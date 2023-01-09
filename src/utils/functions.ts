@@ -15,3 +15,8 @@ export const generateJwt = (
     const token = jwt.sign(payload, secret);
     return token;
 };
+
+// using this in tests
+// to turn return values for mock functions to promises where needed
+// of course I wrote a test for it too :)
+export const promisifyValue = <T>(val: T) => new Promise<T>((res, rej) => res(val));

@@ -54,4 +54,18 @@ describe("Testing utility functions", () => {
             }
         });
     });
+
+    describe("Testing fn promisifyValue", () => {
+        it("should return a promise that resolves to the value passed to it", () => {
+            const vals = ["cat", "dog", 3, 4, { key: "value" }, ["array"]];
+            vals.forEach((val) => {
+                const promise = utilFuncs.promisifyValue(val);
+                expect(promise).toEqual(
+                    new Promise((res, rej) => {
+                        res(val);
+                    })
+                );
+            });
+        });
+    });
 });
