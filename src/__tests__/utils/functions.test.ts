@@ -2,6 +2,8 @@ import * as utilFuncs from "../../utils/functions";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
+const generateJwtMock = jest.spyOn(utilFuncs, "generateJwt");
+
 describe("Testing utility functions", () => {
     describe("Testing fn hashString", () => {
         it("should return a hased string", async () => {
@@ -55,16 +57,71 @@ describe("Testing utility functions", () => {
         });
     });
 
-    describe("Testing fn promisifyValue", () => {
-        it("should return a promise that resolves to the value passed to it", () => {
-            const vals = ["cat", "dog", 3, 4, { key: "value" }, ["array"]];
-            vals.forEach((val) => {
-                const promise = utilFuncs.promisifyValue(val);
-                expect(promise).toEqual(
-                    new Promise((res, rej) => {
-                        res(val);
-                    })
-                );
+    describe("Testing fn generateAuthToken", () => {
+        describe("Given invalid data", () => {
+            it("should throw an error", () => {
+                const invalidData: {
+                    authType: "user" | "business";
+                    payload: { businessId?: string; userId?: string };
+                    error: string;
+                }[] = [
+                    {
+                        authType: "user",
+                        payload: { businessId: "fish" },
+                        error: "userId is required for authType user",
+                    },
+                    {
+                        authType: "business",
+                        payload: { businessId: "fish" },
+                        error: "userId is required for authType business",
+                    },
+                    {
+                        authType: "business",
+                        payload: { userId: "fish" },
+                        error: "businessId is required for authType business",
+                    },
+                    {
+                        authType: "business",
+                        payload: {},
+                        error: "userId is required for authType business",
+                    },
+                    {
+                        authType: "user",
+                        payload: {},
+                        error: "userId is required for authType user",
+                    },
+                ];
+
+                for (let i = 0; i < invalidData.length; i++) {
+                    const data = invalidData[i];
+                    expect(() => {
+                        utilFuncs.generateAuthToken(data.authType, data.payload);
+                    }).toThrow(data.error);
+                }
+            });
+        });
+
+        describe("Given valid data", () => {
+            it("should return a jwt", () => {
+                const validData: {
+                    authType: "user" | "business";
+                    payload: { businessId?: string; userId?: string };
+                }[] = [
+                    {
+                        authType: "user",
+                        payload: { userId: "fish" },
+                    },
+                    {
+                        authType: "business",
+                        payload: { userId: "meat", businessId: "fish" },
+                    },
+                ];
+
+                validData.forEach((data) => {
+                    expect(typeof utilFuncs.generateAuthToken(data.authType, data.payload)).toBe(
+                        "string"
+                    );
+                });
             });
         });
     });

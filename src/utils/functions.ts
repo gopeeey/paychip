@@ -16,7 +16,25 @@ export const generateJwt = (
     return token;
 };
 
-// using this in tests
-// to turn return values for mock functions to promises where needed
-// of course I wrote a test for it too :)
-export const promisifyValue = <T>(val: T) => new Promise<T>((res, rej) => res(val));
+export const generateAuthToken = (
+    authType: "user" | "business",
+    payload: { userId?: string; businessId?: string }
+) => {
+    if (!payload.userId || !payload.userId?.length)
+        throw new Error(`userId is required for authType ${authType}`);
+    switch (authType) {
+        case "user":
+            break;
+        case "business":
+            if (!payload.businessId || !payload.businessId?.length)
+                throw new Error("businessId is required for authType business");
+            break;
+        default:
+            throw new Error("Invalid authentication type");
+    }
+
+    return generateJwt({
+        authType,
+        data: payload,
+    });
+};

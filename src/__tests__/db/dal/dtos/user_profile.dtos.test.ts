@@ -1,4 +1,7 @@
-import { CreateUserProfileDto, FullUserProfileDto } from "../../../../db/dtos/user_profile.dtos";
+import {
+    CreateUserProfileDto,
+    StandardUserProfile,
+} from "../../../../logic/dtos/user_profile.dtos";
 
 describe("Testing UserProfile DTOs", () => {
     describe("Testing CreateUserProfileDto", () => {
@@ -11,10 +14,10 @@ describe("Testing UserProfile DTOs", () => {
         });
     });
 
-    describe("Testing FullUserProfileDto", () => {
+    describe("Testing StandardUserProfile", () => {
         it("should create a dto that contains all user fields except password", () => {
             const data = { name: "Sam", email: "sam", password: "1111" };
-            const dto = new FullUserProfileDto(data);
+            const dto = new StandardUserProfile(data);
             expect(dto.email).toBe(data.email);
             expect(dto.name).toBe(data.name);
         });

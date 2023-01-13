@@ -1,4 +1,4 @@
-import { UserProfileCreationAttributes } from "../models/user_profile.model";
+import { UserProfileCreationAttributes } from "../../db/models/user_profile.model";
 
 export class CreateUserProfileDto
     implements Pick<UserProfileCreationAttributes, "name" | "email" | "password">
@@ -17,7 +17,7 @@ export class CreateUserProfileDto
     }
 }
 
-export class FullUserProfileDto implements Omit<UserProfileCreationAttributes, "password"> {
+export class StandardUserProfile implements Omit<UserProfileCreationAttributes, "password"> {
     name: string;
     email: string;
 

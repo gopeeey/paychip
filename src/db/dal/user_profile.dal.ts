@@ -1,5 +1,5 @@
 import UserProfile, { UserProfileCreationAttributes } from "../models/user_profile.model";
-import { CreateUserProfileDto } from "../dtos/user_profile.dtos";
+import { CreateUserProfileDto } from "../../logic/dtos/user_profile.dtos";
 
 export const create = async (createUserProfileDto: CreateUserProfileDto) => {
     const { name, email, password } = createUserProfileDto;
