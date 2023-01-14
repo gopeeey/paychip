@@ -1,11 +1,12 @@
-import app from "./app";
+import App from "./app";
 import startServer from "./server";
+import container from "./d_container";
 // import db from "./db";
 
 const run = async () => {
     try {
         // await db.sync();
-        startServer(app);
+        startServer(new App(container).init());
     } catch (err) {
         console.log(err);
         process.exit(1);

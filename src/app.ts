@@ -1,39 +1,46 @@
+import { DependencyContainerInterface } from "./d_container";
 import express from "express";
 import morgan from "morgan";
-// import routes from "./api/routes";
+import Routes from "./web/routes";
 
-const app = express();
+export default class App {
+    constructor(private readonly _container: DependencyContainerInterface) {}
 
-app.use(morgan("dev"));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+    init() {
+        const app = express();
 
-// API Rules
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-        "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    );
+        app.use(morgan("dev"));
+        app.use(express.urlencoded({ extended: true }));
+        app.use(express.json());
 
-    if (req.method === "OPTIONS") {
-        res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-        return res.json({});
+        // API Rules
+        app.use((req, res, next) => {
+            res.header("Access-Control-Allow-Origin", "*");
+            res.header(
+                "Access-Control-Allow-Headers",
+                "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+            );
+
+            if (req.method === "OPTIONS") {
+                res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
+                return res.json({});
+            }
+            next();
+        });
+
+        // Routes
+        app.use("", new Routes(this._container).init());
+
+        // Health check
+        app.get("/ping", (req, res) => res.json({ message: "pong" }));
+
+        // Not found
+        app.use((req, res, next) => {
+            res.status(404).json({
+                message: "not found",
+            });
+        });
+
+        return app;
     }
-    next();
-});
-
-// Routes
-// app.use("", routes);
-
-// Health check
-app.get("/ping", (req, res) => res.json({ message: "pong" }));
-
-// Not found
-app.use((req, res, next) => {
-    res.status(404).json({
-        message: "not found",
-    });
-});
-
-export default app;
+}
