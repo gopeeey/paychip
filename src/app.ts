@@ -28,11 +28,11 @@ export default class App {
             next();
         });
 
-        // Routes
-        app.use("", new Routes(this._container).init());
-
         // Health check
         app.get("/ping", (req, res) => res.json({ message: "pong" }));
+
+        // Routes
+        app.use("", new Routes(this._container).init());
 
         // Not found
         app.use((req, res, next) => {

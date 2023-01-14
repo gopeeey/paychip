@@ -7,6 +7,7 @@ export default class Routes {
 
     init() {
         const router = Router();
+
         const userRoutes = new UserProfileRoute(this._container.userProfileService).init();
         router.use("/user", userRoutes);
 
