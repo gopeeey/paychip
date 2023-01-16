@@ -4,7 +4,8 @@
   "description": "An API that allows business to generate wallets and track transactions",
   "main": "src/index.ts",
   "scripts": {
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "dev": "nodemon"
   },
   "author": "Samuel Gopeh",
   "license": "ISC",
