@@ -1,6 +1,5 @@
-import { StandardUserProfileDto } from "../../logic/dtos";
+import { StandardUserProfileDto, LoginDto } from "../../logic/dtos";
 import UserProfile from "../../db/models/user_profile.model";
-import * as utilFuncs from "../../utils/functions";
 
 export const userProfileData = {
     name: "Sam",
@@ -11,3 +10,7 @@ export const userProfileData = {
 export const userProfile = new UserProfile(userProfileData);
 export const userProfileJson = userProfile.toJSON();
 export const standardUserProfile = new StandardUserProfileDto(userProfileJson);
+export const loginDetails = new LoginDto({
+    email: userProfileData.email,
+    password: userProfileData.password,
+});

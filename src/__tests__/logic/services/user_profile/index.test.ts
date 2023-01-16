@@ -4,11 +4,17 @@ import {
     userProfileJson,
     userProfileData,
     standardUserProfile,
+    loginDetails,
 } from "../../../samples/user_profile.samples";
 import * as utilFuncs from "../../../../utils/functions";
+import bcrypt from "bcrypt";
+import { InvalidLoginDetailsError, UserNotFoundError } from "../../../../logic/errors";
 
 const createMock = jest.fn();
 const findByEmailMock = jest.fn();
+const bcryptCompareMock = jest
+    .spyOn(bcrypt, "compare")
+    .mockImplementation(() => Promise.resolve(true));
 
 const repo = {
     create: createMock,
@@ -67,12 +73,77 @@ describe("Testing userProfile service", () => {
         it("should generate a user auth token", async () => {
             generateJwtMock.mockReturnValue("authtoken");
             const response = await userProfileService.signup(userProfileData);
-            expect(response).toHaveProperty("userProfile");
-            expect(response).toHaveProperty("authToken");
             expect(generateJwtMock).toHaveBeenCalledTimes(1);
             expect(generateJwtMock).toHaveBeenCalledWith({
                 authType: "user",
                 data: { userId: response.userProfile.id },
+            });
+        });
+
+        it("should return user profile and auth token", async () => {
+            const response = await userProfileService.signup(userProfileData);
+            expect(response).toHaveProperty("userProfile");
+            expect(response).toHaveProperty("authToken");
+            expect(response.userProfile).toEqual(standardUserProfile);
+        });
+    });
+
+    describe("Testing login", () => {
+        it("should fetch the user profile", async () => {
+            findByEmailMock.mockResolvedValue(userProfileJson);
+            await userProfileService.login(loginDetails);
+            expect(findByEmailMock).toHaveBeenCalledTimes(1);
+            expect(findByEmailMock).toHaveBeenCalledWith(loginDetails.email);
+        });
+
+        describe("Given the user exists", () => {
+            it("should compare passwords", async () => {
+                await userProfileService.login(loginDetails);
+                expect(bcryptCompareMock).toHaveBeenCalledTimes(1);
+                expect(bcryptCompareMock).toHaveBeenCalledWith(
+                    loginDetails.password,
+                    userProfileJson.password
+                );
+            });
+
+            describe("Given the passwords match", () => {
+                it("should generate an auth token", async () => {
+                    await userProfileService.login(loginDetails);
+                    expect(generateJwtMock).toHaveBeenCalledTimes(1);
+                    expect(generateJwtMock).toHaveBeenCalledWith({
+                        authType: "user",
+                        data: { userId: userProfileJson.id },
+                    });
+                });
+
+                it("should return the user profile and an auth token", async () => {
+                    const authToken = "authTokenValue";
+                    generateJwtMock.mockReturnValue(authToken);
+                    const response = await userProfileService.login(loginDetails);
+                    expect(response).toHaveProperty("user", standardUserProfile);
+                    expect(response).toHaveProperty("authToken", authToken);
+                });
+            });
+
+            describe("Given the passwords do not match", () => {
+                it("should throw an invalid login details error", async () => {
+                    bcryptCompareMock.mockImplementation(() => Promise.resolve(false));
+                    await expect(
+                        userProfileService.login({
+                            email: "sammygopeh@gmail.com",
+                            password: "wrongpassword",
+                        })
+                    ).rejects.toThrow(new InvalidLoginDetailsError());
+                });
+            });
+        });
+
+        describe("Given the user does not exist", () => {
+            it("should throw an invalid login details error", async () => {
+                findByEmailMock.mockResolvedValue(null);
+                await expect(
+                    userProfileService.login({ email: "Sam@gmail.com", password: "barleywheat" })
+                ).rejects.toThrow(new InvalidLoginDetailsError());
             });
         });
     });

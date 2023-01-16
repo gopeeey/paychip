@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import config from "../config";
 import jwt from "jsonwebtoken";
+import { Response } from "express";
 
 export const hashString = async (string: string) => {
     const salt = await bcrypt.genSalt(10);
@@ -36,5 +37,18 @@ export const generateAuthToken = (
     return generateJwt({
         authType,
         data: payload,
+    });
+};
+
+export const sendResponse = (
+    res: Response,
+    opts: { code: number; message?: string; data?: object } = {
+        code: 200,
+        message: "successful",
+    }
+) => {
+    res.status(opts.code).json({
+        message: opts.message,
+        data: opts.data,
     });
 };

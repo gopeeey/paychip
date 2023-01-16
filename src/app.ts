@@ -2,6 +2,7 @@ import { DependencyContainerInterface } from "./d_container";
 import express from "express";
 import morgan from "morgan";
 import Routes from "./web/routes";
+import errorHandler from "./web/middleware/error_handler";
 
 export default class App {
     constructor(private readonly _container: DependencyContainerInterface) {}
@@ -33,6 +34,9 @@ export default class App {
 
         // Routes
         app.use("", new Routes(this._container).init());
+
+        // Error handler
+        app.use(errorHandler);
 
         // Not found
         app.use((req, res, next) => {
