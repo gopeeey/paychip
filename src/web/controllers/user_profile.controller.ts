@@ -1,11 +1,11 @@
-import UserProfileService from "../../logic/services/user_profile";
+import { UserProfileServiceInterface } from "../../contracts/interfaces/logic_web";
 import { NextFunction, Request, Response } from "express";
 import BaseController from "./base.controller";
-import { CreateUserProfileDto, LoginDto } from "../../logic/dtos";
+import { CreateUserProfileDto, LoginDto } from "../../contracts/dtos";
 import { sendResponse } from "../../utils/functions";
 
 class UserProfileController extends BaseController {
-    constructor(private readonly _service: UserProfileService) {
+    constructor(private readonly _service: UserProfileServiceInterface) {
         super();
     }
 

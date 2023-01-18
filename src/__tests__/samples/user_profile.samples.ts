@@ -1,4 +1,4 @@
-import { StandardUserProfileDto, LoginDto } from "../../logic/dtos";
+import { StandardUserProfileDto, LoginDto } from "../../contracts/dtos";
 import UserProfile from "../../db/models/user_profile.model";
 
 export const userProfileData = {

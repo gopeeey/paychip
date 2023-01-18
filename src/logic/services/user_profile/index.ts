@@ -1,14 +1,13 @@
-import UserProfileRepo from "../../../db/repos/user-profile.repo";
-import { CreateUserProfileDto, StandardUserProfileDto } from "../../dtos";
-import { hashString, generateJwt, generateAuthToken } from "../../../utils/functions";
-import { EmailAlreadyRegisteredError } from "../../errors/user_profile_errors/email_already_registered_error";
-import { LoginDto } from "../../dtos";
-import { InvalidLoginDetailsError, UserNotFoundError } from "../../errors";
+import { UserProfileRepoInterface } from "../../../contracts/interfaces/db_logic";
+import { CreateUserProfileDto, StandardUserProfileDto } from "../../../contracts/dtos";
+import { hashString, generateAuthToken } from "../../../utils/functions";
+import { LoginDto } from "../../../contracts/dtos";
+import { InvalidLoginDetailsError, EmailAlreadyRegisteredError } from "../../errors";
+import { UserProfileServiceInterface } from "../../../contracts/interfaces/logic_web";
 import bcrypt from "bcrypt";
-import * as utilFuncs from "../../../utils/functions";
 
-class UserProfileService {
-    constructor(private readonly _repository: UserProfileRepo) {}
+class UserProfileService implements UserProfileServiceInterface {
+    constructor(private readonly _repository: UserProfileRepoInterface) {}
 
     async createUserProfile(createUserProfileDto: CreateUserProfileDto) {
         const { email, password } = createUserProfileDto;

@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { LoginDto } from "../../../logic/dtos";
+import { LoginDto } from "../../../contracts/dtos";
 
 export const LoginValidator = Joi.object<LoginDto>({
     email: Joi.string().email().required(),

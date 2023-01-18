@@ -1,6 +1,7 @@
 import UserProfile from "../models/user_profile.model";
+import { UserProfileRepoInterface } from "../../contracts/interfaces/db_logic";
 
-class UserProfileRepo {
+class UserProfileRepo implements UserProfileRepoInterface {
     constructor(private readonly _modelContext: typeof UserProfile) {}
 
     async create(doc: Pick<UserProfile, "email" | "password" | "name">) {

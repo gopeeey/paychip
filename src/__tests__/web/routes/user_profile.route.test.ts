@@ -1,7 +1,7 @@
 import App from "../../../app";
 import supertest from "supertest";
 import { DependencyContainerInterface } from "../../../d_container";
-import UserProfileService from "../../../logic/services/user_profile";
+import { UserProfileServiceInterface } from "../../../contracts/interfaces/logic_web";
 import { testRoute } from "./helpers";
 import {
     loginDetails,
@@ -18,7 +18,7 @@ const container = {
     userProfileService: {
         signup: signupServiceMock,
         login: loginMock,
-    } as unknown as UserProfileService,
+    } as unknown as UserProfileServiceInterface,
 } as unknown as DependencyContainerInterface;
 
 const app = new App(container).init();

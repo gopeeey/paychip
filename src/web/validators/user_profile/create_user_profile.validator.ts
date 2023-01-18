@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { CreateUserProfileDto } from "../../../logic/dtos";
+import { CreateUserProfileDto } from "../../../contracts/dtos";
 
 export const CreateUserValidator = Joi.object<CreateUserProfileDto>({
     name: Joi.string().required(),

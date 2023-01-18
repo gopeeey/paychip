@@ -1,7 +1,7 @@
-import { UserProfileCreationAttributes } from "../../../db/models/user_profile.model";
+import { UserProfileModelInterface } from "../../interfaces/db_logic";
 
 export class CreateUserProfileDto
-    implements Pick<UserProfileCreationAttributes, "name" | "email" | "password">
+    implements Pick<UserProfileModelInterface, "name" | "email" | "password">
 {
     name: string;
     email: string;
@@ -10,7 +10,7 @@ export class CreateUserProfileDto
         name,
         email,
         password,
-    }: Pick<UserProfileCreationAttributes, "name" | "email" | "password">) {
+    }: Pick<UserProfileModelInterface, "name" | "email" | "password">) {
         this.name = name;
         this.email = email;
         this.password = password;

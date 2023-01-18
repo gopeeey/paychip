@@ -9,11 +9,12 @@ import {
     CreationAttributes,
 } from "sequelize";
 import db from "..";
+import { UserProfileModelInterface } from "../../contracts/interfaces/db_logic";
 
-class UserProfile extends Model<
-    InferAttributes<UserProfile>,
-    InferCreationAttributes<UserProfile>
-> {
+class UserProfile
+    extends Model<InferAttributes<UserProfile>, InferCreationAttributes<UserProfile>>
+    implements UserProfileModelInterface
+{
     declare id: CreationOptional<string>;
     declare name: string;
     declare email: string;

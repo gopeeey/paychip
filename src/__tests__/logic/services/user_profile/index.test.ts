@@ -1,4 +1,4 @@
-import UserProfileRepo from "../../../../db/repos/user-profile.repo";
+import { UserProfileRepoInterface } from "../../../../contracts/interfaces/db_logic";
 import UserProfileService from "../../../../logic/services/user_profile";
 import {
     userProfileJson,
@@ -8,7 +8,7 @@ import {
 } from "../../../samples/user_profile.samples";
 import * as utilFuncs from "../../../../utils/functions";
 import bcrypt from "bcrypt";
-import { InvalidLoginDetailsError, UserNotFoundError } from "../../../../logic/errors";
+import { InvalidLoginDetailsError } from "../../../../logic/errors";
 
 const createMock = jest.fn();
 const findByEmailMock = jest.fn();
@@ -19,7 +19,7 @@ const bcryptCompareMock = jest
 const repo = {
     create: createMock,
     findByEmail: findByEmailMock,
-} as unknown as UserProfileRepo;
+} as unknown as UserProfileRepoInterface;
 
 const userProfileService = new UserProfileService(repo);
 
