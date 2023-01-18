@@ -1,10 +1,10 @@
-import UserProfile from "../models/user_profile.model";
-import { UserProfileRepoInterface } from "../../contracts/interfaces/db_logic";
+import Account from "../models/account.model";
+import { AccountRepoInterface } from "../../contracts/interfaces/db_logic";
 
-class UserProfileRepo implements UserProfileRepoInterface {
-    constructor(private readonly _modelContext: typeof UserProfile) {}
+class AccountRepo implements AccountRepoInterface {
+    constructor(private readonly _modelContext: typeof Account) {}
 
-    async create(doc: Pick<UserProfile, "email" | "password" | "name">) {
+    async create(doc: Pick<Account, "email" | "password" | "name">) {
         const { email, password, name } = doc;
         const user_profile = await this._modelContext.create({ email, password, name });
         return user_profile.toJSON();
@@ -16,4 +16,4 @@ class UserProfileRepo implements UserProfileRepoInterface {
     }
 }
 
-export default UserProfileRepo;
+export default AccountRepo;

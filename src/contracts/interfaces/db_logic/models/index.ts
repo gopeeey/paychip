@@ -1,1 +1,1 @@
-export * from "./user_profile.model.interface";
+export * from "./account.model.interface";

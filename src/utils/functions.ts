@@ -18,13 +18,13 @@ export const generateJwt = (
 };
 
 export const generateAuthToken = (
-    authType: "user" | "business",
-    payload: { userId?: string; businessId?: string }
+    authType: "account" | "business",
+    payload: { accountId?: string; businessId?: string }
 ) => {
-    if (!payload.userId || !payload.userId?.length)
-        throw new Error(`userId is required for authType ${authType}`);
+    if (!payload.accountId || !payload.accountId?.length)
+        throw new Error(`accountId is required for authType ${authType}`);
     switch (authType) {
-        case "user":
+        case "account":
             break;
         case "business":
             if (!payload.businessId || !payload.businessId?.length)
@@ -42,11 +42,11 @@ export const generateAuthToken = (
 
 export const sendResponse = (
     res: Response,
-    opts: { code: number; message?: string; data?: object } = {
-        code: 200,
-        message: "successful",
-    }
+    opts: { code: number; message?: string; data?: object }
 ) => {
+    let defaultOpts = { code: 200, message: "successful" };
+    opts = { ...defaultOpts, ...opts };
+
     res.status(opts.code).json({
         message: opts.message,
         data: opts.data,

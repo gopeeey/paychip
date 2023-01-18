@@ -1,1 +1,1 @@
-export * from "./user_profile.service.interface";
+export * from "./account.service.interface";

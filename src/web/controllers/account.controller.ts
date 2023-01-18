@@ -1,20 +1,18 @@
-import { UserProfileServiceInterface } from "../../contracts/interfaces/logic_web";
+import { AccountServiceInterface } from "../../contracts/interfaces/logic_web";
 import { NextFunction, Request, Response } from "express";
 import BaseController from "./base.controller";
-import { CreateUserProfileDto, LoginDto } from "../../contracts/dtos";
+import { CreateAccountDto, LoginDto } from "../../contracts/dtos";
 import { sendResponse } from "../../utils/functions";
 
-class UserProfileController extends BaseController {
-    constructor(private readonly _service: UserProfileServiceInterface) {
+class AccountController extends BaseController {
+    constructor(private readonly _service: AccountServiceInterface) {
         super();
     }
 
     signup = async (req: Request, res: Response, next: NextFunction) => {
         await this.handleReq(next, async () => {
-            const createUserProfileDto = new CreateUserProfileDto(req.body as CreateUserProfileDto);
-            const resData = await this._service.signup(
-                new CreateUserProfileDto(createUserProfileDto)
-            );
+            const createAccountDto = new CreateAccountDto(req.body as CreateAccountDto);
+            const resData = await this._service.signup(new CreateAccountDto(createAccountDto));
             sendResponse(res, { code: 201, data: resData });
         });
     };
@@ -28,4 +26,4 @@ class UserProfileController extends BaseController {
     };
 }
 
-export default UserProfileController;
+export default AccountController;

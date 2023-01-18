@@ -1,1 +1,1 @@
-export * from "./user_profile_errors";
+export * from "./account";

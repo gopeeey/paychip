@@ -1,13 +1,9 @@
 import App from "../../../app";
 import supertest from "supertest";
 import { DependencyContainerInterface } from "../../../d_container";
-import { UserProfileServiceInterface } from "../../../contracts/interfaces/logic_web";
+import { AccountServiceInterface } from "../../../contracts/interfaces/logic_web";
 import { testRoute } from "./helpers";
-import {
-    loginDetails,
-    standardUserProfile,
-    userProfileData,
-} from "../../samples/user_profile.samples";
+import { loginDetails, standardAccount, accountData } from "../../samples/account.samples";
 import { ValidationError } from "../../../logic/errors/base_errors";
 import { InvalidLoginDetailsError } from "../../../logic/errors";
 
@@ -15,16 +11,16 @@ const signupServiceMock = jest.fn();
 const loginMock = jest.fn();
 
 const container = {
-    userProfileService: {
+    accountService: {
         signup: signupServiceMock,
         login: loginMock,
-    } as unknown as UserProfileServiceInterface,
+    } as unknown as AccountServiceInterface,
 } as unknown as DependencyContainerInterface;
 
 const app = new App(container).init();
 
-describe("Testing user profile routes", () => {
-    testRoute("/user/signup", (route) => () => {
+describe("Testing account routes", () => {
+    testRoute("/account/signup", (route) => () => {
         // Return a 400 when given invalid data
         describe("Given invalid data", () => {
             it("should return a 400 with error message", async () => {
@@ -43,36 +39,36 @@ describe("Testing user profile routes", () => {
                 }
             });
         });
-        // Return a 400 when user already exists
+        // Return a 400 when account already exists
         describe("Given the email is already registered", () => {
             it("should return a 400 error with message", async () => {
                 signupServiceMock.mockRejectedValue(
                     new ValidationError("Email already registered")
                 );
-                const response = await supertest(app).post(route).send(userProfileData);
+                const response = await supertest(app).post(route).send(accountData);
                 expect(response.statusCode).toBe(400);
                 expect(response.body.message).toBe("Email already registered");
             });
         });
 
-        // Return a 201 when it successfully creates a user profile
+        // Return a 201 when it successfully creates a account
         describe("Given the email is not already registered", () => {
-            it("should return a 201 with a new user profile", async () => {
+            it("should return a 201 with a new account", async () => {
                 signupServiceMock.mockResolvedValue({
-                    userProfile: standardUserProfile,
+                    account: standardAccount,
                     authToken: "token",
                 });
-                const response = await supertest(app).post(route).send(userProfileData);
+                const response = await supertest(app).post(route).send(accountData);
                 expect(response.statusCode).toBe(201);
-                expect(response.body.data).toHaveProperty("userProfile", standardUserProfile);
+                expect(response.body.data).toHaveProperty("account", standardAccount);
                 expect(response.body.data).toHaveProperty("authToken");
                 expect(signupServiceMock).toHaveBeenCalledTimes(1);
-                expect(signupServiceMock).toHaveBeenCalledWith(userProfileData);
+                expect(signupServiceMock).toHaveBeenCalledWith(accountData);
             });
         });
     });
 
-    testRoute("/user/login", (route) => () => {
+    testRoute("/account/login", (route) => () => {
         describe("Given invalid data", () => {
             it("should return a 400 with message", async () => {
                 const dataSet = [

@@ -1,8 +1,8 @@
-import UserProfile from "./models/user_profile.model";
+import Account from "./models/account.model";
 
 class DBService {
-    get user_profile() {
-        return UserProfile;
+    get account() {
+        return Account;
     }
 }
 

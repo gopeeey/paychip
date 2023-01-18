@@ -37,7 +37,7 @@ describe("Testing utility functions", () => {
                 { something: "anObject", anObject: { nest: "yes" } },
                 { something: "pool", someone: "Sam" },
                 { property: "stock" },
-                { object: "gaming pc", user: "me" },
+                { object: "gaming pc", account: "me" },
                 "something",
             ];
 
@@ -61,34 +61,34 @@ describe("Testing utility functions", () => {
         describe("Given invalid data", () => {
             it("should throw an error", () => {
                 const invalidData: {
-                    authType: "user" | "business";
-                    payload: { businessId?: string; userId?: string };
+                    authType: "account" | "business";
+                    payload: { businessId?: string; accountId?: string };
                     error: string;
                 }[] = [
                     {
-                        authType: "user",
+                        authType: "account",
                         payload: { businessId: "fish" },
-                        error: "userId is required for authType user",
+                        error: "accountId is required for authType account",
                     },
                     {
                         authType: "business",
                         payload: { businessId: "fish" },
-                        error: "userId is required for authType business",
+                        error: "accountId is required for authType business",
                     },
                     {
                         authType: "business",
-                        payload: { userId: "fish" },
+                        payload: { accountId: "fish" },
                         error: "businessId is required for authType business",
                     },
                     {
                         authType: "business",
                         payload: {},
-                        error: "userId is required for authType business",
+                        error: "accountId is required for authType business",
                     },
                     {
-                        authType: "user",
+                        authType: "account",
                         payload: {},
-                        error: "userId is required for authType user",
+                        error: "accountId is required for authType account",
                     },
                 ];
 
@@ -104,16 +104,16 @@ describe("Testing utility functions", () => {
         describe("Given valid data", () => {
             it("should return a jwt", () => {
                 const validData: {
-                    authType: "user" | "business";
-                    payload: { businessId?: string; userId?: string };
+                    authType: "account" | "business";
+                    payload: { businessId?: string; accountId?: string };
                 }[] = [
                     {
-                        authType: "user",
-                        payload: { userId: "fish" },
+                        authType: "account",
+                        payload: { accountId: "fish" },
                     },
                     {
                         authType: "business",
-                        payload: { userId: "meat", businessId: "fish" },
+                        payload: { accountId: "meat", businessId: "fish" },
                     },
                 ];
 

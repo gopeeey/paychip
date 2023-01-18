@@ -1,14 +1,14 @@
-import UserProfile from "./db/models/user_profile.model";
-import UserProfileRepo from "./db/repos/user-profile.repo";
-import UserProfileService from "./logic/services/user_profile";
+import Account from "./db/models/account.model";
+import AccountRepo from "./db/repos/account.repo";
+import AccountService from "./logic/services/account";
 
 export interface DependencyContainerInterface {
-    userProfileService: UserProfileService;
+    accountService: AccountService;
 }
-const userProfileService = new UserProfileService(new UserProfileRepo(UserProfile));
+const accountService = new AccountService(new AccountRepo(Account));
 
 const container: DependencyContainerInterface = {
-    userProfileService,
+    accountService,
 };
 
 export default container;

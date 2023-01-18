@@ -9,6 +9,7 @@ const errorHandler = async (error: unknown, req: Request, res: Response, next: N
 
     if (error instanceof ValidationError) code = 400;
     if (error instanceof NotFoundError) code = 404;
+    if (code === 500) message = "Sorry an error occurred";
 
     return sendResponse(res, { code, message });
 };

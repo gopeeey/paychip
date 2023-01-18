@@ -1,11 +1,11 @@
-import { UserProfileRepoInterface } from "../../../../contracts/interfaces/db_logic";
-import UserProfileService from "../../../../logic/services/user_profile";
+import { AccountRepoInterface } from "../../../../contracts/interfaces/db_logic";
+import AccountService from "../../../../logic/services/account";
 import {
-    userProfileJson,
-    userProfileData,
-    standardUserProfile,
+    accountJson,
+    accountData,
+    standardAccount,
     loginDetails,
-} from "../../../samples/user_profile.samples";
+} from "../../../samples/account.samples";
 import * as utilFuncs from "../../../../utils/functions";
 import bcrypt from "bcrypt";
 import { InvalidLoginDetailsError } from "../../../../logic/errors";
@@ -19,20 +19,20 @@ const bcryptCompareMock = jest
 const repo = {
     create: createMock,
     findByEmail: findByEmailMock,
-} as unknown as UserProfileRepoInterface;
+} as unknown as AccountRepoInterface;
 
-const userProfileService = new UserProfileService(repo);
+const accountService = new AccountService(repo);
 
-const createUserProfileMock = jest.spyOn(userProfileService, "createUserProfile");
+const createAccountMock = jest.spyOn(accountService, "createAccount");
 const hashStringMock = jest.spyOn(utilFuncs, "hashString");
 const generateJwtMock = jest.spyOn(utilFuncs, "generateJwt");
 
-describe("Testing userProfile service", () => {
-    describe("Testing createUserProfile", () => {
-        describe("Given a user with the same email already exists", () => {
+describe("Testing account service", () => {
+    describe("Testing createAccount", () => {
+        describe("Given an account with the same email already exists", () => {
             it("should throw an error", async () => {
-                findByEmailMock.mockResolvedValue(userProfileJson);
-                await expect(userProfileService.createUserProfile(userProfileData)).rejects.toThrow(
+                findByEmailMock.mockResolvedValue(accountJson);
+                await expect(accountService.createAccount(accountData)).rejects.toThrow(
                     "Email already registered"
                 );
                 expect(findByEmailMock).toHaveBeenCalledTimes(1);
@@ -43,18 +43,18 @@ describe("Testing userProfile service", () => {
             it("should hash the password", async () => {
                 findByEmailMock.mockResolvedValue(null);
                 hashStringMock.mockResolvedValue("password");
-                createMock.mockResolvedValue(userProfileJson);
-                await userProfileService.createUserProfile(userProfileData);
+                createMock.mockResolvedValue(accountJson);
+                await accountService.createAccount(accountData);
                 expect(hashStringMock).toHaveBeenCalledTimes(1);
-                expect(hashStringMock).toHaveBeenCalledWith(userProfileData.password);
+                expect(hashStringMock).toHaveBeenCalledWith(accountData.password);
             });
 
-            it("should return a new user profile object", async () => {
-                const profile = await userProfileService.createUserProfile(userProfileData);
-                expect(profile).toEqual(standardUserProfile);
+            it("should return a new account object", async () => {
+                const profile = await accountService.createAccount(accountData);
+                expect(profile).toEqual(standardAccount);
                 expect(createMock).toHaveBeenCalledTimes(1);
                 expect(createMock).toHaveBeenCalledWith({
-                    ...userProfileData,
+                    ...accountData,
                     password: "password",
                 });
             });
@@ -62,65 +62,65 @@ describe("Testing userProfile service", () => {
     });
 
     describe("Testing signup", () => {
-        // Creates a business for the user
-        it("should create a user profile", async () => {
-            await userProfileService.signup(userProfileData);
-            createUserProfileMock.mockResolvedValue(standardUserProfile);
-            expect(createUserProfileMock).toHaveBeenCalledTimes(1);
-            expect(createUserProfileMock).toHaveBeenCalledWith(userProfileData);
+        // Creates a business for the account
+        it("should create an account profile", async () => {
+            await accountService.signup(accountData);
+            createAccountMock.mockResolvedValue(standardAccount);
+            expect(createAccountMock).toHaveBeenCalledTimes(1);
+            expect(createAccountMock).toHaveBeenCalledWith(accountData);
         });
-        // Generates an auth token for the user
-        it("should generate a user auth token", async () => {
+        // Generates an auth token for the account
+        it("should generate an account auth token", async () => {
             generateJwtMock.mockReturnValue("authtoken");
-            const response = await userProfileService.signup(userProfileData);
+            const response = await accountService.signup(accountData);
             expect(generateJwtMock).toHaveBeenCalledTimes(1);
             expect(generateJwtMock).toHaveBeenCalledWith({
-                authType: "user",
-                data: { userId: response.userProfile.id },
+                authType: "account",
+                data: { accountId: response.account.id },
             });
         });
 
-        it("should return user profile and auth token", async () => {
-            const response = await userProfileService.signup(userProfileData);
-            expect(response).toHaveProperty("userProfile");
+        it("should return account and auth token", async () => {
+            const response = await accountService.signup(accountData);
+            expect(response).toHaveProperty("account");
             expect(response).toHaveProperty("authToken");
-            expect(response.userProfile).toEqual(standardUserProfile);
+            expect(response.account).toEqual(standardAccount);
         });
     });
 
     describe("Testing login", () => {
-        it("should fetch the user profile", async () => {
-            findByEmailMock.mockResolvedValue(userProfileJson);
-            await userProfileService.login(loginDetails);
+        it("should fetch the account", async () => {
+            findByEmailMock.mockResolvedValue(accountJson);
+            await accountService.login(loginDetails);
             expect(findByEmailMock).toHaveBeenCalledTimes(1);
             expect(findByEmailMock).toHaveBeenCalledWith(loginDetails.email);
         });
 
-        describe("Given the user exists", () => {
+        describe("Given the account exists", () => {
             it("should compare passwords", async () => {
-                await userProfileService.login(loginDetails);
+                await accountService.login(loginDetails);
                 expect(bcryptCompareMock).toHaveBeenCalledTimes(1);
                 expect(bcryptCompareMock).toHaveBeenCalledWith(
                     loginDetails.password,
-                    userProfileJson.password
+                    accountJson.password
                 );
             });
 
             describe("Given the passwords match", () => {
                 it("should generate an auth token", async () => {
-                    await userProfileService.login(loginDetails);
+                    await accountService.login(loginDetails);
                     expect(generateJwtMock).toHaveBeenCalledTimes(1);
                     expect(generateJwtMock).toHaveBeenCalledWith({
-                        authType: "user",
-                        data: { userId: userProfileJson.id },
+                        authType: "account",
+                        data: { accountId: accountJson.id },
                     });
                 });
 
-                it("should return the user profile and an auth token", async () => {
+                it("should return the account and an auth token", async () => {
                     const authToken = "authTokenValue";
                     generateJwtMock.mockReturnValue(authToken);
-                    const response = await userProfileService.login(loginDetails);
-                    expect(response).toHaveProperty("user", standardUserProfile);
+                    const response = await accountService.login(loginDetails);
+                    expect(response).toHaveProperty("account", standardAccount);
                     expect(response).toHaveProperty("authToken", authToken);
                 });
             });
@@ -129,7 +129,7 @@ describe("Testing userProfile service", () => {
                 it("should throw an invalid login details error", async () => {
                     bcryptCompareMock.mockImplementation(() => Promise.resolve(false));
                     await expect(
-                        userProfileService.login({
+                        accountService.login({
                             email: "sammygopeh@gmail.com",
                             password: "wrongpassword",
                         })
@@ -138,11 +138,11 @@ describe("Testing userProfile service", () => {
             });
         });
 
-        describe("Given the user does not exist", () => {
+        describe("Given the account does not exist", () => {
             it("should throw an invalid login details error", async () => {
                 findByEmailMock.mockResolvedValue(null);
                 await expect(
-                    userProfileService.login({ email: "Sam@gmail.com", password: "barleywheat" })
+                    accountService.login({ email: "Sam@gmail.com", password: "barleywheat" })
                 ).rejects.toThrow(new InvalidLoginDetailsError());
             });
         });

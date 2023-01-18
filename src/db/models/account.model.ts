@@ -9,11 +9,11 @@ import {
     CreationAttributes,
 } from "sequelize";
 import db from "..";
-import { UserProfileModelInterface } from "../../contracts/interfaces/db_logic";
+import { AccountModelInterface } from "../../contracts/interfaces/db_logic";
 
-class UserProfile
-    extends Model<InferAttributes<UserProfile>, InferCreationAttributes<UserProfile>>
-    implements UserProfileModelInterface
+class Account
+    extends Model<InferAttributes<Account>, InferCreationAttributes<Account>>
+    implements AccountModelInterface
 {
     declare id: CreationOptional<string>;
     declare name: string;
@@ -25,7 +25,7 @@ class UserProfile
     declare deletedAt: CreationOptional<Date | null>;
 }
 
-UserProfile.init(
+Account.init(
     {
         id: {
             type: DataTypes.UUID,
@@ -50,9 +50,9 @@ UserProfile.init(
         updatedAt: DataTypes.DATE,
         deletedAt: DataTypes.DATE,
     },
-    { sequelize: db, paranoid: true, modelName: "UserProfile" }
+    { sequelize: db, paranoid: true, modelName: "accounts" }
 );
 
-export default UserProfile;
-export type UserProfileAttributes = Attributes<UserProfile>;
-export type UserProfileCreationAttributes = CreationAttributes<UserProfile>;
+export default Account;
+export type AccountAttributes = Attributes<Account>;
+export type AccountCreationAttributes = CreationAttributes<Account>;
