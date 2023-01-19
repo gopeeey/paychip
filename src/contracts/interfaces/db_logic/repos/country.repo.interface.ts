@@ -6,4 +6,6 @@ export interface CountryRepoInterface {
     ) => Promise<CountryModelInterface>;
 
     getByCode: (code: string) => Promise<CountryModelInterface | null>;
+
+    getAll: () => Promise<CountryModelInterface[]>;
 }

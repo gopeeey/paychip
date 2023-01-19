@@ -1,13 +1,21 @@
 import { CountryRepo } from "../../../db/repos";
 import { Country } from "../../../db/models";
-import { countryObj, countryJson, countryData } from "../../samples";
+import {
+    countryObj,
+    countryJson,
+    countryData,
+    countryObjArray,
+    countryJsonArray,
+} from "../../samples";
 
 const createMock = jest.fn();
 const findByPkMock = jest.fn();
+const findAllMock = jest.fn();
 
 const modelContext = {
     create: createMock,
     findByPk: findByPkMock,
+    findAll: findAllMock,
 } as unknown as typeof Country;
 
 const countryRepo = new CountryRepo(modelContext);
@@ -36,6 +44,14 @@ describe("Testing country repo", () => {
                 const country = await countryRepo.getByCode(countryData.isoCode);
                 expect(country).toBe(null);
             });
+        });
+    });
+
+    describe("Testing getAll", () => {
+        it("should return an array of supported countries", async () => {
+            findAllMock.mockResolvedValue(countryObjArray);
+            const countries = await countryRepo.getAll();
+            expect(countries).toEqual(countryJsonArray);
         });
     });
 });

@@ -15,4 +15,14 @@ export class CountryService implements CountryServiceInterface {
         if (!country) throw new CountryNotFoundError();
         return new StandardCountryDto(country);
     }
+
+    async getSupportedCountries() {
+        const countries = await this._repository.getAll();
+        return countries.map((country) => new StandardCountryDto(country));
+    }
+
+    async getSupportedCountryCodes() {
+        const countries = await this.getSupportedCountries();
+        return countries.map((country) => country.isoCode);
+    }
 }

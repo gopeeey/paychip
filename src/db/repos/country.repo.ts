@@ -1,5 +1,5 @@
 import { Country } from "../models";
-import { CountryRepoInterface } from "../../contracts/interfaces/db_logic";
+import { CountryModelInterface, CountryRepoInterface } from "../../contracts/interfaces/db_logic";
 import { CreateCountryDto } from "../../contracts/dtos";
 
 export class CountryRepo implements CountryRepoInterface {
@@ -14,5 +14,10 @@ export class CountryRepo implements CountryRepoInterface {
     async getByCode(code: string) {
         const country = await this._modelContext.findByPk(code);
         return country ? country.toJSON() : country;
+    }
+
+    async getAll() {
+        const countries = await this._modelContext.findAll();
+        return countries.map((country) => country.toJSON());
     }
 }
