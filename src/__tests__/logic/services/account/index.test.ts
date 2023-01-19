@@ -1,5 +1,5 @@
 import { AccountRepoInterface } from "../../../../contracts/interfaces/db_logic";
-import AccountService from "../../../../logic/services/account";
+import { AccountService } from "../../../../logic/services";
 import {
     accountJson,
     accountData,

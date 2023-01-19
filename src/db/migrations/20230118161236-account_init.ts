@@ -1,5 +1,5 @@
 import { QueryInterface, Sequelize, DataTypes, UUIDV4 } from "sequelize";
-import Account from "../models/account.model";
+import { Account } from "../models";
 
 module.exports = {
     up: async (queryInterface: QueryInterface, Sequelize: Sequelize) => {

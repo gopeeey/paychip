@@ -1,5 +1,5 @@
 import { StandardAccountDto, LoginDto } from "../../contracts/dtos";
-import Account from "../../db/models/account.model";
+import { Account } from "../../db/models";
 
 export const accountData = {
     name: "Sam",

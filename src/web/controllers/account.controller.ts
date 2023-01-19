@@ -4,7 +4,7 @@ import BaseController from "./base.controller";
 import { CreateAccountDto, LoginDto } from "../../contracts/dtos";
 import { sendResponse } from "../../utils/functions";
 
-class AccountController extends BaseController {
+export class AccountController extends BaseController {
     constructor(private readonly _service: AccountServiceInterface) {
         super();
     }
@@ -25,5 +25,3 @@ class AccountController extends BaseController {
         });
     };
 }
-
-export default AccountController;

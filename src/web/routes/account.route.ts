@@ -1,11 +1,11 @@
 import { Router } from "express";
-import AccountService from "../../logic/services/account";
-import AccountController from "../controllers/account.controller";
+import { AccountServiceInterface } from "../../contracts/interfaces/logic_web";
+import { AccountController } from "../controllers";
 import { CreateAccountValidator, LoginValidator } from "../validators";
 import { validateBody } from "../middleware/validation";
 
 export default class AccountRoute {
-    constructor(private readonly _service: AccountService) {}
+    constructor(private readonly _service: AccountServiceInterface) {}
 
     init() {
         const router = Router();

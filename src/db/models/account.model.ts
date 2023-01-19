@@ -5,13 +5,11 @@ import {
     CreationOptional,
     DataTypes,
     UUIDV4,
-    Attributes,
-    CreationAttributes,
 } from "sequelize";
 import db from "..";
 import { AccountModelInterface } from "../../contracts/interfaces/db_logic";
 
-class Account
+export class Account
     extends Model<InferAttributes<Account>, InferCreationAttributes<Account>>
     implements AccountModelInterface
 {
@@ -52,7 +50,3 @@ Account.init(
     },
     { sequelize: db, paranoid: true, modelName: "accounts" }
 );
-
-export default Account;
-export type AccountAttributes = Attributes<Account>;
-export type AccountCreationAttributes = CreationAttributes<Account>;

@@ -6,7 +6,7 @@ import { InvalidLoginDetailsError, EmailAlreadyRegisteredError } from "../../err
 import { AccountServiceInterface } from "../../../contracts/interfaces/logic_web";
 import bcrypt from "bcrypt";
 
-class AccountService implements AccountServiceInterface {
+export class AccountService implements AccountServiceInterface {
     constructor(private readonly _repository: AccountRepoInterface) {}
 
     async createAccount(createAccountDto: CreateAccountDto) {
@@ -45,5 +45,3 @@ class AccountService implements AccountServiceInterface {
         return { account: new StandardAccountDto(account), authToken };
     }
 }
-
-export default AccountService;

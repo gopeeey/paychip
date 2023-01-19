@@ -1,7 +1,7 @@
-import Account from "../models/account.model";
+import { Account } from "../models";
 import { AccountRepoInterface } from "../../contracts/interfaces/db_logic";
 
-class AccountRepo implements AccountRepoInterface {
+export class AccountRepo implements AccountRepoInterface {
     constructor(private readonly _modelContext: typeof Account) {}
 
     async create(doc: Pick<Account, "email" | "password" | "name">) {
@@ -15,5 +15,3 @@ class AccountRepo implements AccountRepoInterface {
         return user_profile ? user_profile.toJSON() : null;
     }
 }
-
-export default AccountRepo;

@@ -1,6 +1,6 @@
-import AccountRepo from "../../../db/repos/account.repo";
-import Account from "../../../db/models/account.model";
-import { account, accountData, accountJson } from "../../samples/account.samples";
+import { AccountRepo } from "../../../db/repos";
+import { Account } from "../../../db/models";
+import { account, accountData, accountJson } from "../../samples";
 
 const createMock = jest.fn();
 const findOneMock = jest.fn();

@@ -1,6 +1,6 @@
-import Account from "./db/models/account.model";
-import AccountRepo from "./db/repos/account.repo";
-import AccountService from "./logic/services/account";
+import { Account } from "./db/models";
+import { AccountRepo } from "./db/repos";
+import { AccountService } from "./logic/services";
 
 export interface DependencyContainerInterface {
     accountService: AccountService;
