@@ -6,7 +6,7 @@ import {
     CreationOptional,
 } from "sequelize";
 import db from "..";
-import { CountryModelInterface } from "../../contracts/interfaces/db_logic";
+import { CountryModelInterface } from "../../contracts/interfaces";
 
 export class Country
     extends Model<InferAttributes<Country>, InferCreationAttributes<Country>>

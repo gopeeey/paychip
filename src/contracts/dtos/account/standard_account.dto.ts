@@ -1,8 +1,7 @@
-import { AccountModelInterface } from "../../interfaces/db_logic";
+import { AccountModelInterface } from "../../interfaces";
+import { StandardDtoType } from "../types";
 
-export class StandardAccountDto
-    implements Omit<AccountModelInterface, "password" | "updatedAt" | "deletedAt">
-{
+export class StandardAccountDto implements StandardDtoType<AccountModelInterface, "password"> {
     readonly name: AccountModelInterface["name"];
     readonly email: AccountModelInterface["email"];
     readonly createdAt: AccountModelInterface["createdAt"];

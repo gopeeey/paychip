@@ -1,10 +1,13 @@
-import { CountryModelInterface } from "../../interfaces/db_logic";
+import { CountryModelInterface } from "../../interfaces";
 
-export class CreateCountryDto implements Pick<CountryModelInterface, "isoCode" | "name"> {
-    isoCode: string;
-    name: string;
-    constructor({ isoCode, name }: Pick<CountryModelInterface, "isoCode" | "name">) {
-        this.isoCode = isoCode;
-        this.name = name;
+type requiredProps = Pick<CountryModelInterface, "isoCode" | "name">;
+
+export class CreateCountryDto implements requiredProps {
+    readonly isoCode: string;
+    readonly name: string;
+
+    constructor(body: requiredProps) {
+        this.isoCode = body.isoCode;
+        this.name = body.name;
     }
 }

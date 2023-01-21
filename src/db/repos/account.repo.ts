@@ -1,5 +1,5 @@
 import { Account } from "../models";
-import { AccountRepoInterface } from "../../contracts/interfaces/db_logic";
+import { AccountRepoInterface } from "../../contracts/interfaces";
 
 export class AccountRepo implements AccountRepoInterface {
     constructor(private readonly _modelContext: typeof Account) {}

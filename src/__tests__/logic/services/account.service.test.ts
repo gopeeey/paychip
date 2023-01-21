@@ -1,14 +1,14 @@
-import { AccountRepoInterface } from "../../../../contracts/interfaces/db_logic";
-import { AccountService } from "../../../../logic/services";
+import { AccountRepoInterface } from "../../../contracts/interfaces";
+import { AccountService } from "../../../logic/services";
 import {
     accountJson,
     accountData,
     standardAccount,
     loginDetails,
-} from "../../../samples/account.samples";
-import * as utilFuncs from "../../../../utils/functions";
+} from "../../samples/account.samples";
+import * as utilFuncs from "../../../utils/functions";
 import bcrypt from "bcrypt";
-import { InvalidLoginDetailsError } from "../../../../logic/errors";
+import { InvalidLoginDetailsError } from "../../../logic/errors";
 
 const createMock = jest.fn();
 const findByEmailMock = jest.fn();

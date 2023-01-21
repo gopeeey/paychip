@@ -1,13 +1,13 @@
-import { CountryService } from "../../../../logic/services";
-import { CountryRepoInterface } from "../../../../contracts/interfaces/db_logic";
+import { CountryService } from "../../../logic/services";
+import { CountryRepoInterface, CountryDetails } from "../../../contracts/interfaces";
 import {
     countryData,
     countryJson,
     countryJsonArray,
     standardCountry,
     standardCountryArray,
-} from "../../../samples";
-import { CountryNotFoundError } from "../../../../logic/errors";
+} from "../../samples";
+import { CountryNotFoundError } from "../../../logic/errors";
 
 const createMock = jest.fn();
 const getByCodeMock = jest.fn();
@@ -19,7 +19,14 @@ const repo = {
     getAll: getAllMock,
 } as unknown as CountryRepoInterface;
 
-const countryService = new CountryService(repo);
+const getCountryByCodeMock = jest.fn();
+const checkCountrySupportedMock = jest.fn();
+const details = {
+    getCountryByCode: getCountryByCodeMock,
+    checkCountrySupported: checkCountrySupportedMock,
+} as unknown as CountryDetails;
+
+const countryService = new CountryService(repo, details);
 
 describe("Testing country service", () => {
     describe("Testing create", () => {
@@ -27,25 +34,8 @@ describe("Testing country service", () => {
             createMock.mockResolvedValue(countryJson);
             const country = await countryService.create(countryData);
             expect(country).toEqual(standardCountry);
-        });
-    });
-
-    describe("Testing getByCode", () => {
-        describe("Given the country exists in the database", () => {
-            it("should return a standard country object", async () => {
-                getByCodeMock.mockResolvedValue(countryJson);
-                const country = await countryService.getByCode(countryData.isoCode);
-                expect(country).toEqual(standardCountry);
-            });
-        });
-
-        describe("Given the country does not exist in the database", () => {
-            it("should throw a country not found error", async () => {
-                getByCodeMock.mockResolvedValue(null);
-                await expect(countryService.getByCode("randomValue")).rejects.toThrow(
-                    new CountryNotFoundError()
-                );
-            });
+            expect(createMock).toHaveBeenCalledTimes(1);
+            expect(createMock).toHaveBeenCalledWith(countryData);
         });
     });
 
@@ -54,6 +44,7 @@ describe("Testing country service", () => {
             getAllMock.mockResolvedValue(countryJsonArray);
             const countries = await countryService.getSupportedCountries();
             expect(countries).toEqual(standardCountryArray);
+            expect(getAllMock).toHaveBeenCalledTimes(1);
         });
     });
 
@@ -62,6 +53,7 @@ describe("Testing country service", () => {
             getAllMock.mockResolvedValue(countryJsonArray);
             const countryCodes = await countryService.getSupportedCountryCodes();
             expect(countryCodes).toEqual(countryCodes);
+            expect(getAllMock).toHaveBeenCalledTimes(1);
         });
     });
 });

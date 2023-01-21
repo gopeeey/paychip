@@ -1,7 +1,7 @@
 import App from "../../../app";
 import supertest from "supertest";
 import { DependencyContainerInterface } from "../../../d_container";
-import { AccountServiceInterface } from "../../../contracts/interfaces/logic_web";
+import { AccountServiceInterface } from "../../../contracts/interfaces";
 import { testRoute } from "./helpers";
 import { loginDetails, standardAccount, accountData } from "../../samples/account.samples";
 import { ValidationError } from "../../../logic/errors/base_errors";

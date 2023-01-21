@@ -1,19 +1,23 @@
-import { CreateCountryDto, StandardCountryDto } from "../../../contracts/dtos";
-import { CountryRepoInterface } from "../../../contracts/interfaces/db_logic";
-import { CountryServiceInterface } from "../../../contracts/interfaces/logic_web";
-import { CountryNotFoundError } from "../../errors";
+import { CreateCountryDto, StandardCountryDto } from "../../contracts/dtos";
+import {
+    CountryRepoInterface,
+    CountryServiceInterface,
+    CountryDetails,
+} from "../../contracts/interfaces";
+import { CountryNotFoundError } from "../errors";
 
 export class CountryService implements CountryServiceInterface {
-    constructor(private readonly _repository: CountryRepoInterface) {}
+    constructor(
+        private readonly _repository: CountryRepoInterface,
+        private readonly _details: CountryDetails
+    ) {}
 
     async create(dto: CreateCountryDto) {
         const country = await this._repository.create(dto);
         return new StandardCountryDto(country);
     }
     async getByCode(isoCode: string) {
-        const country = await this._repository.getByCode(isoCode);
-        if (!country) throw new CountryNotFoundError();
-        return new StandardCountryDto(country);
+        return await this._details.getCountryByCode(this._repository, isoCode);
     }
 
     async getSupportedCountries() {

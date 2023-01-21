@@ -7,7 +7,7 @@ import {
     UUIDV4,
 } from "sequelize";
 import db from "..";
-import { AccountModelInterface } from "../../contracts/interfaces/db_logic";
+import { AccountModelInterface } from "../../contracts/interfaces";
 
 export class Account
     extends Model<InferAttributes<Account>, InferCreationAttributes<Account>>

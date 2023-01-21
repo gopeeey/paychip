@@ -26,6 +26,8 @@ describe("Testing country repo", () => {
             createMock.mockResolvedValue(countryObj);
             const country = await countryRepo.create(countryData);
             expect(country).toEqual(countryJson);
+            expect(createMock).toHaveBeenCalledTimes(1);
+            expect(createMock).toHaveBeenCalledWith(countryData);
         });
     });
 
@@ -35,6 +37,8 @@ describe("Testing country repo", () => {
                 findByPkMock.mockResolvedValue(countryObj);
                 const country = await countryRepo.getByCode(countryJson.isoCode);
                 expect(country).toEqual(countryJson);
+                expect(findByPkMock).toHaveBeenCalledTimes(1);
+                expect(findByPkMock).toHaveBeenCalledWith(countryJson.isoCode);
             });
         });
 
@@ -43,6 +47,8 @@ describe("Testing country repo", () => {
                 findByPkMock.mockResolvedValue(null);
                 const country = await countryRepo.getByCode(countryData.isoCode);
                 expect(country).toBe(null);
+                expect(findByPkMock).toHaveBeenCalledTimes(1);
+                expect(findByPkMock).toHaveBeenCalledWith(countryData.isoCode);
             });
         });
     });
@@ -52,6 +58,7 @@ describe("Testing country repo", () => {
             findAllMock.mockResolvedValue(countryObjArray);
             const countries = await countryRepo.getAll();
             expect(countries).toEqual(countryJsonArray);
+            expect(findAllMock).toHaveBeenCalledTimes(1);
         });
     });
 });

@@ -1,9 +1,9 @@
-import { AccountRepoInterface } from "../../../contracts/interfaces/db_logic";
-import { CreateAccountDto, StandardAccountDto } from "../../../contracts/dtos";
-import { hashString, generateAuthToken } from "../../../utils/functions";
-import { LoginDto } from "../../../contracts/dtos";
-import { InvalidLoginDetailsError, EmailAlreadyRegisteredError } from "../../errors";
-import { AccountServiceInterface } from "../../../contracts/interfaces/logic_web";
+import { AccountRepoInterface } from "../../contracts/interfaces";
+import { CreateAccountDto, StandardAccountDto } from "../../contracts/dtos";
+import { hashString, generateAuthToken } from "../../utils/functions";
+import { LoginDto } from "../../contracts/dtos";
+import { InvalidLoginDetailsError, EmailAlreadyRegisteredError } from "../errors";
+import { AccountServiceInterface } from "../../contracts/interfaces";
 import bcrypt from "bcrypt";
 
 export class AccountService implements AccountServiceInterface {

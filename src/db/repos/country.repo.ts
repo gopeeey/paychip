@@ -1,5 +1,5 @@
 import { Country } from "../models";
-import { CountryModelInterface, CountryRepoInterface } from "../../contracts/interfaces/db_logic";
+import { CountryModelInterface, CountryRepoInterface } from "../../contracts/interfaces";
 import { CreateCountryDto } from "../../contracts/dtos";
 
 export class CountryRepo implements CountryRepoInterface {

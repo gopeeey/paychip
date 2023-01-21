@@ -2,7 +2,7 @@ import {
     BusinessModelInterface,
     AccountModelInterface,
     CountryModelInterface,
-} from "../../contracts/interfaces/db_logic";
+} from "../../contracts/interfaces";
 import {
     DataTypes,
     Model,

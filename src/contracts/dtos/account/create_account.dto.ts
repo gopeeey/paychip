@@ -1,18 +1,15 @@
-import { AccountModelInterface } from "../../interfaces/db_logic";
+import { AccountModelInterface } from "../../interfaces";
 
-export class CreateAccountDto
-    implements Pick<AccountModelInterface, "name" | "email" | "password">
-{
-    name: string;
-    email: string;
-    password: string;
-    constructor({
-        name,
-        email,
-        password,
-    }: Pick<AccountModelInterface, "name" | "email" | "password">) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
+type requiredProps = Pick<AccountModelInterface, "name" | "email" | "password">;
+
+export class CreateAccountDto implements requiredProps {
+    readonly name: AccountModelInterface["name"];
+    readonly email: AccountModelInterface["email"];
+    readonly password: AccountModelInterface["password"];
+
+    constructor(body: requiredProps) {
+        this.name = body.name;
+        this.email = body.email;
+        this.password = body.password;
     }
 }

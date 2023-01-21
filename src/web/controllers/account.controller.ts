@@ -1,4 +1,4 @@
-import { AccountServiceInterface } from "../../contracts/interfaces/logic_web";
+import { AccountServiceInterface } from "../../contracts/interfaces";
 import { NextFunction, Request, Response } from "express";
 import BaseController from "./base.controller";
 import { CreateAccountDto, LoginDto } from "../../contracts/dtos";
