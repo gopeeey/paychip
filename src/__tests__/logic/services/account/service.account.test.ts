@@ -1,14 +1,17 @@
-import { AccountRepoInterface } from "../../../contracts/interfaces";
-import { AccountService } from "../../../logic/services";
+import {
+    AccountRepoInterface,
+    AccountServiceDependenciesInterface,
+} from "../../../../contracts/interfaces";
+import { AccountService } from "../../../../logic/services";
 import {
     accountJson,
     accountData,
     standardAccount,
     loginDetails,
-} from "../../samples/account.samples";
-import * as utilFuncs from "../../../utils/functions";
+} from "../../../samples/account.samples";
+import * as utilFuncs from "../../../../utils/functions";
 import bcrypt from "bcrypt";
-import { InvalidLoginDetailsError } from "../../../logic/errors";
+import { InvalidLoginDetailsError } from "../../../../logic/errors";
 
 const createMock = jest.fn();
 const findByEmailMock = jest.fn();
@@ -21,7 +24,11 @@ const repo = {
     findByEmail: findByEmailMock,
 } as unknown as AccountRepoInterface;
 
-const accountService = new AccountService(repo);
+const dependencies = {
+    repo,
+} as unknown as AccountServiceDependenciesInterface;
+
+const accountService = new AccountService(dependencies);
 
 const createAccountMock = jest.spyOn(accountService, "createAccount");
 const hashStringMock = jest.spyOn(utilFuncs, "hashString");

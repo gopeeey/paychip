@@ -1,13 +1,17 @@
-import { AccountRepoInterface } from "../../contracts/interfaces";
-import { CreateAccountDto, StandardAccountDto } from "../../contracts/dtos";
-import { hashString, generateAuthToken } from "../../utils/functions";
-import { LoginDto } from "../../contracts/dtos";
-import { InvalidLoginDetailsError, EmailAlreadyRegisteredError } from "../errors";
-import { AccountServiceInterface } from "../../contracts/interfaces";
+import { AccountServiceDependenciesInterface } from "../../../contracts/interfaces";
+import { CreateAccountDto, StandardAccountDto } from "../../../contracts/dtos";
+import { hashString, generateAuthToken } from "../../../utils/functions";
+import { LoginDto } from "../../../contracts/dtos";
+import { InvalidLoginDetailsError, EmailAlreadyRegisteredError } from "../../errors";
+import { AccountServiceInterface } from "../../../contracts/interfaces";
 import bcrypt from "bcrypt";
 
 export class AccountService implements AccountServiceInterface {
-    constructor(private readonly _repository: AccountRepoInterface) {}
+    private readonly _repository: AccountServiceDependenciesInterface["repo"];
+
+    constructor(private readonly _dependencies: AccountServiceDependenciesInterface) {
+        this._repository = this._dependencies.repo;
+    }
 
     async createAccount(createAccountDto: CreateAccountDto) {
         const { email, password } = createAccountDto;

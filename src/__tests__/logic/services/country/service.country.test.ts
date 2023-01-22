@@ -1,13 +1,15 @@
-import { CountryService } from "../../../logic/services";
-import { CountryRepoInterface, CountryDetails } from "../../../contracts/interfaces";
+import { CountryService } from "../../../../logic/services";
+import {
+    CountryRepoInterface,
+    CountryServiceDependenciesInterface,
+} from "../../../../contracts/interfaces";
 import {
     countryData,
     countryJson,
     countryJsonArray,
     standardCountry,
     standardCountryArray,
-} from "../../samples";
-import { CountryNotFoundError } from "../../../logic/errors";
+} from "../../../samples";
 
 const createMock = jest.fn();
 const getByCodeMock = jest.fn();
@@ -21,12 +23,13 @@ const repo = {
 
 const getCountryByCodeMock = jest.fn();
 const checkCountrySupportedMock = jest.fn();
-const details = {
+const dependencies = {
+    repo,
     getCountryByCode: getCountryByCodeMock,
     checkCountrySupported: checkCountrySupportedMock,
-} as unknown as CountryDetails;
+} as unknown as CountryServiceDependenciesInterface;
 
-const countryService = new CountryService(repo, details);
+const countryService = new CountryService(dependencies);
 
 describe("Testing country service", () => {
     describe("Testing create", () => {

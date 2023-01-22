@@ -1,23 +1,22 @@
-import { CreateCountryDto, StandardCountryDto } from "../../contracts/dtos";
+import { CreateCountryDto, StandardCountryDto } from "../../../contracts/dtos";
 import {
-    CountryRepoInterface,
     CountryServiceInterface,
-    CountryDetails,
-} from "../../contracts/interfaces";
-import { CountryNotFoundError } from "../errors";
+    CountryServiceDependenciesInterface,
+} from "../../../contracts/interfaces";
 
 export class CountryService implements CountryServiceInterface {
-    constructor(
-        private readonly _repository: CountryRepoInterface,
-        private readonly _details: CountryDetails
-    ) {}
+    private readonly _repository: CountryServiceDependenciesInterface["repo"];
+    constructor(private readonly _dependencies: CountryServiceDependenciesInterface) {
+        this._repository = this._dependencies.repo;
+    }
 
     async create(dto: CreateCountryDto) {
         const country = await this._repository.create(dto);
         return new StandardCountryDto(country);
     }
+
     async getByCode(isoCode: string) {
-        return await this._details.getCountryByCode(this._repository, isoCode);
+        return await this._dependencies.getCountryByCode(isoCode);
     }
 
     async getSupportedCountries() {

@@ -1,26 +1,32 @@
-import { BusinessService } from "../../../logic/services";
-import { BusinessDetailsInterface, BusinessRepoInterface } from "../../../contracts/interfaces";
-import { businessData, businessJson, standardBusiness } from "../../samples";
+import { BusinessService } from "../../../../logic/services";
+import {
+    BusinessServiceDependenciesInterface,
+    BusinessRepoInterface,
+} from "../../../../contracts/interfaces";
+import { businessData, businessJson, standardBusiness } from "../../../samples";
+import { CountryNotSuportedError } from "../../../../logic/errors";
 
 const createMock = jest.fn();
-
 const repo = {
     create: createMock,
 } as unknown as BusinessRepoInterface;
 
 const checkCountrySupportedMock = jest.fn();
-const details = {
+const dependencies = {
+    repo,
     checkCountrySupported: checkCountrySupportedMock,
-} as unknown as BusinessDetailsInterface;
+} as unknown as BusinessServiceDependenciesInterface;
 
-const businessService = new BusinessService(repo, details);
+const businessService = new BusinessService(dependencies);
 
 describe("Testing business service", () => {
     describe("Testing createBusiness", () => {
         it("should check if country is supported", async () => {
             createMock.mockResolvedValue(businessJson);
+            checkCountrySupportedMock.mockResolvedValue(true);
             await businessService.createBusiness(businessData);
-            throw new Error("Implement check for if country service is called");
+            expect(checkCountrySupportedMock).toHaveBeenCalledTimes(1);
+            expect(checkCountrySupportedMock).toHaveBeenCalledWith(businessData.countryCode);
         });
 
         describe("Given a supported country", () => {
@@ -35,7 +41,10 @@ describe("Testing business service", () => {
 
         describe("Given an unsupported country", () => {
             it("should throw an error", async () => {
-                throw new Error("You haven't implemented check supported country yet");
+                checkCountrySupportedMock.mockResolvedValue(false);
+                await expect(businessService.createBusiness(businessData)).rejects.toThrow(
+                    new CountryNotSuportedError()
+                );
             });
         });
     });
