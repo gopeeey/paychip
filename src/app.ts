@@ -1,4 +1,4 @@
-import { DependencyContainerInterface } from "./d_container";
+import { DependencyContainerInterface } from "./contracts/interfaces";
 import express from "express";
 import morgan from "morgan";
 import Routes from "./web/routes";
