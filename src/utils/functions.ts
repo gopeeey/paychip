@@ -40,6 +40,11 @@ export const generateAuthToken = (
     });
 };
 
+export const verifyJwt = <T>(token: string, secret: string = config.misc.jwtSecret) => {
+    const result = jwt.verify(token, secret) as T;
+    return result;
+};
+
 export const sendResponse = (
     res: Response,
     opts: { code: number; message?: string; data?: object }

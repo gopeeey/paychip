@@ -1,11 +1,12 @@
 import App from "../../../app";
 import supertest from "supertest";
-import { DependencyContainerInterface } from "../../../d_container";
-import { AccountServiceInterface } from "../../../contracts/interfaces";
+import {
+    AccountServiceInterface,
+    DependencyContainerInterface,
+} from "../../../contracts/interfaces";
 import { testRoute } from "./helpers";
 import { loginDetails, standardAccount, accountData } from "../../samples/account.samples";
-import { ValidationError } from "../../../logic/errors/base_errors";
-import { InvalidLoginDetailsError } from "../../../logic/errors";
+import { InvalidLoginDetailsError, ValidationError } from "../../../logic/errors";
 
 const signupServiceMock = jest.fn();
 const loginMock = jest.fn();
