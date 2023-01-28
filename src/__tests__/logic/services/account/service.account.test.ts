@@ -11,10 +11,12 @@ import {
 } from "../../../samples/account.samples";
 import * as utilFuncs from "../../../../utils/functions";
 import bcrypt from "bcrypt";
-import { InvalidLoginDetailsError } from "../../../../logic/errors";
+import { AccountNotFoundError, InvalidLoginDetailsError } from "../../../../logic/errors";
 
 const createMock = jest.fn();
 const findByEmailMock = jest.fn();
+const findByIdMock = jest.fn();
+
 const bcryptCompareMock = jest
     .spyOn(bcrypt, "compare")
     .mockImplementation(() => Promise.resolve(true));
@@ -22,6 +24,7 @@ const bcryptCompareMock = jest
 const repo = {
     create: createMock,
     findByEmail: findByEmailMock,
+    findById: findByIdMock,
 } as unknown as AccountRepoInterface;
 
 const dependencies = {
@@ -151,6 +154,29 @@ describe("Testing account service", () => {
                 await expect(
                     accountService.login({ email: "Sam@gmail.com", password: "barleywheat" })
                 ).rejects.toThrow(new InvalidLoginDetailsError());
+            });
+        });
+    });
+
+    describe("Testing getById", () => {
+        describe("Given the account exists", () => {
+            it("should return a standard account object", async () => {
+                findByIdMock.mockResolvedValue(accountJson);
+                const result = await accountService.getById(accountJson.id);
+                expect(result).toEqual(standardAccount);
+                expect(findByIdMock).toHaveBeenCalledTimes(1);
+                expect(findByIdMock).toHaveBeenCalledWith(accountJson.id);
+            });
+        });
+
+        describe("Given the account does not exist", () => {
+            it("should throw an error", async () => {
+                findByIdMock.mockResolvedValue(null);
+                expect(accountService.getById(accountJson.id)).rejects.toThrow(
+                    new AccountNotFoundError()
+                );
+                expect(findByIdMock).toHaveBeenCalledTimes(1);
+                expect(findByIdMock).toHaveBeenCalledWith(accountJson.id);
             });
         });
     });

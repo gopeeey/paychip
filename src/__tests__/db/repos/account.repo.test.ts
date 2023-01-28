@@ -1,12 +1,14 @@
 import { AccountRepo } from "../../../db/repos";
 import { Account } from "../../../db/models";
-import { account, accountData, accountJson } from "../../samples";
+import { account, accountData, accountJson, standardAccount } from "../../samples";
 
 const createMock = jest.fn();
 const findOneMock = jest.fn();
+const findByPkMock = jest.fn();
 const modelContext = {
     create: createMock,
     findOne: findOneMock,
+    findByPk: findByPkMock,
 } as unknown as typeof Account;
 const accountRepo = new AccountRepo(modelContext);
 
@@ -37,6 +39,30 @@ describe("Testing AccountRepo", () => {
                 const profile = await accountRepo.findByEmail("somerandomstring");
                 expect(findOneMock).toHaveBeenCalledTimes(1);
                 expect(profile).toBe(null);
+            });
+        });
+    });
+
+    describe("Testing findById method", () => {
+        describe("Given the account exists", () => {
+            it("should call the correct method on the model", async () => {
+                findByPkMock.mockResolvedValue(account);
+                await accountRepo.findById(accountJson.id);
+                expect(findByPkMock).toHaveBeenCalledTimes(1);
+                expect(findByPkMock).toHaveBeenCalledWith(accountJson.id);
+            });
+
+            it("should return an account object", async () => {
+                const result = await accountRepo.findById(accountJson.id);
+                expect(result).toEqual(accountJson);
+            });
+        });
+
+        describe("Given the account does not exist", () => {
+            it("should return null", async () => {
+                findByPkMock.mockResolvedValue(null);
+                const result = await accountRepo.findById(accountJson.id);
+                expect(result).toBe(null);
             });
         });
     });

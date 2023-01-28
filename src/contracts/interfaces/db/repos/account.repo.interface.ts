@@ -6,4 +6,6 @@ export interface AccountRepoInterface {
     ) => Promise<AccountModelInterface>;
 
     findByEmail: (email: string) => Promise<AccountModelInterface | null>;
+
+    findById: (id: AccountModelInterface["id"]) => Promise<AccountModelInterface | null>;
 }

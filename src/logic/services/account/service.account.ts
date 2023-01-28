@@ -1,8 +1,15 @@
-import { AccountServiceDependenciesInterface } from "../../../contracts/interfaces";
+import {
+    AccountModelInterface,
+    AccountServiceDependenciesInterface,
+} from "../../../contracts/interfaces";
 import { CreateAccountDto, StandardAccountDto } from "../../../contracts/dtos";
 import { hashString, generateAuthToken } from "../../../utils/functions";
 import { LoginDto } from "../../../contracts/dtos";
-import { InvalidLoginDetailsError, EmailAlreadyRegisteredError } from "../../errors";
+import {
+    InvalidLoginDetailsError,
+    EmailAlreadyRegisteredError,
+    AccountNotFoundError,
+} from "../../errors";
 import { AccountServiceInterface } from "../../../contracts/interfaces";
 import bcrypt from "bcrypt";
 
@@ -47,5 +54,11 @@ export class AccountService implements AccountServiceInterface {
         const authToken = generateAuthToken("account", { accountId: account.id });
 
         return { account: new StandardAccountDto(account), authToken };
+    }
+
+    async getById(id: AccountModelInterface["id"]) {
+        const account = await this._repository.findById(id);
+        if (!account) throw new AccountNotFoundError();
+        return new StandardAccountDto(account);
     }
 }

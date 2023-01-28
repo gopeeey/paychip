@@ -1,6 +1,6 @@
 import { NextFunction } from "express";
 
-class BaseController {
+export class BaseController {
     handleReq = async (next: NextFunction, callback: () => Promise<void>) => {
         try {
             await callback();
@@ -9,5 +9,3 @@ class BaseController {
         }
     };
 }
-
-export default BaseController;

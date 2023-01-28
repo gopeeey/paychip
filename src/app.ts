@@ -1,7 +1,7 @@
 import { DependencyContainerInterface } from "./contracts/interfaces";
 import express from "express";
 import morgan from "morgan";
-import Routes from "./web/routes";
+import { RootRoutes } from "./web/routes";
 import errorHandler from "./web/middleware/error_handler";
 
 export default class App {
@@ -33,7 +33,7 @@ export default class App {
         app.get("/ping", (req, res) => res.json({ message: "pong" }));
 
         // Routes
-        app.use("", new Routes(this._container).init());
+        app.use("", new RootRoutes(this._container).init());
 
         // Error handler
         app.use(errorHandler);
