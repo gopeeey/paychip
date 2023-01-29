@@ -4,11 +4,13 @@ import {
     BusinessRepoInterface,
 } from "../../../../contracts/interfaces";
 import { businessData, businessJson, standardBusiness } from "../../../samples";
-import { CountryNotSuportedError } from "../../../../logic/errors";
+import { CountryNotSuportedError, BusinessNotFoundError } from "../../../../logic/errors";
 
 const createMock = jest.fn();
+const findByIdMock = jest.fn();
 const repo = {
     create: createMock,
+    findById: findByIdMock,
 } as unknown as BusinessRepoInterface;
 
 const checkCountrySupportedMock = jest.fn();
@@ -45,6 +47,29 @@ describe("Testing business service", () => {
                 await expect(businessService.createBusiness(businessData)).rejects.toThrow(
                     new CountryNotSuportedError()
                 );
+            });
+        });
+    });
+
+    describe("Testing getById", () => {
+        describe("Given the business exists", () => {
+            it("should return a standard business object", async () => {
+                findByIdMock.mockResolvedValue(businessJson);
+                const result = await businessService.getById(businessJson.id);
+                expect(result).toEqual(standardBusiness);
+                expect(findByIdMock).toHaveBeenCalledTimes(1);
+                expect(findByIdMock).toHaveBeenCalledWith(businessJson.id);
+            });
+        });
+
+        describe("Given the business does not exist", () => {
+            it("should throw an error", async () => {
+                findByIdMock.mockResolvedValue(null);
+                expect(businessService.getById(businessJson.id)).rejects.toThrow(
+                    new BusinessNotFoundError()
+                );
+                expect(findByIdMock).toHaveBeenCalledTimes(1);
+                expect(findByIdMock).toHaveBeenCalledWith(businessJson.id);
             });
         });
     });

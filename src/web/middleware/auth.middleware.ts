@@ -40,13 +40,13 @@ export class AuthMiddleware implements AuthMiddlewareInterface {
                         return next();
                         break;
                     case "business":
-                        // if (!payload.businessId) throw new UnauthorizedError();
-                        // const business = await this._dependencies.businessService.getById(
-                        //     payload.accountId
-                        // );
-                        // if (!account) throw new UnauthorizedError();
-                        // req.account = account;
-                        // return next();
+                        if (!payload.businessId) throw new UnauthorizedError();
+                        const business = await this._dependencies.businessService.getById(
+                            Number(payload.businessId)
+                        );
+                        if (!business) throw new UnauthorizedError();
+                        req.business = business;
+                        return next();
                         break;
                     case "apiKey":
                         break;
