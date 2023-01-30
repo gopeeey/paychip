@@ -86,7 +86,7 @@ describe("Testing account service", () => {
             expect(generateJwtMock).toHaveBeenCalledTimes(1);
             expect(generateJwtMock).toHaveBeenCalledWith({
                 authType: "account",
-                data: { accountId: response.account.id },
+                accountId: response.account.id,
             });
         });
 
@@ -122,7 +122,7 @@ describe("Testing account service", () => {
                     expect(generateJwtMock).toHaveBeenCalledTimes(1);
                     expect(generateJwtMock).toHaveBeenCalledWith({
                         authType: "account",
-                        data: { accountId: accountJson.id },
+                        accountId: accountJson.id,
                     });
                 });
 

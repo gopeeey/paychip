@@ -109,7 +109,13 @@ describe("Testing utility functions", () => {
                 for (let i = 0; i < invalidData.length; i++) {
                     const data = invalidData[i];
                     expect(() => {
-                        utilFuncs.generateAuthToken(data.authType, data.payload);
+                        utilFuncs.generateAuthToken(
+                            data.authType,
+                            data.payload as {
+                                accountId?: string | undefined;
+                                businessId?: number | undefined;
+                            }
+                        );
                     }).toThrow(data.error);
                 }
             });
@@ -119,7 +125,7 @@ describe("Testing utility functions", () => {
             it("should return a jwt", () => {
                 const validData: {
                     authType: "account" | "business";
-                    payload: { businessId?: string; accountId?: string };
+                    payload: { businessId?: number; accountId?: string };
                 }[] = [
                     {
                         authType: "account",
@@ -127,7 +133,7 @@ describe("Testing utility functions", () => {
                     },
                     {
                         authType: "business",
-                        payload: { accountId: "meat", businessId: "fish" },
+                        payload: { accountId: "meat", businessId: 123 },
                     },
                 ];
 

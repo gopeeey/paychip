@@ -1,54 +1,61 @@
 import App from "../../../app";
 import supertest from "supertest";
 import {
-    BusinessServiceInterface,
     DependencyContainerInterface,
+    AuthMiddlewareDependencies,
 } from "../../../contracts/interfaces";
 import { testRoute } from "./helpers";
-import { businessData } from "../../samples";
+import { accountLevelToken, businessData, standardAccount } from "../../samples";
 import { InvalidLoginDetailsError, ValidationError } from "../../../logic/errors";
+import { AuthMiddleware } from "../../../web/middleware";
 
-const businessServiceMock = jest.fn();
+const businessService = {
+    createBusiness: jest.fn(),
+    getById: jest.fn(),
+};
+
+const accountService = { getById: jest.fn() };
+
+const authMiddleware = new AuthMiddleware({
+    businessService,
+    accountService,
+} as unknown as AuthMiddlewareDependencies);
+
 const container = {
-    businessService: businessServiceMock,
+    businessService,
+    authMiddleware,
 } as unknown as DependencyContainerInterface;
 
-const app = new App(container);
+const app = new App(container).init();
 
 const testApp = supertest(app);
 
 describe("Testing business routes", () => {
     testRoute("/business/create", (route) => () => {
-        // Return 401 if user is not authenticated
-        describe("Given user is unauthenticated", () => {
-            it("should return status code 401", async () => {
-                const dataSet = [
-                    // when authToken is not supplied
-                    {
-                        token: undefined,
-                        mock: () => {},
-                    },
-
-                    // when given an invalid authToken
-                    {
-                        token: "asdlfkjlsd",
-                        mock: () => {},
-                    },
-                ];
-                const { statusCode, body } = await testApp.post(route).send(businessData);
-                expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message");
-            });
-        });
-
         // Return 400 when given invalid data
         describe("Given invalid data", () => {
             it("should return status code 400", async () => {
-                const { statusCode, body } = await testApp.post(route).send(businessData);
-                expect(statusCode).toBe(400);
-                expect(body).toHaveProperty("message");
+                // this is so the auth middleware can attach the account object to the request
+                accountService.getById.mockResolvedValue(standardAccount);
+
+                const dataSet = [
+                    { name: "", countryCode: "NG" },
+                    { name: 123, countryCode: "" },
+                    { name: "Sam", countryCode: "" },
+                    { name: "Sam", countryCode: 123 },
+                ];
+
+                for (const data of dataSet) {
+                    const { statusCode, body } = await testApp
+                        .post(route)
+                        .send(data)
+                        .set({ Authorization: accountLevelToken });
+                    expect(statusCode).toBe(400);
+                    expect(body).toHaveProperty("message");
+                }
             });
         });
+
         // Return 400 when the country is not supported
     });
 });

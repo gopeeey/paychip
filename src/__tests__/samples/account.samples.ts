@@ -7,7 +7,8 @@ export const accountData = {
     password: "goldfish",
 };
 
-export const account = new Account(accountData);
+export const account = new Account({ ...accountData, id: "accountId" });
+
 export const accountJson = account.toJSON();
 export const standardAccount = new StandardAccountDto(accountJson);
 export const loginDetails = new LoginDto({

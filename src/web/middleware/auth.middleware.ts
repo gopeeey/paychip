@@ -8,7 +8,7 @@ import {
     AuthMiddlewareDependencies,
     AuthenticatedRequestType,
 } from "../../contracts/interfaces";
-import { UnauthorizedError } from "../../logic/errors";
+import { AccountNotFoundError, BusinessNotFoundError, UnauthorizedError } from "../../logic/errors";
 import { sendResponse, verifyJwt } from "../../utils/functions";
 
 type JwtPayloadType = { accountId?: string; businessId?: string; aid?: string; authType: AuthType };
@@ -22,32 +22,47 @@ export class AuthMiddleware implements AuthMiddlewareInterface {
             try {
                 const rawToken = req.headers.authorization as string | undefined;
                 if (!rawToken) throw new UnauthorizedError();
+                console.log("GETS TO STAGE 1");
+
                 const authToken = rawToken.split("Bearer ")[1];
                 if (!authToken) throw new UnauthorizedError();
+                console.log("GETS TO STAGE 2");
 
                 const payload = verifyJwt<JwtPayloadType>(authToken);
 
                 if (!allowedAuth.includes(payload.authType)) throw new UnauthorizedError();
-
+                console.log("GETS TO STAGE 3");
                 switch (payload.authType) {
                     case "account":
+                        console.log("ACCOUNT iD", payload.accountId);
                         if (!payload.accountId) throw new UnauthorizedError();
-                        const account = await this._dependencies.accountService.getById(
-                            payload.accountId
-                        );
-                        if (!account) throw new UnauthorizedError();
-                        req.account = account;
-                        return next();
-                        break;
+                        console.log("GETS TO STAGE 4");
+                        try {
+                            const account = await this._dependencies.accountService.getById(
+                                payload.accountId
+                            );
+                            if (!account) throw new UnauthorizedError();
+                            req.account = account;
+                            return next();
+                        } catch (err) {
+                            console.log("GETS TO STAGE 100");
+                            if (err instanceof AccountNotFoundError) throw new UnauthorizedError();
+                            throw err;
+                        }
+
                     case "business":
                         if (!payload.businessId) throw new UnauthorizedError();
-                        const business = await this._dependencies.businessService.getById(
-                            Number(payload.businessId)
-                        );
-                        if (!business) throw new UnauthorizedError();
-                        req.business = business;
-                        return next();
-                        break;
+                        try {
+                            const business = await this._dependencies.businessService.getById(
+                                Number(payload.businessId)
+                            );
+                            if (!business) throw new UnauthorizedError();
+                            req.business = business;
+                            return next();
+                        } catch (err) {
+                            if (err instanceof BusinessNotFoundError) throw new UnauthorizedError();
+                            throw err;
+                        }
                     case "apiKey":
                         break;
                     default:

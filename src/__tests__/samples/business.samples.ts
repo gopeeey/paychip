@@ -8,6 +8,6 @@ export const businessData = new CreateBusinessDto({
     ownerId: accountJson.id,
     countryCode: countryJson.isoCode,
 });
-export const businessObj = new Business(businessData);
+export const businessObj = new Business({ ...businessData, id: 1234 });
 export const businessJson = businessObj.toJSON();
 export const standardBusiness = new StandardBusinessDto(businessJson);

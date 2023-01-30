@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import config from "../config";
 import jwt from "jsonwebtoken";
 import { Response } from "express";
+import { AccountModelInterface, BusinessModelInterface } from "../contracts/interfaces";
 
 export const hashString = async (string: string) => {
     const salt = await bcrypt.genSalt(10);
@@ -19,7 +20,7 @@ export const generateJwt = (
 
 export const generateAuthToken = (
     authType: "account" | "business",
-    payload: { accountId?: string; businessId?: string }
+    payload: { accountId?: AccountModelInterface["id"]; businessId?: BusinessModelInterface["id"] }
 ) => {
     if (!payload.accountId || !payload.accountId?.length)
         throw new Error(`accountId is required for authType ${authType}`);
@@ -27,7 +28,7 @@ export const generateAuthToken = (
         case "account":
             break;
         case "business":
-            if (!payload.businessId || !payload.businessId?.length)
+            if (!payload.businessId)
                 throw new Error("businessId is required for authType business");
             break;
         default:
@@ -36,7 +37,7 @@ export const generateAuthToken = (
 
     return generateJwt({
         authType,
-        data: payload,
+        ...payload,
     });
 };
 
