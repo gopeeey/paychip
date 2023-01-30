@@ -5,7 +5,10 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "jest --watchAll",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "build": "rm -rf build/ && tsc",
+    "migrate-dev": "npm run build && cross-env NODE_ENV=development sequelize db:migrate",
+    "migrate-prod": "npm run build && cross-env NODE_ENV=production sequelize db:migrate"
   },
   "author": "Samuel Gopeh",
   "license": "ISC",

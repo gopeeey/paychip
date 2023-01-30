@@ -1,6 +1,6 @@
 import App from "./app";
 import startServer from "./server";
-import container from "./d_container";
+import { container } from "./container";
 // import db from "./db";
 
 const run = async () => {
