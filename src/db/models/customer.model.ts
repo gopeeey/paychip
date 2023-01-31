@@ -13,9 +13,10 @@ export class Customer
     implements CustomerModelInterface
 {
     declare id: CreationOptional<string>;
+    declare businessId: string;
     declare name: string;
     declare email: string;
-    declare phone: string;
+    declare phone?: string;
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
@@ -28,6 +29,10 @@ Customer.init(
             type: DataTypes.STRING(50),
             primaryKey: true,
             unique: true,
+            allowNull: false,
+        },
+        businessId: {
+            type: DataTypes.STRING(150),
             allowNull: false,
         },
         name: {
