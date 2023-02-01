@@ -37,7 +37,7 @@ describe("TESTING CUSTOMER REPO", () => {
             });
         });
 
-        describe("given a customer with passed businessId does not exist", () => {
+        describe("given no customer with passed businessId exists", () => {
             it("should return an empty array", async () => {
                 modelContext.findAll.mockResolvedValue([]);
                 const customers = await customerRepo.getByBusinessId(customerJson.businessId);
