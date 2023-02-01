@@ -1,22 +1,25 @@
-import { CustomerModelInterface } from "../../contracts/interfaces";
+import { BusinessModelInterface, CustomerModelInterface } from "../../contracts/interfaces";
 import {
     Model,
     InferAttributes,
     InferCreationAttributes,
     CreationOptional,
     DataTypes,
+    NonAttribute,
 } from "sequelize";
 import db from "..";
+import { Business } from "./business.model";
 
 export class Customer
     extends Model<InferAttributes<Customer>, InferCreationAttributes<Customer>>
     implements CustomerModelInterface
 {
-    declare id: CreationOptional<string>;
-    declare businessId: string;
-    declare name: string;
-    declare email: string;
-    declare phone?: string;
+    declare id: CreationOptional<CustomerModelInterface["id"]>;
+    declare businessId: CustomerModelInterface["businessId"];
+    declare business?: NonAttribute<BusinessModelInterface>;
+    declare name: CustomerModelInterface["name"];
+    declare email: CustomerModelInterface["email"];
+    declare phone?: CustomerModelInterface["phone"];
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
@@ -32,7 +35,7 @@ Customer.init(
             allowNull: false,
         },
         businessId: {
-            type: DataTypes.STRING(150),
+            type: DataTypes.INTEGER,
             allowNull: false,
         },
         name: {
@@ -52,3 +55,5 @@ Customer.init(
     },
     { sequelize: db, paranoid: true, modelName: "customers" }
 );
+
+Customer.belongsTo(Business, { foreignKey: "businessId", as: "business" });
