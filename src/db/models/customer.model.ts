@@ -8,7 +8,6 @@ import {
     NonAttribute,
 } from "sequelize";
 import db from "..";
-import { Business } from "./business.model";
 
 export class Customer
     extends Model<InferAttributes<Customer>, InferCreationAttributes<Customer>>
@@ -55,5 +54,3 @@ Customer.init(
     },
     { sequelize: db, paranoid: true, modelName: "customers" }
 );
-
-Customer.belongsTo(Business, { foreignKey: "businessId", as: "business" });

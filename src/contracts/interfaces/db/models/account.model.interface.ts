@@ -1,8 +1,5 @@
-import { BaseModelInterface } from "./base.model.interface";
+import { AccountModelInterfaceDef, BusinessModelInterfaceDef } from "./definitions";
 
-export interface AccountModelInterface extends BaseModelInterface {
-    id: string;
-    name: string;
-    email: string;
-    password: string;
+export interface AccountModelInterface extends AccountModelInterfaceDef {
+    businesses?: BusinessModelInterfaceDef[];
 }
