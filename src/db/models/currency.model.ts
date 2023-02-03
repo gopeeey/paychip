@@ -23,7 +23,7 @@ export class Currency
 Currency.init(
     {
         isoCode: {
-            type: DataTypes.STRING(10),
+            type: DataTypes.STRING(9),
             primaryKey: true,
             allowNull: false,
             unique: true,
