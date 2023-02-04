@@ -1,8 +1,12 @@
-import { BaseModelInterface } from "./base.model.interface";
+import {
+    AccountModelInterfaceDef,
+    BusinessModelInterfaceDef,
+    CountryModelInterfaceDef,
+    CustomerModelInterfaceDef,
+} from "./definitions";
 
-export interface BusinessModelInterface extends BaseModelInterface {
-    id: number;
-    ownerId: string;
-    name: string;
-    countryCode: string;
+export interface BusinessModelInterface extends BusinessModelInterfaceDef {
+    owner?: AccountModelInterfaceDef;
+    country?: CountryModelInterfaceDef;
+    customers?: CustomerModelInterfaceDef[];
 }

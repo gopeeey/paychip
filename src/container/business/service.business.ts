@@ -12,6 +12,3 @@ export const businessService = new BusinessService({
     repo: businessRepo,
     checkCountrySupported,
 });
-
-console.log("\n\n\nCOUNTRY CHECKER", checkCountrySupported);
-console.log("\n\n\nCOUNTRY REPO", countryRepo);

@@ -5,9 +5,10 @@ import {
     CreationOptional,
     DataTypes,
     UUIDV4,
+    NonAttribute,
 } from "sequelize";
 import db from "..";
-import { AccountModelInterface } from "../../contracts/interfaces";
+import { AccountModelInterface, BusinessModelInterface } from "../../contracts/interfaces";
 
 export class Account
     extends Model<InferAttributes<Account>, InferCreationAttributes<Account>>
@@ -17,6 +18,7 @@ export class Account
     declare name: string;
     declare email: string;
     declare password: string;
+    declare businesses?: NonAttribute<BusinessModelInterface[]>;
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
@@ -30,6 +32,7 @@ Account.init(
             primaryKey: true,
             allowNull: false,
             defaultValue: UUIDV4,
+            unique: true,
         },
         name: {
             type: DataTypes.STRING(120),

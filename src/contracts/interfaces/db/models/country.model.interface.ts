@@ -1,6 +1,5 @@
-import { BaseModelInterface } from "./base.model.interface";
+import { BusinessModelInterfaceDef, CountryModelInterfaceDef } from "./definitions";
 
-export interface CountryModelInterface extends BaseModelInterface {
-    isoCode: string;
-    name: string;
+export interface CountryModelInterface extends CountryModelInterfaceDef {
+    businesses?: BusinessModelInterfaceDef[];
 }

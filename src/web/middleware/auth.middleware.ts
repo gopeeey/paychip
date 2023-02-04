@@ -22,21 +22,16 @@ export class AuthMiddleware implements AuthMiddlewareInterface {
             try {
                 const rawToken = req.headers.authorization as string | undefined;
                 if (!rawToken) throw new UnauthorizedError();
-                console.log("GETS TO STAGE 1");
 
                 const authToken = rawToken.split("Bearer ")[1];
                 if (!authToken) throw new UnauthorizedError();
-                console.log("GETS TO STAGE 2");
 
                 const payload = verifyJwt<JwtPayloadType>(authToken);
 
                 if (!allowedAuth.includes(payload.authType)) throw new UnauthorizedError();
-                console.log("GETS TO STAGE 3");
                 switch (payload.authType) {
                     case "account":
-                        console.log("ACCOUNT iD", payload.accountId);
                         if (!payload.accountId) throw new UnauthorizedError();
-                        console.log("GETS TO STAGE 4");
                         try {
                             const account = await this._dependencies.accountService.getById(
                                 payload.accountId
@@ -45,7 +40,6 @@ export class AuthMiddleware implements AuthMiddlewareInterface {
                             req.account = account;
                             return next();
                         } catch (err) {
-                            console.log("GETS TO STAGE 100");
                             if (err instanceof AccountNotFoundError) throw new UnauthorizedError();
                             throw err;
                         }

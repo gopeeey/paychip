@@ -12,5 +12,3 @@ export const countryService = new CountryService({
     repo: countryRepo,
     getCountryByCode: countryByCodeGetter.getByCode,
 });
-
-console.log("\n\n\nBUSINESS REPO", businessRepo);
