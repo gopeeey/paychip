@@ -24,11 +24,13 @@ Business.belongsToMany(Currency, {
     through: BusinessCurrency,
     sourceKey: "id",
     targetKey: "isoCode",
+    as: "currencies",
 });
 Currency.belongsToMany(Business, {
     through: BusinessCurrency,
     sourceKey: "isoCode",
     targetKey: "id",
+    as: "businesses",
 });
 
 export * from "./account.model";
@@ -36,3 +38,4 @@ export * from "./country.model";
 export * from "./business.model";
 export * from "./customer.model";
 export * from "./currency.model";
+export * from "./business_currency.model";

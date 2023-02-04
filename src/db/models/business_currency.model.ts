@@ -1,4 +1,10 @@
-import { DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequelize";
+import {
+    DataTypes,
+    InferAttributes,
+    InferCreationAttributes,
+    Model,
+    NonAttribute,
+} from "sequelize";
 import {
     BusinessCurrencyModelInterface,
     BusinessModelInterface,
@@ -12,6 +18,8 @@ export class BusinessCurrency
 {
     declare businessId: BusinessModelInterface["id"];
     declare currencyIsoCode: CurrencyModelInterface["isoCode"];
+    declare business?: NonAttribute<BusinessModelInterface>;
+    declare currency?: NonAttribute<CurrencyModelInterface>;
 }
 
 BusinessCurrency.init(
