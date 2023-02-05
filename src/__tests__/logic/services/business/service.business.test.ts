@@ -3,7 +3,16 @@ import {
     BusinessServiceDependenciesInterface,
     BusinessRepoInterface,
 } from "../../../../contracts/interfaces";
-import { businessData, businessJson, standardBusiness } from "../../../samples";
+import {
+    accountJson,
+    businessData,
+    businessJson,
+    businessJsonArr,
+    businessObj,
+    businessObjArr,
+    standardBusiness,
+    standardBusinessArr,
+} from "../../../samples";
 import { CountryNotSuportedError, BusinessNotFoundError } from "../../../../logic/errors";
 
 const createMock = jest.fn();
@@ -11,11 +20,12 @@ const findByIdMock = jest.fn();
 const repo = {
     create: createMock,
     findById: findByIdMock,
-} as unknown as BusinessRepoInterface;
+    getOwnerBusinesses: jest.fn(),
+};
 
 const checkCountrySupportedMock = jest.fn();
 const dependencies = {
-    repo,
+    repo: repo as unknown as BusinessRepoInterface,
     checkCountrySupported: checkCountrySupportedMock,
 } as unknown as BusinessServiceDependenciesInterface;
 
@@ -70,6 +80,28 @@ describe("Testing business service", () => {
                 );
                 expect(findByIdMock).toHaveBeenCalledTimes(1);
                 expect(findByIdMock).toHaveBeenCalledWith(businessJson.id);
+            });
+        });
+    });
+
+    describe("Testing getOwnerBusinesses", () => {
+        describe("Given the owner has businesses", () => {
+            it("should return a standard business object array", async () => {
+                repo.getOwnerBusinesses.mockResolvedValue(businessJsonArr);
+                const result = await businessService.getOwnerBusinesses(accountJson.id);
+                expect(result).toEqual(standardBusinessArr);
+                expect(repo.getOwnerBusinesses).toHaveBeenCalledTimes(1);
+                expect(repo.getOwnerBusinesses).toHaveBeenCalledWith(accountJson.id);
+            });
+        });
+
+        describe("Given the owner has no businesses", () => {
+            it("should return an empty array", async () => {
+                repo.getOwnerBusinesses.mockResolvedValue([]);
+                const result = await businessService.getOwnerBusinesses(accountJson.id);
+                expect(result).toEqual([]);
+                expect(repo.getOwnerBusinesses).toHaveBeenCalledTimes(1);
+                expect(repo.getOwnerBusinesses).toHaveBeenCalledWith(accountJson.id);
             });
         });
     });

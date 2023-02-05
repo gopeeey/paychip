@@ -1,6 +1,7 @@
 import { CustomerModelInterface } from "../../interfaces";
+import { StandardDtoType } from "../types";
 
-export class StandardCustomerDto implements CustomerModelInterface {
+export class StandardCustomerDto implements StandardDtoType<CustomerModelInterface> {
     id: CustomerModelInterface["id"];
     email: CustomerModelInterface["email"];
     businessId: CustomerModelInterface["businessId"];

@@ -1,5 +1,6 @@
 import { BusinessModelInterface } from "../../interfaces";
 import { StandardDtoType } from "../types";
+import { StandardCurrencyDto } from "../currency";
 
 export class StandardBusinessDto implements StandardDtoType<BusinessModelInterface> {
     readonly id: BusinessModelInterface["id"];
@@ -7,6 +8,7 @@ export class StandardBusinessDto implements StandardDtoType<BusinessModelInterfa
     readonly ownerId: BusinessModelInterface["ownerId"];
     readonly countryCode: BusinessModelInterface["countryCode"];
     readonly createdAt: BusinessModelInterface["createdAt"];
+    readonly currencies?: BusinessModelInterface["currencies"];
 
     constructor(body: BusinessModelInterface) {
         this.id = body.id;
@@ -14,5 +16,6 @@ export class StandardBusinessDto implements StandardDtoType<BusinessModelInterfa
         this.ownerId = body.ownerId;
         this.countryCode = body.countryCode;
         this.createdAt = body.createdAt;
+        this.currencies = body.currencies?.map((currency) => new StandardCurrencyDto(currency));
     }
 }

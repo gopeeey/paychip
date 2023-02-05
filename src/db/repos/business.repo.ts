@@ -1,5 +1,9 @@
 import { CreateBusinessDto } from "../../contracts/dtos";
-import { BusinessModelInterface, BusinessRepoInterface } from "../../contracts/interfaces";
+import {
+    AccountModelInterface,
+    BusinessModelInterface,
+    BusinessRepoInterface,
+} from "../../contracts/interfaces";
 import { Business } from "../models";
 
 export class BusinessRepo implements BusinessRepoInterface {
@@ -13,5 +17,13 @@ export class BusinessRepo implements BusinessRepoInterface {
     async findById(id: BusinessModelInterface["id"]) {
         const business = await this._modelContext.findByPk(id);
         return business ? business.toJSON() : null;
+    }
+
+    async getOwnerBusinesses(ownerId: AccountModelInterface["id"]) {
+        const businesses = await this._modelContext.findAll({
+            where: { ownerId },
+            include: "currencies",
+        });
+        return businesses.map((business) => business.toJSON());
     }
 }

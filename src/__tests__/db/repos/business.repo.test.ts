@@ -1,17 +1,25 @@
 import { BusinessRepo } from "../../../db/repos";
 import { Business } from "../../../db/models";
-import { businessData, businessJson, businessObj } from "../../samples";
+import {
+    accountJson,
+    businessData,
+    businessJson,
+    businessJsonArr,
+    businessObj,
+    businessObjArr,
+} from "../../samples";
 
 const createMock = jest.fn();
 const findAllMock = jest.fn();
 const findByPkMock = jest.fn();
+
 const modelContext = {
     create: createMock,
     findAll: findAllMock,
     findByPk: findByPkMock,
-} as unknown as typeof Business;
+};
 
-const businessRepo = new BusinessRepo(modelContext);
+const businessRepo = new BusinessRepo(modelContext as unknown as typeof Business);
 
 describe("Testing business repo", () => {
     describe("Testing create", () => {
@@ -43,6 +51,26 @@ describe("Testing business repo", () => {
                 findByPkMock.mockResolvedValue(null);
                 const result = await businessRepo.findById(businessJson.id);
                 expect(result).toBe(null);
+            });
+        });
+    });
+
+    describe("Testing getOwnerBusinesses", () => {
+        describe("Given the owner has businesses", () => {
+            it("should return a business json array", async () => {
+                modelContext.findAll.mockResolvedValue(businessObjArr);
+                const result = await businessRepo.getOwnerBusinesses(accountJson.id);
+                expect(result).toEqual(businessJsonArr);
+                expect(modelContext.findAll).toHaveBeenCalledTimes(1);
+            });
+        });
+
+        describe("Given the owner has no businesses", () => {
+            it("should return an empty array", async () => {
+                modelContext.findAll.mockResolvedValue([]);
+                const result = await businessRepo.getOwnerBusinesses(accountJson.id);
+                expect(result).toEqual([]);
+                expect(modelContext.findAll).toHaveBeenCalledTimes(1);
             });
         });
     });

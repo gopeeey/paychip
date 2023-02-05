@@ -1,9 +1,4 @@
-import {
-    BusinessModelInterface,
-    AccountModelInterface,
-    CountryModelInterface,
-    CustomerModelInterface,
-} from "../../contracts/interfaces";
+import { BusinessModelInterface } from "../../contracts/interfaces";
 import {
     DataTypes,
     Model,
@@ -21,11 +16,12 @@ export class Business
 {
     declare id: CreationOptional<number>;
     declare name: string;
-    declare ownerId: ForeignKey<AccountModelInterface["id"]>;
-    declare owner?: NonAttribute<AccountModelInterface>;
-    declare countryCode: ForeignKey<CountryModelInterface["isoCode"]>;
-    declare country?: NonAttribute<CountryModelInterface>;
-    declare customers?: NonAttribute<CustomerModelInterface[]>;
+    declare ownerId: ForeignKey<BusinessModelInterface["ownerId"]>;
+    declare owner?: NonAttribute<BusinessModelInterface["owner"]>;
+    declare countryCode: ForeignKey<BusinessModelInterface["countryCode"]>;
+    declare country?: NonAttribute<BusinessModelInterface["country"]>;
+    declare customers?: NonAttribute<BusinessModelInterface["customers"]>;
+    declare currencies?: NonAttribute<BusinessModelInterface["currencies"]>;
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;

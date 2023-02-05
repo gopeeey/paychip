@@ -1,6 +1,7 @@
 import { CurrencyModelInterface } from "../../interfaces";
+import { StandardDtoType } from "../types";
 
-export class StandardCurrencyDto {
+export class StandardCurrencyDto implements StandardDtoType<CurrencyModelInterface> {
     name: CurrencyModelInterface["name"];
     isoCode: CurrencyModelInterface["isoCode"];
 

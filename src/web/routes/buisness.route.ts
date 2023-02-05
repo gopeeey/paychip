@@ -19,6 +19,8 @@ export class BusinessRoute {
             controller.create
         );
 
+        router.get("/owner", restrictTo(["account"]), controller.getOwnerBusinesses);
+
         return router;
     }
 }
