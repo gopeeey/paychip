@@ -5,6 +5,7 @@ import {
     businessCurrencyObjWithCurrency,
     businessCurrencyObjWithCurrencyArr,
     businessJson,
+    currencyJson,
     currencyJsonArr,
     currencyObj,
     currencyObjArr,
@@ -14,6 +15,7 @@ const currencyModelMock = {
     findAll: jest.fn(),
 };
 const businessCurrencyModelMock = {
+    bulkCreate: jest.fn(),
     findAll: jest.fn(),
 };
 
@@ -42,6 +44,17 @@ describe("TESTING CURRENCY REPO", () => {
                 expect(currencies).toEqual(currencyJsonArr);
                 expect(businessCurrencyModelMock.findAll).toHaveBeenCalledTimes(1);
             });
+        });
+    });
+
+    describe("Testing addBusinessCurrencies", () => {
+        it("should return an array of currency objects", async () => {
+            businessCurrencyModelMock.bulkCreate.mockResolvedValue(businessCurrencyObjArr);
+            const currencies = await currencyRepo.addBusinessCurrencies(businessJson.id, [
+                currencyJson.isoCode,
+            ]);
+            expect(currencies).toEqual(currencyJsonArr);
+            expect(businessCurrencyModelMock.bulkCreate).toHaveBeenCalledTimes(1);
         });
     });
 });

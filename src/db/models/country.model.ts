@@ -5,9 +5,14 @@ import {
     DataTypes,
     CreationOptional,
     NonAttribute,
+    ForeignKey,
 } from "sequelize";
 import db from "..";
-import { BusinessModelInterface, CountryModelInterface } from "../../contracts/interfaces";
+import {
+    BusinessModelInterface,
+    CountryModelInterface,
+    CurrencyModelInterface,
+} from "../../contracts/interfaces";
 
 export class Country
     extends Model<InferAttributes<Country>, InferCreationAttributes<Country>>
@@ -16,6 +21,8 @@ export class Country
     declare isoCode: string;
     declare name: string;
     declare businesses?: NonAttribute<BusinessModelInterface[]>;
+    declare currencyCode: ForeignKey<CurrencyModelInterface["isoCode"]>;
+    declare currency?: NonAttribute<CurrencyModelInterface>;
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;

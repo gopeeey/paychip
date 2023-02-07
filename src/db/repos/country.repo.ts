@@ -6,18 +6,17 @@ export class CountryRepo implements CountryRepoInterface {
     constructor(private readonly _modelContext: typeof Country) {}
 
     async create(createCountryDto: CreateCountryDto) {
-        const { isoCode, name } = createCountryDto;
-        const country = await this._modelContext.create({ isoCode, name });
+        const country = await this._modelContext.create(createCountryDto);
         return country.toJSON();
     }
 
-    async getByCode(code: string) {
-        const country = await this._modelContext.findByPk(code);
+    async getByCode(code: CountryModelInterface["isoCode"]) {
+        const country = await this._modelContext.findByPk(code, { include: "currency" });
         return country ? country.toJSON() : country;
     }
 
     async getAll() {
-        const countries = await this._modelContext.findAll();
+        const countries = await this._modelContext.findAll({ include: "currency" });
         return countries.map((country) => country.toJSON());
     }
 }

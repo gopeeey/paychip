@@ -15,10 +15,8 @@ export class BusinessService implements BusinessServiceInterface {
     }
 
     async createBusiness(createBusinessDto: CreateBusinessDto) {
-        const countrySupported = await this._dependencies.checkCountrySupported(
-            createBusinessDto.countryCode
-        );
-        if (!countrySupported) throw new CountryNotSuportedError();
+        const country = await this._dependencies.getCountry(createBusinessDto.countryCode);
+        if (!country) throw new CountryNotSuportedError();
         const business = await this._repository.create(createBusinessDto);
         return new StandardBusinessDto(business);
     }

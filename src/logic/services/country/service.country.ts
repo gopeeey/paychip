@@ -2,6 +2,7 @@ import { CreateCountryDto, StandardCountryDto } from "../../../contracts/dtos";
 import {
     CountryServiceInterface,
     CountryServiceDependenciesInterface,
+    CountryModelInterface,
 } from "../../../contracts/interfaces";
 
 export class CountryService implements CountryServiceInterface {
@@ -15,8 +16,10 @@ export class CountryService implements CountryServiceInterface {
         return new StandardCountryDto(country);
     }
 
-    async getByCode(isoCode: string) {
-        return await this._dependencies.getCountryByCode(isoCode);
+    async getByCode(isoCode: CountryModelInterface["isoCode"]) {
+        const country = await this._repository.getByCode(isoCode);
+        if (!country) return null;
+        return new StandardCountryDto(country);
     }
 
     async getSupportedCountries() {
@@ -27,5 +30,10 @@ export class CountryService implements CountryServiceInterface {
     async getSupportedCountryCodes() {
         const countries = await this.getSupportedCountries();
         return countries.map((country) => country.isoCode);
+    }
+
+    async checkCountryIsSupported(isoCode: CountryModelInterface["isoCode"]) {
+        const country = await this.getByCode(isoCode);
+        return Boolean(country);
     }
 }

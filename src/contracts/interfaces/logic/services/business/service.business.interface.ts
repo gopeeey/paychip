@@ -1,6 +1,6 @@
 import { CreateBusinessDto, StandardBusinessDto } from "../../../../dtos";
 import { BusinessRepoInterface, BusinessModelInterface, AccountModelInterface } from "../../../db";
-import { CountrySupportedCheckerInterface } from "../country";
+import { CountryServiceInterface, CountrySupportedCheckerInterface } from "../country";
 
 export interface BusinessServiceInterface {
     createBusiness: (dto: CreateBusinessDto) => Promise<StandardBusinessDto>;
@@ -10,5 +10,5 @@ export interface BusinessServiceInterface {
 
 export interface BusinessServiceDependenciesInterface {
     repo: BusinessRepoInterface;
-    checkCountrySupported: CountrySupportedCheckerInterface["check"];
+    getCountry: CountryServiceInterface["getByCode"];
 }

@@ -33,6 +33,10 @@ Currency.belongsToMany(Business, {
     as: "businesses",
 });
 
+// currencies and countries
+Currency.hasMany(Country, { sourceKey: "isoCode", foreignKey: "currencyCode", as: "countries" });
+Country.belongsTo(Currency, { targetKey: "isoCode", foreignKey: "currencyCode", as: "currency" });
+
 export * from "./account.model";
 export * from "./country.model";
 export * from "./business.model";

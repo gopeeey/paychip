@@ -26,4 +26,14 @@ export class CurrencyRepo implements CurrencyRepoInterface {
             return [...agg, businessCurrency.currency];
         }, [] as CurrencyModelInterface[]);
     }
+
+    async addBusinessCurrencies(
+        businessId: BusinessModelInterface["id"],
+        currencyCodes: CurrencyModelInterface["isoCode"][]
+    ) {
+        await this._businessCurrencyModelContext.bulkCreate(
+            currencyCodes.map((code) => ({ businessId, currencyIsoCode: code }))
+        );
+        return await this.getBusinessCurrencies(businessId);
+    }
 }
