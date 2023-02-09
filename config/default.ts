@@ -4,6 +4,8 @@ dotenv.config();
 
 // server
 const SERVER_PORT = process.env.SERVER_PORT as string;
+const HOST_URL = process.env.HOST_URL as string;
+const NODE_ENV = process.env.NODE_ENV as string;
 
 // postgres
 const POSTGRES_DB_NAME = process.env.POSTGRES_DB_NAME as string;
@@ -16,6 +18,8 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 
 const serverConfig = {
     port: Number(SERVER_PORT),
+    hostUrl: HOST_URL,
+    nodeEnv: NODE_ENV,
 };
 
 const dbConfig = {

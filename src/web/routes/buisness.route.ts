@@ -7,7 +7,7 @@ import { CreateBusinessValidator } from "../validators";
 export class BusinessRoute {
     constructor(private readonly _dependencies: BusinessRouteDependencies) {}
 
-    init() {
+    init = () => {
         const router = Router();
         const controller = new BusinessController(this._dependencies.businessService);
         const restrictTo = this._dependencies.authMiddleware.restrictTo;
@@ -19,6 +19,8 @@ export class BusinessRoute {
             controller.create
         );
 
+        router.get("/owner", restrictTo(["account"]), controller.getOwnerBusinesses);
+
         return router;
-    }
+    };
 }

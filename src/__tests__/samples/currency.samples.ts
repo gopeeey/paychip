@@ -1,12 +1,11 @@
 import { CreateCurrencyDto, StandardCurrencyDto } from "../../contracts/dtos";
 import { Currency, BusinessCurrency } from "../../db/models";
-import { businessJson } from "./business.samples";
 
 export const currencyData = new CreateCurrencyDto({ name: "Nigerian Naira", isoCode: "NGN" });
 
 export const currencyObj = new Currency(currencyData);
 export const businessCurrencyObj = new BusinessCurrency({
-    businessId: businessJson.id,
+    businessId: 1234,
     currencyIsoCode: currencyObj.isoCode,
 });
 
@@ -23,3 +22,4 @@ export const businessCurrencyJsonArr = [businessCurrencyJson];
 export const businessCurrencyObjWithCurrencyArr = [businessCurrencyObjWithCurrency];
 
 export const standardCurrency = new StandardCurrencyDto(currencyJson);
+export const standardCurrencyArr = [standardCurrency];

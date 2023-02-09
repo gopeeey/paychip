@@ -1,5 +1,10 @@
-import { BusinessModelInterfaceDef, CountryModelInterfaceDef } from "./definitions";
+import {
+    BusinessModelInterfaceDef,
+    CountryModelInterfaceDef,
+    CurrencyModelInterfaceDef,
+} from "./definitions";
 
 export interface CountryModelInterface extends CountryModelInterfaceDef {
     businesses?: BusinessModelInterfaceDef[];
+    currency?: CurrencyModelInterfaceDef;
 }

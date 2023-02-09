@@ -7,7 +7,7 @@ import { validateBody } from "../middleware/validation";
 export default class AccountRoute {
     constructor(private readonly _service: AccountServiceInterface) {}
 
-    init() {
+    init = () => {
         const router = Router();
         const controller = new AccountController(this._service);
 
@@ -15,5 +15,5 @@ export default class AccountRoute {
         router.post("/login", validateBody(LoginValidator), controller.login);
 
         return router;
-    }
+    };
 }

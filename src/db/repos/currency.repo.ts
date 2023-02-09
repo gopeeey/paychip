@@ -11,19 +11,43 @@ export class CurrencyRepo implements CurrencyRepoInterface {
         private readonly _businessCurrencyModelContext: typeof BusinessCurrency
     ) {}
 
-    async getAll() {
+    getAll = async () => {
         const currencies = await this._currencyModelContext.findAll({});
         return currencies.map((currency) => currency.toJSON());
-    }
+    };
 
-    async getBusinessCurrencies(businessId: BusinessModelInterface["id"]) {
+    getBusinessCurrencies = async (businessId: BusinessModelInterface["id"]) => {
         const businessCurrencies = await this._businessCurrencyModelContext.findAll({
             where: { businessId },
-            include: "currencies",
+            include: "currency",
         });
         return businessCurrencies.reduce((agg, businessCurrency) => {
             if (!businessCurrency.currency) return agg;
             return [...agg, businessCurrency.currency];
         }, [] as CurrencyModelInterface[]);
-    }
+    };
+
+    addBusinessCurrencies = async (
+        businessId: BusinessModelInterface["id"],
+        currencyCodes: CurrencyModelInterface["isoCode"][]
+    ) => {
+        const businessCurrencies = await this._businessCurrencyModelContext.bulkCreate(
+            currencyCodes.map((code) => ({ businessId, currencyIsoCode: code }))
+        );
+        const addedCodes = businessCurrencies.map((curr) => curr.currencyIsoCode);
+        const currencies = await this._currencyModelContext.findAll({
+            where: { isoCode: addedCodes },
+        });
+        return currencies.map((currency) => currency.toJSON());
+    };
+
+    updateBusinessCurrencies = async (
+        businessId: BusinessModelInterface["id"],
+        currencyCodes: CurrencyModelInterface["isoCode"][]
+    ) => {
+        await this._businessCurrencyModelContext.destroy({ where: { businessId } });
+        if (!currencyCodes.length) return [];
+        const currencies = await this.addBusinessCurrencies(businessId, currencyCodes);
+        return currencies;
+    };
 }

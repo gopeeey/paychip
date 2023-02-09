@@ -20,7 +20,7 @@ export class AccountService implements AccountServiceInterface {
         this._repository = this._dependencies.repo;
     }
 
-    async createAccount(createAccountDto: CreateAccountDto) {
+    createAccount = async (createAccountDto: CreateAccountDto) => {
         const { email, password } = createAccountDto;
         // check if email is already registered
         const existing = await this._repository.findByEmail(email);
@@ -36,16 +36,16 @@ export class AccountService implements AccountServiceInterface {
         // persist account
         const profile = await this._repository.create(newCreateAccountDto);
         return new StandardAccountDto(profile);
-    }
+    };
 
-    async signup(createAccountDto: CreateAccountDto) {
+    signup = async (createAccountDto: CreateAccountDto) => {
         // const {email, password, name} = createAccountDto;
         const account = await this.createAccount(createAccountDto);
         const authToken = generateAuthToken("account", { accountId: account.id });
         return { account, authToken };
-    }
+    };
 
-    async login(loginDto: LoginDto) {
+    login = async (loginDto: LoginDto) => {
         const { email, password } = loginDto;
         const account = await this._repository.findByEmail(email);
         if (!account) throw new InvalidLoginDetailsError();
@@ -54,11 +54,11 @@ export class AccountService implements AccountServiceInterface {
         const authToken = generateAuthToken("account", { accountId: account.id });
 
         return { account: new StandardAccountDto(account), authToken };
-    }
+    };
 
-    async getById(id: AccountModelInterface["id"]) {
+    getById = async (id: AccountModelInterface["id"]) => {
         const account = await this._repository.findById(id);
         if (!account) throw new AccountNotFoundError();
         return new StandardAccountDto(account);
-    }
+    };
 }

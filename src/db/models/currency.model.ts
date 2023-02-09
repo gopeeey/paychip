@@ -1,10 +1,11 @@
-import { CurrencyModelInterface } from "../../contracts/interfaces";
+import { CountryModelInterface, CurrencyModelInterface } from "../../contracts/interfaces";
 import {
     Model,
     InferAttributes,
     InferCreationAttributes,
     CreationOptional,
     DataTypes,
+    NonAttribute,
 } from "sequelize";
 import db from "..";
 
@@ -14,6 +15,7 @@ export class Currency
 {
     declare isoCode: string;
     declare name: string;
+    declare countries?: NonAttribute<CountryModelInterface[]>;
 
     declare createdAt?: CreationOptional<Date>;
     declare updatedAt?: CreationOptional<Date>;
