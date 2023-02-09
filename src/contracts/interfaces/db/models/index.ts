@@ -5,3 +5,5 @@ export * from "./business.model.interface";
 export * from "./customer.model.interface";
 export * from "./currency.model.interface";
 export * from "./business_currency.modle.interface";
+export * from "./wallet.model.interface";
+export * from "./charge_scheme.model.interface";
