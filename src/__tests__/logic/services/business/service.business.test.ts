@@ -8,52 +8,63 @@ import {
     businessData,
     businessJson,
     businessJsonArr,
-    businessObj,
-    businessObjArr,
+    countryJson,
     standardBusiness,
     standardBusinessArr,
+    standardBusinessWithCurrencies,
+    standardCountry,
+    standardCurrencyArr,
 } from "../../../samples";
 import { CountryNotSuportedError, BusinessNotFoundError } from "../../../../logic/errors";
 
-const createMock = jest.fn();
-const findByIdMock = jest.fn();
 const repo = {
-    create: createMock,
-    findById: findByIdMock,
+    create: jest.fn(),
+    findById: jest.fn(),
     getOwnerBusinesses: jest.fn(),
 };
 
-const checkCountrySupportedMock = jest.fn();
 const dependencies = {
-    repo: repo as unknown as BusinessRepoInterface,
-    checkCountrySupported: checkCountrySupportedMock,
-} as unknown as BusinessServiceDependenciesInterface;
+    repo,
+    getCountry: jest.fn(),
+    updateCurrencies: jest.fn(),
+};
 
-const businessService = new BusinessService(dependencies);
+const businessService = new BusinessService(
+    dependencies as unknown as BusinessServiceDependenciesInterface
+);
 
 describe("Testing business service", () => {
     describe("Testing createBusiness", () => {
         it("should check if country is supported", async () => {
-            createMock.mockResolvedValue(businessJson);
-            checkCountrySupportedMock.mockResolvedValue(true);
+            repo.create.mockResolvedValue(businessJson);
+            dependencies.getCountry.mockResolvedValue(standardCountry);
             await businessService.createBusiness(businessData);
-            expect(checkCountrySupportedMock).toHaveBeenCalledTimes(1);
-            expect(checkCountrySupportedMock).toHaveBeenCalledWith(businessData.countryCode);
+            expect(dependencies.getCountry).toHaveBeenCalledTimes(1);
+            expect(dependencies.getCountry).toHaveBeenCalledWith(businessData.countryCode);
         });
 
         describe("Given a supported country", () => {
+            it("should update the business currencies with the country's currencyCode", async () => {
+                dependencies.updateCurrencies.mockResolvedValue(standardCurrencyArr);
+                await businessService.createBusiness(businessData);
+                expect(dependencies.updateCurrencies).toHaveBeenCalledTimes(1);
+                expect(dependencies.updateCurrencies).toHaveBeenCalledWith(businessJson.id, [
+                    countryJson.currencyCode,
+                ]);
+            });
+
             it("should return a standard business object", async () => {
-                createMock.mockResolvedValue(businessJson);
+                repo.create.mockResolvedValue(businessJson);
                 const business = await businessService.createBusiness(businessData);
-                expect(business).toEqual(standardBusiness);
-                expect(createMock).toHaveBeenCalledTimes(1);
-                expect(createMock).toHaveBeenCalledWith(businessData);
+                expect(business).toEqual(standardBusinessWithCurrencies);
+                expect(repo.create).toHaveBeenCalledTimes(1);
+                expect(repo.create).toHaveBeenCalledWith(businessData);
             });
         });
 
         describe("Given an unsupported country", () => {
             it("should throw an error", async () => {
-                checkCountrySupportedMock.mockResolvedValue(false);
+                dependencies.getCountry.mockResolvedValue(null);
                 await expect(businessService.createBusiness(businessData)).rejects.toThrow(
                     new CountryNotSuportedError()
                 );
@@ -64,22 +75,22 @@ describe("Testing business service", () => {
     describe("Testing getById", () => {
         describe("Given the business exists", () => {
             it("should return a standard business object", async () => {
-                findByIdMock.mockResolvedValue(businessJson);
+                repo.findById.mockResolvedValue(businessJson);
                 const result = await businessService.getById(businessJson.id);
                 expect(result).toEqual(standardBusiness);
-                expect(findByIdMock).toHaveBeenCalledTimes(1);
-                expect(findByIdMock).toHaveBeenCalledWith(businessJson.id);
+                expect(repo.findById).toHaveBeenCalledTimes(1);
+                expect(repo.findById).toHaveBeenCalledWith(businessJson.id);
             });
         });
 
         describe("Given the business does not exist", () => {
             it("should throw an error", async () => {
-                findByIdMock.mockResolvedValue(null);
+                repo.findById.mockResolvedValue(null);
                 expect(businessService.getById(businessJson.id)).rejects.toThrow(
                     new BusinessNotFoundError()
                 );
-                expect(findByIdMock).toHaveBeenCalledTimes(1);
-                expect(findByIdMock).toHaveBeenCalledWith(businessJson.id);
+                expect(repo.findById).toHaveBeenCalledTimes(1);
+                expect(repo.findById).toHaveBeenCalledWith(businessJson.id);
             });
         });
     });

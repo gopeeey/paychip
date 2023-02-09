@@ -6,13 +6,13 @@ import { Customer } from "../models/customer.model";
 export class CustomerRepo implements CustomerRepoInterface {
     constructor(private readonly _modelContext: typeof Customer) {}
 
-    async create(createCustomerDto: CreateCustomerDto) {
+    create = async (createCustomerDto: CreateCustomerDto) => {
         const customer = await this._modelContext.create(createCustomerDto);
         return customer.toJSON();
-    }
+    };
 
-    async getByBusinessId(businessId: BusinessModelInterface["id"]) {
+    getByBusinessId = async (businessId: BusinessModelInterface["id"]) => {
         const customers = await this._modelContext.findAll({ where: { businessId } });
         return customers.map((customer) => customer.toJSON());
-    }
+    };
 }

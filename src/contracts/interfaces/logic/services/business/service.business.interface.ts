@@ -1,6 +1,7 @@
 import { CreateBusinessDto, StandardBusinessDto } from "../../../../dtos";
 import { BusinessRepoInterface, BusinessModelInterface, AccountModelInterface } from "../../../db";
-import { CountryServiceInterface, CountrySupportedCheckerInterface } from "../country";
+import { CountryServiceInterface } from "../country";
+import { CurrencyServiceInterface } from "../currency";
 
 export interface BusinessServiceInterface {
     createBusiness: (dto: CreateBusinessDto) => Promise<StandardBusinessDto>;
@@ -11,4 +12,5 @@ export interface BusinessServiceInterface {
 export interface BusinessServiceDependenciesInterface {
     repo: BusinessRepoInterface;
     getCountry: CountryServiceInterface["getByCode"];
+    updateCurrencies: CurrencyServiceInterface["updateBusinessCurrencies"];
 }

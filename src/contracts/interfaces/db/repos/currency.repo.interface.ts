@@ -12,6 +12,11 @@ export interface CurrencyRepoInterface {
         currencyCodes: CurrencyModelInterface["isoCode"][]
     ) => Promise<CurrencyModelInterface[]>;
 
+    updateBusinessCurrencies: (
+        businessId: BusinessModelInterface["id"],
+        currencyCodes: CurrencyModelInterface["isoCode"][]
+    ) => Promise<CurrencyModelInterface[]>;
+
     // removeBusinessCurrencies: (
     //     businessId: BusinessModelInterface["id"],
     //     currencyCodes: CurrencyModelInterface["isoCode"]

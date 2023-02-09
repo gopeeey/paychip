@@ -9,35 +9,31 @@ import {
     businessObjArr,
 } from "../../samples";
 
-const createMock = jest.fn();
-const findAllMock = jest.fn();
-const findByPkMock = jest.fn();
-
 const modelContext = {
-    create: createMock,
-    findAll: findAllMock,
-    findByPk: findByPkMock,
+    create: jest.fn(),
+    findAll: jest.fn(),
+    findByPk: jest.fn(),
 };
 
 const businessRepo = new BusinessRepo(modelContext as unknown as typeof Business);
 
-describe("Testing business repo", () => {
+describe("TESTING BUSINESS REPO", () => {
     describe("Testing create", () => {
         it("should return business object", async () => {
-            createMock.mockResolvedValue(businessObj);
+            modelContext.create.mockResolvedValue(businessObj);
             const business = await businessRepo.create(businessData);
             expect(business).toEqual(businessJson);
-            expect(createMock).toHaveBeenCalledTimes(1);
+            expect(modelContext.create).toHaveBeenCalledTimes(1);
         });
     });
 
     describe("Testing findById method", () => {
         describe("Given the business exists", () => {
             it("should call the correct method on the model", async () => {
-                findByPkMock.mockResolvedValue(businessObj);
+                modelContext.findByPk.mockResolvedValue(businessObj);
                 await businessRepo.findById(businessJson.id);
-                expect(findByPkMock).toHaveBeenCalledTimes(1);
-                expect(findByPkMock).toHaveBeenCalledWith(businessJson.id);
+                expect(modelContext.findByPk).toHaveBeenCalledTimes(1);
+                expect(modelContext.findByPk).toHaveBeenCalledWith(businessJson.id);
             });
 
             it("should return an business object", async () => {
@@ -48,7 +44,7 @@ describe("Testing business repo", () => {
 
         describe("Given the business does not exist", () => {
             it("should return null", async () => {
-                findByPkMock.mockResolvedValue(null);
+                modelContext.findByPk.mockResolvedValue(null);
                 const result = await businessRepo.findById(businessJson.id);
                 expect(result).toBe(null);
             });
@@ -71,6 +67,28 @@ describe("Testing business repo", () => {
                 const result = await businessRepo.getOwnerBusinesses(accountJson.id);
                 expect(result).toEqual([]);
                 expect(modelContext.findAll).toHaveBeenCalledTimes(1);
+            });
+        });
+    });
+
+    describe("Testing getFullBusiness", () => {
+        describe("Given the business exists", () => {
+            it("should return a business json object", async () => {
+                modelContext.findByPk.mockResolvedValue(businessObj);
+                const business = await businessRepo.getFullBusiness(businessJson.id);
+                expect(business).toEqual(businessJson);
+                expect(modelContext.findByPk).toHaveBeenCalledTimes(1);
+                expect(modelContext.findByPk).toHaveBeenCalledWith(businessJson.id, {
+                    include: "currencies",
+                });
+            });
+        });
+
+        describe("Given the business does not exist", () => {
+            it("should return null", async () => {
+                modelContext.findByPk.mockResolvedValue(null);
+                const business = await businessRepo.getFullBusiness(businessJson.id);
+                expect(business).toBe(null);
             });
         });
     });

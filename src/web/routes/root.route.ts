@@ -7,7 +7,7 @@ import EmptyRoute from "./empty.route";
 export class RootRoutes {
     constructor(private readonly _container: DependencyContainerInterface) {}
 
-    init() {
+    init = () => {
         const router = Router();
 
         const accountRoutes = new AccountRoute(this._container.accountService).init();
@@ -26,5 +26,5 @@ export class RootRoutes {
         }
 
         return router;
-    }
+    };
 }

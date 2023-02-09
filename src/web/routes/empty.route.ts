@@ -4,7 +4,7 @@ import { AuthMiddlewareInterface } from "../../contracts/interfaces";
 export default class EmptyRoute {
     constructor(private readonly _authMiddleware: AuthMiddlewareInterface) {}
 
-    init() {
+    init = () => {
         const router = Router();
         const controller = async (req: Request, res: Response) => res.send("true");
         const { restrictTo } = this._authMiddleware;
@@ -17,5 +17,5 @@ export default class EmptyRoute {
         router.get("/unprotected", controller);
 
         return router;
-    }
+    };
 }

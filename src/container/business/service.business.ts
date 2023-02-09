@@ -1,14 +1,12 @@
 import { BusinessService } from "../../logic/services";
 import { businessRepo } from "./repo.business";
-import { countryRepo } from "../country";
-import { CountryByCodeGetter, CountrySupportedChecker } from "../../logic/services";
-
-const countryByCodeGetter = new CountryByCodeGetter({ repo: countryRepo });
-const checkCountrySupported = new CountrySupportedChecker({
-    getCountryByCode: countryByCodeGetter.getByCode,
-}).check;
+import { getCountry } from "../country";
+import { updateBusinessCurrencies } from "../currency";
 
 export const businessService = new BusinessService({
     repo: businessRepo,
-    checkCountrySupported,
+    getCountry,
+    updateCurrencies: updateBusinessCurrencies,
 });
+
+// console.log("\n\n\nFROM BUSINESS SERVICE", getCountry("NGA"));

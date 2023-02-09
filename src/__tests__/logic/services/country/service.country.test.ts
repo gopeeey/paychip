@@ -39,7 +39,7 @@ describe("Testing country service", () => {
             it("should return a standard country object", async () => {
                 repo.getByCode.mockResolvedValue(countryJson);
                 const result = await countryService.getByCode(countryData.currencyCode);
-                expect(result).toBe(standardCountry);
+                expect(result).toEqual(standardCountry);
                 expect(repo.getByCode).toHaveBeenCalledTimes(1);
                 expect(repo.getByCode).toHaveBeenCalledWith(countryData.currencyCode);
             });
