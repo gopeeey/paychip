@@ -14,4 +14,5 @@ export interface ChargeSchemeModelInterfaceDef extends BaseModelInterface {
     percentageCharge: number;
     percentageChargeCap: number;
     minimumPrincipalAmount: number;
+    payer: "wallet" | "customer";
 }

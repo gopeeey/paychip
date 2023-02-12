@@ -4,6 +4,7 @@ import { Country } from "./country.model";
 import { Currency } from "./currency.model";
 import { BusinessCurrency } from "./business_currency.model";
 import { Customer } from "./customer.model";
+import { ChargeScheme } from "./charge_scheme.model";
 
 // Associate
 
@@ -37,9 +38,14 @@ Currency.belongsToMany(Business, {
 Currency.hasMany(Country, { sourceKey: "isoCode", foreignKey: "currencyCode", as: "countries" });
 Country.belongsTo(Currency, { targetKey: "isoCode", foreignKey: "currencyCode", as: "currency" });
 
+// charge schemes and businesses
+Business.hasMany(ChargeScheme, { sourceKey: "id", foreignKey: "businessId", as: "chargeSchemes" });
+ChargeScheme.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
+
 export * from "./account.model";
 export * from "./country.model";
 export * from "./business.model";
 export * from "./customer.model";
 export * from "./currency.model";
 export * from "./business_currency.model";
+export * from "./charge_scheme.model";

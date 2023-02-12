@@ -26,6 +26,7 @@ export class ChargeScheme
     declare percentageCharge: ChargeSchemeModelInterface["percentageCharge"];
     declare percentageChargeCap: ChargeSchemeModelInterface["percentageChargeCap"];
     declare minimumPrincipalAmount: ChargeSchemeModelInterface["minimumPrincipalAmount"];
+    declare payer: ChargeSchemeModelInterface["payer"];
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
@@ -48,6 +49,7 @@ ChargeScheme.init(
         percentageCharge: { type: DataTypes.NUMBER, defaultValue: 0, allowNull: false },
         percentageChargeCap: { type: DataTypes.NUMBER, defaultValue: 0, allowNull: false },
         minimumPrincipalAmount: { type: DataTypes.NUMBER, defaultValue: 0, allowNull: false },
+        payer: { type: DataTypes.STRING, allowNull: false },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,
         deletedAt: DataTypes.DATE,
