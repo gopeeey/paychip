@@ -1,4 +1,4 @@
-import { CreateChargeSchemeDto } from "../../contracts/dtos";
+import { CreateChargeSchemeDto, StandardChargeSchemeDto } from "../../contracts/dtos";
 import { ChargeScheme } from "../../db/models";
 import { currencyJson } from "./currency.samples";
 
@@ -39,4 +39,11 @@ export const chargeSchemeJson = {
     customerDebit: chargeSchemeObj.customerDebit.toJSON(),
     walletCredit: chargeSchemeObj.walletCredit.toJSON(),
     walletDebit: chargeSchemeObj.walletDebit.toJSON(),
+};
+
+export const standardChargeScheme = {
+    customerCredit: new StandardChargeSchemeDto(chargeSchemeJson.customerCredit),
+    customerDebit: new StandardChargeSchemeDto(chargeSchemeJson.customerDebit),
+    walletCredit: new StandardChargeSchemeDto(chargeSchemeJson.walletCredit),
+    walletDebit: new StandardChargeSchemeDto(chargeSchemeJson.walletDebit),
 };

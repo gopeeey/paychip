@@ -1,5 +1,6 @@
 import { BaseModelInterface } from "../base.model.interface";
 import { BusinessModelInterfaceDef } from "./business.def.model.interface";
+import { ChargeSchemeModelInterfaceDef } from "./charge_scheme.def.model.interface";
 import { CurrencyModelInterfaceDef } from "./currency.def.model.interface";
 
 export interface WalletModelInterfaceDef extends BaseModelInterface {
@@ -11,4 +12,6 @@ export interface WalletModelInterfaceDef extends BaseModelInterface {
     waiveFundingCharges: boolean;
     waiveWithdrawalCharges: boolean;
     email: string;
+    chargeSchemeId: ChargeSchemeModelInterfaceDef["id"] | null;
+    walletType: "personal" | "commercial";
 }

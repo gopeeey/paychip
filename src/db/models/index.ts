@@ -5,6 +5,7 @@ import { Currency } from "./currency.model";
 import { BusinessCurrency } from "./business_currency.model";
 import { Customer } from "./customer.model";
 import { ChargeScheme } from "./charge_scheme.model";
+import { Wallet } from "./wallet.model";
 
 // Associate
 
@@ -38,9 +39,21 @@ Currency.belongsToMany(Business, {
 Currency.hasMany(Country, { sourceKey: "isoCode", foreignKey: "currencyCode", as: "countries" });
 Country.belongsTo(Currency, { targetKey: "isoCode", foreignKey: "currencyCode", as: "currency" });
 
+// businesses and wallets
+Business.hasMany(Wallet, { sourceKey: "id", foreignKey: "businessId", as: "wallets" });
+Wallet.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
+
 // charge schemes and businesses
 Business.hasMany(ChargeScheme, { sourceKey: "id", foreignKey: "businessId", as: "chargeSchemes" });
 ChargeScheme.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
+
+// charge schemes and wallets
+ChargeScheme.hasMany(Wallet, { sourceKey: "id", foreignKey: "chargeSchemeId", as: "wallets" });
+Wallet.belongsTo(ChargeScheme, {
+    targetKey: "id",
+    foreignKey: "chargeSchemeId",
+    as: "chargeScheme",
+});
 
 export * from "./account.model";
 export * from "./country.model";
@@ -49,3 +62,4 @@ export * from "./customer.model";
 export * from "./currency.model";
 export * from "./business_currency.model";
 export * from "./charge_scheme.model";
+export * from "./wallet.model";
