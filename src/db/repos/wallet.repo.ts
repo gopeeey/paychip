@@ -9,4 +9,9 @@ export class WalletRepo implements WalletRepoInterface {
         const wallet = await this._modelContext.create(createWalletDto);
         return wallet.toJSON();
     };
+
+    getById = async (id: WalletModelInterface["id"]) => {
+        const wallet = await this._modelContext.findByPk(id);
+        return wallet ? wallet.toJSON() : null;
+    };
 }
