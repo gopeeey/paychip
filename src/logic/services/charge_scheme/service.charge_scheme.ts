@@ -4,6 +4,7 @@ import {
     ChargeSchemeServiceDependencies,
     ChargeSchemeServiceInterface,
 } from "../../../contracts/interfaces";
+import { ChargeSchemeNotFoundError } from "../../errors";
 
 export class ChargeSchemeService implements ChargeSchemeServiceInterface {
     private readonly _repo: ChargeSchemeServiceDependencies["repo"];
@@ -19,6 +20,7 @@ export class ChargeSchemeService implements ChargeSchemeServiceInterface {
 
     getById = async (id: ChargeSchemeModelInterface["id"]) => {
         const chargeScheme = await this._repo.getById(id);
-        return chargeScheme ? new StandardChargeSchemeDto(chargeScheme) : null;
+        if (!chargeScheme) throw new ChargeSchemeNotFoundError();
+        return chargeScheme;
     };
 }

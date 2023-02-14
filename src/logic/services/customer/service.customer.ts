@@ -13,11 +13,11 @@ export class CustomerService implements CustomerServiceInterface {
 
     createCustomer = async (createCustomerDto: CreateCustomerDto) => {
         const customer = await this._repo.create(createCustomerDto);
-        return new StandardCustomerDto(customer);
+        return customer;
     };
 
     getBusinessCustomers = async (businessId: BusinessModelInterface["id"]) => {
         const customers = await this._repo.getByBusinessId(businessId);
-        return customers.map((customer) => new StandardCustomerDto(customer));
+        return customers;
     };
 }

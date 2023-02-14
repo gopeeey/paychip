@@ -1,10 +1,10 @@
-import { CreateChargeSchemeDto, StandardChargeSchemeDto } from "../../../../dtos";
+import { CreateChargeSchemeDto } from "../../../../dtos";
 import { ChargeSchemeModelInterface, ChargeSchemeRepoInterface } from "../../../db";
 
 export interface ChargeSchemeServiceInterface {
-    create: (createChargeSchemeDto: CreateChargeSchemeDto) => Promise<StandardChargeSchemeDto>;
+    create: (createChargeSchemeDto: CreateChargeSchemeDto) => Promise<ChargeSchemeModelInterface>;
 
-    getById: (id: ChargeSchemeModelInterface["id"]) => Promise<StandardChargeSchemeDto | null>;
+    getById: (id: ChargeSchemeModelInterface["id"]) => Promise<ChargeSchemeModelInterface>;
 }
 
 export interface ChargeSchemeServiceDependencies {

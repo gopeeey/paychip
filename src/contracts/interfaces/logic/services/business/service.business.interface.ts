@@ -4,9 +4,9 @@ import { CountryServiceInterface } from "../country";
 import { CurrencyServiceInterface } from "../currency";
 
 export interface BusinessServiceInterface {
-    createBusiness: (dto: CreateBusinessDto) => Promise<StandardBusinessDto>;
-    getById: (id: BusinessModelInterface["id"]) => Promise<StandardBusinessDto>;
-    getOwnerBusinesses: (ownerId: AccountModelInterface["id"]) => Promise<StandardBusinessDto[]>;
+    createBusiness: (dto: CreateBusinessDto) => Promise<BusinessModelInterface>;
+    getById: (id: BusinessModelInterface["id"]) => Promise<BusinessModelInterface>;
+    getOwnerBusinesses: (ownerId: AccountModelInterface["id"]) => Promise<BusinessModelInterface[]>;
 }
 
 export interface BusinessServiceDependenciesInterface {

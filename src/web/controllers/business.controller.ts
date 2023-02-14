@@ -1,7 +1,7 @@
 import { BaseController } from "./base.controller";
 import { AuthenticatedRequestType, BusinessServiceInterface } from "../../contracts/interfaces";
 import { NextFunction, Response } from "express";
-import { CreateBusinessDto } from "../../contracts/dtos";
+import { CreateBusinessDto, StandardBusinessDto } from "../../contracts/dtos";
 import { sendResponse } from "../../utils/functions";
 import { ProtectedRouteAccessError } from "../../logic/errors";
 
@@ -15,9 +15,12 @@ export class BusinessController extends BaseController {
             if (!req.account) throw new ProtectedRouteAccessError(req.path);
             const createBusinessDto = { ...req.body, ownerId: req.account.id };
             console.log("\n\nFROM CONTROLLER", this._service);
-            const business = await this._service.createBusiness(
+            const data = await this._service.createBusiness(
                 new CreateBusinessDto(createBusinessDto as CreateBusinessDto)
             );
+
+            const business = new StandardBusinessDto(data);
+
             sendResponse(res, { code: 201, data: { business } });
         });
     };
@@ -29,7 +32,9 @@ export class BusinessController extends BaseController {
     ) => {
         await this.handleReq(next, async () => {
             if (!req.account) throw new ProtectedRouteAccessError(req.path);
-            const businesses = await this._service.getOwnerBusinesses(req.account.id);
+            const data = await this._service.getOwnerBusinesses(req.account.id);
+            const businesses = data.map((business) => new StandardBusinessDto(business));
+
             sendResponse(res, { code: 200, data: { businesses } });
         });
     };

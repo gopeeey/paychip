@@ -33,11 +33,11 @@ export class BusinessService implements BusinessServiceInterface {
     getById = async (id: BusinessModelInterface["id"]) => {
         const business = await this._repository.findById(id);
         if (!business) throw new BusinessNotFoundError();
-        return new StandardBusinessDto(business);
+        return business;
     };
 
     getOwnerBusinesses = async (ownerId: AccountModelInterface["id"]) => {
         const businesses = await this._repository.getOwnerBusinesses(ownerId);
-        return businesses.map((business) => new StandardBusinessDto(business));
+        return businesses;
     };
 }

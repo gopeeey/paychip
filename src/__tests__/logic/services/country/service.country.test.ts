@@ -3,13 +3,7 @@ import {
     CountryRepoInterface,
     CountryServiceDependenciesInterface,
 } from "../../../../contracts/interfaces";
-import {
-    countryData,
-    countryJson,
-    countryJsonArray,
-    standardCountry,
-    standardCountryArray,
-} from "../../../samples";
+import { countryData, countryJson, countryJsonArray } from "../../../samples";
 import { CountryNotFoundError } from "../../../../logic/errors";
 
 const repo = {
@@ -29,7 +23,7 @@ describe("Testing country service", () => {
         it("should return a standard country object", async () => {
             repo.create.mockResolvedValue(countryJson);
             const country = await countryService.create(countryData);
-            expect(country).toEqual(standardCountry);
+            expect(country).toEqual(countryJson);
             expect(repo.create).toHaveBeenCalledTimes(1);
             expect(repo.create).toHaveBeenCalledWith(countryData);
         });
@@ -40,7 +34,7 @@ describe("Testing country service", () => {
             it("should return a standard country object", async () => {
                 repo.getByCode.mockResolvedValue(countryJson);
                 const result = await countryService.getByCode(countryJson.isoCode);
-                expect(result).toEqual(standardCountry);
+                expect(result).toEqual(countryJson);
                 expect(repo.getByCode).toHaveBeenCalledTimes(1);
                 expect(repo.getByCode).toHaveBeenCalledWith(countryJson.isoCode);
             });
@@ -62,7 +56,7 @@ describe("Testing country service", () => {
         it("should return an array of standard countries", async () => {
             repo.getAll.mockResolvedValue(countryJsonArray);
             const countries = await countryService.getSupportedCountries();
-            expect(countries).toEqual(standardCountryArray);
+            expect(countries).toEqual(countryJsonArray);
             expect(repo.getAll).toHaveBeenCalledTimes(1);
         });
     });

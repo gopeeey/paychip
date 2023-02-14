@@ -1,13 +1,12 @@
 import { AccountServiceInterface, BusinessServiceInterface } from "../../logic";
 import { NextFunction, Request, Response } from "express";
 import { AccountModelInterface, BusinessModelInterface } from "../../db";
-import { StandardAccountDto, StandardBusinessDto } from "../../../dtos";
 
 export type AuthType = "account" | "business" | "apiKey";
 export type AllowedAuthTypes = AuthType[];
 export interface AuthenticatedRequestType extends Request {
-    account?: StandardAccountDto;
-    business?: StandardBusinessDto;
+    account?: AccountModelInterface;
+    business?: BusinessModelInterface;
 }
 
 export interface AuthMiddlewareInterface {

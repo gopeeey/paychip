@@ -3,7 +3,7 @@ import {
     CurrencyServiceDependencies,
 } from "../../../../contracts/interfaces";
 import { CurrencyService } from "../../../../logic/services";
-import { businessJson, currencyJsonArr, standardCurrencyArr } from "../../../samples";
+import { businessJson, currencyJsonArr } from "../../../samples";
 
 const repo = {
     updateBusinessCurrencies: jest.fn(),
@@ -26,7 +26,7 @@ describe("TESTING CURRENCY SERVICE", () => {
                 businessJson.id,
                 currencyJsonArr.map((curr) => curr.isoCode)
             );
-            expect(currencies).toEqual(standardCurrencyArr);
+            expect(currencies).toEqual(currencyJsonArr);
         });
     });
 });
