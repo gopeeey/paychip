@@ -10,6 +10,7 @@ import {
     standardCountry,
     standardCountryArray,
 } from "../../../samples";
+import { CountryNotFoundError } from "../../../../logic/errors";
 
 const repo = {
     create: jest.fn(),
@@ -38,20 +39,21 @@ describe("Testing country service", () => {
         describe("Given country exists", () => {
             it("should return a standard country object", async () => {
                 repo.getByCode.mockResolvedValue(countryJson);
-                const result = await countryService.getByCode(countryData.currencyCode);
+                const result = await countryService.getByCode(countryJson.isoCode);
                 expect(result).toEqual(standardCountry);
                 expect(repo.getByCode).toHaveBeenCalledTimes(1);
-                expect(repo.getByCode).toHaveBeenCalledWith(countryData.currencyCode);
+                expect(repo.getByCode).toHaveBeenCalledWith(countryJson.isoCode);
             });
         });
 
         describe("Given country does not exist", () => {
-            it("should return null", async () => {
+            it("should throw a country not found error", async () => {
                 repo.getByCode.mockResolvedValue(null);
-                const result = await countryService.getByCode(countryData.currencyCode);
-                expect(result).toBe(null);
+                await expect(countryService.getByCode(countryJson.isoCode)).rejects.toThrow(
+                    new CountryNotFoundError()
+                );
                 expect(repo.getByCode).toHaveBeenCalledTimes(1);
-                expect(repo.getByCode).toHaveBeenCalledWith(countryData.currencyCode);
+                expect(repo.getByCode).toHaveBeenCalledWith(countryJson.isoCode);
             });
         });
     });
@@ -71,32 +73,6 @@ describe("Testing country service", () => {
             const countryCodes = await countryService.getSupportedCountryCodes();
             expect(countryCodes).toEqual(countryCodes);
             expect(repo.getAll).toHaveBeenCalledTimes(1);
-        });
-    });
-
-    describe("Testing checkCountryIsSupported", () => {
-        describe("Given country is supported", () => {
-            it("should return true", async () => {
-                repo.getByCode.mockResolvedValue(countryJson);
-                const result = await countryService.checkCountryIsSupported(
-                    countryData.currencyCode
-                );
-                expect(result).toBe(true);
-                expect(repo.getByCode).toHaveBeenCalledTimes(1);
-                expect(repo.getByCode).toHaveBeenCalledWith(countryData.currencyCode);
-            });
-        });
-
-        describe("Given country is not supported", () => {
-            it("should return false", async () => {
-                repo.getByCode.mockResolvedValue(null);
-                const result = await countryService.checkCountryIsSupported(
-                    countryData.currencyCode
-                );
-                expect(result).toBe(false);
-                expect(repo.getByCode).toHaveBeenCalledTimes(1);
-                expect(repo.getByCode).toHaveBeenCalledWith(countryData.currencyCode);
-            });
         });
     });
 });

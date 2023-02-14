@@ -2,7 +2,7 @@ import {
     AccountModelInterface,
     AccountServiceDependenciesInterface,
 } from "../../../contracts/interfaces";
-import { CreateAccountDto, StandardAccountDto } from "../../../contracts/dtos";
+import { CreateAccountDto } from "../../../contracts/dtos";
 import { hashString, generateAuthToken } from "../../../utils/functions";
 import { LoginDto } from "../../../contracts/dtos";
 import {
@@ -34,8 +34,8 @@ export class AccountService implements AccountServiceInterface {
         });
 
         // persist account
-        const profile = await this._repository.create(newCreateAccountDto);
-        return new StandardAccountDto(profile);
+        const account = await this._repository.create(newCreateAccountDto);
+        return account;
     };
 
     signup = async (createAccountDto: CreateAccountDto) => {
@@ -53,12 +53,12 @@ export class AccountService implements AccountServiceInterface {
         if (!passMatch) throw new InvalidLoginDetailsError();
         const authToken = generateAuthToken("account", { accountId: account.id });
 
-        return { account: new StandardAccountDto(account), authToken };
+        return { account, authToken };
     };
 
     getById = async (id: AccountModelInterface["id"]) => {
         const account = await this._repository.findById(id);
         if (!account) throw new AccountNotFoundError();
-        return new StandardAccountDto(account);
+        return account;
     };
 }

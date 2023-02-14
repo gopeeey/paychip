@@ -4,6 +4,7 @@ import {
     CountryServiceDependenciesInterface,
     CountryModelInterface,
 } from "../../../contracts/interfaces";
+import { CountryNotFoundError } from "../../errors";
 
 export class CountryService implements CountryServiceInterface {
     private readonly _repository: CountryServiceDependenciesInterface["repo"];
@@ -18,7 +19,7 @@ export class CountryService implements CountryServiceInterface {
 
     getByCode = async (isoCode: CountryModelInterface["isoCode"]) => {
         const country = await this._repository.getByCode(isoCode);
-        if (!country) return null;
+        if (!country) throw new CountryNotFoundError();
         return new StandardCountryDto(country);
     };
 
@@ -30,10 +31,5 @@ export class CountryService implements CountryServiceInterface {
     getSupportedCountryCodes = async () => {
         const countries = await this.getSupportedCountries();
         return countries.map((country) => country.isoCode);
-    };
-
-    checkCountryIsSupported = async (isoCode: CountryModelInterface["isoCode"]) => {
-        const country = await this.getByCode(isoCode);
-        return Boolean(country);
     };
 }

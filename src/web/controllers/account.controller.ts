@@ -1,7 +1,7 @@
 import { AccountServiceInterface } from "../../contracts/interfaces";
 import { NextFunction, Request, Response } from "express";
 import { BaseController } from "./base.controller";
-import { CreateAccountDto, LoginDto } from "../../contracts/dtos";
+import { CreateAccountDto, LoginDto, StandardAccountDto } from "../../contracts/dtos";
 import { sendResponse } from "../../utils/functions";
 
 export class AccountController extends BaseController {
@@ -13,7 +13,12 @@ export class AccountController extends BaseController {
         await this.handleReq(next, async () => {
             const createAccountDto = new CreateAccountDto(req.body as CreateAccountDto);
             const resData = await this._service.signup(new CreateAccountDto(createAccountDto));
-            sendResponse(res, { code: 201, data: resData });
+
+            const data = {
+                account: new StandardAccountDto(resData.account),
+                authToken: resData.authToken,
+            };
+            sendResponse(res, { code: 201, data });
         });
     };
 
@@ -21,7 +26,12 @@ export class AccountController extends BaseController {
         await this.handleReq(next, async () => {
             const loginDto = new LoginDto(req.body as LoginDto);
             const resData = await this._service.login(loginDto);
-            sendResponse(res, { code: 200, data: resData });
+
+            const data = {
+                account: new StandardAccountDto(resData.account),
+                authToken: resData.authToken,
+            };
+            sendResponse(res, { code: 200, data });
         });
     };
 }

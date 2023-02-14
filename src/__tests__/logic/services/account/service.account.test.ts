@@ -3,12 +3,7 @@ import {
     AccountServiceDependenciesInterface,
 } from "../../../../contracts/interfaces";
 import { AccountService } from "../../../../logic/services";
-import {
-    accountJson,
-    accountData,
-    standardAccount,
-    loginDetails,
-} from "../../../samples/account.samples";
+import { accountJson, accountData, loginDetails } from "../../../samples/account.samples";
 import * as utilFuncs from "../../../../utils/functions";
 import bcrypt from "bcrypt";
 import { AccountNotFoundError, InvalidLoginDetailsError } from "../../../../logic/errors";
@@ -61,7 +56,7 @@ describe("Testing account service", () => {
 
             it("should return a new account object", async () => {
                 const profile = await accountService.createAccount(accountData);
-                expect(profile).toEqual(standardAccount);
+                expect(profile).toEqual(accountJson);
                 expect(createMock).toHaveBeenCalledTimes(1);
                 expect(createMock).toHaveBeenCalledWith({
                     ...accountData,
@@ -75,7 +70,7 @@ describe("Testing account service", () => {
         // Creates a business for the account
         it("should create an account profile", async () => {
             await accountService.signup(accountData);
-            createAccountMock.mockResolvedValue(standardAccount);
+            createAccountMock.mockResolvedValue(accountJson);
             expect(createAccountMock).toHaveBeenCalledTimes(1);
             expect(createAccountMock).toHaveBeenCalledWith(accountData);
         });
@@ -94,7 +89,7 @@ describe("Testing account service", () => {
             const response = await accountService.signup(accountData);
             expect(response).toHaveProperty("account");
             expect(response).toHaveProperty("authToken");
-            expect(response.account).toEqual(standardAccount);
+            expect(response.account).toEqual(accountJson);
         });
     });
 
@@ -130,7 +125,7 @@ describe("Testing account service", () => {
                     const authToken = "authTokenValue";
                     generateJwtMock.mockReturnValue(authToken);
                     const response = await accountService.login(loginDetails);
-                    expect(response).toHaveProperty("account", standardAccount);
+                    expect(response).toHaveProperty("account", accountJson);
                     expect(response).toHaveProperty("authToken", authToken);
                 });
             });
@@ -163,7 +158,7 @@ describe("Testing account service", () => {
             it("should return a standard account object", async () => {
                 findByIdMock.mockResolvedValue(accountJson);
                 const result = await accountService.getById(accountJson.id);
-                expect(result).toEqual(standardAccount);
+                expect(result).toEqual(accountJson);
                 expect(findByIdMock).toHaveBeenCalledTimes(1);
                 expect(findByIdMock).toHaveBeenCalledWith(accountJson.id);
             });

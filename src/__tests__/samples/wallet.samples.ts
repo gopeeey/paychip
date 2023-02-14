@@ -9,7 +9,7 @@ export const walletData = new CreateWalletDto({
     parentWalletId: null,
     waiveFundingCharges: false,
     waiveWithdrawalCharges: false,
-    walletType: "personal",
+    walletType: "commercial",
 });
 
 export const walletObj = new Wallet(walletData);
