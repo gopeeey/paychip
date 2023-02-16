@@ -5,29 +5,27 @@ import {
     BusinessModelInterface,
     AccountModelInterface,
 } from "../../../contracts/interfaces";
-import { BusinessNotFoundError, CountryNotSuportedError } from "../../errors";
+import { BusinessNotFoundError } from "../../errors";
+import { BusinessCreator } from "./business_creator.business";
 
 export class BusinessService implements BusinessServiceInterface {
     private readonly _repository: BusinessServiceDependenciesInterface["repo"];
 
-    constructor(private readonly _dependencies: BusinessServiceDependenciesInterface) {
-        this._repository = this._dependencies.repo;
+    constructor(private readonly _dep: BusinessServiceDependenciesInterface) {
+        this._repository = this._dep.repo;
     }
 
     createBusiness = async (createBusinessDto: CreateBusinessDto) => {
-        // check if country is supported
-        const country = await this._dependencies.getCountry(createBusinessDto.countryCode);
-        if (!country) throw new CountryNotSuportedError();
+        const business = await new BusinessCreator({
+            dto: createBusinessDto,
+            createWallet: this._dep.createWallet,
+            getCountry: this._dep.getCountry,
+            getOwner: this._dep.getAccount,
+            repo: this._dep.repo,
+            updateCurrencies: this._dep.updateCurrencies,
+        }).create();
 
-        // create business
-        const business = await this._repository.create(createBusinessDto);
-
-        // add the currency of the country to the business currencies
-        const currencies = await this._dependencies.updateCurrencies(business.id, [
-            country.currencyCode,
-        ]);
-
-        return new StandardBusinessDto({ ...business, currencies });
+        return business;
     };
 
     getById = async (id: BusinessModelInterface["id"]) => {

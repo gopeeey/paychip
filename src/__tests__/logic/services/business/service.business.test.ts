@@ -2,9 +2,14 @@ import { BusinessService } from "../../../../logic/services";
 import {
     BusinessServiceDependenciesInterface,
     BusinessRepoInterface,
+    BusinessCreatorDependencies,
 } from "../../../../contracts/interfaces";
 import { accountJson, businessData, businessJson, businessJsonArr } from "../../../samples";
 import { CountryNotSuportedError, BusinessNotFoundError } from "../../../../logic/errors";
+import { BusinessCreator } from "../../../../logic/services";
+
+const businessCreateor = new BusinessCreator({} as unknown as BusinessCreatorDependencies);
+const businessCreatorCreate = jest.spyOn(businessCreateor, "create");
 
 const repo = {
     create: jest.fn(),
@@ -16,6 +21,8 @@ const dependencies = {
     repo,
     getCountry: jest.fn(),
     updateCurrencies: jest.fn(),
+    getAccount: jest.fn(),
+    createWallet: jest.fn(),
 };
 
 const businessService = new BusinessService(

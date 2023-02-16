@@ -6,6 +6,7 @@ import {
     BusinessModelInterface,
     BusinessRepoInterface,
     CountryModelInterface,
+    CurrencyModelInterface,
     WalletModelInterface,
 } from "../../../contracts/interfaces";
 
@@ -16,19 +17,20 @@ export class BusinessCreator implements BusinessCreatorInterface {
     private declare business: BusinessModelInterface;
     private declare owner: AccountModelInterface;
     private declare wallet: WalletModelInterface;
+    private declare currencies: CurrencyModelInterface[];
 
     constructor(private readonly _dep: BusinessCreatorDependencies) {
         this._repo = this._dep.repo;
+        this.createBusinessDto = this._dep.dto;
     }
 
-    create = async (createBusinessDto: CreateBusinessDto) => {
-        this.createBusinessDto = createBusinessDto;
-
+    create = async () => {
         await this.checkOwner();
         await this.checkCountry();
         await this.persistBusiness();
         await this.createBusinessWallet();
         // add currency of the country to the business currencies
+        await this.addFirstCurrency();
         return this.business;
     };
 
@@ -57,5 +59,11 @@ export class BusinessCreator implements BusinessCreatorInterface {
                 walletType: "commercial",
             })
         );
+    };
+
+    private addFirstCurrency = async () => {
+        this.currencies = await this._dep.updateCurrencies(this.business.id, [
+            this.country.currencyCode,
+        ]);
     };
 }

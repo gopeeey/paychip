@@ -6,6 +6,7 @@ import {
     CountryModelInterface,
     WalletModelInterface,
 } from "../../../db";
+import { CurrencyServiceInterface } from "../currency";
 
 export interface BusinessCreatorInterface {
     create: (createBusinessDto: CreateBusinessDto) => Promise<BusinessModelInterface>;
@@ -16,4 +17,5 @@ export interface BusinessCreatorDependencies {
     getOwner: (ownerId: AccountModelInterface["id"]) => Promise<AccountModelInterface>;
     getCountry: (countryCode: CountryModelInterface["isoCode"]) => Promise<CountryModelInterface>;
     createWallet: (createWalletDto: CreateWalletDto) => Promise<WalletModelInterface>;
+    updateCurrencies: CurrencyServiceInterface["updateBusinessCurrencies"];
 }

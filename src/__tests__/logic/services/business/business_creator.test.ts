@@ -11,17 +11,19 @@ import {
 } from "../../../samples";
 
 const dependencies = {
+    dto: businessData,
     repo: {
         create: jest.fn(),
     },
     getCountry: jest.fn(),
     createWallet: jest.fn(),
     getOwner: jest.fn(),
+    updateCurrencies: jest.fn(),
 };
 
 const businessCreator = new BusinessCreator(dependencies as unknown as BusinessCreatorDependencies);
 
-const runCreator = async () => businessCreator.create(businessData);
+const runCreator = async () => businessCreator.create();
 
 const mockSuccess = () => {
     dependencies.repo.create.mockResolvedValue(businessJson);
@@ -88,6 +90,14 @@ describe("TESTING BUSINESS CREATOR", () => {
             });
 
             // add currency of the country to the business currencies
+            it("should update the business currencies", async () => {
+                mockSuccess();
+                await runCreator();
+                expect(dependencies.updateCurrencies).toHaveBeenCalledTimes(1);
+                expect(dependencies.updateCurrencies).toHaveBeenCalledWith(businessJson.id, [
+                    countryJson.currencyCode,
+                ]);
+            });
         });
     });
 });
