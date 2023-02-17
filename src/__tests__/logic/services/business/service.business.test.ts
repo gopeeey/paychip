@@ -8,8 +8,7 @@ import { accountJson, businessData, businessJson, businessJsonArr } from "../../
 import { CountryNotSuportedError, BusinessNotFoundError } from "../../../../logic/errors";
 import { BusinessCreator } from "../../../../logic/services";
 
-const businessCreateor = new BusinessCreator({} as unknown as BusinessCreatorDependencies);
-const businessCreatorCreate = jest.spyOn(businessCreateor, "create");
+const businessCreatorSpy = jest.spyOn(BusinessCreator.prototype, "create");
 
 const repo = {
     create: jest.fn(),
@@ -30,6 +29,15 @@ const businessService = new BusinessService(
 );
 
 describe("Testing business service", () => {
+    describe("Testing createBusiness", () => {
+        it("should return a business object", async () => {
+            businessCreatorSpy.mockResolvedValue(businessJson);
+            const business = await businessService.createBusiness(businessData);
+            expect(business).toEqual(businessJson);
+            expect(businessCreatorSpy).toHaveBeenCalledTimes(1);
+        });
+    });
+
     describe("Testing getById", () => {
         describe("Given the business exists", () => {
             it("should return a business object", async () => {

@@ -24,7 +24,7 @@ export class BusinessCreator implements BusinessCreatorInterface {
         this.createBusinessDto = this._dep.dto;
     }
 
-    create = async () => {
+    async create() {
         await this.checkOwner();
         await this.checkCountry();
         await this.persistBusiness();
@@ -32,7 +32,7 @@ export class BusinessCreator implements BusinessCreatorInterface {
         // add currency of the country to the business currencies
         await this.addFirstCurrency();
         return this.business;
-    };
+    }
 
     private checkOwner = async () => {
         this.owner = await this._dep.getOwner(this.createBusinessDto.ownerId);

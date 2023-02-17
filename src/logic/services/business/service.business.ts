@@ -1,4 +1,4 @@
-import { CreateBusinessDto, StandardBusinessDto } from "../../../contracts/dtos";
+import { CreateBusinessDto } from "../../../contracts/dtos";
 import {
     BusinessServiceInterface,
     BusinessServiceDependenciesInterface,

@@ -9,10 +9,11 @@ import {
 import { CurrencyServiceInterface } from "../currency";
 
 export interface BusinessCreatorInterface {
-    create: (createBusinessDto: CreateBusinessDto) => Promise<BusinessModelInterface>;
+    create: () => Promise<BusinessModelInterface>;
 }
 
 export interface BusinessCreatorDependencies {
+    dto: CreateBusinessDto;
     repo: BusinessRepoInterface;
     getOwner: (ownerId: AccountModelInterface["id"]) => Promise<AccountModelInterface>;
     getCountry: (countryCode: CountryModelInterface["isoCode"]) => Promise<CountryModelInterface>;
