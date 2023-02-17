@@ -6,7 +6,7 @@ import {
     AccountModelInterface,
 } from "../../../contracts/interfaces";
 import { BusinessNotFoundError } from "../../errors";
-import { BusinessCreator } from "./business_creator.business";
+import { BusinessCreator } from "./creator.business";
 
 export class BusinessService implements BusinessServiceInterface {
     private readonly _repository: BusinessServiceDependenciesInterface["repo"];

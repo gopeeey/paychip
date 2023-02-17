@@ -14,4 +14,9 @@ export class WalletRepo implements WalletRepoInterface {
         const wallet = await this._modelContext.findByPk(id);
         return wallet ? wallet.toJSON() : null;
     };
+
+    getUnique: WalletRepoInterface["getUnique"] = async ({ businessId, email, currency }) => {
+        const wallet = await this._modelContext.findOne({ where: { businessId, email, currency } });
+        return wallet ? wallet.toJSON() : null;
+    };
 }

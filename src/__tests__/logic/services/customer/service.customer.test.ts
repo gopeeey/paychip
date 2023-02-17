@@ -1,6 +1,6 @@
 import { CustomerService } from "../../../../logic/services";
 import { CustomerServiceDependencies } from "../../../../contracts/interfaces";
-import { customerData, customerJson, customerJsonArray, customerObj } from "../../../samples";
+import { customerData, customerJson, customerJsonArray } from "../../../samples";
 
 const repo = {
     create: jest.fn(),
@@ -16,24 +16,26 @@ const customerService = new CustomerService(dependencies);
 describe("TESTING CUSTOMER SERVICE", () => {
     describe("testing createCustomer", () => {
         it("should return a customer object", async () => {
-            repo.create.mockResolvedValue(customerJson);
-            const customer = await customerService.createCustomer(customerData);
-            expect(customer).toEqual(customerJson);
+            repo.create.mockResolvedValue(customerJson.complete);
+            const customer = await customerService.createCustomer(customerData.complete);
+            expect(customer).toEqual(customerJson.complete);
             expect(repo.create).toHaveBeenCalledTimes(1);
-            expect(repo.create).toHaveBeenCalledWith(customerData);
+            expect(repo.create).toHaveBeenCalledWith(customerData.complete);
         });
     });
 
     describe("testing getBusinessCustomers", () => {
         describe("given customers with passed businessId exist", () => {
             it("should return an array of standard customer objects", async () => {
-                repo.getByBusinessId.mockResolvedValue(customerJsonArray);
+                repo.getByBusinessId.mockResolvedValue(customerJsonArray.complete);
                 const customers = await customerService.getBusinessCustomers(
-                    customerJson.businessId
+                    customerJson.complete.businessId
                 );
-                expect(customers).toEqual(customerJsonArray);
+                expect(customers).toEqual(customerJsonArray.complete);
                 expect(repo.getByBusinessId).toHaveBeenCalledTimes(1);
-                expect(repo.getByBusinessId).toHaveBeenLastCalledWith(customerJson.businessId);
+                expect(repo.getByBusinessId).toHaveBeenLastCalledWith(
+                    customerJson.complete.businessId
+                );
             });
         });
 
@@ -41,7 +43,7 @@ describe("TESTING CUSTOMER SERVICE", () => {
             it("should return an array of customer objects", async () => {
                 repo.getByBusinessId.mockResolvedValue([]);
                 const customers = await customerService.getBusinessCustomers(
-                    customerJson.businessId
+                    customerJson.complete.businessId
                 );
                 expect(customers).toEqual([]);
             });

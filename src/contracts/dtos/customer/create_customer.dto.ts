@@ -5,8 +5,8 @@ type requiredProps = Pick<CustomerModelInterface, "email" | "businessId" | "name
 export class CreateCustomerDto implements requiredProps {
     email: CustomerModelInterface["email"];
     businessId: CustomerModelInterface["businessId"];
-    name: CustomerModelInterface["name"];
-    phone: CustomerModelInterface["phone"];
+    name?: CustomerModelInterface["name"];
+    phone?: CustomerModelInterface["phone"];
 
     constructor(body: requiredProps) {
         this.email = body.email;

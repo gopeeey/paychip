@@ -7,7 +7,6 @@ import {
     customerObj,
     customerObjArr,
 } from "../../samples";
-import { CreateCustomerDto } from "../../../contracts/dtos";
 
 const modelContext = {
     create: jest.fn(),
@@ -19,20 +18,22 @@ const customerRepo = new CustomerRepo(modelContext as unknown as typeof Customer
 describe("TESTING CUSTOMER REPO", () => {
     describe("testing create", () => {
         it("should return a new customer object", async () => {
-            modelContext.create.mockResolvedValue(customerObj);
-            const customer = await customerRepo.create(customerData);
-            expect(customer).toEqual(customerJson);
+            modelContext.create.mockResolvedValue(customerObj.complete);
+            const customer = await customerRepo.create(customerData.complete);
+            expect(customer).toEqual(customerJson.complete);
             expect(modelContext.create).toHaveBeenCalledTimes(1);
-            expect(modelContext.create).toHaveBeenCalledWith(customerData);
+            expect(modelContext.create).toHaveBeenCalledWith(customerData.complete);
         });
     });
 
     describe("testing getByBusinessId", () => {
         describe("given a customer with passed businessId exists", () => {
             it("should return an array of customers", async () => {
-                modelContext.findAll.mockResolvedValue(customerObjArr);
-                const customers = await customerRepo.getByBusinessId(customerJson.businessId);
-                expect(customers).toEqual(customerJsonArray);
+                modelContext.findAll.mockResolvedValue(customerObjArr.complete);
+                const customers = await customerRepo.getByBusinessId(
+                    customerJson.complete.businessId
+                );
+                expect(customers).toEqual(customerJsonArray.complete);
                 expect(modelContext.findAll).toHaveBeenCalledTimes(1);
             });
         });
@@ -40,7 +41,9 @@ describe("TESTING CUSTOMER REPO", () => {
         describe("given no customer with passed businessId exists", () => {
             it("should return an empty array", async () => {
                 modelContext.findAll.mockResolvedValue([]);
-                const customers = await customerRepo.getByBusinessId(customerJson.businessId);
+                const customers = await customerRepo.getByBusinessId(
+                    customerJson.complete.businessId
+                );
                 expect(customers).toEqual([]);
                 expect(modelContext.findAll).toHaveBeenCalledTimes(1);
             });

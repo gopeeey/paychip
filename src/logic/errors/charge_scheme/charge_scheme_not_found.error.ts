@@ -1,7 +1,7 @@
 import { NotFoundError } from "../base_errors";
 
-export class ChargeSchemeNotFoundError extends NotFoundError {
-    constructor() {
-        super("Charge scheme not found");
+export class ChargeSchemeNotFoundError<T> extends NotFoundError<undefined, T> {
+    constructor(searchParams?: T) {
+        super("Charge scheme not found", undefined, searchParams);
     }
 }

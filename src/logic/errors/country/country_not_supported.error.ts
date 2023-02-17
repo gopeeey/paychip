@@ -1,7 +1,7 @@
 import { ValidationError } from "../base_errors";
 
-export class CountryNotSuportedError extends ValidationError {
-    constructor() {
-        super("Country not supported");
+export class CountryNotSuportedError<T> extends ValidationError<undefined, T> {
+    constructor(countryData?: T) {
+        super("Country not supported", undefined, countryData);
     }
 }

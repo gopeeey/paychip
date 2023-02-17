@@ -5,6 +5,7 @@ import { walletData, walletJson, walletObj } from "../../samples";
 const modelContext = {
     create: jest.fn(),
     findByPk: jest.fn(),
+    findOne: jest.fn(),
 };
 
 const walletRepo = new WalletRepo(modelContext as unknown as typeof Wallet);
@@ -40,6 +41,28 @@ describe("TESTING WALLET REPO", () => {
                 expect(wallet).toBeNull();
                 expect(modelContext.findByPk).toHaveBeenCalledTimes(1);
                 expect(modelContext.findByPk).toHaveBeenCalledWith(data);
+            });
+        });
+    });
+
+    describe("Testing getUnique", () => {
+        describe("Given the wallet exists", () => {
+            it("should return a wallet json object", async () => {
+                modelContext.findOne.mockResolvedValue(walletObj);
+                const data = walletJson;
+                const wallet = await walletRepo.getUnique(data);
+                expect(wallet).toEqual(walletJson);
+                expect(modelContext.findOne).toHaveBeenCalledTimes(1);
+            });
+        });
+
+        describe("Given the wallet does not exist", () => {
+            it("should return null", async () => {
+                modelContext.findOne.mockResolvedValue(null);
+                const data = walletJson;
+                const wallet = await walletRepo.getUnique(data);
+                expect(wallet).toBeNull();
+                expect(modelContext.findOne).toHaveBeenCalledTimes(1);
             });
         });
     });

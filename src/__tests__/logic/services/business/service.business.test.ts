@@ -1,11 +1,7 @@
 import { BusinessService } from "../../../../logic/services";
-import {
-    BusinessServiceDependenciesInterface,
-    BusinessRepoInterface,
-    BusinessCreatorDependencies,
-} from "../../../../contracts/interfaces";
+import { BusinessServiceDependenciesInterface } from "../../../../contracts/interfaces";
 import { accountJson, businessData, businessJson, businessJsonArr } from "../../../samples";
-import { CountryNotSuportedError, BusinessNotFoundError } from "../../../../logic/errors";
+import { BusinessNotFoundError } from "../../../../logic/errors";
 import { BusinessCreator } from "../../../../logic/services";
 
 const businessCreatorSpy = jest.spyOn(BusinessCreator.prototype, "create");

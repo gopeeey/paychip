@@ -1,4 +1,4 @@
-import { CreateBusinessDto, CreateWalletDto, StandardBusinessDto } from "../../../../dtos";
+import { CreateBusinessDto, CreateWalletDto } from "../../../../dtos";
 import {
     BusinessRepoInterface,
     BusinessModelInterface,
@@ -7,10 +7,6 @@ import {
 } from "../../../db";
 import { CountryServiceInterface } from "../country";
 import { CurrencyServiceInterface } from "../currency";
-import {
-    BusinessCreatorDependencies,
-    BusinessCreatorInterface,
-} from "./business_creator.business.interface";
 
 export interface BusinessServiceInterface {
     createBusiness: (dto: CreateBusinessDto) => Promise<BusinessModelInterface>;

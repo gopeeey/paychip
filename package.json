@@ -4,7 +4,7 @@
   "description": "An API that allows business to generate wallets and track transactions",
   "main": "src/index.ts",
   "scripts": {
-    "test": "jest --watchAll",
+    "test": "jest --watch",
     "dev": "nodemon",
     "build": "rm -rf build/ && tsc",
     "migrate-dev": "npm run build && cross-env NODE_ENV=development sequelize db:migrate",

@@ -48,7 +48,7 @@ export const verifyJwt = <T>(token: string, secret: string = config.misc.jwtSecr
 
 export const sendResponse = (
     res: Response,
-    opts: { code: number; message?: string; data?: object }
+    opts: { code: number; message?: string; data?: any }
 ) => {
     let defaultOpts = { code: 200, message: "successful" };
     opts = { ...defaultOpts, ...opts };

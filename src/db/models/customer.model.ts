@@ -16,7 +16,7 @@ export class Customer
     declare id: CreationOptional<CustomerModelInterface["id"]>;
     declare businessId: CustomerModelInterface["businessId"];
     declare business?: NonAttribute<BusinessModelInterface>;
-    declare name: CustomerModelInterface["name"];
+    declare name?: CustomerModelInterface["name"];
     declare email: CustomerModelInterface["email"];
     declare phone?: CustomerModelInterface["phone"];
 
@@ -39,7 +39,6 @@ Customer.init(
         },
         name: {
             type: DataTypes.STRING(100),
-            allowNull: false,
         },
         email: {
             type: DataTypes.STRING(200),
