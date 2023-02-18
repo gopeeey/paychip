@@ -9,7 +9,7 @@ const dep = {
         create: jest.fn(),
         getUnique: jest.fn(),
     },
-    createCustomer: jest.fn(),
+    // createCustomer: jest.fn(),
 };
 
 const walletCreator = new WalletCreator(dep as unknown as WalletCreatorDependencies);
@@ -55,11 +55,11 @@ describe("TESTING BUSINESS CREATOR", () => {
             expect(dep.repo.create).toHaveBeenCalledWith(walletData);
         });
 
-        it("should create a customer for the wallet", async () => {
-            await walletCreator.create();
-            expect(dep.createCustomer).toHaveBeenCalledTimes(1);
-            expect(dep.createCustomer).toHaveBeenCalledWith(customerData.incomplete);
-        });
+        // it("should create a customer for the wallet", async () => {
+        //     await walletCreator.create();
+        //     expect(dep.createCustomer).toHaveBeenCalledTimes(1);
+        //     expect(dep.createCustomer).toHaveBeenCalledWith(customerData.incomplete);
+        // });
 
         it("should return a wallet object", async () => {
             const wallet = await walletCreator.create();

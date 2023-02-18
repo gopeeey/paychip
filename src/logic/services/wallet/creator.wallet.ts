@@ -5,7 +5,6 @@ import {
     WalletModelInterface,
     WalletRepoInterface,
 } from "../../../contracts/interfaces";
-import { walletJson } from "../../../__tests__/samples";
 import { DuplicateWalletError } from "../../errors";
 
 export class WalletCreator implements WalletCreatorInterface {
@@ -21,7 +20,7 @@ export class WalletCreator implements WalletCreatorInterface {
     async create() {
         await this.checkExists();
         await this.persistWallet();
-        await this.createCustomer();
+        // await this.createCustomer();
         return this.wallet;
     }
 
@@ -35,9 +34,9 @@ export class WalletCreator implements WalletCreatorInterface {
         this.wallet = await this._repo.create(this.createWalletDto);
     };
 
-    private createCustomer = async () => {
-        const { businessId, email } = this.createWalletDto;
-        const customerDto = new CreateCustomerDto({ email, businessId });
-        await this._dep.createCustomer(customerDto);
-    };
+    // private createCustomer = async () => {
+    //     const { businessId, email } = this.createWalletDto;
+    //     const customerDto = new CreateCustomerDto({ email, businessId });
+    //     await this._dep.createCustomer(customerDto);
+    // };
 }

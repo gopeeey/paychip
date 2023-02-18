@@ -8,5 +8,5 @@ export interface WalletCreatorInterface {
 export interface WalletCreatorDependencies {
     dto: CreateWalletDto;
     repo: WalletRepoInterface;
-    createCustomer: (createCustomerDto: CreateCustomerDto) => Promise<CustomerModelInterface>;
+    // createCustomer: (createCustomerDto: CreateCustomerDto) => Promise<CustomerModelInterface>;
 }
