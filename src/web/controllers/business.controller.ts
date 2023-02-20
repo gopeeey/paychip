@@ -14,7 +14,6 @@ export class BusinessController extends BaseController {
         await this.handleReq(next, async () => {
             if (!req.account) throw new ProtectedRouteAccessError(req.path);
             const createBusinessDto = { ...req.body, ownerId: req.account.id };
-            console.log("\n\nFROM CONTROLLER", this._service);
             const data = await this._service.createBusiness(
                 new CreateBusinessDto(createBusinessDto as CreateBusinessDto)
             );

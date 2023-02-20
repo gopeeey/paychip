@@ -1,6 +1,7 @@
 import { Wallet } from "../../../db/models";
 import { WalletRepo } from "../../../db/repos";
 import { walletData, walletJson, walletObj } from "../../samples";
+import { generateIdMock } from "../../mocks";
 
 const modelContext = {
     create: jest.fn(),
@@ -13,11 +14,14 @@ const walletRepo = new WalletRepo(modelContext as unknown as typeof Wallet);
 describe("TESTING WALLET REPO", () => {
     describe("Testing create", () => {
         it("should return a json wallet object", async () => {
+            const id = "cat";
+            generateIdMock.mockReturnValue(id);
             modelContext.create.mockResolvedValue(walletObj);
             const wallet = await walletRepo.create(walletData);
             expect(wallet).toEqual(walletJson);
             expect(modelContext.create).toHaveBeenCalledTimes(1);
-            expect(modelContext.create).toHaveBeenCalledWith(walletData);
+            expect(modelContext.create).toHaveBeenCalledWith({ ...walletData, id });
+            expect(generateIdMock).toHaveBeenCalledTimes(1);
         });
     });
 

@@ -55,6 +55,10 @@ Wallet.belongsTo(ChargeScheme, {
     as: "chargeScheme",
 });
 
+// wallets and wallets
+Wallet.hasMany(Wallet, { sourceKey: "id", foreignKey: "parentWalletId", as: "childWallets" });
+Wallet.belongsTo(Wallet, { targetKey: "id", foreignKey: "parentWalletId", as: "parentWallet" });
+
 export * from "./account.model";
 export * from "./country.model";
 export * from "./business.model";

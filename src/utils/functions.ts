@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import config from "../config";
 import jwt from "jsonwebtoken";
+import { nanoid } from "nanoid";
 import { Response } from "express";
 import { AccountModelInterface, BusinessModelInterface } from "../contracts/interfaces";
 
@@ -58,3 +59,5 @@ export const sendResponse = (
         data: opts.data,
     });
 };
+
+export const generateId = () => nanoid();
