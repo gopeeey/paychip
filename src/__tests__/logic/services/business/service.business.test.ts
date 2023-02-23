@@ -1,8 +1,15 @@
 import { BusinessService } from "../../../../logic/services";
 import { BusinessServiceDependenciesInterface } from "../../../../contracts/interfaces";
-import { accountJson, businessData, businessJson, businessJsonArr } from "../../../samples";
-import { BusinessNotFoundError } from "../../../../logic/errors";
+import {
+    accountJson,
+    businessData,
+    businessJson,
+    businessJsonArr,
+    businessLevelToken,
+} from "../../../samples";
+import { BusinessNotFoundError, UnauthorizedBusinessAccessError } from "../../../../logic/errors";
 import { BusinessCreator } from "../../../../logic/services";
+import * as utilFuncs from "../../../../utils/functions";
 
 const businessCreatorSpy = jest.spyOn(BusinessCreator.prototype, "create");
 
@@ -24,7 +31,10 @@ const businessService = new BusinessService(
     dependencies as unknown as BusinessServiceDependenciesInterface
 );
 
-describe("Testing business service", () => {
+const getByIdMock = jest.spyOn(businessService, "getById");
+const generateAuthTokenMock = jest.spyOn(utilFuncs, "generateAuthToken");
+
+describe("TESTING BUSINESS SERVICE", () => {
     describe("Testing createBusiness", () => {
         it("should return a business object", async () => {
             businessCreatorSpy.mockResolvedValue(businessJson);
@@ -75,6 +85,41 @@ describe("Testing business service", () => {
                 expect(result).toEqual([]);
                 expect(repo.getOwnerBusinesses).toHaveBeenCalledTimes(1);
                 expect(repo.getOwnerBusinesses).toHaveBeenCalledWith(accountJson.id);
+            });
+        });
+    });
+
+    describe("Testing getBusinessAuth", () => {
+        it("should check if the user is the owner of the business", async () => {
+            getByIdMock.mockResolvedValue(businessJson);
+            generateAuthTokenMock.mockReturnValue(businessLevelToken);
+            await businessService.getBusinessAuth(businessJson.id, businessJson.ownerId);
+            expect(getByIdMock).toHaveBeenCalledTimes(1);
+            expect(getByIdMock).toHaveBeenCalledWith(businessJson.id);
+        });
+
+        describe("Given the user is not the owner of the business", () => {
+            it("should throw an unauthorized business access error", async () => {
+                getByIdMock.mockResolvedValue({ ...businessJson, ownerId: "5555" });
+                await expect(
+                    businessService.getBusinessAuth(businessJson.id, businessJson.ownerId)
+                ).rejects.toThrow(new UnauthorizedBusinessAccessError());
+            });
+        });
+
+        describe("Given the user is the owner of the business", () => {
+            it("should generate and return a business jwt token", async () => {
+                getByIdMock.mockResolvedValue(businessJson);
+                const token = await businessService.getBusinessAuth(
+                    businessJson.id,
+                    businessJson.ownerId
+                );
+                expect(token).toBe(businessLevelToken);
+                expect(generateAuthTokenMock).toHaveBeenCalledTimes(1);
+                expect(generateAuthTokenMock).toHaveBeenCalledWith("business", {
+                    accountId: businessJson.ownerId,
+                    businessId: businessJson.id,
+                });
             });
         });
     });

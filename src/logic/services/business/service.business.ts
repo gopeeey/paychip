@@ -5,8 +5,9 @@ import {
     BusinessModelInterface,
     AccountModelInterface,
 } from "../../../contracts/interfaces";
-import { BusinessNotFoundError } from "../../errors";
+import { BusinessNotFoundError, UnauthorizedBusinessAccessError } from "../../errors";
 import { BusinessCreator } from "./creator.business";
+import { generateAuthToken } from "../../../utils";
 
 export class BusinessService implements BusinessServiceInterface {
     private readonly _repository: BusinessServiceDependenciesInterface["repo"];
@@ -37,5 +38,15 @@ export class BusinessService implements BusinessServiceInterface {
     getOwnerBusinesses = async (ownerId: AccountModelInterface["id"]) => {
         const businesses = await this._repository.getOwnerBusinesses(ownerId);
         return businesses;
+    };
+
+    getBusinessAuth: BusinessServiceInterface["getBusinessAuth"] = async (
+        businessId,
+        accountId
+    ) => {
+        const business = await this.getById(businessId);
+        if (business.ownerId !== accountId) throw new UnauthorizedBusinessAccessError();
+        const accessToken = generateAuthToken("business", { accountId, businessId: business.id });
+        return accessToken;
     };
 }

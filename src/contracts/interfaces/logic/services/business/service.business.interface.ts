@@ -11,7 +11,13 @@ import { CurrencyServiceInterface } from "../currency";
 export interface BusinessServiceInterface {
     createBusiness: (dto: CreateBusinessDto) => Promise<BusinessModelInterface>;
     getById: (id: BusinessModelInterface["id"]) => Promise<BusinessModelInterface>;
-    getOwnerBusinesses: (ownerId: AccountModelInterface["id"]) => Promise<BusinessModelInterface[]>;
+    getOwnerBusinesses: (
+        ownerId: BusinessModelInterface["ownerId"]
+    ) => Promise<BusinessModelInterface[]>;
+    getBusinessAuth: (
+        businessId: BusinessModelInterface["id"],
+        accountId: BusinessModelInterface["ownerId"]
+    ) => Promise<string>;
 }
 
 export interface BusinessServiceDependenciesInterface {
