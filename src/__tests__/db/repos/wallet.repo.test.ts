@@ -70,4 +70,15 @@ describe("TESTING WALLET REPO", () => {
             });
         });
     });
+
+    describe("Testing getBusinessRootWallet", () => {
+        it("should return a wallet object for the business", async () => {
+            modelContext.findOne.mockResolvedValue(walletObj);
+            const wallet = await walletRepo.getBusinessRootWallet(
+                walletData.businessId,
+                walletData.currency
+            );
+            expect(wallet).toEqual(walletJson);
+        });
+    });
 });

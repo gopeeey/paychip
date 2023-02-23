@@ -3,6 +3,8 @@ import { BusinessModelInterfaceDef } from "./business.def.model.interface";
 import { ChargeSchemeModelInterfaceDef } from "./charge_scheme.def.model.interface";
 import { CurrencyModelInterfaceDef } from "./currency.def.model.interface";
 
+export const allowedWalletTypes = ["personal", "commercial"] as const;
+
 export interface WalletModelInterfaceDef extends BaseModelInterface {
     id: string;
     businessId: BusinessModelInterfaceDef["id"];
@@ -13,5 +15,5 @@ export interface WalletModelInterfaceDef extends BaseModelInterface {
     waiveWithdrawalCharges: boolean;
     email: string;
     chargeSchemeId: ChargeSchemeModelInterfaceDef["id"] | null;
-    walletType: "personal" | "commercial";
+    walletType: typeof allowedWalletTypes[number];
 }

@@ -13,4 +13,9 @@ export interface WalletRepoInterface {
         WalletModelInterface,
         "businessId" | "email" | "currency"
     >) => Promise<WalletModelInterface | null>;
+
+    getBusinessRootWallet: (
+        businessId: WalletModelInterface["businessId"],
+        currency: WalletModelInterface["currency"]
+    ) => Promise<WalletModelInterface | null>;
 }

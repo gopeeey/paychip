@@ -5,6 +5,15 @@ export interface CurrencyServiceInterface {
         businessId: BusinessModelInterface["id"],
         currencyCodes: CurrencyModelInterface["isoCode"][]
     ) => Promise<CurrencyModelInterface[]>;
+
+    getBusinessCurrencies: (
+        businessId: BusinessModelInterface["id"]
+    ) => Promise<CurrencyModelInterface[]>;
+
+    isSupportedBusinessCurrency: (
+        businessId: BusinessModelInterface["id"],
+        currencyCode: CurrencyModelInterface["isoCode"]
+    ) => Promise<boolean>;
 }
 
 export interface CurrencyServiceDependencies {

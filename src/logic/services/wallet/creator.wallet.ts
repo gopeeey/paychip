@@ -13,8 +13,8 @@ export class WalletCreator implements WalletCreatorInterface {
     private declare wallet: WalletModelInterface;
 
     constructor(private readonly _dep: WalletCreatorDependencies) {
-        this.createWalletDto = _dep.dto;
-        this._repo = _dep.repo;
+        this.createWalletDto = this._dep.dto;
+        this._repo = this._dep.repo;
     }
 
     async create() {

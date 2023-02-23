@@ -5,13 +5,7 @@ import {
     AuthMiddlewareDependencies,
 } from "../../../contracts/interfaces";
 import { testRoute } from "./helpers";
-import {
-    accountLevelToken,
-    businessData,
-    standardAccount,
-    standardBusinessArr,
-} from "../../samples";
-import { InvalidLoginDetailsError, ValidationError } from "../../../logic/errors";
+import { accountLevelToken, standardAccount, standardBusinessArr } from "../../samples";
 import { AuthMiddleware } from "../../../web/middleware";
 
 const businessService = {

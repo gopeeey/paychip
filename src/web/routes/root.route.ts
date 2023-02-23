@@ -2,6 +2,7 @@ import { DependencyContainerInterface } from "../../contracts/interfaces";
 import { Router } from "express";
 import AccountRoute from "./account.route";
 import { BusinessRoute } from "./buisness.route";
+import { WalletRoute } from "./wallet.route";
 import EmptyRoute from "./empty.route";
 
 export class RootRoutes {
@@ -15,9 +16,14 @@ export class RootRoutes {
             authMiddleware: this._container.authMiddleware,
             businessService: this._container.businessService,
         }).init();
+        const walletRoutes = new WalletRoute({
+            authMiddleware: this._container.authMiddleware,
+            walletService: this._container.walletService,
+        }).init();
 
         router.use("/account", accountRoutes);
         router.use("/business", businessRoutes);
+        router.use("/wallet", walletRoutes);
 
         // These are just empty, they make unit testing the auth middleware easier
         if (this._container.authMiddleware) {

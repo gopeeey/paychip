@@ -3,10 +3,11 @@ import {
     CurrencyServiceDependencies,
 } from "../../../../contracts/interfaces";
 import { CurrencyService } from "../../../../logic/services";
-import { businessJson, currencyJsonArr } from "../../../samples";
+import { businessJson, currencyJson, currencyJsonArr } from "../../../samples";
 
 const repo = {
     updateBusinessCurrencies: jest.fn(),
+    getBusinessCurrencies: jest.fn(),
 };
 
 const dependencies = { repo };
@@ -27,6 +28,44 @@ describe("TESTING CURRENCY SERVICE", () => {
                 currencyJsonArr.map((curr) => curr.isoCode)
             );
             expect(currencies).toEqual(currencyJsonArr);
+        });
+    });
+
+    describe("Testing getBusinessCurrencies", () => {
+        it("should return an array of business currencies", async () => {
+            repo.getBusinessCurrencies.mockResolvedValue(currencyJsonArr);
+            const currencies = await currencyService.getBusinessCurrencies(businessJson.id);
+            expect(currencies).toEqual(currencyJsonArr);
+            expect(repo.getBusinessCurrencies).toHaveBeenCalledTimes(1);
+            expect(repo.getBusinessCurrencies).toHaveBeenCalledWith(businessJson.id);
+        });
+    });
+
+    describe("Testing isSupportedBusinessCurrency", () => {
+        describe("Given the business currency is supported", () => {
+            it("should return true", async () => {
+                repo.getBusinessCurrencies.mockResolvedValue(currencyJsonArr);
+                const answer = await currencyService.isSupportedBusinessCurrency(
+                    businessJson.id,
+                    currencyJson.isoCode
+                );
+                expect(answer).toBe(true);
+                expect(repo.getBusinessCurrencies).toHaveBeenCalledTimes(1);
+                expect(repo.getBusinessCurrencies).toHaveBeenCalledWith(businessJson.id);
+            });
+        });
+
+        describe("Given the business currency is not supported", () => {
+            it("should return false", async () => {
+                repo.getBusinessCurrencies.mockResolvedValue([{ ...currencyJson, isoCode: "pie" }]);
+                const answer = await currencyService.isSupportedBusinessCurrency(
+                    businessJson.id,
+                    currencyJson.isoCode
+                );
+                expect(answer).toBe(false);
+                expect(repo.getBusinessCurrencies).toHaveBeenCalledTimes(1);
+                expect(repo.getBusinessCurrencies).toHaveBeenCalledWith(businessJson.id);
+            });
         });
     });
 });

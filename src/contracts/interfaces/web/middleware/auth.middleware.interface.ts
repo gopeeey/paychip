@@ -8,6 +8,11 @@ export interface AuthenticatedRequestType extends Request {
     account?: AccountModelInterface;
     business?: BusinessModelInterface;
 }
+export type AuthRequiredController = (
+    req: AuthenticatedRequestType,
+    res: Response,
+    next: NextFunction
+) => Promise<void>;
 
 export interface AuthMiddlewareInterface {
     restrictTo: (
