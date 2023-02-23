@@ -34,6 +34,16 @@ Currency.belongsToMany(Business, {
     targetKey: "id",
     as: "businesses",
 });
+BusinessCurrency.belongsTo(Business, {
+    targetKey: "id",
+    foreignKey: "businessId",
+    as: "business",
+});
+BusinessCurrency.belongsTo(Currency, {
+    targetKey: "isoCode",
+    foreignKey: "currencyIsoCode",
+    as: "currency",
+});
 
 // currencies and countries
 Currency.hasMany(Country, { sourceKey: "isoCode", foreignKey: "currencyCode", as: "countries" });

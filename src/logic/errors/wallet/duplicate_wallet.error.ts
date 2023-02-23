@@ -5,6 +5,6 @@ type DuplicateWalletType = Pick<WalletModelInterface, "businessId" | "email" | "
 
 export class DuplicateWalletError extends ValidationError<undefined, DuplicateWalletType> {
     constructor(data: DuplicateWalletType) {
-        super("duplicate wallet found", undefined, data);
+        super("A wallet with this email address and currency already exists", undefined, data);
     }
 }

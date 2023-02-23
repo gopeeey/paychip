@@ -14,7 +14,7 @@ export interface BusinessServiceInterface {
     getOwnerBusinesses: (
         ownerId: BusinessModelInterface["ownerId"]
     ) => Promise<BusinessModelInterface[]>;
-    getBusinessAuth: (
+    getBusinessAccessToken: (
         businessId: BusinessModelInterface["id"],
         accountId: BusinessModelInterface["ownerId"]
     ) => Promise<string>;

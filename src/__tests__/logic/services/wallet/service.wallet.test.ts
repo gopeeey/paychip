@@ -56,49 +56,52 @@ describe("TESTING WALLET SERVICE", () => {
     });
 
     describe("Testing createBusinessWallet", () => {
-        it("should check if the parent wallet exists", async () => {
-            deps.repo.getBusinessRootWallet.mockResolvedValue(walletJson);
+        it("should check if the provided currency is supported by the business", async () => {
             deps.isSupportedBusinessCurrency.mockResolvedValue(true);
-
+            deps.repo.getBusinessRootWallet.mockResolvedValue(walletJsons.noParent);
             await walletService.createBusinessWallet(walletData);
-            expect(deps.repo.getBusinessRootWallet).toHaveBeenCalledTimes(1);
-            expect(deps.repo.getBusinessRootWallet).toHaveBeenCalledWith(
+            expect(deps.isSupportedBusinessCurrency).toHaveBeenCalledTimes(1);
+            expect(deps.isSupportedBusinessCurrency).toHaveBeenCalledWith(
                 walletData.businessId,
                 walletData.currency
             );
         });
 
-        describe("Given the parent wallet does not exist", () => {
-            it("should throw business wallet not found error", async () => {
-                deps.repo.getBusinessRootWallet.mockResolvedValue(null);
+        describe("Given the currency is not supported", () => {
+            it("should throw a business currency not supported error", async () => {
+                deps.isSupportedBusinessCurrency.mockResolvedValue(false);
                 await expect(walletService.createBusinessWallet(walletData)).rejects.toThrow(
-                    new BusinessRootWalletNotFoundError(walletData.businessId, walletData.currency)
+                    new BusinessCurrencyNotSupportedError(walletData.currency)
                 );
             });
         });
 
-        describe("Given the parent wallet exists", () => {
-            it("should check if the provided currency is supported by the business", async () => {
+        describe("Given the currency is supported", () => {
+            it("should check if the parent wallet exists", async () => {
+                deps.repo.getBusinessRootWallet.mockResolvedValue(walletJson);
                 deps.isSupportedBusinessCurrency.mockResolvedValue(true);
-                deps.repo.getBusinessRootWallet.mockResolvedValue(walletJsons.noParent);
+
                 await walletService.createBusinessWallet(walletData);
-                expect(deps.isSupportedBusinessCurrency).toHaveBeenCalledTimes(1);
-                expect(deps.isSupportedBusinessCurrency).toHaveBeenCalledWith(
+                expect(deps.repo.getBusinessRootWallet).toHaveBeenCalledTimes(1);
+                expect(deps.repo.getBusinessRootWallet).toHaveBeenCalledWith(
                     walletData.businessId,
                     walletData.currency
                 );
             });
 
-            describe("Given the currency is not supported", () => {
-                it("should throw a business currency not supported error", async () => {
-                    deps.isSupportedBusinessCurrency.mockResolvedValue(false);
+            describe("Given the parent wallet does not exist", () => {
+                it("should throw business wallet not found error", async () => {
+                    deps.repo.getBusinessRootWallet.mockResolvedValue(null);
                     await expect(walletService.createBusinessWallet(walletData)).rejects.toThrow(
-                        new BusinessCurrencyNotSupportedError(walletData.currency)
+                        new BusinessRootWalletNotFoundError(
+                            walletData.businessId,
+                            walletData.currency
+                        )
                     );
                 });
             });
 
-            describe("Given the currency is supported", () => {
+            describe("Given the parent wallet exists", () => {
                 it("should create a wallet with the business wallet's id as the new wallet's parentWalletId", async () => {
                     deps.isSupportedBusinessCurrency.mockResolvedValue(true);
                     deps.repo.getBusinessRootWallet.mockResolvedValue(walletJson);

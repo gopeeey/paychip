@@ -5,13 +5,21 @@ import {
     AuthMiddlewareDependencies,
 } from "../../../contracts/interfaces";
 import { testRoute } from "./helpers";
-import { accountLevelToken, standardAccount, standardBusinessArr } from "../../samples";
+import {
+    accountJson,
+    accountLevelToken,
+    businessLevelToken,
+    standardAccount,
+    standardBusinessArr,
+} from "../../samples";
 import { AuthMiddleware } from "../../../web/middleware";
+import { UnauthorizedBusinessAccessError } from "../../../logic/errors";
 
 const businessService = {
     createBusiness: jest.fn(),
     getById: jest.fn(),
     getOwnerBusinesses: jest.fn(),
+    getBusinessAccessToken: jest.fn(),
 };
 
 const accountService = { getById: jest.fn() };
@@ -79,6 +87,43 @@ describe("Testing business routes", () => {
                     .set({ Authorization: accountLevelToken });
                 expect(statusCode).toBe(200);
                 expect(body).toHaveProperty("data.businesses", []);
+            });
+        });
+    });
+
+    testRoute("/business/login/1234", (route) => () => {
+        describe("Given the user does not have access to the business", () => {
+            it("should respond with a 401", async () => {
+                businessService.getBusinessAccessToken.mockRejectedValue(
+                    new UnauthorizedBusinessAccessError()
+                );
+                const { statusCode } = await testApp
+                    .get(route)
+                    .set({ Authorization: accountLevelToken });
+
+                expect(statusCode).toBe(401);
+                expect(businessService.getBusinessAccessToken).toHaveBeenCalledTimes(1);
+                expect(businessService.getBusinessAccessToken).toHaveBeenCalledWith(
+                    1234,
+                    accountJson.id
+                );
+            });
+        });
+
+        describe("Given the user has access to the business", () => {
+            it("should respond with a business access token", async () => {
+                businessService.getBusinessAccessToken.mockResolvedValue(businessLevelToken);
+                const { statusCode, body } = await testApp
+                    .get(route)
+                    .set({ Authorization: accountLevelToken });
+
+                expect(statusCode).toBe(200);
+                expect(body).toHaveProperty("data.accessToken", businessLevelToken);
+                expect(businessService.getBusinessAccessToken).toHaveBeenCalledTimes(1);
+                expect(businessService.getBusinessAccessToken).toHaveBeenCalledWith(
+                    1234,
+                    accountJson.id
+                );
             });
         });
     });

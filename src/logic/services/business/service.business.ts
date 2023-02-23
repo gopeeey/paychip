@@ -40,7 +40,7 @@ export class BusinessService implements BusinessServiceInterface {
         return businesses;
     };
 
-    getBusinessAuth: BusinessServiceInterface["getBusinessAuth"] = async (
+    getBusinessAccessToken: BusinessServiceInterface["getBusinessAccessToken"] = async (
         businessId,
         accountId
     ) => {

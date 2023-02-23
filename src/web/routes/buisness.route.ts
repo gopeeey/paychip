@@ -21,6 +21,8 @@ export class BusinessRoute {
 
         router.get("/owner", restrictTo(["account"]), controller.getOwnerBusinesses);
 
+        router.get("/login/:businessId", restrictTo(["account"]), controller.businessLogin);
+
         return router;
     };
 }

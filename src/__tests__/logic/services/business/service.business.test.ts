@@ -89,11 +89,11 @@ describe("TESTING BUSINESS SERVICE", () => {
         });
     });
 
-    describe("Testing getBusinessAuth", () => {
+    describe("Testing getBusinessAccessToken", () => {
         it("should check if the user is the owner of the business", async () => {
             getByIdMock.mockResolvedValue(businessJson);
             generateAuthTokenMock.mockReturnValue(businessLevelToken);
-            await businessService.getBusinessAuth(businessJson.id, businessJson.ownerId);
+            await businessService.getBusinessAccessToken(businessJson.id, businessJson.ownerId);
             expect(getByIdMock).toHaveBeenCalledTimes(1);
             expect(getByIdMock).toHaveBeenCalledWith(businessJson.id);
         });
@@ -102,7 +102,7 @@ describe("TESTING BUSINESS SERVICE", () => {
             it("should throw an unauthorized business access error", async () => {
                 getByIdMock.mockResolvedValue({ ...businessJson, ownerId: "5555" });
                 await expect(
-                    businessService.getBusinessAuth(businessJson.id, businessJson.ownerId)
+                    businessService.getBusinessAccessToken(businessJson.id, businessJson.ownerId)
                 ).rejects.toThrow(new UnauthorizedBusinessAccessError());
             });
         });
@@ -110,7 +110,7 @@ describe("TESTING BUSINESS SERVICE", () => {
         describe("Given the user is the owner of the business", () => {
             it("should generate and return a business jwt token", async () => {
                 getByIdMock.mockResolvedValue(businessJson);
-                const token = await businessService.getBusinessAuth(
+                const token = await businessService.getBusinessAccessToken(
                     businessJson.id,
                     businessJson.ownerId
                 );

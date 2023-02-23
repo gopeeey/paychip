@@ -1,6 +1,5 @@
 import { BaseController } from "./base.controller";
-import { AuthenticatedRequestType, BusinessServiceInterface } from "../../contracts/interfaces";
-import { NextFunction, Response } from "express";
+import { AuthRequiredController, BusinessServiceInterface } from "../../contracts/interfaces";
 import { CreateBusinessDto, StandardBusinessDto } from "../../contracts/dtos";
 import { sendResponse } from "../../utils/functions";
 import { ProtectedRouteAccessError } from "../../logic/errors";
@@ -10,7 +9,7 @@ export class BusinessController extends BaseController {
         super();
     }
 
-    create = async (req: AuthenticatedRequestType, res: Response, next: NextFunction) => {
+    create: AuthRequiredController = async (req, res, next) => {
         await this.handleReq(next, async () => {
             if (!req.account) throw new ProtectedRouteAccessError(req.path);
             const createBusinessDto = { ...req.body, ownerId: req.account.id };
@@ -24,17 +23,25 @@ export class BusinessController extends BaseController {
         });
     };
 
-    getOwnerBusinesses = async (
-        req: AuthenticatedRequestType,
-        res: Response,
-        next: NextFunction
-    ) => {
+    getOwnerBusinesses: AuthRequiredController = async (req, res, next) => {
         await this.handleReq(next, async () => {
             if (!req.account) throw new ProtectedRouteAccessError(req.path);
             const data = await this._service.getOwnerBusinesses(req.account.id);
             const businesses = data.map((business) => new StandardBusinessDto(business));
 
             sendResponse(res, { code: 200, data: { businesses } });
+        });
+    };
+
+    businessLogin: AuthRequiredController = async (req, res, next) => {
+        await this.handleReq(next, async () => {
+            if (!req.account) throw new ProtectedRouteAccessError(req.path);
+            const accessToken = await this._service.getBusinessAccessToken(
+                Number(req.params.businessId),
+                req.account.id
+            );
+
+            sendResponse(res, { code: 200, data: { accessToken } });
         });
     };
 }
