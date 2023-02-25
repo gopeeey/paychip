@@ -1,5 +1,5 @@
-import { CreateWalletDto, StandardWalletDto } from "../../contracts/dtos";
-import { Wallet } from "../../db/models";
+import { CreateWalletDto, StandardWalletDto } from "@logic/wallet";
+import { Wallet } from "@data/wallet";
 
 export const walletData = new CreateWalletDto({
     businessId: 1234,

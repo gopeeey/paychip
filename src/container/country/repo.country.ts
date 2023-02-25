@@ -1,4 +1,3 @@
-import { Country } from "../../db/models";
-import { CountryRepo } from "../../db/repos";
+import { Country, CountryRepo } from "@data/country";
 
 export const countryRepo = new CountryRepo(Country);

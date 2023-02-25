@@ -1,4 +1,4 @@
-import * as utilFuncs from "../../utils/functions";
+import * as utilFuncs from "src/utils";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 

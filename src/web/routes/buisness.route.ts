@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { BusinessRouteDependencies } from "../../contracts/interfaces";
+import { BusinessRouteDependencies } from "./interfaces";
 import { BusinessController } from "../controllers";
 import { validateBody } from "../middleware/validation";
 import { CreateBusinessValidator } from "../validators";

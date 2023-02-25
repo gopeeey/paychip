@@ -1,4 +1,4 @@
-import { BusinessService } from "../../logic/services";
+import { BusinessService } from "@logic/business";
 import { businessRepo } from "./repo.business";
 import { getCountry } from "../country";
 import { updateBusinessCurrencies } from "../currency";

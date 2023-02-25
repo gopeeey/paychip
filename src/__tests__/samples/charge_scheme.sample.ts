@@ -1,5 +1,5 @@
-import { CreateChargeSchemeDto, StandardChargeSchemeDto } from "../../contracts/dtos";
-import { ChargeScheme } from "../../db/models";
+import { CreateChargeSchemeDto, StandardChargeSchemeDto } from "@logic/charge_scheme";
+import { ChargeScheme } from "@data/charge_scheme";
 import { currencyJson } from "./currency.samples";
 
 const data: CreateChargeSchemeDto = {

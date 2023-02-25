@@ -1,5 +1,5 @@
-import { CreateCustomerDto, StandardCustomerDto } from "../../contracts/dtos";
-import { Customer } from "../../db/models";
+import { CreateCustomerDto, StandardCustomerDto } from "@logic/customer";
+import { Customer } from "@data/customer";
 
 export const customerData = {
     complete: new CreateCustomerDto({

@@ -1,4 +1,4 @@
-import { WalletService } from "../../logic/services";
+import { WalletService } from "@logic/wallet";
 import { walletRepo } from "./repo.wallet";
 import { isSupportedBusinessCurrency } from "../currency";
 

@@ -1,5 +1,5 @@
-import { CreateCurrencyDto, StandardCurrencyDto } from "../../contracts/dtos";
-import { Currency, BusinessCurrency } from "../../db/models";
+import { CreateCurrencyDto, StandardCurrencyDto } from "@logic/currency";
+import { Currency, BusinessCurrency } from "@data/currency";
 
 export const currencyData = new CreateCurrencyDto({ name: "Nigerian Naira", isoCode: "NGN" });
 

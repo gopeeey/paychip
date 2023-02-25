@@ -1,9 +1,7 @@
-import App from "../../../app";
+import App from "src/app";
 import supertest from "supertest";
-import {
-    DependencyContainerInterface,
-    AuthMiddlewareDependencies,
-} from "../../../contracts/interfaces";
+import { AuthMiddlewareDependencies, AuthMiddleware } from "@web/middleware";
+import { DependencyContainerInterface } from "src/container";
 import { testRoute } from "./helpers";
 import {
     businessJson,
@@ -13,7 +11,6 @@ import {
     walletJsons,
     walletSampleData,
 } from "../../samples";
-import { AuthMiddleware } from "../../../web/middleware";
 
 const businessService = {
     getById: jest.fn(),

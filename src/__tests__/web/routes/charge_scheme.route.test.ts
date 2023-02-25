@@ -1,11 +1,8 @@
-import App from "../../../app";
+import App from "src/app";
 import supertest from "supertest";
-import {
-    DependencyContainerInterface,
-    AuthMiddlewareDependencies,
-} from "../../../contracts/interfaces";
+import { AuthMiddlewareDependencies, AuthMiddleware } from "@web/middleware";
+import { DependencyContainerInterface } from "src/container";
 import { testRoute } from "./helpers";
-import { AuthMiddleware } from "../../../web/middleware";
 import {
     accountJson,
     businessJson,

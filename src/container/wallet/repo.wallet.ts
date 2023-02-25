@@ -1,4 +1,3 @@
-import { Wallet } from "../../db/models";
-import { WalletRepo } from "../../db/repos";
+import { Wallet, WalletRepo } from "@data/wallet";
 
 export const walletRepo = new WalletRepo(Wallet);

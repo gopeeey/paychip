@@ -1,7 +1,7 @@
-import { CreateWalletDto, StandardWalletDto } from "../../contracts/dtos";
-import { AuthRequiredController, WalletServiceInterface } from "../../contracts/interfaces";
-import { ProtectedRouteAccessError } from "../../logic/errors";
-import { sendResponse } from "../../utils";
+import { CreateWalletDto, StandardWalletDto, WalletServiceInterface } from "@logic/wallet";
+import { AuthRequiredController } from "../middleware";
+import { ProtectedRouteAccessError } from "../errors";
+import { sendResponse } from "src/utils";
 import { BaseController } from "./base.controller";
 
 export class WalletController extends BaseController {

@@ -1,5 +1,5 @@
-import { Business } from "../../db/models";
-import { CreateBusinessDto, StandardBusinessDto } from "../../contracts/dtos";
+import { Business } from "@data/business";
+import { CreateBusinessDto, StandardBusinessDto } from "@logic/business";
 import { accountJson } from "./account.samples";
 import { countryJson } from "./country.samples";
 import { currencyJsonArr } from "./currency.samples";

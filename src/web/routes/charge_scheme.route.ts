@@ -1,4 +1,4 @@
-import { ChargeSchemeRouteDependencies } from "../../contracts/interfaces";
+import { ChargeSchemeRouteDependencies } from "./interfaces";
 import { Router } from "express";
 import { ChargeSchemeController } from "../controllers";
 import { validateBody } from "../middleware/validation";

@@ -1,19 +1,11 @@
-import App from "../../../app";
+import App from "src/app";
 import supertest from "supertest";
-import {
-    AccountServiceInterface,
-    AuthMiddlewareDependencies,
-    DependencyContainerInterface,
-} from "../../../contracts/interfaces";
+import { AuthMiddlewareDependencies, AuthMiddleware } from "@web/middleware";
+import { DependencyContainerInterface } from "src/container";
 import { testRoute } from "./helpers";
-import {
-    loginDetails,
-    standardAccount,
-    accountData,
-    accountJson,
-} from "../../samples/account.samples";
-import { InvalidLoginDetailsError, ValidationError } from "../../../logic/errors";
-import { AuthMiddleware } from "../../../web/middleware";
+import { loginDetails, standardAccount, accountData, accountJson } from "../../samples";
+import { ValidationError } from "@logic/base_errors";
+import { InvalidLoginDetailsError } from "@logic/account";
 
 const accountService = {
     signup: jest.fn(),

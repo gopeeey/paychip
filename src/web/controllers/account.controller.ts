@@ -1,8 +1,12 @@
-import { AccountServiceInterface } from "../../contracts/interfaces";
 import { NextFunction, Request, Response } from "express";
 import { BaseController } from "./base.controller";
-import { CreateAccountDto, LoginDto, StandardAccountDto } from "../../contracts/dtos";
-import { sendResponse } from "../../utils/functions";
+import {
+    CreateAccountDto,
+    LoginDto,
+    StandardAccountDto,
+    AccountServiceInterface,
+} from "@logic/account";
+import { sendResponse } from "src/utils";
 
 export class AccountController extends BaseController {
     constructor(private readonly _service: AccountServiceInterface) {

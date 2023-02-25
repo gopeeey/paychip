@@ -1,7 +1,11 @@
-import { CreateChargeSchemeDto, StandardChargeSchemeDto } from "../../contracts/dtos";
-import { AuthRequiredController, ChargeSchemeServiceInterface } from "../../contracts/interfaces";
-import { ProtectedRouteAccessError } from "../../logic/errors";
-import { sendResponse } from "../../utils";
+import {
+    CreateChargeSchemeDto,
+    StandardChargeSchemeDto,
+    ChargeSchemeServiceInterface,
+} from "@logic/charge_scheme";
+import { AuthRequiredController } from "../middleware";
+import { ProtectedRouteAccessError } from "../errors";
+import { sendResponse } from "src/utils";
 import { BaseController } from "./base.controller";
 
 export class ChargeSchemeController extends BaseController {

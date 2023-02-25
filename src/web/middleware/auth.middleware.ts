@@ -1,15 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import {
-    AccountServiceInterface,
-    BusinessServiceInterface,
     AuthType,
     AllowedAuthTypes,
     AuthMiddlewareInterface,
     AuthMiddlewareDependencies,
     AuthenticatedRequestType,
-} from "../../contracts/interfaces";
-import { AccountNotFoundError, BusinessNotFoundError, UnauthorizedError } from "../../logic/errors";
-import { sendResponse, verifyJwt } from "../../utils/functions";
+} from "./interfaces";
+import { UnauthorizedError } from "@logic/base_errors";
+import { AccountNotFoundError } from "@logic/account";
+import { BusinessNotFoundError } from "@logic/business";
+import { sendResponse, verifyJwt } from "src/utils";
 
 type JwtPayloadType = { accountId?: string; businessId?: string; aid?: string; authType: AuthType };
 

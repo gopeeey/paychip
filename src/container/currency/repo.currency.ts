@@ -1,4 +1,3 @@
-import { Currency, BusinessCurrency } from "../../db/models";
-import { CurrencyRepo } from "../../db/repos";
+import { Currency, BusinessCurrency, CurrencyRepo } from "@data/currency";
 
 export const currencyRepo = new CurrencyRepo(Currency, BusinessCurrency);

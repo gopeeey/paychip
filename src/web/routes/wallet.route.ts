@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { WalletRouteDependencies } from "../../contracts/interfaces";
+import { WalletRouteDependencies } from "./interfaces";
 import { WalletController } from "../controllers/wallet.controller";
 import { validateBody } from "../middleware/validation";
 import { CreateBusinessWalletValidator } from "../validators";
