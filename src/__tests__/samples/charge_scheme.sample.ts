@@ -12,7 +12,6 @@ const data: CreateChargeSchemeDto = {
     payer: "customer",
     percentageCharge: 30,
     percentageChargeCap: 3000,
-    primary: false,
     transactionType: "credit",
 };
 

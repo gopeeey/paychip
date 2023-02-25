@@ -1,4 +1,4 @@
-import { CreateChargeSchemeDto, StandardChargeSchemeDto } from "../../../contracts/dtos";
+import { CreateChargeSchemeDto } from "../../../contracts/dtos";
 import {
     ChargeSchemeModelInterface,
     ChargeSchemeServiceDependencies,
@@ -15,7 +15,7 @@ export class ChargeSchemeService implements ChargeSchemeServiceInterface {
 
     create = async (createChargeSchemeDto: CreateChargeSchemeDto) => {
         const chargeScheme = await this._repo.create(createChargeSchemeDto);
-        return new StandardChargeSchemeDto(chargeScheme);
+        return chargeScheme;
     };
 
     getById = async (id: ChargeSchemeModelInterface["id"]) => {

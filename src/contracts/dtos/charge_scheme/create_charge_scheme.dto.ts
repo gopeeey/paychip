@@ -6,7 +6,6 @@ type RequiredProps = Pick<
     | "businessId"
     | "currency"
     | "description"
-    | "primary"
     | "transactionType"
     | "payer"
     | "flatCharge"
@@ -20,7 +19,6 @@ export class CreateChargeSchemeDto implements RequiredProps {
     businessId: ChargeSchemeModelInterface["businessId"];
     currency: ChargeSchemeModelInterface["currency"];
     description: ChargeSchemeModelInterface["description"] = null;
-    primary: ChargeSchemeModelInterface["primary"] = false;
     transactionType: ChargeSchemeModelInterface["transactionType"];
     payer: ChargeSchemeModelInterface["payer"];
     flatCharge: ChargeSchemeModelInterface["flatCharge"];
@@ -33,7 +31,6 @@ export class CreateChargeSchemeDto implements RequiredProps {
         this.businessId = body.businessId;
         this.currency = body.currency;
         this.description = body.description;
-        this.primary = body.primary;
         this.transactionType = body.transactionType;
         this.payer = body.payer;
         this.flatCharge = body.flatCharge;

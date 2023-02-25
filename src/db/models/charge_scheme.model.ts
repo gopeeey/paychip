@@ -21,7 +21,7 @@ export class ChargeScheme
     declare description: ChargeSchemeModelInterface["description"];
     declare currency: ForeignKey<ChargeSchemeModelInterface["currency"]>;
     declare transactionType: ChargeSchemeModelInterface["transactionType"];
-    declare primary: ChargeSchemeModelInterface["primary"];
+    declare primary: CreationOptional<ChargeSchemeModelInterface["primary"]>;
     declare flatCharge: ChargeSchemeModelInterface["flatCharge"];
     declare percentageCharge: ChargeSchemeModelInterface["percentageCharge"];
     declare percentageChargeCap: ChargeSchemeModelInterface["percentageChargeCap"];
