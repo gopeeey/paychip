@@ -1,4 +1,4 @@
-import { CurrencyService } from "../../logic/services";
+import { CurrencyService } from "@logic/currency";
 import { currencyRepo } from "./repo.currency";
 
 export const currencyService = new CurrencyService({
@@ -6,3 +6,5 @@ export const currencyService = new CurrencyService({
 });
 
 export const updateBusinessCurrencies = currencyService.updateBusinessCurrencies;
+
+export const isSupportedBusinessCurrency = currencyService.isSupportedBusinessCurrency;

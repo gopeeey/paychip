@@ -1,4 +1,3 @@
-import { Account } from "../../db/models";
-import { AccountRepo } from "../../db/repos";
+import { Account, AccountRepo } from "@data/account";
 
 export const accountRepo = new AccountRepo(Account);

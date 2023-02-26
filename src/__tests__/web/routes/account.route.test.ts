@@ -1,14 +1,11 @@
-import App from "../../../app";
+import App from "src/app";
 import supertest from "supertest";
-import {
-    AccountServiceInterface,
-    AuthMiddlewareDependencies,
-    DependencyContainerInterface,
-} from "../../../contracts/interfaces";
+import { AuthMiddlewareDependencies, AuthMiddleware } from "@web/middleware";
+import { DependencyContainerInterface } from "src/container";
 import { testRoute } from "./helpers";
-import { loginDetails, standardAccount, accountData } from "../../samples/account.samples";
-import { InvalidLoginDetailsError, ValidationError } from "../../../logic/errors";
-import { AuthMiddleware } from "../../../web/middleware";
+import { loginDetails, standardAccount, accountData, accountJson } from "../../samples";
+import { ValidationError } from "@logic/base_errors";
+import { InvalidLoginDetailsError } from "@logic/account";
 
 const accountService = {
     signup: jest.fn(),
@@ -69,7 +66,7 @@ describe("Testing account routes", () => {
         describe("Given the email is not already registered", () => {
             it("should return a 201 with a new account", async () => {
                 accountService.signup.mockResolvedValue({
-                    account: standardAccount,
+                    account: accountJson,
                     authToken: "token",
                 });
                 const response = await supertest(app).post(route).send(accountData);
@@ -113,12 +110,17 @@ describe("Testing account routes", () => {
 
         describe("Given the request is successful", () => {
             it("should return data returned from the service login method", async () => {
-                const resolvedData =
-                    "I can afford to do this here because I'm mocking the login method";
+                const resolvedData = {
+                    account: accountJson,
+                    authToken: "token",
+                };
                 accountService.login.mockResolvedValue(resolvedData);
                 const response = await supertest(app).post(route).send(loginDetails);
                 expect(response.statusCode).toBe(200);
-                expect(response.body).toHaveProperty("data", resolvedData);
+                expect(response.body).toHaveProperty("data", {
+                    account: standardAccount,
+                    authToken: "token",
+                });
             });
         });
     });

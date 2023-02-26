@@ -1,6 +1,6 @@
 import { Schema, ValidationError } from "joi";
 import { MiddlewareType } from "./types";
-import { sendResponse } from "../../utils/functions";
+import { sendResponse } from "src/utils";
 
 export const validateBody = (schema: Schema) => {
     const middleware: MiddlewareType = async (req, res, next) => {

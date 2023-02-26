@@ -1,14 +1,11 @@
-import {
-    AccountServiceInterface,
-    BusinessServiceInterface,
-    DependencyContainerInterface,
-} from "../../../contracts/interfaces";
-import { AuthMiddleware } from "../../../web/middleware";
+import { AccountServiceInterface, AccountNotFoundError } from "@logic/account";
+import { BusinessServiceInterface, BusinessNotFoundError } from "@logic/business";
+import { DependencyContainerInterface } from "src/container";
+import { AuthMiddleware } from "@web/middleware";
 import supertest from "supertest";
 import App from "../../../app";
-import { AccountNotFoundError, BusinessNotFoundError } from "../../../logic/errors";
 import { standardAccount, standardBusiness } from "../../samples";
-import * as utilFuncs from "../../../utils/functions";
+import * as utilFuncs from "src/utils/functions";
 
 const getAccountByIdMock = jest.fn();
 const getBusinessByIdMock = jest.fn();

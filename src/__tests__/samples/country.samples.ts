@@ -1,5 +1,5 @@
-import { CreateCountryDto, StandardCountryDto } from "../../contracts/dtos";
-import { Country } from "../../db/models";
+import { CreateCountryDto, StandardCountryDto } from "@logic/country";
+import { Country } from "@data/country";
 
 export const countryData = new CreateCountryDto({
     isoCode: "NGA",

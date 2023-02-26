@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { BusinessRouteDependencies } from "../../contracts/interfaces";
+import { BusinessRouteDependencies } from "./interfaces";
 import { BusinessController } from "../controllers";
 import { validateBody } from "../middleware/validation";
 import { CreateBusinessValidator } from "../validators";
@@ -20,6 +20,8 @@ export class BusinessRoute {
         );
 
         router.get("/owner", restrictTo(["account"]), controller.getOwnerBusinesses);
+
+        router.get("/login/:businessId", restrictTo(["account"]), controller.businessLogin);
 
         return router;
     };

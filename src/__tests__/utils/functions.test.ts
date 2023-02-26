@@ -1,4 +1,4 @@
-import * as utilFuncs from "../../utils/functions";
+import * as utilFuncs from "src/utils";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
@@ -143,6 +143,19 @@ describe("Testing utility functions", () => {
                     );
                 });
             });
+        });
+    });
+
+    describe("Testing generateId", () => {
+        it("should return a string that's different on each call", () => {
+            let count = 10;
+            let prevString: string = "";
+            while (count > 0) {
+                const newString = utilFuncs.generateId();
+                expect(newString).not.toBe(prevString);
+                prevString = newString;
+                count--;
+            }
         });
     });
 });

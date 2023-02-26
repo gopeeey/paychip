@@ -1,4 +1,4 @@
-import { generateAuthToken } from "../../utils/functions";
+import { generateAuthToken } from "src/utils";
 import { accountJson } from "./account.samples";
 import { businessJson } from "./business.samples";
 

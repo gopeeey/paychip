@@ -1,8 +1,10 @@
 import bcrypt from "bcrypt";
 import config from "../config";
 import jwt from "jsonwebtoken";
+import { nanoid } from "nanoid";
 import { Response } from "express";
-import { AccountModelInterface, BusinessModelInterface } from "../contracts/interfaces";
+import { AccountModelInterface } from "@logic/account";
+import { BusinessModelInterface } from "@logic/business";
 
 export const hashString = async (string: string) => {
     const salt = await bcrypt.genSalt(10);
@@ -48,7 +50,7 @@ export const verifyJwt = <T>(token: string, secret: string = config.misc.jwtSecr
 
 export const sendResponse = (
     res: Response,
-    opts: { code: number; message?: string; data?: object }
+    opts: { code: number; message?: string; data?: any }
 ) => {
     let defaultOpts = { code: 200, message: "successful" };
     opts = { ...defaultOpts, ...opts };
@@ -58,3 +60,5 @@ export const sendResponse = (
         data: opts.data,
     });
 };
+
+export const generateId = () => nanoid();
