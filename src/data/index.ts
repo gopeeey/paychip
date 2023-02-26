@@ -7,3 +7,4 @@ export * from "./currency";
 export * from "./charge_scheme";
 export * from "./wallet";
 export * from "./db";
+export * from "./transaction";

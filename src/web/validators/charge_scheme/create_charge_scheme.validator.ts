@@ -1,9 +1,6 @@
 import Joi from "joi";
-import {
-    CreateChargeSchemeDto,
-    allowedChargeSchemePayers,
-    allowedTransactionTypes,
-} from "@logic/charge_scheme";
+import { CreateChargeSchemeDto, allowedChargeSchemePayers } from "@logic/charge_scheme";
+import { allowedTransactionTypes } from "@logic/transaction";
 
 export const CreateChargeSchemeValidator = Joi.object<CreateChargeSchemeDto>({
     name: Joi.string().required(),

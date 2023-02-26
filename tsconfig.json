@@ -30,10 +30,10 @@
         "moduleResolution": "node",                       /* Specify how TypeScript looks up a file from a given module specifier. */
         "baseUrl": ".",                                  /* Specify the base directory to resolve non-relative module names. */
         "paths": {
-            "src/*": ["./src/*"],
             "@logic/*":["./src/logic/*"],                   /* Specify a set of entries that re-map imports to additional lookup locations. */
             "@data/*": ["./src/data/*"],
-            "@web/*": ["./src/web/*"]
+            "@web/*": ["./src/web/*"],
+            "src/*": ["./src/*"],
         },   
         "plugins":[
             { "transform":"typescript-transform-paths" },         /* Transform paths in output .js files */
