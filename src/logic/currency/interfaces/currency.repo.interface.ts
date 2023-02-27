@@ -1,4 +1,5 @@
 import { BusinessModelInterface } from "@logic/business";
+import { SessionInterface } from "@logic/session_interface";
 import { CurrencyModelInterface } from "./currency.model.interface";
 
 export interface CurrencyRepoInterface {
@@ -10,12 +11,14 @@ export interface CurrencyRepoInterface {
 
     addBusinessCurrencies: (
         businessId: BusinessModelInterface["id"],
-        currencyCodes: CurrencyModelInterface["isoCode"][]
+        currencyCodes: CurrencyModelInterface["isoCode"][],
+        session?: SessionInterface
     ) => Promise<CurrencyModelInterface[]>;
 
     updateBusinessCurrencies: (
         businessId: BusinessModelInterface["id"],
-        currencyCodes: CurrencyModelInterface["isoCode"][]
+        currencyCodes: CurrencyModelInterface["isoCode"][],
+        session?: SessionInterface
     ) => Promise<CurrencyModelInterface[]>;
 
     // removeBusinessCurrencies: (

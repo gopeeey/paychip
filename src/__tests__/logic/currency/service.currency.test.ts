@@ -1,4 +1,5 @@
 import { CurrencyService, CurrencyServiceDependencies } from "@logic/currency";
+import { sessionMock } from "src/__tests__/mocks";
 import { businessJson, currencyJson, currencyJsonArr } from "../../samples";
 
 const repo = {
@@ -16,12 +17,14 @@ describe("TESTING CURRENCY SERVICE", () => {
             repo.updateBusinessCurrencies.mockResolvedValue(currencyJsonArr);
             const currencies = await currencyService.updateBusinessCurrencies(
                 businessJson.id,
-                currencyJsonArr.map((curr) => curr.isoCode)
+                currencyJsonArr.map((curr) => curr.isoCode),
+                sessionMock
             );
             expect(repo.updateBusinessCurrencies).toHaveBeenCalledTimes(1);
             expect(repo.updateBusinessCurrencies).toHaveBeenCalledWith(
                 businessJson.id,
-                currencyJsonArr.map((curr) => curr.isoCode)
+                currencyJsonArr.map((curr) => curr.isoCode),
+                sessionMock
             );
             expect(currencies).toEqual(currencyJsonArr);
         });

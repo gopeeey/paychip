@@ -9,9 +9,14 @@ export class CurrencyService implements CurrencyServiceInterface {
 
     updateBusinessCurrencies: CurrencyServiceInterface["updateBusinessCurrencies"] = async (
         businessId,
-        currencyCodes
+        currencyCodes,
+        session
     ) => {
-        const currencies = await this._repo.updateBusinessCurrencies(businessId, currencyCodes);
+        const currencies = await this._repo.updateBusinessCurrencies(
+            businessId,
+            currencyCodes,
+            session
+        );
         return currencies;
     };
 

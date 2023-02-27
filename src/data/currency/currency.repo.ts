@@ -3,6 +3,8 @@ import {
     CurrencyModelInterface,
     CurrencyRepoInterface,
 } from "@logic/currency";
+import { SessionInterface } from "@logic/session_interface";
+import { Transaction } from "sequelize";
 import { BusinessCurrency } from "./business_currency.model";
 import { Currency } from "./currency.model";
 
@@ -28,12 +30,14 @@ export class CurrencyRepo implements CurrencyRepoInterface {
         }, [] as CurrencyModelInterface[]);
     };
 
-    addBusinessCurrencies = async (
-        businessId: BusinessCurrencyModelInterface["businessId"],
-        currencyCodes: CurrencyModelInterface["isoCode"][]
+    addBusinessCurrencies: CurrencyRepoInterface["addBusinessCurrencies"] = async (
+        businessId,
+        currencyCodes,
+        session
     ) => {
         const businessCurrencies = await this._businessCurrencyModelContext.bulkCreate(
-            currencyCodes.map((code) => ({ businessId, currencyIsoCode: code }))
+            currencyCodes.map((code) => ({ businessId, currencyIsoCode: code })),
+            { transaction: session as Transaction }
         );
         const addedCodes = businessCurrencies.map((curr) => curr.currencyIsoCode);
         const currencies = await this._currencyModelContext.findAll({
@@ -42,13 +46,17 @@ export class CurrencyRepo implements CurrencyRepoInterface {
         return currencies.map((currency) => currency.toJSON());
     };
 
-    updateBusinessCurrencies = async (
-        businessId: BusinessCurrencyModelInterface["businessId"],
-        currencyCodes: CurrencyModelInterface["isoCode"][]
+    updateBusinessCurrencies: CurrencyRepoInterface["updateBusinessCurrencies"] = async (
+        businessId,
+        currencyCodes,
+        session
     ) => {
-        await this._businessCurrencyModelContext.destroy({ where: { businessId } });
+        await this._businessCurrencyModelContext.destroy({
+            where: { businessId },
+            transaction: session as Transaction,
+        });
         if (!currencyCodes.length) return [];
-        const currencies = await this.addBusinessCurrencies(businessId, currencyCodes);
+        const currencies = await this.addBusinessCurrencies(businessId, currencyCodes, session);
         return currencies;
     };
 }

@@ -1,12 +1,11 @@
 import { CreateBusinessDto } from "../dtos";
-import { CreateWalletDto, WalletModelInterface } from "@logic/wallet";
-
-import { AccountModelInterface } from "@logic/account";
 import { BusinessModelInterface } from "./business.model.interface";
 import { BusinessRepoInterface } from "./business.repo.interface";
 import { CountryModelInterface } from "@logic/country";
-
 import { CurrencyServiceInterface } from "@logic/currency";
+import { CreateWalletDto, WalletModelInterface, WalletServiceInterface } from "@logic/wallet";
+import { AccountModelInterface } from "@logic/account";
+import { SessionInterface } from "@logic/session_interface";
 
 export interface BusinessCreatorInterface {
     create: () => Promise<BusinessModelInterface>;
@@ -15,8 +14,11 @@ export interface BusinessCreatorInterface {
 export interface BusinessCreatorDependencies {
     dto: CreateBusinessDto;
     repo: BusinessRepoInterface;
-    getOwner: (ownerId: AccountModelInterface["id"]) => Promise<AccountModelInterface>;
-    getCountry: (countryCode: CountryModelInterface["isoCode"]) => Promise<CountryModelInterface>;
-    createWallet: (createWalletDto: CreateWalletDto) => Promise<WalletModelInterface>;
+    session: SessionInterface;
+    getOwner: (ownerId: BusinessModelInterface["ownerId"]) => Promise<AccountModelInterface>;
+    getCountry: (
+        countryCode: BusinessModelInterface["countryCode"]
+    ) => Promise<CountryModelInterface>;
+    createWallet: WalletServiceInterface["createWallet"];
     updateCurrencies: CurrencyServiceInterface["updateBusinessCurrencies"];
 }

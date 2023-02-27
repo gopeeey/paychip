@@ -6,21 +6,23 @@ import {
     WalletRepoInterface,
 } from "./interfaces";
 import { DuplicateWalletError } from "./errors";
+import { SessionInterface } from "..";
 
 export class WalletCreator implements WalletCreatorInterface {
     private declare createWalletDto: CreateWalletDto;
     private declare _repo: WalletRepoInterface;
+    private declare session?: SessionInterface;
     private declare wallet: WalletModelInterface;
 
     constructor(private readonly _dep: WalletCreatorDependencies) {
         this.createWalletDto = this._dep.dto;
         this._repo = this._dep.repo;
+        this.session = this._dep.session;
     }
 
     async create() {
         await this.checkExists();
         await this.persistWallet();
-        // await this.createCustomer();
         return this.wallet;
     }
 
@@ -31,12 +33,6 @@ export class WalletCreator implements WalletCreatorInterface {
     };
 
     private persistWallet = async () => {
-        this.wallet = await this._repo.create(this.createWalletDto);
+        this.wallet = await this._repo.create(this.createWalletDto, this.session);
     };
-
-    // private createCustomer = async () => {
-    //     const { businessId, email } = this.createWalletDto;
-    //     const customerDto = new CreateCustomerDto({ email, businessId });
-    //     await this._dep.createCustomer(customerDto);
-    // };
 }

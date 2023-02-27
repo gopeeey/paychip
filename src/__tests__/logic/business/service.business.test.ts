@@ -13,7 +13,7 @@ import {
     businessLevelToken,
 } from "../../samples";
 
-import { generateAuthTokenMock } from "src/__tests__/mocks";
+import { generateAuthTokenMock, sessionMock } from "src/__tests__/mocks";
 
 const businessCreatorSpy = jest.spyOn(BusinessCreator.prototype, "create");
 
@@ -25,6 +25,7 @@ const repo = {
 
 const dependencies = {
     repo,
+    startSession: jest.fn(async () => sessionMock),
     getCountry: jest.fn(),
     updateCurrencies: jest.fn(),
     getAccount: jest.fn(),
@@ -39,6 +40,37 @@ const getByIdMock = jest.spyOn(businessService, "getById");
 
 describe("TESTING BUSINESS SERVICE", () => {
     describe("Testing createBusiness", () => {
+        describe("Given it is passed a session", () => {
+            it("should NOT start it's own session", async () => {
+                businessCreatorSpy.mockResolvedValue(businessJson);
+                await businessService.createBusiness(businessData, sessionMock);
+                expect(dependencies.startSession).not.toHaveBeenCalled();
+            });
+            describe("given an error occurs", () => {
+                it("should NOT try to roll back changes", async () => {
+                    await businessService.createBusiness(businessData, sessionMock);
+                    expect(sessionMock.rollback).not.toHaveBeenCalled();
+                });
+            });
+        });
+
+        describe("Given it is NOT passed a session", () => {
+            it("should start it's own session", async () => {
+                businessCreatorSpy.mockResolvedValue(businessJson);
+                await businessService.createBusiness(businessData);
+                expect(dependencies.startSession).toHaveBeenCalled();
+            });
+            describe("given an error occurs", () => {
+                it("should roll back changes", async () => {
+                    businessCreatorSpy.mockRejectedValue(new Error());
+                    try {
+                        await businessService.createBusiness(businessData);
+                    } catch (err) {}
+                    expect(sessionMock.rollback).toHaveBeenCalledTimes(1);
+                });
+            });
+        });
+
         it("should return a business object", async () => {
             businessCreatorSpy.mockResolvedValue(businessJson);
             const business = await businessService.createBusiness(businessData);

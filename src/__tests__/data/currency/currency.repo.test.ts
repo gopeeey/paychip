@@ -1,4 +1,5 @@
 import { CurrencyRepo, Currency, BusinessCurrency } from "@data/currency";
+import { sessionMock } from "src/__tests__/mocks";
 import {
     businessCurrencyObjArr,
     businessCurrencyObjWithCurrencyArr,
@@ -21,6 +22,8 @@ const currencyRepo = new CurrencyRepo(
     currencyModelMock as unknown as typeof Currency,
     businessCurrencyModelMock as unknown as typeof BusinessCurrency
 );
+
+const addBusinessCurrenciesMock = jest.spyOn(currencyRepo, "addBusinessCurrencies");
 
 describe("TESTING CURRENCY REPO", () => {
     describe("Testing getAll", () => {
@@ -48,19 +51,39 @@ describe("TESTING CURRENCY REPO", () => {
     describe("Testing addBusinessCurrencies", () => {
         it("should return an array of currency objects", async () => {
             businessCurrencyModelMock.bulkCreate.mockResolvedValue(businessCurrencyObjArr);
-            const currencies = await currencyRepo.addBusinessCurrencies(businessJson.id, [
-                currencyJson.isoCode,
-            ]);
+            const currencies = await currencyRepo.addBusinessCurrencies(
+                businessJson.id,
+                [currencyJson.isoCode],
+                sessionMock
+            );
             expect(currencies).toEqual(currencyJsonArr);
             expect(businessCurrencyModelMock.bulkCreate).toHaveBeenCalledTimes(1);
+            expect(businessCurrencyModelMock.bulkCreate).toHaveBeenCalledWith(
+                [
+                    {
+                        businessId: businessJson.id,
+                        currencyIsoCode: currencyJson.isoCode,
+                    },
+                ],
+                { transaction: sessionMock }
+            );
         });
     });
 
     describe("Testing updateBusinessCurrencies", () => {
         it("should delete all business currencies", async () => {
             businessCurrencyModelMock.destroy.mockResolvedValue(businessCurrencyObjArr.length);
-            await currencyRepo.updateBusinessCurrencies(businessJson.id, [currencyJson.isoCode]);
+            addBusinessCurrenciesMock.mockResolvedValue(currencyJsonArr);
+            await currencyRepo.updateBusinessCurrencies(
+                businessJson.id,
+                [currencyJson.isoCode],
+                sessionMock
+            );
             expect(businessCurrencyModelMock.destroy).toHaveBeenCalledTimes(1);
+            expect(businessCurrencyModelMock.destroy).toHaveBeenCalledWith({
+                where: { businessId: businessJson.id },
+                transaction: sessionMock,
+            });
         });
 
         describe("Given an empty array of currencies", () => {
@@ -74,12 +97,18 @@ describe("TESTING CURRENCY REPO", () => {
         describe("Given a non empty array of currencies", () => {
             it("should return an array of currency objects", async () => {
                 businessCurrencyModelMock.destroy.mockResolvedValue(businessCurrencyObjArr.length);
-                businessCurrencyModelMock.bulkCreate.mockResolvedValue(businessCurrencyObjArr);
-                const currencies = await currencyRepo.updateBusinessCurrencies(businessJson.id, [
-                    currencyJson.isoCode,
-                ]);
+                const currencies = await currencyRepo.updateBusinessCurrencies(
+                    businessJson.id,
+                    [currencyJson.isoCode],
+                    sessionMock
+                );
                 expect(currencies).toEqual(currencyJsonArr);
-                expect(businessCurrencyModelMock.bulkCreate).toHaveBeenCalledTimes(1);
+                expect(addBusinessCurrenciesMock).toHaveBeenCalledTimes(1);
+                expect(addBusinessCurrenciesMock).toHaveBeenCalledWith(
+                    businessJson.id,
+                    [currencyJson.isoCode],
+                    sessionMock
+                );
             });
         });
     });

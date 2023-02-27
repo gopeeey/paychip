@@ -1,4 +1,5 @@
 import { WalletCreator, WalletCreatorDependencies, DuplicateWalletError } from "@logic/wallet";
+import { sessionMock } from "src/__tests__/mocks";
 import { walletData, walletJson } from "../../samples";
 
 const dep = {
@@ -7,7 +8,7 @@ const dep = {
         create: jest.fn(),
         getUnique: jest.fn(),
     },
-    // createCustomer: jest.fn(),
+    session: sessionMock,
 };
 
 const walletCreator = new WalletCreator(dep as unknown as WalletCreatorDependencies);
@@ -50,14 +51,8 @@ describe("TESTING WALLET CREATOR", () => {
         it("should persist the wallet", async () => {
             await walletCreator.create();
             expect(dep.repo.create).toHaveBeenCalledTimes(1);
-            expect(dep.repo.create).toHaveBeenCalledWith(walletData);
+            expect(dep.repo.create).toHaveBeenCalledWith(walletData, sessionMock);
         });
-
-        // it("should create a customer for the wallet", async () => {
-        //     await walletCreator.create();
-        //     expect(dep.createCustomer).toHaveBeenCalledTimes(1);
-        //     expect(dep.createCustomer).toHaveBeenCalledWith(customerData.incomplete);
-        // });
 
         it("should return a wallet object", async () => {
             const wallet = await walletCreator.create();

@@ -6,6 +6,7 @@ import {
 import * as WalletCreatorModule from "@logic/wallet/creator.wallet";
 import { walletData, walletJson, walletJsons, walletSampleData } from "../../samples";
 import { BusinessCurrencyNotSupportedError } from "@logic/currency";
+import { sessionMock } from "src/__tests__/mocks";
 
 const createFn = jest.fn();
 jest.mock("../../../logic/wallet/creator.wallet", () => ({
@@ -32,11 +33,12 @@ describe("TESTING WALLET SERVICE", () => {
     describe("Testing createWallet", () => {
         it("should run the wallet creator", async () => {
             createFn.mockResolvedValue(walletJson);
-            await walletService.createWallet(walletData);
+            await walletService.createWallet(walletData, sessionMock);
             expect(WalletCreator).toHaveBeenCalledTimes(1);
             expect(WalletCreator).toHaveBeenCalledWith({
                 dto: walletData,
                 repo: deps.repo,
+                session: sessionMock,
             });
             expect(createFn).toHaveBeenCalledTimes(1);
         });

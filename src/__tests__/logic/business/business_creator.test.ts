@@ -9,12 +9,12 @@ import {
     walletData,
     walletJson,
 } from "../../samples";
+import { sessionMock } from "src/__tests__/mocks";
 
 const dependencies = {
     dto: businessData,
-    repo: {
-        create: jest.fn(),
-    },
+    repo: { create: jest.fn() },
+    session: sessionMock,
     getCountry: jest.fn(),
     createWallet: jest.fn(),
     getOwner: jest.fn(),
@@ -79,17 +79,20 @@ describe("TESTING BUSINESS CREATOR", () => {
 
                 await runCreator();
                 expect(dependencies.repo.create).toHaveBeenCalledTimes(1);
-                expect(dependencies.repo.create).toHaveBeenCalledWith(businessData);
+                expect(dependencies.repo.create).toHaveBeenCalledWith(businessData, sessionMock);
             });
 
             // create wallet for business
             it("should create a wallet for the business", async () => {
                 await runCreator();
                 expect(dependencies.createWallet).toHaveBeenCalledTimes(1);
-                expect(dependencies.createWallet).toHaveBeenCalledWith({
-                    ...walletData,
-                    currency: countryJson.currencyCode,
-                });
+                expect(dependencies.createWallet).toHaveBeenCalledWith(
+                    {
+                        ...walletData,
+                        currency: countryJson.currencyCode,
+                    },
+                    sessionMock
+                );
             });
 
             // add currency of the country to the business currencies
@@ -97,9 +100,11 @@ describe("TESTING BUSINESS CREATOR", () => {
                 mockSuccess();
                 await runCreator();
                 expect(dependencies.updateCurrencies).toHaveBeenCalledTimes(1);
-                expect(dependencies.updateCurrencies).toHaveBeenCalledWith(businessJson.id, [
-                    countryJson.currencyCode,
-                ]);
+                expect(dependencies.updateCurrencies).toHaveBeenCalledWith(
+                    businessJson.id,
+                    [countryJson.currencyCode],
+                    sessionMock
+                );
             });
         });
     });
