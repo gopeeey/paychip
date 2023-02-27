@@ -1,4 +1,5 @@
 import { AccountRepo, Account } from "@data/account";
+import { sessionMock } from "src/__tests__/mocks";
 import { account, accountData, accountJson } from "../../samples";
 
 const createMock = jest.fn();
@@ -15,10 +16,11 @@ describe("Testing AccountRepo", () => {
     describe("Testing create method", () => {
         it("should return a new account instance", async () => {
             createMock.mockResolvedValue(account);
-            const newAccount = await accountRepo.create(accountData);
+            const data = [accountData, sessionMock] as const;
+            const newAccount = await accountRepo.create(...data);
             expect(newAccount).toEqual(accountJson);
             expect(createMock).toHaveBeenCalledTimes(1);
-            expect(createMock).toHaveBeenCalledWith(accountData);
+            expect(createMock).toHaveBeenCalledWith(accountData, { transaction: sessionMock });
         });
     });
 

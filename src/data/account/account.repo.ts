@@ -1,12 +1,14 @@
 import { Account } from "@data/account";
 import { AccountModelInterface, AccountRepoInterface } from "@logic/account";
+import { Transaction } from "sequelize";
 
 export class AccountRepo implements AccountRepoInterface {
     constructor(private readonly _modelContext: typeof Account) {}
 
-    create = async (doc: Pick<Account, "email" | "password" | "name">) => {
-        const { email, password, name } = doc;
-        const account = await this._modelContext.create({ email, password, name });
+    create: AccountRepoInterface["create"] = async (createAccountDto, session) => {
+        const account = await this._modelContext.create(createAccountDto, {
+            transaction: session as Transaction,
+        });
         return account.toJSON();
     };
 
