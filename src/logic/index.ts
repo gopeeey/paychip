@@ -6,3 +6,4 @@ export * from "./currency";
 export * from "./charge_scheme";
 export * from "./wallet";
 export * from "./base_errors";
+export * from "./session_interface";

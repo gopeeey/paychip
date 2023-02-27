@@ -1,11 +1,14 @@
-import { CreateBusinessDto, BusinessModelInterface, BusinessRepoInterface } from "@logic/business";
+import { BusinessModelInterface, BusinessRepoInterface } from "@logic/business";
+import { Transaction } from "sequelize";
 import { Business } from "./business.model";
 
 export class BusinessRepo implements BusinessRepoInterface {
     constructor(private readonly _modelContext: typeof Business) {}
 
-    create = async (createBusinessDto: CreateBusinessDto) => {
-        const business = await this._modelContext.create(createBusinessDto);
+    create: BusinessRepoInterface["create"] = async (createBusinessDto, session) => {
+        const business = await this._modelContext.create(createBusinessDto, {
+            transaction: session as Transaction,
+        });
         return business.toJSON();
     };
 
