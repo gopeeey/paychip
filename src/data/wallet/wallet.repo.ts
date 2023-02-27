@@ -1,13 +1,16 @@
 import { CreateWalletDto, WalletModelInterface, WalletRepoInterface } from "@logic/wallet";
 import { generateId } from "src/utils";
 import { Wallet } from "./wallet.model";
-import { Op } from "sequelize";
+import { Op, Transaction } from "sequelize";
 
 export class WalletRepo implements WalletRepoInterface {
     constructor(private readonly _modelContext: typeof Wallet) {}
 
-    create = async (createWalletDto: CreateWalletDto) => {
-        const wallet = await this._modelContext.create({ ...createWalletDto, id: generateId() });
+    create: WalletRepoInterface["create"] = async (createWalletDto, session) => {
+        const wallet = await this._modelContext.create(
+            { ...createWalletDto, id: generateId() },
+            { transaction: session as Transaction }
+        );
         return wallet.toJSON();
     };
 

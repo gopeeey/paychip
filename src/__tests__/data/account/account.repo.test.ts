@@ -16,8 +16,7 @@ describe("Testing AccountRepo", () => {
     describe("Testing create method", () => {
         it("should return a new account instance", async () => {
             createMock.mockResolvedValue(account);
-            const data = [accountData, sessionMock] as const;
-            const newAccount = await accountRepo.create(...data);
+            const newAccount = await accountRepo.create(accountData, sessionMock);
             expect(newAccount).toEqual(accountJson);
             expect(createMock).toHaveBeenCalledTimes(1);
             expect(createMock).toHaveBeenCalledWith(accountData, { transaction: sessionMock });

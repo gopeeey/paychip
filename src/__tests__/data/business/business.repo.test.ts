@@ -21,11 +21,12 @@ describe("TESTING BUSINESS REPO", () => {
     describe("Testing create", () => {
         it("should return business object", async () => {
             modelContext.create.mockResolvedValue(businessObj);
-            const data = [businessData, sessionMock] as const;
-            const business = await businessRepo.create(...data);
+            const business = await businessRepo.create(businessData, sessionMock);
             expect(business).toEqual(businessJson);
             expect(modelContext.create).toHaveBeenCalledTimes(1);
-            expect(modelContext.create).toHaveBeenCalledWith(data[0], { transaction: data[1] });
+            expect(modelContext.create).toHaveBeenCalledWith(businessData, {
+                transaction: sessionMock,
+            });
         });
     });
 
