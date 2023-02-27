@@ -11,10 +11,10 @@ const chargeSchemeRepo = new ChargeSchemeRepo(modelContext as unknown as typeof 
 describe("TESTING CHARGE SCHEME REPO", () => {
     describe("Testing create", () => {
         it("should return a charge scheme object", async () => {
-            modelContext.create.mockResolvedValue(chargeSchemeObj.customerCredit);
-            const data = chargeSchemeData.customerCredit;
+            modelContext.create.mockResolvedValue(chargeSchemeObj.customerFunding);
+            const data = chargeSchemeData.customerFunding;
             const chargeScheme = await chargeSchemeRepo.create(data);
-            expect(chargeScheme).toEqual(chargeSchemeJson.customerCredit);
+            expect(chargeScheme).toEqual(chargeSchemeJson.customerFunding);
             expect(modelContext.create).toHaveBeenCalledTimes(1);
             expect(modelContext.create).toHaveBeenCalledWith(data);
         });
@@ -23,10 +23,10 @@ describe("TESTING CHARGE SCHEME REPO", () => {
     describe("Testing getById", () => {
         describe("Given the chargeScheme exists", () => {
             it("should return a charge scheme json object", async () => {
-                modelContext.findByPk.mockResolvedValue(chargeSchemeObj.customerCredit);
-                const data = chargeSchemeObj.customerCredit.id;
+                modelContext.findByPk.mockResolvedValue(chargeSchemeObj.customerFunding);
+                const data = chargeSchemeObj.customerFunding.id;
                 const chargeScheme = await chargeSchemeRepo.getById(data);
-                expect(chargeScheme).toEqual(chargeSchemeJson.customerCredit);
+                expect(chargeScheme).toEqual(chargeSchemeJson.customerFunding);
                 expect(modelContext.findByPk).toHaveBeenCalledTimes(1);
                 expect(modelContext.findByPk).toHaveBeenCalledWith(data);
             });
@@ -35,7 +35,7 @@ describe("TESTING CHARGE SCHEME REPO", () => {
         describe("Given the chargeScheme does not exist", () => {
             it("should return null", async () => {
                 modelContext.findByPk.mockResolvedValue(null);
-                const data = chargeSchemeObj.customerCredit.id;
+                const data = chargeSchemeObj.customerFunding.id;
                 const chargeScheme = await chargeSchemeRepo.getById(data);
                 expect(chargeScheme).toBeNull();
                 expect(modelContext.findByPk).toHaveBeenCalledTimes(1);

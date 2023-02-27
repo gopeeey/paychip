@@ -3,13 +3,18 @@ import { Wallet } from "@data/wallet";
 
 export const walletData = new CreateWalletDto({
     businessId: 1234,
-    chargeSchemeId: null,
     currency: "NGN",
     email: "sammygopeh@gmail.com",
+    walletType: "commercial",
     parentWalletId: null,
     waiveFundingCharges: false,
     waiveWithdrawalCharges: false,
-    walletType: "commercial",
+    waiveWalletInCharges: false,
+    waiveWalletOutCharges: false,
+    fundingChargeSchemeId: null,
+    withdrawalChargeSchemeId: null,
+    walletInChargeSchemeId: null,
+    walletOutChargeSchemeId: null,
 });
 
 export const walletObj = new Wallet({ ...walletData, id: "parentwallet" });

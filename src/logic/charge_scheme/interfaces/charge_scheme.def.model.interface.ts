@@ -1,9 +1,14 @@
 import { BaseModelInterface } from "@logic/types";
 import { BusinessModelInterfaceDef } from "@logic/business";
 import { CurrencyModelInterfaceDef } from "@logic/currency";
-import { TransactionModelInterfaceDef } from "@logic/transaction";
 
 export const allowedChargeSchemePayers = ["wallet", "customer"] as const;
+export const allowedChargeSchemeTransactions = [
+    "funding",
+    "withdrawal",
+    "walletIn",
+    "walletOut",
+] as const;
 
 export interface ChargeSchemeModelInterfaceDef extends BaseModelInterface {
     id: string;
@@ -11,7 +16,7 @@ export interface ChargeSchemeModelInterfaceDef extends BaseModelInterface {
     name: string;
     description: string | null;
     currency: CurrencyModelInterfaceDef["isoCode"];
-    transactionType: TransactionModelInterfaceDef["transactionType"];
+    transactionType: typeof allowedChargeSchemeTransactions[number];
     primary: boolean;
     flatCharge: number;
     percentageCharge: number;

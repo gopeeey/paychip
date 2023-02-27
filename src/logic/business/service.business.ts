@@ -37,6 +37,7 @@ export class BusinessService implements BusinessServiceInterface {
                 updateCurrencies: this._dep.updateCurrencies,
             }).create();
 
+            if (selfStartedSession) await session.commit();
             return business;
         } catch (err) {
             if (selfStartedSession) await session.rollback();

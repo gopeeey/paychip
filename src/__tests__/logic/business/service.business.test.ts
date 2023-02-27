@@ -46,6 +46,14 @@ describe("TESTING BUSINESS SERVICE", () => {
                 await businessService.createBusiness(businessData, sessionMock);
                 expect(dependencies.startSession).not.toHaveBeenCalled();
             });
+
+            describe("given no errors occur", () => {
+                it("should not commit any changes made", async () => {
+                    await businessService.createBusiness(businessData, sessionMock);
+                    expect(sessionMock.commit).not.toHaveBeenCalled();
+                });
+            });
+
             describe("given an error occurs", () => {
                 it("should NOT try to roll back changes", async () => {
                     await businessService.createBusiness(businessData, sessionMock);
@@ -59,6 +67,12 @@ describe("TESTING BUSINESS SERVICE", () => {
                 businessCreatorSpy.mockResolvedValue(businessJson);
                 await businessService.createBusiness(businessData);
                 expect(dependencies.startSession).toHaveBeenCalled();
+            });
+            describe("given no errors occur", () => {
+                it("should commit all changes made", async () => {
+                    await businessService.createBusiness(businessData);
+                    expect(sessionMock.commit).toHaveBeenCalledTimes(1);
+                });
             });
             describe("given an error occurs", () => {
                 it("should roll back changes", async () => {

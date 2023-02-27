@@ -47,12 +47,17 @@ describe("TESTING WALLET ROUTES", () => {
                 businessService.getById.mockResolvedValue(businessJson);
 
                 const rootData = {
-                    chargeSchemeId: null,
                     currency: "NGN",
                     email: "sammygopeh@gmail.com",
+                    walletType: "commercial",
                     waiveFundingCharges: false,
                     waiveWithdrawalCharges: false,
-                    walletType: "commercial",
+                    waiveWalletInCharges: false,
+                    waiveWalletOutCharges: false,
+                    fundingChargeSchemeId: null,
+                    withdrawalChargeSchemeId: null,
+                    walletInChargeSchemeId: null,
+                    walletOutChargeSchemeId: null,
                 };
 
                 const { email, ...noEmail } = rootData;
@@ -75,8 +80,15 @@ describe("TESTING WALLET ROUTES", () => {
         describe("Given valid data", () => {
             it("should return a standard wallet dto", async () => {
                 walletService.createBusinessWallet.mockResolvedValue(walletJsons.withParent);
-                const { businessId, parentWalletId, chargeSchemeId, ...form } =
-                    walletSampleData.noParent;
+                const {
+                    businessId,
+                    parentWalletId,
+                    fundingChargeSchemeId,
+                    withdrawalChargeSchemeId,
+                    walletInChargeSchemeId,
+                    walletOutChargeSchemeId,
+                    ...form
+                } = walletSampleData.noParent;
                 const { statusCode, body } = await testApp
                     .post(route)
                     .send(form)

@@ -1,6 +1,9 @@
 import Joi from "joi";
-import { CreateChargeSchemeDto, allowedChargeSchemePayers } from "@logic/charge_scheme";
-import { allowedTransactionTypes } from "@logic/transaction";
+import {
+    CreateChargeSchemeDto,
+    allowedChargeSchemePayers,
+    allowedChargeSchemeTransactions,
+} from "@logic/charge_scheme";
 
 export const CreateChargeSchemeValidator = Joi.object<CreateChargeSchemeDto>({
     name: Joi.string().required(),
@@ -12,7 +15,7 @@ export const CreateChargeSchemeValidator = Joi.object<CreateChargeSchemeDto>({
     percentageChargeCap: Joi.number().optional(),
     transactionType: Joi.string()
         .required()
-        .valid(...allowedTransactionTypes),
+        .valid(...allowedChargeSchemeTransactions),
     payer: Joi.string()
         .required()
         .valid(...allowedChargeSchemePayers),

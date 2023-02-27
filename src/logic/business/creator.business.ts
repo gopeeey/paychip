@@ -52,13 +52,18 @@ export class BusinessCreator implements BusinessCreatorInterface {
     private createBusinessWallet = async () => {
         const createWalletDto = new CreateWalletDto({
             businessId: this.business.id,
-            chargeSchemeId: null,
             currency: this.country.currencyCode,
             email: this.owner.email,
             parentWalletId: null,
+            walletType: "commercial",
             waiveFundingCharges: false,
             waiveWithdrawalCharges: false,
-            walletType: "commercial",
+            waiveWalletInCharges: false,
+            waiveWalletOutCharges: false,
+            fundingChargeSchemeId: null,
+            withdrawalChargeSchemeId: null,
+            walletInChargeSchemeId: null,
+            walletOutChargeSchemeId: null,
         });
         this.wallet = await this._dep.createWallet(createWalletDto, this.session);
     };

@@ -74,11 +74,45 @@ export const runAssociations = () => {
     ChargeScheme.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
 
     // charge schemes and wallets
-    ChargeScheme.hasMany(Wallet, { sourceKey: "id", foreignKey: "chargeSchemeId", as: "wallets" });
+    ChargeScheme.hasMany(Wallet, {
+        sourceKey: "id",
+        foreignKey: "fundingChargeSchemeId",
+        as: "fundingWallets",
+    });
+    ChargeScheme.hasMany(Wallet, {
+        sourceKey: "id",
+        foreignKey: "withdrawalChargeSchemeId",
+        as: "withdrawalWallets",
+    });
+    ChargeScheme.hasMany(Wallet, {
+        sourceKey: "id",
+        foreignKey: "walletInChargeSchemeId",
+        as: "walletInWallets",
+    });
+    ChargeScheme.hasMany(Wallet, {
+        sourceKey: "id",
+        foreignKey: "walletOutChargeSchemeId",
+        as: "walletOutWallets",
+    });
     Wallet.belongsTo(ChargeScheme, {
         targetKey: "id",
-        foreignKey: "chargeSchemeId",
-        as: "chargeScheme",
+        foreignKey: "fundingChargeSchemeId",
+        as: "fundingChargeScheme",
+    });
+    Wallet.belongsTo(ChargeScheme, {
+        targetKey: "id",
+        foreignKey: "withdrawalChargeSchemeId",
+        as: "withdrawalChargeScheme",
+    });
+    Wallet.belongsTo(ChargeScheme, {
+        targetKey: "id",
+        foreignKey: "walletInChargeSchemeId",
+        as: "walletInChargeScheme",
+    });
+    Wallet.belongsTo(ChargeScheme, {
+        targetKey: "id",
+        foreignKey: "walletOutChargeSchemeId",
+        as: "walletOutChargeScheme",
     });
 
     // wallets and wallets

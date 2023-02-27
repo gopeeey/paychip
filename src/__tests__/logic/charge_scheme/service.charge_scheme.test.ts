@@ -20,10 +20,10 @@ const chargeSchemeService = new ChargeSchemeService(
 describe("TESTING CHARGE SCHEME SERVICE", () => {
     describe("Testing create", () => {
         it("should return a standard charge scheme object", async () => {
-            dependencies.repo.create.mockResolvedValue(chargeSchemeJson.customerCredit);
-            const data = chargeSchemeData.customerCredit;
+            dependencies.repo.create.mockResolvedValue(chargeSchemeJson.customerFunding);
+            const data = chargeSchemeData.customerFunding;
             const chargeScheme = await chargeSchemeService.create(data);
-            expect(chargeScheme).toEqual(chargeSchemeJson.customerCredit);
+            expect(chargeScheme).toEqual(chargeSchemeJson.customerFunding);
             expect(dependencies.repo.create).toHaveBeenCalledTimes(1);
             expect(dependencies.repo.create).toHaveBeenCalledWith(data);
         });
@@ -32,10 +32,10 @@ describe("TESTING CHARGE SCHEME SERVICE", () => {
     describe("Testing getById", () => {
         describe("Given the charge scheme exists", () => {
             it("should return a standard charge scheme object", async () => {
-                dependencies.repo.getById.mockResolvedValue(chargeSchemeJson.customerCredit);
-                const data = chargeSchemeObj.customerCredit.id;
+                dependencies.repo.getById.mockResolvedValue(chargeSchemeJson.customerFunding);
+                const data = chargeSchemeObj.customerFunding.id;
                 const chargeScheme = await chargeSchemeService.getById(data);
-                expect(chargeScheme).toEqual(chargeSchemeJson.customerCredit);
+                expect(chargeScheme).toEqual(chargeSchemeJson.customerFunding);
                 expect(dependencies.repo.getById).toHaveBeenCalledTimes(1);
                 expect(dependencies.repo.getById).toHaveBeenCalledWith(data);
             });
@@ -44,7 +44,7 @@ describe("TESTING CHARGE SCHEME SERVICE", () => {
         describe("Given the charge scheme does not exist", () => {
             it("should throw a charge scheme not found error", async () => {
                 dependencies.repo.getById.mockResolvedValue(null);
-                const data = chargeSchemeObj.customerCredit.id;
+                const data = chargeSchemeObj.customerFunding.id;
                 await expect(chargeSchemeService.getById(data)).rejects.toThrow(
                     new ChargeSchemeNotFoundError()
                 );

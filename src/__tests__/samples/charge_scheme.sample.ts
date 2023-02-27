@@ -12,37 +12,37 @@ const data: CreateChargeSchemeDto = {
     payer: "customer",
     percentageCharge: 30,
     percentageChargeCap: 3000,
-    transactionType: "credit",
+    transactionType: "funding",
 };
 
 export const chargeSchemeData = {
-    customerCredit: new CreateChargeSchemeDto(data),
-    customerDebit: new CreateChargeSchemeDto({ ...data, transactionType: "debit" }),
-    walletCredit: new CreateChargeSchemeDto({ ...data, payer: "wallet" }),
-    walletDebit: new CreateChargeSchemeDto({
+    customerFunding: new CreateChargeSchemeDto(data),
+    customerWithdrawal: new CreateChargeSchemeDto({ ...data, transactionType: "withdrawal" }),
+    walletFunding: new CreateChargeSchemeDto({ ...data, payer: "wallet" }),
+    walletWithdrawal: new CreateChargeSchemeDto({
         ...data,
         payer: "wallet",
-        transactionType: "debit",
+        transactionType: "withdrawal",
     }),
 };
 
 export const chargeSchemeObj = {
-    customerCredit: new ChargeScheme(chargeSchemeData.customerCredit),
-    customerDebit: new ChargeScheme(chargeSchemeData.customerDebit),
-    walletCredit: new ChargeScheme(chargeSchemeData.walletCredit),
-    walletDebit: new ChargeScheme(chargeSchemeData.walletDebit),
+    customerFunding: new ChargeScheme(chargeSchemeData.customerFunding),
+    customerWithdrawal: new ChargeScheme(chargeSchemeData.customerWithdrawal),
+    walletFunding: new ChargeScheme(chargeSchemeData.walletFunding),
+    walletWithdrawal: new ChargeScheme(chargeSchemeData.walletWithdrawal),
 };
 
 export const chargeSchemeJson = {
-    customerCredit: chargeSchemeObj.customerCredit.toJSON(),
-    customerDebit: chargeSchemeObj.customerDebit.toJSON(),
-    walletCredit: chargeSchemeObj.walletCredit.toJSON(),
-    walletDebit: chargeSchemeObj.walletDebit.toJSON(),
+    customerFunding: chargeSchemeObj.customerFunding.toJSON(),
+    customerWithdrawal: chargeSchemeObj.customerWithdrawal.toJSON(),
+    walletFunding: chargeSchemeObj.walletFunding.toJSON(),
+    walletWithdrawal: chargeSchemeObj.walletWithdrawal.toJSON(),
 };
 
 export const standardChargeScheme = {
-    customerCredit: new StandardChargeSchemeDto(chargeSchemeJson.customerCredit),
-    customerDebit: new StandardChargeSchemeDto(chargeSchemeJson.customerDebit),
-    walletCredit: new StandardChargeSchemeDto(chargeSchemeJson.walletCredit),
-    walletDebit: new StandardChargeSchemeDto(chargeSchemeJson.walletDebit),
+    customerFunding: new StandardChargeSchemeDto(chargeSchemeJson.customerFunding),
+    customerWithdrawal: new StandardChargeSchemeDto(chargeSchemeJson.customerWithdrawal),
+    walletFunding: new StandardChargeSchemeDto(chargeSchemeJson.walletFunding),
+    walletWithdrawal: new StandardChargeSchemeDto(chargeSchemeJson.walletWithdrawal),
 };

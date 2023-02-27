@@ -1,4 +1,3 @@
-import { CreateWalletDto } from "./dtos";
 import {
     WalletRepoInterface,
     WalletServiceDependencies,

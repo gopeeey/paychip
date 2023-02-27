@@ -8,7 +8,7 @@ import {
     NonAttribute,
 } from "sequelize";
 import { db } from "../db";
-import { ChargeSchemeModelInterface } from "@logic/charge_scheme";
+import { allowedChargeSchemeTransactions, ChargeSchemeModelInterface } from "@logic/charge_scheme";
 
 export class ChargeScheme
     extends Model<InferAttributes<ChargeScheme>, InferCreationAttributes<ChargeScheme>>
@@ -43,7 +43,10 @@ ChargeScheme.init(
         },
         name: { type: DataTypes.STRING, allowNull: false },
         description: { type: DataTypes.STRING },
-        transactionType: { type: DataTypes.STRING, allowNull: false },
+        transactionType: {
+            type: DataTypes.ENUM(...allowedChargeSchemeTransactions),
+            allowNull: false,
+        },
         primary: { type: DataTypes.BOOLEAN, defaultValue: false, allowNull: false },
         flatCharge: { type: DataTypes.DECIMAL(12, 2), defaultValue: 0, allowNull: false },
         percentageCharge: { type: DataTypes.DECIMAL(12, 2), defaultValue: 0, allowNull: false },
