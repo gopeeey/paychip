@@ -1,4 +1,5 @@
 import { CustomerRepo, Customer } from "@data/customer";
+import { sessionMock } from "src/__tests__/mocks";
 import {
     customerData,
     customerJson,
@@ -18,10 +19,12 @@ describe("TESTING CUSTOMER REPO", () => {
     describe("testing create", () => {
         it("should return a new customer object", async () => {
             modelContext.create.mockResolvedValue(customerObj.complete);
-            const customer = await customerRepo.create(customerData.complete);
+            const customer = await customerRepo.create(customerData.complete, sessionMock);
             expect(customer).toEqual(customerJson.complete);
             expect(modelContext.create).toHaveBeenCalledTimes(1);
-            expect(modelContext.create).toHaveBeenCalledWith(customerData.complete);
+            expect(modelContext.create).toHaveBeenCalledWith(customerData.complete, {
+                transaction: sessionMock,
+            });
         });
     });
 

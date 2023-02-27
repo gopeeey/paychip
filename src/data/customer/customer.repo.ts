@@ -1,11 +1,14 @@
 import { CreateCustomerDto, CustomerModelInterface, CustomerRepoInterface } from "@logic/customer";
+import { Transaction } from "sequelize";
 import { Customer } from "./customer.model";
 
 export class CustomerRepo implements CustomerRepoInterface {
     constructor(private readonly _modelContext: typeof Customer) {}
 
-    create = async (createCustomerDto: CreateCustomerDto) => {
-        const customer = await this._modelContext.create(createCustomerDto);
+    create: CustomerRepoInterface["create"] = async (dto, session) => {
+        const customer = await this._modelContext.create(dto, {
+            transaction: session as Transaction,
+        });
         return customer.toJSON();
     };
 
