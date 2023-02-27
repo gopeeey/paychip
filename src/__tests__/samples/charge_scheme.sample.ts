@@ -26,11 +26,13 @@ export const chargeSchemeData = {
     }),
 };
 
+const id = "something";
+
 export const chargeSchemeObj = {
-    customerFunding: new ChargeScheme(chargeSchemeData.customerFunding),
-    customerWithdrawal: new ChargeScheme(chargeSchemeData.customerWithdrawal),
-    walletFunding: new ChargeScheme(chargeSchemeData.walletFunding),
-    walletWithdrawal: new ChargeScheme(chargeSchemeData.walletWithdrawal),
+    customerFunding: new ChargeScheme({ ...chargeSchemeData.customerFunding, id }),
+    customerWithdrawal: new ChargeScheme({ ...chargeSchemeData.customerWithdrawal, id }),
+    walletFunding: new ChargeScheme({ ...chargeSchemeData.walletFunding, id }),
+    walletWithdrawal: new ChargeScheme({ ...chargeSchemeData.walletWithdrawal, id }),
 };
 
 export const chargeSchemeJson = {

@@ -1,4 +1,5 @@
 import { ChargeScheme, ChargeSchemeRepo } from "@data/charge_scheme";
+import { generateIdMock } from "src/__tests__/mocks";
 import { chargeSchemeObj, chargeSchemeJson, chargeSchemeData } from "../../samples";
 
 const modelContext = {
@@ -12,11 +13,16 @@ describe("TESTING CHARGE SCHEME REPO", () => {
     describe("Testing create", () => {
         it("should return a charge scheme object", async () => {
             modelContext.create.mockResolvedValue(chargeSchemeObj.customerFunding);
+            generateIdMock.mockReturnValue(chargeSchemeObj.customerFunding.id);
             const data = chargeSchemeData.customerFunding;
             const chargeScheme = await chargeSchemeRepo.create(data);
             expect(chargeScheme).toEqual(chargeSchemeJson.customerFunding);
             expect(modelContext.create).toHaveBeenCalledTimes(1);
-            expect(modelContext.create).toHaveBeenCalledWith(data);
+            expect(modelContext.create).toHaveBeenCalledWith({
+                ...data,
+                id: chargeSchemeObj.customerFunding.id,
+            });
+            expect(generateIdMock).toHaveBeenCalledTimes(1);
         });
     });
 
