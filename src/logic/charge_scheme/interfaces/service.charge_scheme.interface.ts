@@ -6,6 +6,11 @@ export interface ChargeSchemeServiceInterface {
     create: (createChargeSchemeDto: CreateChargeSchemeDto) => Promise<ChargeSchemeModelInterface>;
 
     getById: (id: ChargeSchemeModelInterface["id"]) => Promise<ChargeSchemeModelInterface>;
+
+    checkCompatibility: (
+        chargeSchemeId: ChargeSchemeModelInterface["id"],
+        currency: ChargeSchemeModelInterface["currency"]
+    ) => Promise<boolean>;
 }
 
 export interface ChargeSchemeServiceDependencies {

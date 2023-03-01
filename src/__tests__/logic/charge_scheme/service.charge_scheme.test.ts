@@ -17,6 +17,8 @@ const chargeSchemeService = new ChargeSchemeService(
     dependencies as unknown as ChargeSchemeServiceDependencies
 );
 
+const getByIdMock = jest.spyOn(chargeSchemeService, "getById");
+
 describe("TESTING CHARGE SCHEME SERVICE", () => {
     describe("Testing create", () => {
         it("should return a standard charge scheme object", async () => {
@@ -50,6 +52,36 @@ describe("TESTING CHARGE SCHEME SERVICE", () => {
                 );
                 expect(dependencies.repo.getById).toHaveBeenCalledTimes(1);
                 expect(dependencies.repo.getById).toHaveBeenCalledWith(data);
+            });
+        });
+    });
+
+    describe("Testing getCompatibility", () => {
+        describe("Given the currency matches the charge scheme currency", () => {
+            it("should return true", async () => {
+                getByIdMock.mockResolvedValue({
+                    ...chargeSchemeJson.customerFunding,
+                    currency: "NGN",
+                });
+                const val = await chargeSchemeService.checkCompatibility(
+                    chargeSchemeJson.customerFunding.id,
+                    "NGN"
+                );
+                expect(val).toBe(true);
+                expect(getByIdMock).toHaveBeenCalledTimes(1);
+                expect(getByIdMock).toHaveBeenCalledWith(chargeSchemeJson.customerFunding.id);
+            });
+        });
+
+        describe("given the currency does not match the charge scheme currency", () => {
+            it("should return false", async () => {
+                const val = await chargeSchemeService.checkCompatibility(
+                    chargeSchemeJson.customerFunding.id,
+                    "USD"
+                );
+                expect(val).toBe(false);
+                expect(getByIdMock).toHaveBeenCalledTimes(1);
+                expect(getByIdMock).toHaveBeenCalledWith(chargeSchemeJson.customerFunding.id);
             });
         });
     });

@@ -18,9 +18,17 @@ export class ChargeSchemeService implements ChargeSchemeServiceInterface {
         return chargeScheme;
     };
 
-    getById = async (id: ChargeSchemeModelInterface["id"]) => {
+    getById: ChargeSchemeServiceInterface["getById"] = async (id) => {
         const chargeScheme = await this._repo.getById(id);
         if (!chargeScheme) throw new ChargeSchemeNotFoundError();
         return chargeScheme;
+    };
+
+    checkCompatibility: ChargeSchemeServiceInterface["checkCompatibility"] = async (
+        chargeSchemeId,
+        currency
+    ) => {
+        const chargeScheme = await this.getById(chargeSchemeId);
+        return chargeScheme.currency === currency;
     };
 }
