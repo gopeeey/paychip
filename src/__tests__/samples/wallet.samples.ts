@@ -39,3 +39,5 @@ export const standardWallet = {
     noParent: new StandardWalletDto(walletJsons.noParent),
     withParent: new StandardWalletDto(walletJsons.withParent),
 };
+
+export const walletSeeder = async () => {};
