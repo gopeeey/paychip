@@ -9,19 +9,19 @@ const data: CreateChargeSchemeDto = {
     name: "Test charge scheme",
     flatCharge: 100,
     minimumPrincipalAmount: 0,
-    payer: "customer",
+    payer: "sender",
     percentageCharge: 30,
     percentageChargeCap: 3000,
     transactionType: "funding",
 };
 
 export const chargeSchemeData = {
-    customerFunding: new CreateChargeSchemeDto(data),
-    customerWithdrawal: new CreateChargeSchemeDto({ ...data, transactionType: "withdrawal" }),
-    walletFunding: new CreateChargeSchemeDto({ ...data, payer: "wallet" }),
-    walletWithdrawal: new CreateChargeSchemeDto({
+    senderFunding: new CreateChargeSchemeDto(data),
+    senderWithdrawal: new CreateChargeSchemeDto({ ...data, transactionType: "withdrawal" }),
+    receiverFunding: new CreateChargeSchemeDto({ ...data, payer: "receiver" }),
+    receiverWithdrawal: new CreateChargeSchemeDto({
         ...data,
-        payer: "wallet",
+        payer: "receiver",
         transactionType: "withdrawal",
     }),
 };
@@ -29,22 +29,22 @@ export const chargeSchemeData = {
 const id = "something";
 
 export const chargeSchemeObj = {
-    customerFunding: new ChargeScheme({ ...chargeSchemeData.customerFunding, id }),
-    customerWithdrawal: new ChargeScheme({ ...chargeSchemeData.customerWithdrawal, id }),
-    walletFunding: new ChargeScheme({ ...chargeSchemeData.walletFunding, id }),
-    walletWithdrawal: new ChargeScheme({ ...chargeSchemeData.walletWithdrawal, id }),
+    senderFunding: new ChargeScheme({ ...chargeSchemeData.senderFunding, id }),
+    senderWithdrawal: new ChargeScheme({ ...chargeSchemeData.senderWithdrawal, id }),
+    receiverFunding: new ChargeScheme({ ...chargeSchemeData.receiverFunding, id }),
+    receiverWithdrawal: new ChargeScheme({ ...chargeSchemeData.receiverWithdrawal, id }),
 };
 
 export const chargeSchemeJson = {
-    customerFunding: chargeSchemeObj.customerFunding.toJSON(),
-    customerWithdrawal: chargeSchemeObj.customerWithdrawal.toJSON(),
-    walletFunding: chargeSchemeObj.walletFunding.toJSON(),
-    walletWithdrawal: chargeSchemeObj.walletWithdrawal.toJSON(),
+    senderFunding: chargeSchemeObj.senderFunding.toJSON(),
+    senderWithdrawal: chargeSchemeObj.senderWithdrawal.toJSON(),
+    receiverFunding: chargeSchemeObj.receiverFunding.toJSON(),
+    receiverWithdrawal: chargeSchemeObj.receiverWithdrawal.toJSON(),
 };
 
 export const standardChargeScheme = {
-    customerFunding: new StandardChargeSchemeDto(chargeSchemeJson.customerFunding),
-    customerWithdrawal: new StandardChargeSchemeDto(chargeSchemeJson.customerWithdrawal),
-    walletFunding: new StandardChargeSchemeDto(chargeSchemeJson.walletFunding),
-    walletWithdrawal: new StandardChargeSchemeDto(chargeSchemeJson.walletWithdrawal),
+    senderFunding: new StandardChargeSchemeDto(chargeSchemeJson.senderFunding),
+    senderWithdrawal: new StandardChargeSchemeDto(chargeSchemeJson.senderWithdrawal),
+    receiverFunding: new StandardChargeSchemeDto(chargeSchemeJson.receiverFunding),
+    receiverWithdrawal: new StandardChargeSchemeDto(chargeSchemeJson.receiverWithdrawal),
 };

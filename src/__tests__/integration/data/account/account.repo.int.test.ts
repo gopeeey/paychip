@@ -1,6 +1,6 @@
 import { AccountRepo, Account } from "@data/account";
 import { sessionMock } from "src/__tests__/mocks";
-import { account, accountData, accountJson } from "../../samples";
+import { account, accountData, accountJson } from "src/__tests__/samples";
 
 const createMock = jest.fn();
 const findOneMock = jest.fn();

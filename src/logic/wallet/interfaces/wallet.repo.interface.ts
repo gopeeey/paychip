@@ -1,5 +1,5 @@
 import { SessionInterface } from "@logic/session_interface";
-import { CreateWalletDto } from "../dtos";
+import { CreateWalletDto, AddChargeSchemeDto } from "../dtos";
 import { WalletModelInterface } from "./wallet.model.interface";
 
 export interface WalletRepoInterface {
@@ -22,4 +22,6 @@ export interface WalletRepoInterface {
         businessId: WalletModelInterface["businessId"],
         currency: WalletModelInterface["currency"]
     ) => Promise<WalletModelInterface | null>;
+
+    addChargeScheme: (addChargeSchemeDto: AddChargeSchemeDto) => Promise<WalletModelInterface>;
 }

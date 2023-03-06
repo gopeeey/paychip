@@ -7,7 +7,7 @@ import {
     currencyJson,
     currencyJsonArr,
     currencyObjArr,
-} from "../../samples";
+} from "src/__tests__/samples";
 
 const currencyModelMock = {
     findAll: jest.fn(),

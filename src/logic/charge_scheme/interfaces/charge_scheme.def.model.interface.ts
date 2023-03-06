@@ -2,7 +2,7 @@ import { BaseModelInterface } from "@logic/types";
 import { BusinessModelInterfaceDef } from "@logic/business";
 import { CurrencyModelInterfaceDef } from "@logic/currency";
 
-export const allowedChargeSchemePayers = ["wallet", "customer"] as const;
+export const allowedChargeSchemePayers = ["sender", "receiver"] as const;
 export const allowedChargeSchemeTransactions = [
     "funding",
     "withdrawal",

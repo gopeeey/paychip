@@ -2,6 +2,7 @@ import { CreateWalletDto, WalletModelInterface, WalletRepoInterface } from "@log
 import { generateId } from "src/utils";
 import { Wallet } from "./wallet.model";
 import { Op, Transaction } from "sequelize";
+import { walletJson } from "src/__tests__/samples";
 
 export class WalletRepo implements WalletRepoInterface {
     constructor(private readonly _modelContext: typeof Wallet) {}
@@ -34,5 +35,9 @@ export class WalletRepo implements WalletRepoInterface {
             },
         });
         return wallet ? wallet.toJSON() : null;
+    };
+
+    addChargeScheme: WalletRepoInterface["addChargeScheme"] = async (addChargeSchemeDto) => {
+        return walletJson;
     };
 }

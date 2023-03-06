@@ -7,7 +7,7 @@ import {
     businessJsonArr,
     businessObj,
     businessObjArr,
-} from "../../samples";
+} from "src/__tests__/samples";
 
 const modelContext = {
     create: jest.fn(),

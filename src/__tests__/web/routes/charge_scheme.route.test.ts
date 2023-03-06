@@ -45,10 +45,10 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
                 accountService.getById.mockResolvedValue(accountJson);
                 businessService.getById.mockResolvedValue(businessJson);
 
-                const { name, ...noName } = chargeSchemeData.customerFunding;
-                const { currency, ...noCurrency } = chargeSchemeData.customerFunding;
-                const { payer, ...noPayer } = chargeSchemeData.customerFunding;
-                const { transactionType, ...noTransactonType } = chargeSchemeData.customerFunding;
+                const { name, ...noName } = chargeSchemeData.senderFunding;
+                const { currency, ...noCurrency } = chargeSchemeData.senderFunding;
+                const { payer, ...noPayer } = chargeSchemeData.senderFunding;
+                const { transactionType, ...noTransactonType } = chargeSchemeData.senderFunding;
 
                 const dataSet = [noName, noCurrency, noPayer, noTransactonType];
 
@@ -65,15 +65,15 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
 
         describe("Given valid data", () => {
             it("should respond with a 201 and a standard charge scheme object", async () => {
-                chargeSchemeService.create.mockResolvedValue(chargeSchemeJson.customerFunding);
+                chargeSchemeService.create.mockResolvedValue(chargeSchemeJson.senderFunding);
 
-                const { businessId, ...data } = chargeSchemeData.customerFunding;
+                const { businessId, ...data } = chargeSchemeData.senderFunding;
                 const { statusCode, body } = await testApp
                     .post(route)
                     .send(data)
                     .set({ Authorization: businessLevelToken });
                 expect(statusCode).toBe(201);
-                expect(body).toHaveProperty("data.charge", standardChargeScheme.customerFunding);
+                expect(body).toHaveProperty("data.charge", standardChargeScheme.senderFunding);
                 expect(chargeSchemeService.create).toHaveBeenCalledTimes(1);
                 expect(chargeSchemeService.create).toHaveBeenCalledWith({
                     ...data,

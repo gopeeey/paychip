@@ -1,6 +1,6 @@
 import { Wallet, WalletRepo } from "@data/wallet";
-import { walletData, walletJson, walletObj } from "../../samples";
-import { generateIdMock, sessionMock } from "../../mocks";
+import { walletData, walletJson, walletObj } from "src/__tests__/samples";
+import { generateIdMock, sessionMock } from "src/__tests__/mocks";
 
 const modelContext = {
     create: jest.fn(),
@@ -83,4 +83,6 @@ describe("TESTING WALLET REPO", () => {
             expect(wallet).toEqual(walletJson);
         });
     });
+
+    describe("Testing addChargeScheme", () => {});
 });
