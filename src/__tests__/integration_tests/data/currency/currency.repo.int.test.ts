@@ -1,16 +1,7 @@
 import { Business } from "@data/business";
 import { CurrencyRepo, Currency, BusinessCurrency } from "@data/currency";
 import { StartSequelizeSession } from "@data/sequelize_session";
-import { sessionMock } from "src/__tests__/mocks";
-import {
-    businessCurrencyObjArr,
-    businessCurrencyObjWithCurrencyArr,
-    businessJson,
-    currencyJson,
-    currencyJsonArr,
-    currencyObjArr,
-    currencySeeder,
-} from "src/__tests__/samples";
+import { currencySeeder } from "src/__tests__/samples";
 import { DBSetup } from "src/__tests__/test_utils";
 
 const currencyModelMock = {
