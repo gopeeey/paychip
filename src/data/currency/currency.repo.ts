@@ -26,7 +26,7 @@ export class CurrencyRepo implements CurrencyRepoInterface {
         });
         return businessCurrencies.reduce((agg, businessCurrency) => {
             if (!businessCurrency.currency) return agg;
-            return [...agg, businessCurrency.currency];
+            return [...agg, (businessCurrency.currency as Currency).toJSON()];
         }, [] as CurrencyModelInterface[]);
     };
 

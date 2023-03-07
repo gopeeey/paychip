@@ -32,15 +32,18 @@ export const standardCurrencyArr = [standardCurrency];
 
 export const currencySeeder = async () => {
     const currency = await Currency.create(currencyData);
+    await Currency.create({ isoCode: "USD", name: "United States Dollar" });
     const country = await Country.create({
         currencyCode: currency.isoCode,
         isoCode: "NGA",
         name: "Nigeria",
     });
     const account = await Account.create({ email: "mail@mail.com", name: "Sam", password: "hash" });
-    await Business.create({
+    const business = await Business.create({
         countryCode: country.isoCode,
         name: "New Business",
         ownerId: account.id,
     });
+
+    await BusinessCurrency.create({ businessId: business.id, currencyIsoCode: currency.isoCode });
 };
