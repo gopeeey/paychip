@@ -7,7 +7,9 @@ import {
     currencyJson,
     currencyJsonArr,
     currencyObjArr,
+    currencySeeder,
 } from "src/__tests__/samples";
+import { closeDbConnection, syncDbForce } from "src/__tests__/test_utils";
 
 const currencyModelMock = {
     findAll: jest.fn(),
@@ -24,6 +26,22 @@ const currencyRepo = new CurrencyRepo(
 );
 
 const addBusinessCurrenciesMock = jest.spyOn(currencyRepo, "addBusinessCurrencies");
+
+// seed data
+beforeEach((done: jest.DoneCallback) => {
+    (async () => {
+        await syncDbForce();
+        await currencySeeder();
+        done();
+    })();
+});
+
+afterAll((done: jest.DoneCallback) => {
+    (async () => {
+        await closeDbConnection();
+        done();
+    })();
+});
 
 describe("TESTING CURRENCY REPO", () => {
     describe("Testing getAll", () => {

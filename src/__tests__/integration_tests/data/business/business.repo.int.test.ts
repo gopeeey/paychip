@@ -7,7 +7,9 @@ import {
     businessJsonArr,
     businessObj,
     businessObjArr,
+    businessSeeder,
 } from "src/__tests__/samples";
+import { closeDbConnection, syncDbForce } from "src/__tests__/test_utils";
 
 const modelContext = {
     create: jest.fn(),
@@ -16,6 +18,22 @@ const modelContext = {
 };
 
 const businessRepo = new BusinessRepo(modelContext as unknown as typeof Business);
+
+// seed data
+// beforeEach((done: jest.DoneCallback) => {
+//     (async () => {
+//         await syncDbForce();
+//         await businessSeeder();
+//         done();
+//     })();
+// });
+
+// afterAll((done: jest.DoneCallback) => {
+//     (async () => {
+//         await closeDbConnection();
+//         done();
+//     })();
+// });
 
 describe("TESTING BUSINESS REPO", () => {
     describe("Testing create", () => {

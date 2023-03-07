@@ -2,25 +2,11 @@ import { AccountRepo, Account } from "@data/account";
 import { StartSequelizeSession } from "@data/sequelize_session";
 import { CreateAccountDto } from "@logic/index";
 import { accountData, accountSeeder } from "src/__tests__/samples";
-import { closeDbConnection, syncDbForce } from "src/__tests__/test_utils";
+import { DBSetup } from "src/__tests__/test_utils";
 
 const accountRepo = new AccountRepo(Account);
 
-// seed data
-beforeEach((done: jest.DoneCallback) => {
-    (async () => {
-        await syncDbForce();
-        await accountSeeder();
-        done();
-    })();
-});
-
-afterAll((done: jest.DoneCallback) => {
-    (async () => {
-        await closeDbConnection();
-        done();
-    })();
-});
+DBSetup(accountSeeder);
 
 describe("Testing AccountRepo", () => {
     describe("Testing create method", () => {

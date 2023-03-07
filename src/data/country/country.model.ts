@@ -30,7 +30,7 @@ export class Country
 Country.init(
     {
         isoCode: {
-            type: DataTypes.CHAR(4),
+            type: DataTypes.CHAR(3),
             unique: true,
             allowNull: false,
             primaryKey: true,
