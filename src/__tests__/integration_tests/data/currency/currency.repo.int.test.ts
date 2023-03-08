@@ -4,23 +4,7 @@ import { StartSequelizeSession } from "@data/sequelize_session";
 import { currencySeeder } from "src/__tests__/samples";
 import { DBSetup } from "src/__tests__/test_utils";
 
-const currencyModelMock = {
-    findAll: jest.fn(),
-};
-const businessCurrencyModelMock = {
-    bulkCreate: jest.fn(),
-    findAll: jest.fn(),
-    destroy: jest.fn(),
-};
-
-const currencyRepo = new CurrencyRepo(
-    currencyModelMock as unknown as typeof Currency,
-    businessCurrencyModelMock as unknown as typeof BusinessCurrency
-);
-
-const testCurrencyRepo = new CurrencyRepo(Currency, BusinessCurrency);
-
-const addBusinessCurrenciesMock = jest.spyOn(currencyRepo, "addBusinessCurrencies");
+const currencyRepo = new CurrencyRepo(Currency, BusinessCurrency);
 
 DBSetup(currencySeeder);
 
@@ -28,7 +12,7 @@ describe("TESTING CURRENCY REPO", () => {
     describe("Testing getAll", () => {
         it("should return an array of currencyJson objects", async () => {
             const expected = await Currency.findAll();
-            const currencies = await testCurrencyRepo.getAll();
+            const currencies = await currencyRepo.getAll();
             expect(currencies).toEqual(expected.map((ex) => ex.toJSON()));
         });
     });
@@ -42,7 +26,7 @@ describe("TESTING CURRENCY REPO", () => {
                     where: { businessId: business.id },
                 });
                 const expectedCodes = bCurrencies.map((curr) => curr.currencyIsoCode);
-                const currencies = await testCurrencyRepo.getBusinessCurrencies(business.id);
+                const currencies = await currencyRepo.getBusinessCurrencies(business.id);
 
                 const first = await Currency.findOne();
                 if (!first) throw new Error("Seeding error");
@@ -61,9 +45,9 @@ describe("TESTING CURRENCY REPO", () => {
             const bulkCreateMock = jest.spyOn(BusinessCurrency, "bulkCreate");
             const business = await Business.findOne();
             if (!business) throw new Error("Seeding error: business not found");
-            await testCurrencyRepo.addBusinessCurrencies(business.id, ["USD"], session);
+            await currencyRepo.addBusinessCurrencies(business.id, ["USD"], session);
             await session.commit();
-            const bCurrencies = await testCurrencyRepo.getBusinessCurrencies(business.id);
+            const bCurrencies = await currencyRepo.getBusinessCurrencies(business.id);
             const newlyAdded = bCurrencies.find((bCurr) => bCurr.isoCode === "USD");
             expect(newlyAdded).toBeDefined();
             expect(bulkCreateMock).toHaveBeenCalledTimes(1);
@@ -87,9 +71,9 @@ describe("TESTING CURRENCY REPO", () => {
             if (!business) throw new Error("Seeding error: business not found");
 
             const newCurrencyCodes = ["USD"];
-            await testCurrencyRepo.updateBusinessCurrencies(business.id, newCurrencyCodes, session);
+            await currencyRepo.updateBusinessCurrencies(business.id, newCurrencyCodes, session);
             await session.commit();
-            const bCurrencies = await testCurrencyRepo.getBusinessCurrencies(business.id);
+            const bCurrencies = await currencyRepo.getBusinessCurrencies(business.id);
             const expectedCurrencyCodes = bCurrencies.map((bCurr) => bCurr.isoCode);
 
             expect(expectedCurrencyCodes).toEqual(newCurrencyCodes);
@@ -102,19 +86,19 @@ describe("TESTING CURRENCY REPO", () => {
 
         describe("Given a non empty array of currencies", () => {
             it("should return an array of currency objects", async () => {
-                const addSpy = jest.spyOn(testCurrencyRepo, "addBusinessCurrencies");
+                const addSpy = jest.spyOn(currencyRepo, "addBusinessCurrencies");
                 const session = await StartSequelizeSession();
                 const business = await Business.findOne();
                 if (!business) throw new Error("Seeding error: business not found");
 
                 const newCurrencyCodes = ["USD"];
-                const updatedCurrencies = await testCurrencyRepo.updateBusinessCurrencies(
+                const updatedCurrencies = await currencyRepo.updateBusinessCurrencies(
                     business.id,
                     newCurrencyCodes,
                     session
                 );
                 await session.commit();
-                const bCurrencies = await testCurrencyRepo.getBusinessCurrencies(business.id);
+                const bCurrencies = await currencyRepo.getBusinessCurrencies(business.id);
 
                 expect(updatedCurrencies).toEqual(bCurrencies);
                 expect(addSpy).toHaveBeenCalledTimes(1);

@@ -1,72 +1,56 @@
+import { Account } from "@data/account";
 import { BusinessRepo, Business } from "@data/business";
-import { sessionMock } from "src/__tests__/mocks";
-import {
-    accountJson,
-    businessData,
-    businessJson,
-    businessJsonArr,
-    businessObj,
-    businessObjArr,
-    businessSeeder,
-} from "src/__tests__/samples";
-import { closeDbConnection, syncDbForce } from "src/__tests__/test_utils";
+import { Country } from "@data/country";
+import { StartSequelizeSession } from "@data/sequelize_session";
+import { CreateBusinessDto } from "@logic/index";
+import { businessSeeder } from "src/__tests__/samples";
+import { DBSetup, SeedingError } from "src/__tests__/test_utils";
 
-const modelContext = {
-    create: jest.fn(),
-    findAll: jest.fn(),
-    findByPk: jest.fn(),
-};
+const businessRepo = new BusinessRepo(Business);
 
-const businessRepo = new BusinessRepo(modelContext as unknown as typeof Business);
-
-// seed data
-// beforeEach((done: jest.DoneCallback) => {
-//     (async () => {
-//         await syncDbForce();
-//         await businessSeeder();
-//         done();
-//     })();
-// });
-
-// afterAll((done: jest.DoneCallback) => {
-//     (async () => {
-//         await closeDbConnection();
-//         done();
-//     })();
-// });
+DBSetup(businessSeeder);
 
 describe("TESTING BUSINESS REPO", () => {
     describe("Testing create", () => {
         it("should return business object", async () => {
-            modelContext.create.mockResolvedValue(businessObj);
-            const business = await businessRepo.create(businessData, sessionMock);
-            expect(business).toEqual(businessJson);
-            expect(modelContext.create).toHaveBeenCalledTimes(1);
-            expect(modelContext.create).toHaveBeenCalledWith(businessData, {
-                transaction: sessionMock,
-            });
+            const session = await StartSequelizeSession();
+            const owner = await Account.findOne();
+            if (!owner) throw new Error("Seeding error: account not found");
+            const country = await Country.findOne();
+            if (!country) throw new Error("Seeding error: country not found");
+            const data: CreateBusinessDto = {
+                countryCode: country.isoCode,
+                name: "The business",
+                ownerId: owner.id,
+            };
+
+            const business = await businessRepo.create(data, session);
+            await session.commit();
+            expect(business.id).toBeDefined();
+
+            const persistedBusiness = await Business.findByPk(business.id);
+            if (!persistedBusiness) throw new Error("Business not persisted");
+            expect(persistedBusiness.id).toBe(business.id);
+            expect(persistedBusiness).toMatchObject(data);
         });
     });
 
     describe("Testing findById method", () => {
         describe("Given the business exists", () => {
-            it("should call the correct method on the model", async () => {
-                modelContext.findByPk.mockResolvedValue(businessObj);
-                await businessRepo.findById(businessJson.id);
-                expect(modelContext.findByPk).toHaveBeenCalledTimes(1);
-                expect(modelContext.findByPk).toHaveBeenCalledWith(businessJson.id);
-            });
-
             it("should return an business object", async () => {
-                const result = await businessRepo.findById(businessJson.id);
-                expect(result).toEqual(businessJson);
+                const existing = await Business.findOne();
+                if (!existing) throw new Error("Seeding error: business not found");
+                const result = await businessRepo.findById(existing.id);
+                expect(result).not.toBeNull();
+                expect(result).toBeDefined();
+                if (!result) throw new Error("Business not found");
+                expect(existing).toMatchObject(result);
             });
         });
 
         describe("Given the business does not exist", () => {
             it("should return null", async () => {
-                modelContext.findByPk.mockResolvedValue(null);
-                const result = await businessRepo.findById(businessJson.id);
+                const result = await businessRepo.findById(5555);
                 expect(result).toBe(null);
             });
         });
@@ -75,19 +59,24 @@ describe("TESTING BUSINESS REPO", () => {
     describe("Testing getOwnerBusinesses", () => {
         describe("Given the owner has businesses", () => {
             it("should return a business json array", async () => {
-                modelContext.findAll.mockResolvedValue(businessObjArr);
-                const result = await businessRepo.getOwnerBusinesses(accountJson.id);
-                expect(result).toEqual(businessJsonArr);
-                expect(modelContext.findAll).toHaveBeenCalledTimes(1);
+                const existing = await Business.findOne({ include: "currencies" });
+                if (!existing) throw new SeedingError("business not found");
+                const result = await businessRepo.getOwnerBusinesses(existing.ownerId);
+                result.forEach((business) => {
+                    expect(business.ownerId).toBe(existing.ownerId);
+                });
+                const existingMatch = result.find((busi) => busi.id === existing.id);
+                if (!existingMatch) throw new Error("Existing business not included in result");
+                expect(existing).toMatchObject(existingMatch);
             });
         });
 
         describe("Given the owner has no businesses", () => {
             it("should return an empty array", async () => {
-                modelContext.findAll.mockResolvedValue([]);
-                const result = await businessRepo.getOwnerBusinesses(accountJson.id);
+                const result = await businessRepo.getOwnerBusinesses(
+                    "84322fbb-95e3-4b92-8e69-66fccb020b07"
+                );
                 expect(result).toEqual([]);
-                expect(modelContext.findAll).toHaveBeenCalledTimes(1);
             });
         });
     });
@@ -95,20 +84,18 @@ describe("TESTING BUSINESS REPO", () => {
     describe("Testing getFullBusiness", () => {
         describe("Given the business exists", () => {
             it("should return a business json object", async () => {
-                modelContext.findByPk.mockResolvedValue(businessObj);
-                const business = await businessRepo.getFullBusiness(businessJson.id);
-                expect(business).toEqual(businessJson);
-                expect(modelContext.findByPk).toHaveBeenCalledTimes(1);
-                expect(modelContext.findByPk).toHaveBeenCalledWith(businessJson.id, {
-                    include: "currencies",
-                });
+                const existing = await Business.findOne({ include: "currencies" });
+                if (!existing) throw new SeedingError("business not found");
+
+                const business = await businessRepo.getFullBusiness(existing.id);
+                if (!business) throw new Error("Business not found");
+                expect(existing).toMatchObject(business);
             });
         });
 
         describe("Given the business does not exist", () => {
             it("should return null", async () => {
-                modelContext.findByPk.mockResolvedValue(null);
-                const business = await businessRepo.getFullBusiness(businessJson.id);
+                const business = await businessRepo.getFullBusiness(7777);
                 expect(business).toBe(null);
             });
         });

@@ -38,3 +38,9 @@ export const DBSetup = async (seeder: () => Promise<void>) => {
         })();
     });
 };
+
+export class SeedingError extends Error {
+    constructor(message?: string) {
+        super(`Seeding error: ${message}`);
+    }
+}
