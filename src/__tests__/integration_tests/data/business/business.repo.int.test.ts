@@ -30,7 +30,6 @@ describe("TESTING BUSINESS REPO", () => {
 
             const persistedBusiness = await Business.findByPk(business.id);
             if (!persistedBusiness) throw new Error("Business not persisted");
-            expect(persistedBusiness.id).toBe(business.id);
             expect(persistedBusiness).toMatchObject(data);
         });
     });

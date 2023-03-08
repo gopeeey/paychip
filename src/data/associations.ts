@@ -73,6 +73,14 @@ export const runAssociations = () => {
     });
     ChargeScheme.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
 
+    // charge schemes and currencies
+    Currency.hasMany(ChargeScheme, { sourceKey: "isoCode", foreignKey: "currency", as: "charges" });
+    ChargeScheme.belongsTo(Currency, {
+        targetKey: "isoCode",
+        foreignKey: "currency",
+        as: "chargeCurrency",
+    });
+
     // charge schemes and wallets
     ChargeScheme.hasMany(Wallet, {
         sourceKey: "id",

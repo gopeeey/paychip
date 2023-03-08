@@ -1,6 +1,11 @@
 import { CreateChargeSchemeDto, StandardChargeSchemeDto } from "@logic/charge_scheme";
 import { ChargeScheme } from "@data/charge_scheme";
 import { currencyJson } from "./currency.samples";
+import { businessSeeder } from "./business.samples";
+import { Business } from "@data/business";
+import { SeedingError } from "../test_utils";
+import { Country } from "@data/country";
+import { generateId } from "src/utils";
 
 const data: CreateChargeSchemeDto = {
     businessId: 1234,
@@ -47,4 +52,19 @@ export const standardChargeScheme = {
     senderWithdrawal: new StandardChargeSchemeDto(chargeSchemeJson.senderWithdrawal),
     receiverFunding: new StandardChargeSchemeDto(chargeSchemeJson.receiverFunding),
     receiverWithdrawal: new StandardChargeSchemeDto(chargeSchemeJson.receiverWithdrawal),
+};
+
+export const chargeSchemeSeeder = async () => {
+    await businessSeeder();
+    const business = await Business.findOne();
+    if (!business) throw new SeedingError("business not found");
+    const country = await Country.findByPk(business.countryCode);
+    if (!country) throw new SeedingError("country not found");
+
+    await ChargeScheme.create({
+        ...chargeSchemeData.senderFunding,
+        businessId: business.id,
+        currency: country.currencyCode,
+        id: generateId(),
+    });
 };
