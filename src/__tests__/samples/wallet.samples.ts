@@ -1,5 +1,10 @@
 import { CreateWalletDto, StandardWalletDto } from "@logic/wallet";
 import { Wallet } from "@data/wallet";
+import { chargeSchemeSeeder } from "./charge_scheme.sample";
+import { Business } from "@data/business";
+import { SeedingError } from "../test_utils";
+import { Country } from "@data/country";
+import { generateId } from "src/utils";
 
 export const walletData = new CreateWalletDto({
     businessId: 1234,
@@ -40,4 +45,28 @@ export const standardWallet = {
     withParent: new StandardWalletDto(walletJsons.withParent),
 };
 
-export const walletSeeder = async () => {};
+export const walletSeeder = async () => {
+    await chargeSchemeSeeder();
+    const business = await Business.findOne();
+    if (!business) throw new SeedingError("business not found");
+    const country = await Country.findByPk(business.countryCode);
+    if (!country) throw new SeedingError("country not found");
+
+    const data: CreateWalletDto = {
+        businessId: business.id,
+        currency: country.currencyCode,
+        email: "sammygopeh@gmail.com",
+        walletType: "commercial",
+        parentWalletId: null,
+        waiveFundingCharges: false,
+        waiveWithdrawalCharges: false,
+        waiveWalletInCharges: false,
+        waiveWalletOutCharges: false,
+        fundingChargeSchemeId: null,
+        walletInChargeSchemeId: null,
+        walletOutChargeSchemeId: null,
+        withdrawalChargeSchemeId: null,
+    };
+
+    await Wallet.create({ ...data, id: generateId() });
+};

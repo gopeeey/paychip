@@ -6,7 +6,7 @@
   "scripts": {
     "prepare": "npx ts-patch install -s",
     "test": "jest --watch",
-    "test:int": "cross-env NODE_ENV=test jest --config ./jest.int-config.js",
+    "test:int": "cross-env NODE_ENV=test jest --runInBand --config ./jest.int-config.js",
     "dev": "nodemon",
     "build": "rm -rf build/ && tsc",
     "migrate-dev": "npm run build && cross-env NODE_ENV=development sequelize db:migrate",

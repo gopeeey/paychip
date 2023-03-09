@@ -2,7 +2,7 @@ import { Account } from "@data/account";
 import { Business } from "@data/business";
 import { CreateBusinessDto, StandardBusinessDto } from "@logic/business";
 import { accountJson, accountSeeder } from "./account.samples";
-import { countryJson } from "./country.samples";
+import { countryJson, countrySeeder } from "./country.samples";
 import { currencyJsonArr, currencySeeder } from "./currency.samples";
 
 export const businessData = new CreateBusinessDto({

@@ -1,5 +1,9 @@
 import { CreateCustomerDto, StandardCustomerDto } from "@logic/customer";
 import { Customer } from "@data/customer";
+import { businessSeeder } from "./business.samples";
+import { Business } from "@data/business";
+import { SeedingError } from "../test_utils";
+import { generateId } from "src/utils";
 
 export const customerData = {
     complete: new CreateCustomerDto({
@@ -46,4 +50,15 @@ export const standardCustomerArr = {
     complete: [standardCustomer.complete],
     incomplete: [standardCustomer.incomplete],
     mixed: [standardCustomer.complete, standardCustomer.incomplete],
+};
+
+export const customerSeeder = async () => {
+    await businessSeeder();
+    const business = await Business.findOne();
+    if (!business) throw new SeedingError("Business not found");
+    await Customer.create({
+        id: generateId(),
+        ...customerData.complete,
+        businessId: business.id,
+    });
 };

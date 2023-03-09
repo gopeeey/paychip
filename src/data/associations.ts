@@ -127,5 +127,13 @@ export const runAssociations = () => {
     Wallet.hasMany(Wallet, { sourceKey: "id", foreignKey: "parentWalletId", as: "childWallets" });
     Wallet.belongsTo(Wallet, { targetKey: "id", foreignKey: "parentWalletId", as: "parentWallet" });
 
-    console.log("\n\n\nCAUSED TO RUN");
+    // wallets and currencies
+    Currency.hasMany(Wallet, { sourceKey: "isoCode", foreignKey: "currency", as: "wallets" });
+    Wallet.belongsTo(Currency, {
+        targetKey: "isoCode",
+        foreignKey: "currency",
+        as: "walletCurrency",
+    });
+
+    console.log("Running associations...");
 };
