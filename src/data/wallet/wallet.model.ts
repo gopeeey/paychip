@@ -27,14 +27,14 @@ export class Wallet
     declare waiveWithdrawalCharges: WalletModelInterface["waiveWithdrawalCharges"];
     declare waiveWalletInCharges: WalletModelInterface["waiveWalletInCharges"];
     declare waiveWalletOutCharges: WalletModelInterface["waiveWalletOutCharges"];
-    declare fundingChargeSchemeId: ForeignKey<WalletModelInterface["fundingChargeSchemeId"]>;
-    declare fundingChargeScheme?: NonAttribute<WalletModelInterface["fundingChargeScheme"]>;
-    declare withdrawalChargeSchemeId: ForeignKey<WalletModelInterface["withdrawalChargeSchemeId"]>;
-    declare withdrawalChargeScheme?: NonAttribute<WalletModelInterface["withdrawalChargeScheme"]>;
-    declare walletInChargeSchemeId: ForeignKey<WalletModelInterface["walletInChargeSchemeId"]>;
-    declare walletInChargeScheme?: NonAttribute<WalletModelInterface["walletInChargeScheme"]>;
-    declare walletOutChargeSchemeId: ForeignKey<WalletModelInterface["walletOutChargeSchemeId"]>;
-    declare walletOutChargeScheme?: NonAttribute<WalletModelInterface["walletOutChargeScheme"]>;
+    declare fundingChargeStackId: ForeignKey<WalletModelInterface["fundingChargeStackId"]>;
+    declare fundingChargeStack?: NonAttribute<WalletModelInterface["fundingChargeStack"]>;
+    declare withdrawalChargeStackId: ForeignKey<WalletModelInterface["withdrawalChargeStackId"]>;
+    declare withdrawalChargeStack?: NonAttribute<WalletModelInterface["withdrawalChargeStack"]>;
+    declare walletInChargeStackId: ForeignKey<WalletModelInterface["walletInChargeStackId"]>;
+    declare walletInChargeStack?: NonAttribute<WalletModelInterface["walletInChargeStack"]>;
+    declare walletOutChargeStackId: ForeignKey<WalletModelInterface["walletOutChargeStackId"]>;
+    declare walletOutChargeStack?: NonAttribute<WalletModelInterface["walletOutChargeStack"]>;
 }
 
 Wallet.init(

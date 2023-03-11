@@ -3,7 +3,7 @@ import { Router } from "express";
 import AccountRoute from "./account.route";
 import { BusinessRoute } from "./buisness.route";
 import { WalletRoute } from "./wallet.route";
-import { ChargeSchemeRoute } from "./charge_scheme.route";
+import { ChargeStackRoute } from "./charge_scheme.route";
 import EmptyRoute from "./empty.route";
 
 export class RootRoutes {
@@ -21,15 +21,15 @@ export class RootRoutes {
             authMiddleware: this._container.authMiddleware,
             walletService: this._container.walletService,
         }).init();
-        const chargeSchemeRoutes = new ChargeSchemeRoute({
+        const chargeStackRoutes = new ChargeStackRoute({
             authMiddleware: this._container.authMiddleware,
-            chargeSchemeService: this._container.chargeSchemeService,
+            chargeStackService: this._container.chargeStackService,
         }).init();
 
         router.use("/account", accountRoutes);
         router.use("/business", businessRoutes);
         router.use("/wallet", walletRoutes);
-        router.use("/charges", chargeSchemeRoutes);
+        router.use("/charges", chargeStackRoutes);
 
         // These are just empty, they make unit testing the auth middleware easier
         if (this._container.authMiddleware) {

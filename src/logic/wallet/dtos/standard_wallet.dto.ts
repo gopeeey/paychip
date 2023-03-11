@@ -13,10 +13,10 @@ export class StandardWalletDto implements StandardDtoType<WalletModelInterface> 
     readonly waiveWithdrawalCharges: WalletModelInterface["waiveWithdrawalCharges"];
     readonly waiveWalletInCharges: WalletModelInterface["waiveWalletInCharges"];
     readonly waiveWalletOutCharges: WalletModelInterface["waiveWalletOutCharges"];
-    readonly fundingChargeSchemeId: WalletModelInterface["fundingChargeSchemeId"];
-    readonly withdrawalChargeSchemeId: WalletModelInterface["withdrawalChargeSchemeId"];
-    readonly walletInChargeSchemeId: WalletModelInterface["walletInChargeSchemeId"];
-    readonly walletOutChargeSchemeId: WalletModelInterface["walletOutChargeSchemeId"];
+    readonly fundingChargeStackId: WalletModelInterface["fundingChargeStackId"];
+    readonly withdrawalChargeStackId: WalletModelInterface["withdrawalChargeStackId"];
+    readonly walletInChargeStackId: WalletModelInterface["walletInChargeStackId"];
+    readonly walletOutChargeStackId: WalletModelInterface["walletOutChargeStackId"];
 
     constructor(body: WalletModelInterface) {
         this.id = body.id;
@@ -30,9 +30,9 @@ export class StandardWalletDto implements StandardDtoType<WalletModelInterface> 
         this.waiveWithdrawalCharges = body.waiveWithdrawalCharges;
         this.waiveWalletInCharges = body.waiveWalletInCharges;
         this.waiveWalletOutCharges = body.waiveWalletOutCharges;
-        this.fundingChargeSchemeId = body.fundingChargeSchemeId;
-        this.withdrawalChargeSchemeId = body.withdrawalChargeSchemeId;
-        this.walletInChargeSchemeId = body.walletInChargeSchemeId;
-        this.walletOutChargeSchemeId = body.walletOutChargeSchemeId;
+        this.fundingChargeStackId = body.fundingChargeStackId;
+        this.withdrawalChargeStackId = body.withdrawalChargeStackId;
+        this.walletInChargeStackId = body.walletInChargeStackId;
+        this.walletOutChargeStackId = body.walletOutChargeStackId;
     }
 }

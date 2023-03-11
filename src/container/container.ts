@@ -3,7 +3,7 @@ import { accountService } from "./account";
 import { businessService } from "./business";
 import { countryService } from "./country";
 import { walletService } from "./wallet";
-import { chargeSchemeService } from "./charge_scheme";
+import { chargeStackService } from "./charge_scheme";
 import { AuthMiddleware } from "@web/middleware";
 
 const authMiddleware = new AuthMiddleware({
@@ -17,5 +17,5 @@ export const container: DependencyContainerInterface = {
     countryService,
     authMiddleware,
     walletService,
-    chargeSchemeService,
+    chargeStackService,
 };

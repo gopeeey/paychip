@@ -1,5 +1,5 @@
-import { CreateChargeSchemeDto, StandardChargeSchemeDto } from "@logic/charge_scheme";
-import { ChargeScheme } from "@data/charge_scheme";
+import { CreateChargeStackDto, StandardChargeStackDto } from "@logic/charges";
+import { ChargeStack } from "@data/charges";
 import { currencyJson } from "./currency.samples";
 import { businessSeeder } from "./business.samples";
 import { Business } from "@data/business";
@@ -7,7 +7,7 @@ import { SeedingError } from "../test_utils";
 import { Country } from "@data/country";
 import { generateId } from "src/utils";
 
-const data: CreateChargeSchemeDto = {
+const data: CreateChargeStackDto = {
     businessId: 1234,
     currency: currencyJson.isoCode,
     description: "This is a charge scheme",
@@ -20,11 +20,11 @@ const data: CreateChargeSchemeDto = {
     transactionType: "funding",
 };
 
-export const chargeSchemeData = {
-    senderFunding: new CreateChargeSchemeDto(data),
-    senderWithdrawal: new CreateChargeSchemeDto({ ...data, transactionType: "withdrawal" }),
-    receiverFunding: new CreateChargeSchemeDto({ ...data, payer: "receiver" }),
-    receiverWithdrawal: new CreateChargeSchemeDto({
+export const chargeStackData = {
+    senderFunding: new CreateChargeStackDto(data),
+    senderWithdrawal: new CreateChargeStackDto({ ...data, transactionType: "withdrawal" }),
+    receiverFunding: new CreateChargeStackDto({ ...data, payer: "receiver" }),
+    receiverWithdrawal: new CreateChargeStackDto({
         ...data,
         payer: "receiver",
         transactionType: "withdrawal",
@@ -33,36 +33,36 @@ export const chargeSchemeData = {
 
 const id = "something";
 
-export const chargeSchemeObj = {
-    senderFunding: new ChargeScheme({ ...chargeSchemeData.senderFunding, id }),
-    senderWithdrawal: new ChargeScheme({ ...chargeSchemeData.senderWithdrawal, id }),
-    receiverFunding: new ChargeScheme({ ...chargeSchemeData.receiverFunding, id }),
-    receiverWithdrawal: new ChargeScheme({ ...chargeSchemeData.receiverWithdrawal, id }),
+export const chargeStackObj = {
+    senderFunding: new ChargeStack({ ...chargeStackData.senderFunding, id }),
+    senderWithdrawal: new ChargeStack({ ...chargeStackData.senderWithdrawal, id }),
+    receiverFunding: new ChargeStack({ ...chargeStackData.receiverFunding, id }),
+    receiverWithdrawal: new ChargeStack({ ...chargeStackData.receiverWithdrawal, id }),
 };
 
-export const chargeSchemeJson = {
-    senderFunding: chargeSchemeObj.senderFunding.toJSON(),
-    senderWithdrawal: chargeSchemeObj.senderWithdrawal.toJSON(),
-    receiverFunding: chargeSchemeObj.receiverFunding.toJSON(),
-    receiverWithdrawal: chargeSchemeObj.receiverWithdrawal.toJSON(),
+export const chargeStackJson = {
+    senderFunding: chargeStackObj.senderFunding.toJSON(),
+    senderWithdrawal: chargeStackObj.senderWithdrawal.toJSON(),
+    receiverFunding: chargeStackObj.receiverFunding.toJSON(),
+    receiverWithdrawal: chargeStackObj.receiverWithdrawal.toJSON(),
 };
 
-export const standardChargeScheme = {
-    senderFunding: new StandardChargeSchemeDto(chargeSchemeJson.senderFunding),
-    senderWithdrawal: new StandardChargeSchemeDto(chargeSchemeJson.senderWithdrawal),
-    receiverFunding: new StandardChargeSchemeDto(chargeSchemeJson.receiverFunding),
-    receiverWithdrawal: new StandardChargeSchemeDto(chargeSchemeJson.receiverWithdrawal),
+export const standardChargeStack = {
+    senderFunding: new StandardChargeStackDto(chargeStackJson.senderFunding),
+    senderWithdrawal: new StandardChargeStackDto(chargeStackJson.senderWithdrawal),
+    receiverFunding: new StandardChargeStackDto(chargeStackJson.receiverFunding),
+    receiverWithdrawal: new StandardChargeStackDto(chargeStackJson.receiverWithdrawal),
 };
 
-export const chargeSchemeSeeder = async () => {
+export const chargeStackSeeder = async () => {
     await businessSeeder();
     const business = await Business.findOne();
     if (!business) throw new SeedingError("business not found");
     const country = await Country.findByPk(business.countryCode);
     if (!country) throw new SeedingError("country not found");
 
-    await ChargeScheme.create({
-        ...chargeSchemeData.senderFunding,
+    await ChargeStack.create({
+        ...chargeStackData.senderFunding,
         businessId: business.id,
         currency: country.currencyCode,
         id: generateId(),

@@ -1,3 +1,3 @@
-import { ChargeSchemeRepo, ChargeScheme } from "@data/charge_scheme";
+import { ChargeStackRepo, ChargeStack } from "@data/charges";
 
-export const chargeSchemeRepo = new ChargeSchemeRepo(ChargeScheme);
+export const chargeStackRepo = new ChargeStackRepo(ChargeStack);

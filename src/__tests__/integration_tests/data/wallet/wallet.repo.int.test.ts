@@ -31,10 +31,10 @@ describe("TESTING WALLET REPO", () => {
                 waiveWithdrawalCharges: false,
                 waiveWalletInCharges: false,
                 waiveWalletOutCharges: false,
-                fundingChargeSchemeId: null,
-                walletInChargeSchemeId: null,
-                walletOutChargeSchemeId: null,
-                withdrawalChargeSchemeId: null,
+                fundingChargeStackId: null,
+                walletInChargeStackId: null,
+                walletOutChargeStackId: null,
+                withdrawalChargeStackId: null,
             };
             const wallet = await testWalletRepo.create(data, session);
             await session.commit();
@@ -104,5 +104,5 @@ describe("TESTING WALLET REPO", () => {
         });
     });
 
-    describe("Testing addChargeScheme", () => {});
+    describe("Testing addChargeStack", () => {});
 });

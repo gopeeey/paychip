@@ -11,8 +11,8 @@ export const CreateBusinessWalletValidator = Joi.object<CreateWalletDto>({
     waiveWithdrawalCharges: Joi.boolean().optional(),
     waiveWalletInCharges: Joi.boolean().optional(),
     waiveWalletOutCharges: Joi.boolean().optional(),
-    fundingChargeSchemeId: Joi.string().optional(),
-    withdrawalChargeSchemeId: Joi.string().optional(),
-    walletInChargeSchemeId: Joi.string().optional(),
-    walletOutChargeSchemeId: Joi.string().optional(),
+    fundingChargeStackId: Joi.string().optional(),
+    withdrawalChargeStackId: Joi.string().optional(),
+    walletInChargeStackId: Joi.string().optional(),
+    walletOutChargeStackId: Joi.string().optional(),
 });

@@ -54,10 +54,10 @@ describe("TESTING WALLET ROUTES", () => {
                     waiveWithdrawalCharges: false,
                     waiveWalletInCharges: false,
                     waiveWalletOutCharges: false,
-                    fundingChargeSchemeId: null,
-                    withdrawalChargeSchemeId: null,
-                    walletInChargeSchemeId: null,
-                    walletOutChargeSchemeId: null,
+                    fundingChargeStackId: null,
+                    withdrawalChargeStackId: null,
+                    walletInChargeStackId: null,
+                    walletOutChargeStackId: null,
                 };
 
                 const { email, ...noEmail } = rootData;
@@ -83,10 +83,10 @@ describe("TESTING WALLET ROUTES", () => {
                 const {
                     businessId,
                     parentWalletId,
-                    fundingChargeSchemeId,
-                    withdrawalChargeSchemeId,
-                    walletInChargeSchemeId,
-                    walletOutChargeSchemeId,
+                    fundingChargeStackId,
+                    withdrawalChargeStackId,
+                    walletInChargeStackId,
+                    walletOutChargeStackId,
                     ...form
                 } = walletSampleData.noParent;
                 const { statusCode, body } = await testApp

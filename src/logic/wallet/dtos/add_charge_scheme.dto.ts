@@ -1,19 +1,19 @@
 import { WalletModelInterface } from "../interfaces";
 
-export type AddChargeSchemeDtoProps = {
+export type AddChargeStackDtoProps = {
     walletId: WalletModelInterface["id"];
-    chargeSchemeId: WalletModelInterface["fundingChargeSchemeId"];
+    chargeStackId: WalletModelInterface["fundingChargeStackId"];
     transactionType: "funding" | "withdrawal" | "walletIn" | "walletOut";
 };
 
-export class AddChargeSchemeDto implements AddChargeSchemeDtoProps {
-    walletId: AddChargeSchemeDtoProps["walletId"];
-    chargeSchemeId: AddChargeSchemeDtoProps["chargeSchemeId"];
-    transactionType: AddChargeSchemeDtoProps["transactionType"];
+export class AddChargeStackDto implements AddChargeStackDtoProps {
+    walletId: AddChargeStackDtoProps["walletId"];
+    chargeStackId: AddChargeStackDtoProps["chargeStackId"];
+    transactionType: AddChargeStackDtoProps["transactionType"];
 
-    constructor(body: AddChargeSchemeDtoProps) {
+    constructor(body: AddChargeStackDtoProps) {
         this.walletId = body.walletId;
-        this.chargeSchemeId = body.chargeSchemeId;
+        this.chargeStackId = body.chargeStackId;
         this.transactionType = body.transactionType;
     }
 }

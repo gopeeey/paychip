@@ -7,9 +7,9 @@ import {
     accountJson,
     businessJson,
     businessLevelToken,
-    chargeSchemeData,
-    chargeSchemeJson,
-    standardChargeScheme,
+    chargeStackData,
+    chargeStackJson,
+    standardChargeStack,
 } from "src/__tests__/samples";
 
 const businessService = {
@@ -18,7 +18,7 @@ const businessService = {
 
 const accountService = { getById: jest.fn() };
 
-const chargeSchemeService = {
+const chargeStackService = {
     create: jest.fn(),
 };
 
@@ -30,7 +30,7 @@ const authMiddleware = new AuthMiddleware({
 const container = {
     businessService,
     authMiddleware,
-    chargeSchemeService,
+    chargeStackService,
 } as unknown as DependencyContainerInterface;
 
 const app = new App(container).init();
@@ -45,10 +45,10 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
                 accountService.getById.mockResolvedValue(accountJson);
                 businessService.getById.mockResolvedValue(businessJson);
 
-                const { name, ...noName } = chargeSchemeData.senderFunding;
-                const { currency, ...noCurrency } = chargeSchemeData.senderFunding;
-                const { payer, ...noPayer } = chargeSchemeData.senderFunding;
-                const { transactionType, ...noTransactonType } = chargeSchemeData.senderFunding;
+                const { name, ...noName } = chargeStackData.senderFunding;
+                const { currency, ...noCurrency } = chargeStackData.senderFunding;
+                const { payer, ...noPayer } = chargeStackData.senderFunding;
+                const { transactionType, ...noTransactonType } = chargeStackData.senderFunding;
 
                 const dataSet = [noName, noCurrency, noPayer, noTransactonType];
 
@@ -65,17 +65,17 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
 
         describe("Given valid data", () => {
             it("should respond with a 201 and a standard charge scheme object", async () => {
-                chargeSchemeService.create.mockResolvedValue(chargeSchemeJson.senderFunding);
+                chargeStackService.create.mockResolvedValue(chargeStackJson.senderFunding);
 
-                const { businessId, ...data } = chargeSchemeData.senderFunding;
+                const { businessId, ...data } = chargeStackData.senderFunding;
                 const { statusCode, body } = await testApp
                     .post(route)
                     .send(data)
                     .set({ Authorization: businessLevelToken });
                 expect(statusCode).toBe(201);
-                expect(body).toHaveProperty("data.charge", standardChargeScheme.senderFunding);
-                expect(chargeSchemeService.create).toHaveBeenCalledTimes(1);
-                expect(chargeSchemeService.create).toHaveBeenCalledWith({
+                expect(body).toHaveProperty("data.charge", standardChargeStack.senderFunding);
+                expect(chargeStackService.create).toHaveBeenCalledTimes(1);
+                expect(chargeStackService.create).toHaveBeenCalledWith({
                     ...data,
                     businessId: businessJson.id,
                 });

@@ -1,6 +1,6 @@
 import { CreateWalletDto, StandardWalletDto } from "@logic/wallet";
 import { Wallet } from "@data/wallet";
-import { chargeSchemeSeeder } from "./charge_scheme.sample";
+import { chargeStackSeeder } from "./charge_scheme.sample";
 import { Business } from "@data/business";
 import { SeedingError } from "../test_utils";
 import { Country } from "@data/country";
@@ -16,10 +16,10 @@ export const walletData = new CreateWalletDto({
     waiveWithdrawalCharges: false,
     waiveWalletInCharges: false,
     waiveWalletOutCharges: false,
-    fundingChargeSchemeId: null,
-    withdrawalChargeSchemeId: null,
-    walletInChargeSchemeId: null,
-    walletOutChargeSchemeId: null,
+    fundingChargeStackId: null,
+    withdrawalChargeStackId: null,
+    walletInChargeStackId: null,
+    walletOutChargeStackId: null,
 });
 
 export const walletObj = new Wallet({ ...walletData, id: "parentwallet" });
@@ -46,7 +46,7 @@ export const standardWallet = {
 };
 
 export const walletSeeder = async () => {
-    await chargeSchemeSeeder();
+    await chargeStackSeeder();
     const business = await Business.findOne();
     if (!business) throw new SeedingError("business not found");
     const country = await Country.findByPk(business.countryCode);
@@ -62,10 +62,10 @@ export const walletSeeder = async () => {
         waiveWithdrawalCharges: false,
         waiveWalletInCharges: false,
         waiveWalletOutCharges: false,
-        fundingChargeSchemeId: null,
-        walletInChargeSchemeId: null,
-        walletOutChargeSchemeId: null,
-        withdrawalChargeSchemeId: null,
+        fundingChargeStackId: null,
+        walletInChargeStackId: null,
+        walletOutChargeStackId: null,
+        withdrawalChargeStackId: null,
     };
 
     await Wallet.create({ ...data, id: generateId() });

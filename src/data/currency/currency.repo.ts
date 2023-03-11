@@ -3,7 +3,6 @@ import {
     CurrencyModelInterface,
     CurrencyRepoInterface,
 } from "@logic/currency";
-import { SessionInterface } from "@logic/session_interface";
 import { Transaction } from "sequelize";
 import { BusinessCurrency } from "./business_currency.model";
 import { Currency } from "./currency.model";

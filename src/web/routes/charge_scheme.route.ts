@@ -1,21 +1,21 @@
-import { ChargeSchemeRouteDependencies } from "./interfaces";
+import { ChargeStackRouteDependencies } from "./interfaces";
 import { Router } from "express";
-import { ChargeSchemeController } from "../controllers";
+import { ChargeStackController } from "../controllers";
 import { validateBody } from "../middleware/validation";
-import { CreateChargeSchemeValidator } from "../validators";
+import { CreateChargeStackValidator } from "../validators";
 
-export class ChargeSchemeRoute {
-    constructor(private readonly _deps: ChargeSchemeRouteDependencies) {}
+export class ChargeStackRoute {
+    constructor(private readonly _deps: ChargeStackRouteDependencies) {}
 
     init = () => {
         const router = Router();
-        const controller = new ChargeSchemeController(this._deps.chargeSchemeService);
+        const controller = new ChargeStackController(this._deps.chargeStackService);
         const restrictTo = this._deps.authMiddleware.restrictTo;
 
         router.post(
             "/create",
             restrictTo(["business", "apiKey"]),
-            validateBody(CreateChargeSchemeValidator),
+            validateBody(CreateChargeStackValidator),
             controller.create
         );
 

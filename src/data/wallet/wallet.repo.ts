@@ -37,7 +37,7 @@ export class WalletRepo implements WalletRepoInterface {
         return wallet ? wallet.toJSON() : null;
     };
 
-    addChargeScheme: WalletRepoInterface["addChargeScheme"] = async (addChargeSchemeDto) => {
+    addChargeStack: WalletRepoInterface["addChargeStack"] = async (addChargeStackDto) => {
         return walletJson;
     };
 }

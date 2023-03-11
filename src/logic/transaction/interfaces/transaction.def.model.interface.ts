@@ -1,7 +1,7 @@
 import { CustomerModelInterfaceDef } from "@logic/customer";
 import { WalletModelInterfaceDef } from "@logic/wallet";
 import { BaseModelInterface } from "@logic/types";
-import { ChargeSchemeModelInterfaceDef } from "@logic/charge_scheme";
+import { ChargeStackModelInterfaceDef } from "@logic/charges";
 
 export const allowedTransactionTypes = ["credit", "debit"] as const;
 export type TransactionType = typeof allowedTransactionTypes[number];
@@ -24,7 +24,7 @@ export interface TransactionModelInterfaceDef extends BaseModelInterface {
     amount: number;
     settledAmount: number;
     charge: number;
-    chargePaidBy: ChargeSchemeModelInterfaceDef["payer"];
+    chargePaidBy: ChargeStackModelInterfaceDef["payer"];
     provider?: TransactionProviderType;
     providerRef?: string;
     bankName?: string;
