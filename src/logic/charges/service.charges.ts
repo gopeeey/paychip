@@ -15,4 +15,8 @@ export class ChargesService implements ChargesServiceInterface {
         const chargeStack = await this._repo.createChargeStack(createStackDto, session);
         return chargeStack;
     };
+
+    addStackToWallet: ChargesServiceInterface["addStackToWallet"] = async (addStackToWalletDto) => {
+        await this._repo.addStackToWallet(addStackToWalletDto);
+    };
 }

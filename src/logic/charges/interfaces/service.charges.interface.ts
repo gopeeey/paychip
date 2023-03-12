@@ -1,5 +1,5 @@
 import { SessionInterface } from "@logic/session_interface";
-import { CreateChargeStackDto } from "../dtos";
+import { AddChargeStackToWalletDto, CreateChargeStackDto } from "../dtos";
 import { ChargesRepoInterface } from "./charges_repo.interface";
 import { ChargeStackModelInterface } from "./charge_stack.model.interface";
 
@@ -8,6 +8,8 @@ export interface ChargesServiceInterface {
         createStackDto: CreateChargeStackDto,
         session?: SessionInterface
     ) => Promise<ChargeStackModelInterface>;
+
+    addStackToWallet: (addStackToWalletDto: AddChargeStackToWalletDto) => Promise<void>;
 }
 
 export interface ChargesServiceDependencies {

@@ -1,10 +1,12 @@
+import { AddChargeStackToWalletDto } from "@logic/charges";
 import { ChargesServiceDependencies } from "@logic/charges/interfaces/service.charges.interface";
 import { ChargesService } from "@logic/charges/service.charges";
 import { sessionMock } from "src/__tests__/mocks";
-import { chargeStackData, chargeStackJson } from "src/__tests__/samples";
+import { chargeStackData, chargeStackJson, walletJson } from "src/__tests__/samples";
 
 const repoMock = {
     createChargeStack: jest.fn(),
+    addStackToWallet: jest.fn(async () => {}),
 };
 
 const chargesService = new ChargesService({
@@ -25,6 +27,20 @@ describe("TESTING CHARGES SERVICE", () => {
                 chargeStackData.receiver,
                 sessionMock
             );
+        });
+    });
+
+    describe("Testing addStackToWallet", () => {
+        it.only("should call the appropriate method in the repo", async () => {
+            const data = new AddChargeStackToWalletDto({
+                chargeStackId: chargeStackJson.sender.id,
+                walletId: walletJson.id,
+                chargeStackType: "funding",
+                isChildDefault: false,
+            });
+            await chargesService.addStackToWallet(data);
+            expect(repoMock.addStackToWallet).toHaveBeenCalledTimes(1);
+            expect(repoMock.addStackToWallet).toHaveBeenCalledWith(data);
         });
     });
 });

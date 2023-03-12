@@ -43,5 +43,5 @@ WalletChargeStack.init(
         updatedAt: DataTypes.DATE,
         deletedAt: DataTypes.DATE,
     },
-    { sequelize: db, modelName: "walletChargeStacks" }
+    { sequelize: db, modelName: "wallet_charge_stacks" }
 );
