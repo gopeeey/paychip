@@ -54,10 +54,6 @@ describe("TESTING WALLET ROUTES", () => {
                     waiveWithdrawalCharges: false,
                     waiveWalletInCharges: false,
                     waiveWalletOutCharges: false,
-                    fundingChargeStackId: null,
-                    withdrawalChargeStackId: null,
-                    walletInChargeStackId: null,
-                    walletOutChargeStackId: null,
                 };
 
                 const { email, ...noEmail } = rootData;
@@ -80,15 +76,7 @@ describe("TESTING WALLET ROUTES", () => {
         describe("Given valid data", () => {
             it("should return a standard wallet dto", async () => {
                 walletService.createBusinessWallet.mockResolvedValue(walletJsons.withParent);
-                const {
-                    businessId,
-                    parentWalletId,
-                    fundingChargeStackId,
-                    withdrawalChargeStackId,
-                    walletInChargeStackId,
-                    walletOutChargeStackId,
-                    ...form
-                } = walletSampleData.noParent;
+                const { businessId, parentWalletId, ...form } = walletSampleData.noParent;
                 const { statusCode, body } = await testApp
                     .post(route)
                     .send(form)

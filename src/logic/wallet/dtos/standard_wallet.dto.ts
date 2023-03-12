@@ -13,10 +13,6 @@ export class StandardWalletDto implements StandardDtoType<WalletModelInterface> 
     readonly waiveWithdrawalCharges: WalletModelInterface["waiveWithdrawalCharges"];
     readonly waiveWalletInCharges: WalletModelInterface["waiveWalletInCharges"];
     readonly waiveWalletOutCharges: WalletModelInterface["waiveWalletOutCharges"];
-    readonly fundingChargeStackId: WalletModelInterface["fundingChargeStackId"];
-    readonly withdrawalChargeStackId: WalletModelInterface["withdrawalChargeStackId"];
-    readonly walletInChargeStackId: WalletModelInterface["walletInChargeStackId"];
-    readonly walletOutChargeStackId: WalletModelInterface["walletOutChargeStackId"];
 
     constructor(body: WalletModelInterface) {
         this.id = body.id;
@@ -30,9 +26,5 @@ export class StandardWalletDto implements StandardDtoType<WalletModelInterface> 
         this.waiveWithdrawalCharges = body.waiveWithdrawalCharges;
         this.waiveWalletInCharges = body.waiveWalletInCharges;
         this.waiveWalletOutCharges = body.waiveWalletOutCharges;
-        this.fundingChargeStackId = body.fundingChargeStackId;
-        this.withdrawalChargeStackId = body.withdrawalChargeStackId;
-        this.walletInChargeStackId = body.walletInChargeStackId;
-        this.walletOutChargeStackId = body.walletOutChargeStackId;
     }
 }

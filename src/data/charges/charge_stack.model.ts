@@ -1,4 +1,4 @@
-import { ChargeStackModelInterface } from "@logic/charges";
+import { allowedPaidBy, ChargeStackModelInterface } from "@logic/charges";
 import {
     Model,
     InferAttributes,
@@ -19,6 +19,7 @@ export class ChargeStack
     declare business?: NonAttribute<ChargeStackModelInterface["business"]>;
     declare name: ChargeStackModelInterface["name"];
     declare description: ChargeStackModelInterface["description"];
+    declare paidBy: ChargeStackModelInterface["paidBy"];
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
@@ -35,6 +36,7 @@ ChargeStack.init(
         },
         name: { type: DataTypes.STRING, allowNull: false },
         description: { type: DataTypes.STRING },
+        paidBy: { type: DataTypes.ENUM(...allowedPaidBy), allowNull: false },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,
         deletedAt: DataTypes.DATE,

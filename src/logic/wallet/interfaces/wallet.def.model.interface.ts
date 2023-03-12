@@ -12,13 +12,9 @@ export interface WalletModelInterfaceDef extends BaseModelInterface {
     currency: CurrencyModelInterfaceDef["isoCode"];
     balance: number;
     email: string;
+    walletType: typeof allowedWalletTypes[number];
     waiveFundingCharges: boolean;
     waiveWithdrawalCharges: boolean;
     waiveWalletInCharges: boolean;
     waiveWalletOutCharges: boolean;
-    fundingChargeStackId: ChargeStackModelInterfaceDef["id"] | null;
-    withdrawalChargeStackId: ChargeStackModelInterfaceDef["id"] | null;
-    walletInChargeStackId: ChargeStackModelInterfaceDef["id"] | null;
-    walletOutChargeStackId: ChargeStackModelInterfaceDef["id"] | null;
-    walletType: typeof allowedWalletTypes[number];
 }

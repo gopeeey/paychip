@@ -60,10 +60,6 @@ export class BusinessCreator implements BusinessCreatorInterface {
             waiveWithdrawalCharges: false,
             waiveWalletInCharges: false,
             waiveWalletOutCharges: false,
-            fundingChargeStackId: null,
-            withdrawalChargeStackId: null,
-            walletInChargeStackId: null,
-            walletOutChargeStackId: null,
         });
         this.wallet = await this._dep.createWallet(createWalletDto, this.session);
     };

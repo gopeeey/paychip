@@ -7,8 +7,4 @@ export interface WalletModelInterface extends WalletModelInterfaceDef {
     business?: BusinessModelInterfaceDef;
     parentWallet?: WalletModelInterfaceDef;
     customers?: CustomerModelInterfaceDef[];
-    fundingChargeStack?: ChargeStackModelInterfaceDef;
-    withdrawalChargeStack?: ChargeStackModelInterfaceDef;
-    walletInChargeStack?: ChargeStackModelInterfaceDef;
-    walletOutChargeStack?: ChargeStackModelInterfaceDef;
 }

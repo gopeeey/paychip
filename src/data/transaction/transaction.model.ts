@@ -1,5 +1,5 @@
 import { allowedTransactionTypes, TransactionModelInterface } from "@logic/transaction";
-import { allowedChargeStackPayers } from "@logic/charges";
+import { allowedPaidBy, PaidByType } from "@logic/charges";
 import {
     Model,
     InferAttributes,
@@ -51,7 +51,7 @@ Transaction.init(
         settledAmount: { type: DataTypes.DECIMAL(12, 2), allowNull: false },
         charge: { type: DataTypes.DECIMAL(12, 2), allowNull: false },
         chargePaidBy: {
-            type: DataTypes.ENUM(...allowedChargeStackPayers),
+            type: DataTypes.ENUM(...allowedPaidBy),
             allowNull: false,
         },
         provider: { type: DataTypes.STRING },

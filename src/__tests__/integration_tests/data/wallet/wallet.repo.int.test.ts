@@ -31,10 +31,6 @@ describe("TESTING WALLET REPO", () => {
                 waiveWithdrawalCharges: false,
                 waiveWalletInCharges: false,
                 waiveWalletOutCharges: false,
-                fundingChargeStackId: null,
-                walletInChargeStackId: null,
-                walletOutChargeStackId: null,
-                withdrawalChargeStackId: null,
             };
             const wallet = await testWalletRepo.create(data, session);
             await session.commit();

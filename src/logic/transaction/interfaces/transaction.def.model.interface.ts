@@ -24,7 +24,7 @@ export interface TransactionModelInterfaceDef extends BaseModelInterface {
     amount: number;
     settledAmount: number;
     charge: number;
-    chargePaidBy: ChargeStackModelInterfaceDef["payer"];
+    chargePaidBy: ChargeStackModelInterfaceDef["paidBy"];
     provider?: TransactionProviderType;
     providerRef?: string;
     bankName?: string;
