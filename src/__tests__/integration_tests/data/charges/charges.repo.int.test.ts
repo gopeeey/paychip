@@ -1,5 +1,5 @@
 import { Business } from "@data/business";
-import { ChargeStack, WalletChargeStack } from "@data/charges";
+import { Charge, ChargeStack, WalletChargeStack } from "@data/charges";
 import { ChargesRepo } from "@data/charges/charges.repo";
 import { Wallet } from "@data/wallet";
 import { StartSequelizeSession } from "@data/sequelize_session";
@@ -7,6 +7,7 @@ import {
     AddChargeStackToWalletDto,
     allowedChargeStackTypes,
     ChargeStackModelInterface,
+    CreateChargeDto,
     CreateChargeStackDto,
 } from "@logic/charges";
 import { chargesSeeder } from "src/__tests__/samples/charges.samples";
@@ -76,6 +77,27 @@ describe("TESTING CHARGES REPO", () => {
                 expect(persistedStacks.length).toBe(1);
                 expect(persistedStacks[0]).toMatchObject(data);
             }
+        });
+    });
+
+    describe("Testing createCharge", () => {
+        it.only("should persist and return a charge object", async () => {
+            const wallet = await getAWallet();
+            const data = new CreateChargeDto({
+                businessId: wallet.businessId,
+                flatCharge: 100,
+                minimumPrincipalAmount: 100,
+                name: "Test charge",
+                percentageCharge: 20,
+                percentageChargeCap: 2000,
+            });
+
+            const charge = await chargesRepo.createCharge(data);
+
+            const persistedCharge = await Charge.findByPk(charge.id);
+            if (!persistedCharge) throw new Error("Charge not persisted");
+            console.log(typeof persistedCharge.flatCharge);
+            expect(persistedCharge.toJSON()).toMatchObject(data);
         });
     });
 });

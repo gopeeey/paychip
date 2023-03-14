@@ -1,6 +1,6 @@
-import { ChargeStack } from "@data/charges";
+import { ChargeStack, Charge } from "@data/charges";
 import { Wallet } from "@data/index";
-import { CreateChargeStackDto } from "@logic/charges";
+import { CreateChargeDto, CreateChargeStackDto } from "@logic/charges";
 import { generateId } from "src/utils";
 import { SeedingError } from "../test_utils";
 import { walletJson, walletSeeder } from "./wallet.samples";
@@ -25,6 +25,18 @@ export const chargeStackJson = {
     sender: chargeStackObj.sender.toJSON(),
     receiver: chargeStackObj.receiver.toJSON(),
 };
+
+export const chargeData = new CreateChargeDto({
+    businessId: 1234,
+    flatCharge: 4000,
+    minimumPrincipalAmount: 120000,
+    name: "For something",
+    percentageCharge: 34.5,
+    percentageChargeCap: 4000,
+});
+
+export const chargeObj = new Charge({ ...chargeData, id: "charge_id" });
+export const chargeJson = chargeObj.toJSON();
 
 export const chargesSeeder = async () => {
     await walletSeeder();

@@ -3,7 +3,7 @@ import { Business } from "./business";
 import { Country } from "./country";
 import { Currency, BusinessCurrency } from "./currency";
 import { Customer } from "./customer";
-import { ChargeStack, WalletChargeStack } from "./charges";
+import { Charge, ChargeStack, ChargeStackCharge, WalletChargeStack } from "./charges";
 import { Wallet } from "./wallet";
 
 export const runAssociations = () => {
@@ -97,6 +97,25 @@ export const runAssociations = () => {
         foreignKey: "walletId",
         as: "wallet",
         onDelete: "CASCADE",
+    });
+
+    // charges and charge stacks
+    Charge.belongsToMany(ChargeStack, {
+        through: ChargeStackCharge,
+        sourceKey: "id",
+        targetKey: "id",
+        as: "chargeStacks",
+    });
+
+    // charges and businesses
+    Business.hasMany(Charge, { sourceKey: "id", foreignKey: "businessId", as: "charges" });
+    Charge.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
+
+    ChargeStack.belongsToMany(Charge, {
+        through: ChargeStackCharge,
+        sourceKey: "id",
+        targetKey: "id",
+        as: "charges",
     });
 
     // wallets and wallets

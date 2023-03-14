@@ -37,7 +37,7 @@ Wallet.init(
             unique: true,
             allowNull: false,
         },
-        balance: { type: DataTypes.DECIMAL(12, 2), allowNull: false, defaultValue: 0 },
+        balance: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
         email: { type: DataTypes.STRING(150), allowNull: false },
         walletType: { type: DataTypes.STRING(25), allowNull: false },
         waiveFundingCharges: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },

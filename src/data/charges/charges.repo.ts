@@ -1,7 +1,7 @@
 import { ChargesRepoInterface } from "@logic/charges/interfaces/charges_repo.interface";
 import { Transaction, Op } from "sequelize";
 import { generateId } from "src/utils";
-import { WalletChargeStack } from "../charges";
+import { Charge, WalletChargeStack } from "../charges";
 import { ChargeStack } from "./charge_stack.model";
 
 type Dependencies = {
@@ -39,5 +39,10 @@ export class ChargesRepo implements ChargesRepoInterface {
             },
         });
         await this._deps.walletChargeStackModel.create({ ...addStackDto, id: generateId() });
+    };
+
+    createCharge: ChargesRepoInterface["createCharge"] = async (createChargeDto) => {
+        const charge = await Charge.create({ ...createChargeDto, id: generateId() });
+        return charge.toJSON();
     };
 }

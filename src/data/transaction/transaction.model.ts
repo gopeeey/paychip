@@ -47,9 +47,9 @@ Transaction.init(
             allowNull: false,
         },
         channel: { type: DataTypes.STRING, allowNull: false },
-        amount: { type: DataTypes.DECIMAL(12, 2), allowNull: false },
-        settledAmount: { type: DataTypes.DECIMAL(12, 2), allowNull: false },
-        charge: { type: DataTypes.DECIMAL(12, 2), allowNull: false },
+        amount: { type: DataTypes.INTEGER, allowNull: false },
+        settledAmount: { type: DataTypes.INTEGER, allowNull: false },
+        charge: { type: DataTypes.INTEGER, allowNull: false },
         chargePaidBy: {
             type: DataTypes.ENUM(...allowedPaidBy),
             allowNull: false,
