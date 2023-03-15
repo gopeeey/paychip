@@ -1,12 +1,14 @@
 import { Business } from "@data/business";
-import { Charge, ChargeStack, WalletChargeStack } from "@data/charges";
+import { Charge, ChargeStack, ChargeStackCharge, WalletChargeStack } from "@data/charges";
 import { ChargesRepo } from "@data/charges/charges.repo";
 import { Wallet } from "@data/wallet";
 import { StartSequelizeSession } from "@data/sequelize_session";
 import {
     AddChargeStackToWalletDto,
     allowedChargeStackTypes,
+    ChargeModelInterface,
     ChargeStackModelInterface,
+    ChargeStackNotFoundError,
     CreateChargeDto,
     CreateChargeStackDto,
 } from "@logic/charges";
@@ -30,6 +32,12 @@ const getAStack = async (businessId: ChargeStackModelInterface["businessId"]) =>
     const chargeStack = await ChargeStack.findOne({ where: { businessId } });
     if (!chargeStack) throw new SeedingError("charge stack not found");
     return chargeStack;
+};
+
+const getACharge = async (businessId: ChargeModelInterface["businessId"]) => {
+    const charge = await Charge.findOne({ where: { businessId } });
+    if (!charge) throw new SeedingError("charge not found");
+    return charge;
 };
 
 describe("TESTING CHARGES REPO", () => {
@@ -81,7 +89,7 @@ describe("TESTING CHARGES REPO", () => {
     });
 
     describe("Testing createCharge", () => {
-        it.only("should persist and return a charge object", async () => {
+        it("should persist and return a charge object", async () => {
             const wallet = await getAWallet();
             const data = new CreateChargeDto({
                 businessId: wallet.businessId,
@@ -98,6 +106,51 @@ describe("TESTING CHARGES REPO", () => {
             if (!persistedCharge) throw new Error("Charge not persisted");
             console.log(typeof persistedCharge.flatCharge);
             expect(persistedCharge.toJSON()).toMatchObject(data);
+        });
+    });
+
+    describe("Testing getStackById", () => {
+        describe("Given the charge stack exists", () => {
+            it("should return the correct charge stack", async () => {
+                const wallet = await getAWallet();
+                const sample = await getAStack(wallet.businessId);
+                const result = await chargesRepo.getStackById(sample.id);
+                expect(result).toMatchObject(sample.toJSON());
+            });
+        });
+
+        describe("Given the charge stack does not exist", () => {
+            it("should throw a charge stack not found error", async () => {
+                await expect(chargesRepo.getStackById("some")).rejects.toThrow(
+                    new ChargeStackNotFoundError()
+                );
+            });
+        });
+    });
+
+    describe("Testing addChargesToStack", () => {
+        const setup = async () => {
+            const wallet = await getAWallet();
+            const chargeStack = await getAStack(wallet.businessId);
+            const charge = await getACharge(wallet.businessId);
+            const data = { chargeIds: [charge.id], stackId: chargeStack.id };
+            const result = await chargesRepo.addChargesToStack(data.chargeIds, data.stackId);
+            return { result, data, charge, chargeStack };
+        };
+
+        it("should create the correct ChargeStackCharge objects", async () => {
+            const { data } = await setup();
+
+            const stackCharges = await ChargeStackCharge.findAll({
+                where: { chargeId: data.chargeIds, chargeStackId: data.stackId },
+            });
+            expect(stackCharges.length).toBe(data.chargeIds.length);
+        });
+
+        it("should return the chargeStack", async () => {
+            const { result, chargeStack } = await setup();
+
+            expect(result).toMatchObject(chargeStack.toJSON());
         });
     });
 });

@@ -52,7 +52,7 @@ describe("TESTING CHARGES SERVICE", () => {
     });
 
     describe("Testing createCharge", () => {
-        it.only("should create and return a charge object", async () => {
+        it("should create and return a charge object", async () => {
             repoMock.createCharge.mockResolvedValue(chargeJson);
             const charge = await chargesService.createCharge(chargeData);
             expect(charge).toEqual(chargeJson);

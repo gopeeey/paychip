@@ -12,4 +12,11 @@ export interface ChargesRepoInterface {
     addStackToWallet: (addStackDto: AddChargeStackToWalletDto) => Promise<void>;
 
     createCharge: (createChargeDto: CreateChargeDto) => Promise<ChargeModelInterface>;
+
+    getStackById: (stackId: ChargeStackModelInterface["id"]) => Promise<ChargeStackModelInterface>;
+
+    addChargesToStack: (
+        chargeIds: ChargeModelInterface["id"][],
+        stackId: ChargeStackModelInterface["id"]
+    ) => Promise<ChargeStackModelInterface>;
 }

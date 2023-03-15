@@ -1,7 +1,8 @@
+import { ChargeStackNotFoundError } from "@logic/charges";
 import { ChargesRepoInterface } from "@logic/charges/interfaces/charges_repo.interface";
 import { Transaction, Op } from "sequelize";
 import { generateId } from "src/utils";
-import { Charge, WalletChargeStack } from "../charges";
+import { Charge, ChargeStackCharge, WalletChargeStack } from "../charges";
 import { ChargeStack } from "./charge_stack.model";
 
 type Dependencies = {
@@ -44,5 +45,20 @@ export class ChargesRepo implements ChargesRepoInterface {
     createCharge: ChargesRepoInterface["createCharge"] = async (createChargeDto) => {
         const charge = await Charge.create({ ...createChargeDto, id: generateId() });
         return charge.toJSON();
+    };
+
+    getStackById: ChargesRepoInterface["getStackById"] = async (stackId) => {
+        const chargeStack = await ChargeStack.findByPk(stackId, { include: "charges" });
+        if (!chargeStack) throw new ChargeStackNotFoundError();
+        return chargeStack.toJSON();
+    };
+
+    addChargesToStack: ChargesRepoInterface["addChargesToStack"] = async (chargeIds, stackId) => {
+        const stack = await this.getStackById(stackId);
+        await ChargeStackCharge.bulkCreate(
+            chargeIds.map((chargeId) => ({ chargeId, chargeStackId: stackId }))
+        );
+
+        return stack;
     };
 }

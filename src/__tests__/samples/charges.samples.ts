@@ -49,4 +49,14 @@ export const chargesSeeder = async () => {
         id: generateId(),
         paidBy: "sender",
     });
+
+    await Charge.create({
+        businessId: wallet.businessId,
+        flatCharge: 2000,
+        id: generateId(),
+        minimumPrincipalAmount: 30,
+        name: "Tester",
+        percentageCharge: 30,
+        percentageChargeCap: 40000,
+    });
 };
