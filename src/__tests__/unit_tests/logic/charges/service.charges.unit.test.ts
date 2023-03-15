@@ -1,3 +1,4 @@
+import { ChargeStackCharge } from "@data/index";
 import { AddChargeStackToWalletDto, CreateChargeDto } from "@logic/charges";
 import { ChargesServiceDependencies } from "@logic/charges/interfaces/service.charges.interface";
 import { ChargesService } from "@logic/charges/service.charges";
@@ -14,6 +15,7 @@ const repoMock = {
     createChargeStack: jest.fn(),
     addStackToWallet: jest.fn(async () => {}),
     createCharge: jest.fn(),
+    addChargesToStack: jest.fn(),
 };
 
 const chargesService = new ChargesService({
@@ -58,6 +60,20 @@ describe("TESTING CHARGES SERVICE", () => {
             expect(charge).toEqual(chargeJson);
             expect(repoMock.createCharge).toHaveBeenCalledTimes(1);
             expect(repoMock.createCharge).toHaveBeenCalledWith(chargeData);
+        });
+    });
+
+    describe("Testing addChargesToStack", () => {
+        it("should call the appropriate methods and return a stack object", async () => {
+            repoMock.addChargesToStack.mockResolvedValue(chargeStackJson);
+            const data = {
+                chargeIds: [chargeJson.id],
+                stackId: chargeStackJson.receiver.id,
+            };
+            const result = await chargesService.addChargesToStack(data);
+            expect(result).toEqual(chargeStackJson);
+            expect(repoMock.addChargesToStack).toHaveBeenCalledTimes(1);
+            expect(repoMock.addChargesToStack).toHaveBeenCalledWith(data);
         });
     });
 });

@@ -53,7 +53,10 @@ export class ChargesRepo implements ChargesRepoInterface {
         return chargeStack.toJSON();
     };
 
-    addChargesToStack: ChargesRepoInterface["addChargesToStack"] = async (chargeIds, stackId) => {
+    addChargesToStack: ChargesRepoInterface["addChargesToStack"] = async ({
+        chargeIds,
+        stackId,
+    }) => {
         const stack = await this.getStackById(stackId);
         await ChargeStackCharge.bulkCreate(
             chargeIds.map((chargeId) => ({ chargeId, chargeStackId: stackId }))

@@ -134,7 +134,7 @@ describe("TESTING CHARGES REPO", () => {
             const chargeStack = await getAStack(wallet.businessId);
             const charge = await getACharge(wallet.businessId);
             const data = { chargeIds: [charge.id], stackId: chargeStack.id };
-            const result = await chargesRepo.addChargesToStack(data.chargeIds, data.stackId);
+            const result = await chargesRepo.addChargesToStack(data);
             return { result, data, charge, chargeStack };
         };
 
