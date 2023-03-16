@@ -1,7 +1,7 @@
-import { ChargeStackServiceInterface } from "@logic/charges";
+import { ChargesServiceInterface } from "@logic/charges";
 import { AuthMiddlewareInterface } from "@web/middleware";
 
 export interface ChargeStackRouteDependencies {
-    chargeStackService: ChargeStackServiceInterface;
+    chargesService: ChargesServiceInterface;
     authMiddleware: AuthMiddlewareInterface;
 }

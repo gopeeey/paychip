@@ -4,19 +4,19 @@ import { ChargeStackController } from "../controllers";
 import { validateBody } from "../middleware/validation";
 import { CreateChargeStackValidator } from "../validators";
 
-export class ChargeStackRoute {
+export class ChargesRoute {
     constructor(private readonly _deps: ChargeStackRouteDependencies) {}
 
     init = () => {
         const router = Router();
-        const controller = new ChargeStackController(this._deps.chargeStackService);
+        const controller = new ChargeStackController(this._deps.chargesService);
         const restrictTo = this._deps.authMiddleware.restrictTo;
 
         router.post(
-            "/create",
+            "/stacks/create",
             restrictTo(["business", "apiKey"]),
             validateBody(CreateChargeStackValidator),
-            controller.create
+            controller.create_charge_stack
         );
 
         return router;

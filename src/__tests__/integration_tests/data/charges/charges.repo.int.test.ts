@@ -1,4 +1,3 @@
-import { Business } from "@data/business";
 import { Charge, ChargeStack, ChargeStackCharge, WalletChargeStack } from "@data/charges";
 import { ChargesRepo } from "@data/charges/charges.repo";
 import { Wallet } from "@data/wallet";
@@ -17,10 +16,7 @@ import { DBSetup, SeedingError } from "src/__tests__/test_utils";
 
 DBSetup(chargesSeeder);
 
-const chargesRepo = new ChargesRepo({
-    chargeStackModel: ChargeStack,
-    walletChargeStackModel: WalletChargeStack,
-});
+const chargesRepo = new ChargesRepo();
 
 const getAWallet = async () => {
     const wallet = await Wallet.findOne();

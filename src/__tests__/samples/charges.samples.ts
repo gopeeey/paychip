@@ -1,6 +1,6 @@
 import { ChargeStack, Charge } from "@data/charges";
 import { Wallet } from "@data/index";
-import { CreateChargeDto, CreateChargeStackDto } from "@logic/charges";
+import { CreateChargeDto, CreateChargeStackDto, StandardChargeStackDto } from "@logic/charges";
 import { generateId } from "src/utils";
 import { SeedingError } from "../test_utils";
 import { walletJson, walletSeeder } from "./wallet.samples";
@@ -24,6 +24,11 @@ export const chargeStackObj = {
 export const chargeStackJson = {
     sender: chargeStackObj.sender.toJSON(),
     receiver: chargeStackObj.receiver.toJSON(),
+};
+
+export const standardChargeStack = {
+    sender: new StandardChargeStackDto(chargeStackJson.sender),
+    receiver: new StandardChargeStackDto(chargeStackJson.receiver),
 };
 
 export const chargeData = new CreateChargeDto({

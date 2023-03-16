@@ -1,7 +1,10 @@
 import { ChargeStackCharge } from "@data/index";
-import { AddChargeStackToWalletDto, CreateChargeDto } from "@logic/charges";
-import { ChargesServiceDependencies } from "@logic/charges/interfaces/service.charges.interface";
-import { ChargesService } from "@logic/charges/service.charges";
+import {} from "@logic/charges";
+import {
+    ChargesService,
+    ChargesServiceDependencies,
+    AddChargeStackToWalletDto,
+} from "@logic/charges";
 import { sessionMock } from "src/__tests__/mocks";
 import {
     chargeData,

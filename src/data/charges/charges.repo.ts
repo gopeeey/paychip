@@ -5,25 +5,12 @@ import { generateId } from "src/utils";
 import { Charge, ChargeStackCharge, WalletChargeStack } from "../charges";
 import { ChargeStack } from "./charge_stack.model";
 
-type Dependencies = {
-    chargeStackModel: typeof ChargeStack;
-    walletChargeStackModel: typeof WalletChargeStack;
-};
-
 export class ChargesRepo implements ChargesRepoInterface {
-    chargeStackModel: Dependencies["chargeStackModel"];
-    walletChargeStackModel: Dependencies["walletChargeStackModel"];
-
-    constructor(private readonly _deps: Dependencies) {
-        this.chargeStackModel = this._deps.chargeStackModel;
-        this.walletChargeStackModel = this._deps.walletChargeStackModel;
-    }
-
     createChargeStack: ChargesRepoInterface["createChargeStack"] = async (
         createChargeStackDto,
         session
     ) => {
-        const chargeStack = await this._deps.chargeStackModel.create(
+        const chargeStack = await ChargeStack.create(
             { ...createChargeStackDto, id: generateId() },
             { transaction: session as Transaction }
         );
@@ -31,7 +18,7 @@ export class ChargesRepo implements ChargesRepoInterface {
     };
 
     addStackToWallet: ChargesRepoInterface["addStackToWallet"] = async (addStackDto) => {
-        await this.walletChargeStackModel.destroy({
+        await WalletChargeStack.destroy({
             where: {
                 [Op.and]: {
                     walletId: addStackDto.walletId,
@@ -39,7 +26,7 @@ export class ChargesRepo implements ChargesRepoInterface {
                 },
             },
         });
-        await this._deps.walletChargeStackModel.create({ ...addStackDto, id: generateId() });
+        await WalletChargeStack.create({ ...addStackDto, id: generateId() });
     };
 
     createCharge: ChargesRepoInterface["createCharge"] = async (createChargeDto) => {

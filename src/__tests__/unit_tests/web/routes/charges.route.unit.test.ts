@@ -18,8 +18,8 @@ const businessService = {
 
 const accountService = { getById: jest.fn() };
 
-const chargeStackService = {
-    create: jest.fn(),
+const chargesService = {
+    createStack: jest.fn(),
 };
 
 const authMiddleware = new AuthMiddleware({
@@ -30,7 +30,7 @@ const authMiddleware = new AuthMiddleware({
 const container = {
     businessService,
     authMiddleware,
-    chargeStackService,
+    chargesService,
 } as unknown as DependencyContainerInterface;
 
 const app = new App(container).init();
@@ -38,19 +38,18 @@ const app = new App(container).init();
 const testApp = supertest(app);
 
 describe("TESTING CHARGE SCHEME ROUTES", () => {
-    testRoute("/charges/create", (route) => () => {
+    testRoute("/charges/stacks/create", (route) => () => {
         describe("Given invalid data", () => {
             it("should respond with a 400", async () => {
                 // this is so the auth middleware can attach the account object to the request
                 accountService.getById.mockResolvedValue(accountJson);
                 businessService.getById.mockResolvedValue(businessJson);
 
-                const { name, ...noName } = chargeStackData.senderFunding;
-                const { currency, ...noCurrency } = chargeStackData.senderFunding;
-                const { payer, ...noPayer } = chargeStackData.senderFunding;
-                const { transactionType, ...noTransactonType } = chargeStackData.senderFunding;
+                const { name, ...noName } = chargeStackData.sender;
+                const { paidBy, ...noPaidBy } = chargeStackData.sender;
+                const wrongPaidBy = { ...chargeStackData.sender, paidBy: "me" };
 
-                const dataSet = [noName, noCurrency, noPayer, noTransactonType];
+                const dataSet = [noName, noPaidBy, wrongPaidBy];
 
                 for (const data of dataSet) {
                     const { statusCode, body } = await testApp
@@ -64,18 +63,18 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
         });
 
         describe("Given valid data", () => {
-            it("should respond with a 201 and a standard charge scheme object", async () => {
-                chargeStackService.create.mockResolvedValue(chargeStackJson.senderFunding);
+            it("should respond with a 201 and a standard charge stack object", async () => {
+                chargesService.createStack.mockResolvedValue(chargeStackJson.sender);
 
-                const { businessId, ...data } = chargeStackData.senderFunding;
+                const { businessId, ...data } = chargeStackData.sender;
                 const { statusCode, body } = await testApp
                     .post(route)
                     .send(data)
                     .set({ Authorization: businessLevelToken });
                 expect(statusCode).toBe(201);
-                expect(body).toHaveProperty("data.charge", standardChargeStack.senderFunding);
-                expect(chargeStackService.create).toHaveBeenCalledTimes(1);
-                expect(chargeStackService.create).toHaveBeenCalledWith({
+                expect(body).toHaveProperty("data.chargeStack", standardChargeStack.sender);
+                expect(chargesService.createStack).toHaveBeenCalledTimes(1);
+                expect(chargesService.createStack).toHaveBeenCalledWith({
                     ...data,
                     businessId: businessJson.id,
                 });
