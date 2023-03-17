@@ -13,7 +13,7 @@ export class ChargesRoute {
         const restrictTo = this._deps.authMiddleware.restrictTo;
 
         router.post(
-            "/stacks/create",
+            "/stacks",
             restrictTo(["business", "apiKey"]),
             validateBody(CreateChargeStackValidator),
             controller.create_charge_stack

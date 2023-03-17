@@ -38,7 +38,7 @@ const app = new App(container).init();
 const testApp = supertest(app);
 
 describe("TESTING CHARGE SCHEME ROUTES", () => {
-    testRoute("/charges/stacks/create", (route) => () => {
+    testRoute("/charges/stacks", (route) => () => {
         describe("Given invalid data", () => {
             it("should respond with a 400", async () => {
                 // this is so the auth middleware can attach the account object to the request
@@ -79,6 +79,12 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
                     businessId: businessJson.id,
                 });
             });
+        });
+    });
+
+    testRoute("/charges", (route) => () => {
+        describe("Given invalid data", () => {
+            it("should respond with a 400", async () => {});
         });
     });
 });

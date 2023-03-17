@@ -26,4 +26,10 @@ export class ChargeStackController extends BaseController {
             sendResponse(res, { code: 201, data: { chargeStack } });
         });
     };
+
+    create_charge: AuthRequiredController = async (req, res, next) => {
+        this.handleReq(next, async () => {
+            if (!req.business) throw new ProtectedRouteAccessError(req.path);
+        });
+    };
 }
