@@ -8,10 +8,15 @@ import {
     chargeStackData,
     chargeStackJson,
     standardChargeStack,
+    chargeData,
+    chargeJson,
+    standardCharge,
 } from "src/__tests__/samples";
+import { CreateChargeDto } from "@logic/charges";
 
 const chargesService = {
     createStack: jest.fn(),
+    createCharge: jest.fn(),
 };
 
 const mm = getMiddlewareMocks();
@@ -75,9 +80,49 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
         { middlewareDeps }
     );
 
-    testRoute("/charges", (route) => () => {
-        describe("Given invalid data", () => {
-            it("should respond with a 400", async () => {});
-        });
-    });
+    testRoute(
+        "/charges",
+        (route, mockMiddleware) => () => {
+            describe("Given invalid data", () => {
+                it("should respond with a 400", async () => {
+                    if (mockMiddleware) mockMiddleware();
+
+                    const { name, businessId, ...noName } = chargeData;
+
+                    const { statusCode, body } = await testApp
+                        .post(route)
+                        .send(noName)
+                        .set({ Authorization: businessLevelToken });
+
+                    expect(statusCode).toBe(400);
+                    expect(body).toHaveProperty("message");
+                });
+            });
+
+            describe("Given valid data", () => {
+                it.only("should create and respond with a new standard charge object", async () => {
+                    if (mockMiddleware) mockMiddleware();
+
+                    const { businessId, ...data } = new CreateChargeDto({
+                        ...chargeData,
+                        businessId: businessJson.id,
+                    });
+                    chargesService.createCharge.mockResolvedValue(chargeJson);
+                    const { statusCode, body } = await testApp
+                        .post(route)
+                        .send(data)
+                        .set({ Authorization: businessLevelToken });
+
+                    expect(statusCode).toBe(201);
+                    expect(body).toHaveProperty("data.charge", standardCharge);
+                    expect(chargesService.createCharge).toHaveBeenCalledTimes(1);
+                    expect(chargesService.createCharge).toHaveBeenCalledWith({
+                        ...data,
+                        businessId: businessJson.id,
+                    });
+                });
+            });
+        },
+        { middlewareDeps }
+    );
 });

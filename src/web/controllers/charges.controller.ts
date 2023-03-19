@@ -2,6 +2,8 @@ import {
     CreateChargeStackDto,
     StandardChargeStackDto,
     ChargesServiceInterface,
+    CreateChargeDto,
+    StandardChargeDto,
 } from "@logic/charges";
 import { AuthRequiredController } from "../middleware";
 import { ProtectedRouteAccessError } from "../errors";
@@ -30,6 +32,15 @@ export class ChargeStackController extends BaseController {
     create_charge: AuthRequiredController = async (req, res, next) => {
         this.handleReq(next, async () => {
             if (!req.business) throw new ProtectedRouteAccessError(req.path);
+            const data = new CreateChargeDto({ ...req.body, businessId: req.business.id });
+            const charge = await this._service.createCharge(data);
+            const standardCharge = new StandardChargeDto(charge);
+
+            sendResponse(res, {
+                code: 201,
+                message: "successful",
+                data: { charge: standardCharge },
+            });
         });
     };
 }
