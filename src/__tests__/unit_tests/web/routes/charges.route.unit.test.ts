@@ -67,6 +67,7 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
                         .post(route)
                         .send(data)
                         .set({ Authorization: businessLevelToken });
+
                     expect(statusCode).toBe(201);
                     expect(body).toHaveProperty("data.chargeStack", standardChargeStack.sender);
                     expect(chargesService.createStack).toHaveBeenCalledTimes(1);
@@ -100,7 +101,7 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
             });
 
             describe("Given valid data", () => {
-                it.only("should create and respond with a new standard charge object", async () => {
+                it("should create and respond with a new standard charge object", async () => {
                     if (mockMiddleware) mockMiddleware();
 
                     const { businessId, ...data } = new CreateChargeDto({
@@ -120,6 +121,34 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
                         ...data,
                         businessId: businessJson.id,
                     });
+                });
+            });
+        },
+        { middlewareDeps }
+    );
+
+    testRoute(
+        "/charges/stacks/add-charge",
+        (route, mockMiddleware) => () => {
+            describe("Given invalid data", () => {
+                it.only("should respond with a 400", async () => {
+                    if (mockMiddleware) mockMiddleware();
+
+                    const dataSet = [
+                        { chargeStackId: "saldfjald" },
+                        { chargeIds: [], chargeStackId: "a;dlfkajsd" },
+                        { chargeIds: ["aldkfj", "asdlfajsld"] },
+                    ];
+
+                    for (const data of dataSet) {
+                        const { statusCode, body } = await testApp
+                            .post(route)
+                            .send(data)
+                            .set({ Authorization: businessLevelToken });
+
+                        expect(statusCode).toBe(400);
+                        expect(body).toHaveProperty("message");
+                    }
                 });
             });
         },
