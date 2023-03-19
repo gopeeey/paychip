@@ -12,11 +12,12 @@ import {
     chargeJson,
     standardCharge,
 } from "src/__tests__/samples";
-import { CreateChargeDto } from "@logic/charges";
+import { AddChargesToStackDto, CreateChargeDto } from "@logic/charges";
 
 const chargesService = {
     createStack: jest.fn(),
     createCharge: jest.fn(),
+    addChargesToStack: jest.fn(),
 };
 
 const mm = getMiddlewareMocks();
@@ -128,15 +129,15 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
     );
 
     testRoute(
-        "/charges/stacks/add-charge",
+        "/charges/stacks/add-charges",
         (route, mockMiddleware) => () => {
             describe("Given invalid data", () => {
-                it.only("should respond with a 400", async () => {
+                it("should respond with a 400", async () => {
                     if (mockMiddleware) mockMiddleware();
 
                     const dataSet = [
-                        { chargeStackId: "saldfjald" },
-                        { chargeIds: [], chargeStackId: "a;dlfkajsd" },
+                        { stackId: "saldfjald" },
+                        { chargeIds: [], stackId: "a;dlfkajsd" },
                         { chargeIds: ["aldkfj", "asdlfajsld"] },
                     ];
 
@@ -149,6 +150,28 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
                         expect(statusCode).toBe(400);
                         expect(body).toHaveProperty("message");
                     }
+                });
+            });
+
+            describe("Given valid data", () => {
+                it.only("should respond with a 200 and the standard charge stack object", async () => {
+                    if (mockMiddleware) mockMiddleware();
+
+                    chargesService.addChargesToStack.mockResolvedValue(chargeStackJson.sender);
+                    const data = new AddChargesToStackDto({
+                        stackId: chargeStackJson.sender.id,
+                        chargeIds: ["sdlkfj"],
+                    });
+
+                    const { statusCode, body } = await testApp
+                        .post(route)
+                        .send(data)
+                        .set({ Authorization: businessLevelToken });
+
+                    expect(statusCode).toBe(200);
+                    expect(body).toHaveProperty("data.chargeStack", standardChargeStack.sender);
+                    expect(chargesService.addChargesToStack).toHaveBeenCalledTimes(1);
+                    expect(chargesService.addChargesToStack).toHaveBeenCalledWith(data);
                 });
             });
         },

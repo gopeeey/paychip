@@ -2,7 +2,7 @@ import { ChargeStackRouteDependencies } from "./interfaces";
 import { Router } from "express";
 import { ChargeStackController } from "../controllers";
 import { validateBody } from "../middleware/validation";
-import { CreateChargeStackValidator, CreateChargeValidator } from "../validators";
+import * as validators from "../validators";
 
 export class ChargesRoute {
     constructor(private readonly _deps: ChargeStackRouteDependencies) {}
@@ -15,15 +15,23 @@ export class ChargesRoute {
         router.post(
             "/",
             restrictTo(["business"]),
-            validateBody(CreateChargeValidator),
+            validateBody(validators.CreateChargeValidator),
             controller.create_charge
         );
 
+        // CHARGE STACKS
         router.post(
             "/stacks",
-            restrictTo(["business", "apiKey"]),
-            validateBody(CreateChargeStackValidator),
+            restrictTo(["business"]),
+            validateBody(validators.CreateChargeStackValidator),
             controller.create_charge_stack
+        );
+
+        router.post(
+            "/stacks/add-charges",
+            restrictTo(["business"]),
+            validateBody(validators.AddChargesToStackValidator),
+            controller.add_charges_to_stack
         );
 
         return router;
