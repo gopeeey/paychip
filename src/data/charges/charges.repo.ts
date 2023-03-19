@@ -11,7 +11,7 @@ export class ChargesRepo implements ChargesRepoInterface {
         session
     ) => {
         const chargeStack = await ChargeStack.create(
-            { ...createChargeStackDto, id: generateId() },
+            { ...createChargeStackDto, id: generateId(createChargeStackDto.businessId) },
             { transaction: session as Transaction }
         );
         return chargeStack.toJSON();
@@ -30,7 +30,10 @@ export class ChargesRepo implements ChargesRepoInterface {
     };
 
     createCharge: ChargesRepoInterface["createCharge"] = async (createChargeDto) => {
-        const charge = await Charge.create({ ...createChargeDto, id: generateId() });
+        const charge = await Charge.create({
+            ...createChargeDto,
+            id: generateId(createChargeDto.businessId),
+        });
         return charge.toJSON();
     };
 

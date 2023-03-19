@@ -57,14 +57,14 @@ export const chargesSeeder = async () => {
         name: "Sample sender stack",
         description: "Just an example",
         businessId: wallet.businessId,
-        id: generateId(),
+        id: generateId(wallet.businessId),
         paidBy: "sender",
     });
 
     await Charge.create({
         businessId: wallet.businessId,
         flatCharge: 2000,
-        id: generateId(),
+        id: generateId(wallet.businessId),
         minimumPrincipalAmount: 30,
         name: "Tester",
         percentageCharge: 30,

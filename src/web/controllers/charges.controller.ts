@@ -8,7 +8,7 @@ import {
 } from "@logic/charges";
 import { AuthRequiredController } from "../middleware";
 import { ProtectedRouteAccessError } from "../errors";
-import { sendResponse } from "src/utils";
+import { sendResponse, validateBusinessObjectId } from "src/utils";
 import { BaseController } from "./base.controller";
 
 export class ChargeStackController extends BaseController {
@@ -49,6 +49,10 @@ export class ChargeStackController extends BaseController {
             if (!req.business) throw new ProtectedRouteAccessError(req.path);
 
             const data = new AddChargesToStackDto(req.body);
+            const objectIds = [...data.chargeIds, data.stackId];
+
+            validateBusinessObjectId(objectIds, req.business.id);
+
             const stack = await this._service.addChargesToStack(data);
             const standardStack = new StandardChargeStackDto(stack);
 

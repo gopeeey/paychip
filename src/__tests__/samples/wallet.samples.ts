@@ -60,5 +60,5 @@ export const walletSeeder = async () => {
         waiveWalletOutCharges: false,
     };
 
-    await Wallet.create({ ...data, id: generateId() });
+    await Wallet.create({ ...data, id: generateId(business.id) });
 };

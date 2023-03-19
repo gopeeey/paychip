@@ -1,6 +1,7 @@
 import * as utilFuncs from "src/utils";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { PermissionDeniedError } from "@logic/base_errors";
 
 type ObjType = { [key: string]: any } | string;
 
@@ -156,6 +157,50 @@ describe("Testing utility functions", () => {
                 prevString = newString;
                 count--;
             }
+        });
+
+        describe("Given a suffix", () => {
+            it("should return a string with the suffix appended", () => {
+                const suffixes = ["me", "you", "us", "molybdenum"];
+                suffixes.forEach((suffix) => {
+                    const str = utilFuncs.generateId(suffix);
+                    expect(str.lastIndexOf(suffix)).toBe(str.length - suffix.length);
+                });
+            });
+        });
+    });
+
+    describe("Testing validateBusinessObjectId", () => {
+        describe("Given the objectIds are not valid", () => {
+            it("should throw a permission denied error", () => {
+                const businessId = 11111;
+                const invalidIdSets = [
+                    ["what", "are", "you", "saying"],
+                    ["some", "contain" + businessId],
+                ];
+                invalidIdSets.forEach((idSet) => {
+                    try {
+                        utilFuncs.validateBusinessObjectId(idSet, businessId);
+                    } catch (err) {
+                        expect(err).toBeInstanceOf(PermissionDeniedError);
+                    }
+                });
+            });
+        });
+
+        describe("Given the objectIds are valid", () => {
+            it("should do nothing", () => {
+                const businessId = 1234;
+                const validIdSets = [
+                    ["weare" + businessId, "another" + businessId],
+                    ["my" + businessId, "name" + businessId],
+                ];
+
+                validIdSets.forEach((idSet) => {
+                    const val = utilFuncs.validateBusinessObjectId(idSet, businessId);
+                    expect(val).toBeUndefined();
+                });
+            });
         });
     });
 });

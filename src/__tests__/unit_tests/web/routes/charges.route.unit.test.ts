@@ -13,6 +13,7 @@ import {
     standardCharge,
 } from "src/__tests__/samples";
 import { AddChargesToStackDto, CreateChargeDto } from "@logic/charges";
+import { validateBusinessObjectIdMock } from "src/__tests__/mocks";
 
 const chargesService = {
     createStack: jest.fn(),
@@ -154,10 +155,12 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
             });
 
             describe("Given valid data", () => {
-                it.only("should respond with a 200 and the standard charge stack object", async () => {
+                it("should respond with a 200 and the standard charge stack object", async () => {
                     if (mockMiddleware) mockMiddleware();
 
                     chargesService.addChargesToStack.mockResolvedValue(chargeStackJson.sender);
+                    validateBusinessObjectIdMock.mockImplementation(() => {});
+
                     const data = new AddChargesToStackDto({
                         stackId: chargeStackJson.sender.id,
                         chargeIds: ["sdlkfj"],
@@ -172,6 +175,11 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
                     expect(body).toHaveProperty("data.chargeStack", standardChargeStack.sender);
                     expect(chargesService.addChargesToStack).toHaveBeenCalledTimes(1);
                     expect(chargesService.addChargesToStack).toHaveBeenCalledWith(data);
+                    expect(validateBusinessObjectIdMock).toHaveBeenCalledTimes(1);
+                    expect(validateBusinessObjectIdMock).toHaveBeenCalledWith(
+                        [...data.chargeIds, data.stackId],
+                        businessJson.id
+                    );
                 });
             });
         },

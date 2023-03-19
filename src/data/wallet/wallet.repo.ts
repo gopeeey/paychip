@@ -9,7 +9,7 @@ export class WalletRepo implements WalletRepoInterface {
 
     create: WalletRepoInterface["create"] = async (createWalletDto, session) => {
         const wallet = await this._modelContext.create(
-            { ...createWalletDto, id: generateId() },
+            { ...createWalletDto, id: generateId(createWalletDto.businessId) },
             { transaction: session as Transaction }
         );
         return wallet.toJSON();

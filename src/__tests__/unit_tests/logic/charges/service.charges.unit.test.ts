@@ -43,7 +43,7 @@ describe("TESTING CHARGES SERVICE", () => {
     });
 
     describe("Testing addStackToWallet", () => {
-        it.only("should call the appropriate method in the repo", async () => {
+        it("should call the appropriate method in the repo", async () => {
             const data = new AddChargeStackToWalletDto({
                 chargeStackId: chargeStackJson.sender.id,
                 walletId: walletJson.id,

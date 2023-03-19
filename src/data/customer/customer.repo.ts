@@ -8,7 +8,7 @@ export class CustomerRepo implements CustomerRepoInterface {
 
     create: CustomerRepoInterface["create"] = async (dto, session) => {
         const customer = await this._modelContext.create(
-            { ...dto, id: generateId() },
+            { ...dto, id: generateId(dto.businessId) },
             {
                 transaction: session as Transaction,
             }

@@ -57,7 +57,7 @@ export const customerSeeder = async () => {
     const business = await Business.findOne();
     if (!business) throw new SeedingError("Business not found");
     await Customer.create({
-        id: generateId(),
+        id: generateId(business.id),
         ...customerData.complete,
         businessId: business.id,
     });
