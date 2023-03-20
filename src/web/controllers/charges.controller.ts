@@ -5,6 +5,7 @@ import {
     CreateChargeDto,
     StandardChargeDto,
     AddChargesToStackDto,
+    AddChargeStackToWalletDto,
 } from "@logic/charges";
 import { AuthRequiredController } from "../middleware";
 import { ProtectedRouteAccessError } from "../errors";
@@ -57,6 +58,18 @@ export class ChargeStackController extends BaseController {
             const standardStack = new StandardChargeStackDto(stack);
 
             sendResponse(res, { code: 200, data: { chargeStack: standardStack } });
+        });
+    };
+
+    add_stack_to_wallet: AuthRequiredController = async (req, res, next) => {
+        this.handleReq(next, async () => {
+            if (!req.business) throw new ProtectedRouteAccessError(req.path);
+
+            const data = new AddChargeStackToWalletDto({ ...req.body, isChildDefault: false });
+            validateBusinessObjectId([data.walletId, data.chargeStackId], req.business.id);
+            await this._service.addStackToWallet(data);
+
+            sendResponse(res, { code: 200 });
         });
     };
 }

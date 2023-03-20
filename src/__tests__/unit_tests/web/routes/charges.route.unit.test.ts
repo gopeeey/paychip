@@ -11,14 +11,16 @@ import {
     chargeData,
     chargeJson,
     standardCharge,
+    walletJson,
 } from "src/__tests__/samples";
-import { AddChargesToStackDto, CreateChargeDto } from "@logic/charges";
+import { AddChargeStackToWalletDto, AddChargesToStackDto, CreateChargeDto } from "@logic/charges";
 import { validateBusinessObjectIdMock } from "src/__tests__/mocks";
 
 const chargesService = {
     createStack: jest.fn(),
     createCharge: jest.fn(),
     addChargesToStack: jest.fn(),
+    addStackToWallet: jest.fn(),
 };
 
 const mm = getMiddlewareMocks();
@@ -178,6 +180,71 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
                     expect(validateBusinessObjectIdMock).toHaveBeenCalledTimes(1);
                     expect(validateBusinessObjectIdMock).toHaveBeenCalledWith(
                         [...data.chargeIds, data.stackId],
+                        businessJson.id
+                    );
+                });
+            });
+        },
+        { middlewareDeps }
+    );
+
+    testRoute(
+        "/charges/stacks/add-to-wallet",
+        (route, mockMiddleware) => () => {
+            describe("Given invalid data", () => {
+                it("should respond with a 400", async () => {
+                    if (mockMiddleware) mockMiddleware();
+
+                    const dto = new AddChargeStackToWalletDto({
+                        walletId: walletJson.id,
+                        chargeStackId: chargeStackJson.sender.id,
+                        chargeStackType: "funding",
+                        isChildDefault: false,
+                    });
+
+                    const { walletId, ...noWalletId } = dto;
+                    const { chargeStackId, ...noChargeStackId } = dto;
+                    const { chargeStackType, ...noChargeStackType } = dto;
+
+                    const invalidData = [noWalletId, noChargeStackId, noChargeStackType];
+
+                    for (const data of invalidData) {
+                        const { statusCode, body } = await testApp
+                            .post(route)
+                            .send(data)
+                            .set({ Authorization: businessLevelToken });
+
+                        expect(statusCode).toBe(400);
+                        expect(body).toHaveProperty("message");
+                    }
+                });
+            });
+
+            describe("Given valid data", () => {
+                it.only("should respond with a 200", async () => {
+                    if (mockMiddleware) mockMiddleware();
+
+                    validateBusinessObjectIdMock.mockImplementation(() => {});
+                    chargesService.addStackToWallet.mockResolvedValue(undefined);
+
+                    const dto = new AddChargeStackToWalletDto({
+                        walletId: walletJson.id,
+                        chargeStackId: chargeStackJson.sender.id,
+                        chargeStackType: "funding",
+                        isChildDefault: false,
+                    });
+
+                    const { isChildDefault, ...data } = dto;
+
+                    const { statusCode } = await testApp
+                        .post(route)
+                        .send(data)
+                        .set({ Authorization: businessLevelToken });
+
+                    expect(statusCode).toBe(200);
+                    expect(validateBusinessObjectIdMock).toHaveBeenCalledTimes(1);
+                    expect(validateBusinessObjectIdMock).toHaveBeenCalledWith(
+                        [data.walletId, data.chargeStackId],
                         businessJson.id
                     );
                 });

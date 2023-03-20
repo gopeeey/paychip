@@ -34,6 +34,13 @@ export class ChargesRoute {
             controller.add_charges_to_stack
         );
 
+        router.post(
+            "/stacks/add-to-wallet",
+            restrictTo(["business"]),
+            validateBody(validators.AddStackToWalletValidator),
+            controller.add_stack_to_wallet
+        );
+
         return router;
     };
 }

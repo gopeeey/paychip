@@ -47,11 +47,11 @@ export class ChargesRepo implements ChargesRepoInterface {
         chargeIds,
         stackId,
     }) => {
-        const stack = await this.getStackById(stackId);
+        await this.getStackById(stackId);
         await ChargeStackCharge.bulkCreate(
             chargeIds.map((chargeId) => ({ chargeId, chargeStackId: stackId }))
         );
 
-        return stack;
+        return await this.getStackById(stackId);
     };
 }
