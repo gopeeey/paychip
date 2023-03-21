@@ -7,3 +7,4 @@ export * from "./currency.samples";
 export * from "./charges.samples";
 export * from "./wallet.samples";
 export * from "./misce.samples";
+export * from "./transaction.samples";

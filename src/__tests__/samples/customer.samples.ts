@@ -4,6 +4,7 @@ import { businessSeeder } from "./business.samples";
 import { Business } from "@data/business";
 import { SeedingError } from "../test_utils";
 import { generateId } from "src/utils";
+import { BusinessModelInterface } from "@logic/index";
 
 export const customerData = {
     complete: new CreateCustomerDto({
@@ -52,13 +53,16 @@ export const standardCustomerArr = {
     mixed: [standardCustomer.complete, standardCustomer.incomplete],
 };
 
-export const customerSeeder = async () => {
-    await businessSeeder();
-    const business = await Business.findOne();
-    if (!business) throw new SeedingError("Business not found");
+export const customerSeeder = async (businessId: BusinessModelInterface["id"]) => {
+    if (!businessId) {
+        await businessSeeder();
+        const business = await Business.findOne();
+        if (!business) throw new SeedingError("Business not found");
+        businessId = business.id;
+    }
     await Customer.create({
-        id: generateId(business.id),
+        id: generateId(businessId),
         ...customerData.complete,
-        businessId: business.id,
+        businessId: businessId,
     });
 };

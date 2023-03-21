@@ -5,6 +5,7 @@ import { Currency, BusinessCurrency } from "./currency";
 import { Customer } from "./customer";
 import { Charge, ChargeStack, ChargeStackCharge, WalletChargeStack } from "./charges";
 import { Wallet } from "./wallet";
+import { Transaction } from "./transaction";
 
 export const runAssociations = () => {
     // Associate
@@ -128,6 +129,26 @@ export const runAssociations = () => {
         targetKey: "isoCode",
         foreignKey: "currency",
         as: "walletCurrency",
+    });
+
+    // transactions and wallets
+    Transaction.belongsTo(Wallet, { targetKey: "id", foreignKey: "walletId", as: "wallet" });
+    Wallet.hasMany(Transaction, { sourceKey: "id", foreignKey: "walletId", as: "transactions" });
+
+    // transactions and customers
+    Transaction.belongsTo(Customer, { targetKey: "id", foreignKey: "customerId", as: "customer" });
+    Customer.hasMany(Transaction, {
+        sourceKey: "id",
+        foreignKey: "customerId",
+        as: "transactions",
+    });
+
+    // transactions and businesses
+    Transaction.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
+    Business.hasMany(Transaction, {
+        sourceKey: "id",
+        foreignKey: "businessId",
+        as: "transactions",
     });
 
     console.log("Running associations...");

@@ -2,8 +2,7 @@ import { ChargeStackNotFoundError } from "@logic/charges";
 import { ChargesRepoInterface } from "@logic/charges/interfaces/charges_repo.interface";
 import { Transaction, Op } from "sequelize";
 import { generateId } from "src/utils";
-import { Charge, ChargeStackCharge, WalletChargeStack } from "../charges";
-import { ChargeStack } from "./charge_stack.model";
+import { Charge, ChargeStackCharge, WalletChargeStack, ChargeStack } from "../charges";
 
 export class ChargesRepo implements ChargesRepoInterface {
     createChargeStack: ChargesRepoInterface["createChargeStack"] = async (
