@@ -221,7 +221,7 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
             });
 
             describe("Given valid data", () => {
-                it.only("should respond with a 200", async () => {
+                it("should respond with a 200", async () => {
                     if (mockMiddleware) mockMiddleware();
 
                     validateBusinessObjectIdMock.mockImplementation(() => {});

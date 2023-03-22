@@ -53,7 +53,7 @@ export const standardCustomerArr = {
     mixed: [standardCustomer.complete, standardCustomer.incomplete],
 };
 
-export const customerSeeder = async (businessId: BusinessModelInterface["id"]) => {
+export const customerSeeder = async (businessId?: BusinessModelInterface["id"]) => {
     if (!businessId) {
         await businessSeeder();
         const business = await Business.findOne();
