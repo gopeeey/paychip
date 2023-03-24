@@ -1,9 +1,9 @@
 import { Wallet, WalletRepo } from "@data/wallet";
-import { walletSeeder } from "src/__tests__/samples";
+import { getAWallet, walletSeeder } from "src/__tests__/samples";
 import { DBSetup, SeedingError } from "src/__tests__/test_utils";
 import { Business } from "@data/business";
 import { Country } from "@data/country";
-import { CreateWalletDto, GetUniqueWalletDto } from "@logic/wallet";
+import { CreateWalletDto, GetUniqueWalletDto, IncrementBalanceDto } from "@logic/wallet";
 import { StartSequelizeSession } from "@data/sequelize_session";
 
 const testWalletRepo = new WalletRepo(Wallet);
@@ -100,5 +100,24 @@ describe("TESTING WALLET REPO", () => {
         });
     });
 
-    describe("Testing addChargeStack", () => {});
+    describe("Testing incrementBalance", () => {
+        it("should increment the balance of the wallet by the provided amount", async () => {
+            const amounts = [20, 2000, -4, -4000, -1.5, -23.34, 2.4];
+            for (const amount of amounts) {
+                const wallet = await getAWallet();
+                const session = await StartSequelizeSession();
+                const incrementDto = new IncrementBalanceDto({
+                    walletId: wallet.id,
+                    amount,
+                    session,
+                });
+                await testWalletRepo.incrementBalance(incrementDto);
+                await session.commit();
+
+                const newWallet = await Wallet.findByPk(wallet.id);
+                if (!newWallet) throw new SeedingError("Wallet not found");
+                expect(newWallet.balance - wallet.balance).toBe(Math.round(amount));
+            }
+        });
+    });
 });

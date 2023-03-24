@@ -1,4 +1,9 @@
-import { CreateWalletDto, WalletModelInterface, WalletRepoInterface } from "@logic/wallet";
+import {
+    CreateWalletDto,
+    IncrementBalanceDto,
+    WalletModelInterface,
+    WalletRepoInterface,
+} from "@logic/wallet";
 import { generateId } from "src/utils";
 import { Wallet } from "./wallet.model";
 import { Op, Transaction } from "sequelize";
@@ -35,5 +40,13 @@ export class WalletRepo implements WalletRepoInterface {
             },
         });
         return wallet ? wallet.toJSON() : null;
+    };
+
+    incrementBalance: WalletRepoInterface["incrementBalance"] = async (incrementBalanceDto) => {
+        await Wallet.increment("balance", {
+            by: Math.round(incrementBalanceDto.amount),
+            where: { id: incrementBalanceDto.walletId },
+            transaction: incrementBalanceDto.session as Transaction,
+        });
     };
 }

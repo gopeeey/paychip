@@ -62,3 +62,9 @@ export const walletSeeder = async () => {
 
     await Wallet.create({ ...data, id: generateId(business.id) });
 };
+
+export const getAWallet = async () => {
+    const wallet = await Wallet.findOne();
+    if (!wallet) throw new SeedingError("Wallet not found");
+    return wallet;
+};
