@@ -20,6 +20,6 @@ export interface WalletModelInterfaceDef extends BaseModelInterface {
     waiveWithdrawalCharges: boolean;
     waiveWalletInCharges: boolean;
     waiveWalletOutCharges: boolean;
-    fundingChargesPaidBy: WalletChargesPaidByType;
-    withdrawalChargesPaidBy: WalletChargesPaidByType;
+    // fundingChargesPaidBy: WalletChargesPaidByType;
+    // withdrawalChargesPaidBy: WalletChargesPaidByType;
 }

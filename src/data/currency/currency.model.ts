@@ -17,6 +17,10 @@ export class Currency
     declare isoCode: string;
     declare name: string;
     declare countries?: NonAttribute<CountryModelInterface[]>;
+    declare fundingCs: CurrencyModelInterface["fundingCs"];
+    declare withdrawalCs: CurrencyModelInterface["withdrawalCs"];
+    declare walletInCs: CurrencyModelInterface["walletInCs"];
+    declare walletOutCs: CurrencyModelInterface["walletOutCs"];
 
     declare createdAt?: CreationOptional<Date>;
     declare updatedAt?: CreationOptional<Date>;
@@ -33,6 +37,22 @@ Currency.init(
         },
         name: {
             type: DataTypes.STRING(20),
+            allowNull: false,
+        },
+        fundingCs: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        withdrawalCs: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        walletInCs: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        walletOutCs: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
         createdAt: DataTypes.DATE,

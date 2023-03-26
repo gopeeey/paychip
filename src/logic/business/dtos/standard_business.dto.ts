@@ -8,7 +8,7 @@ export class StandardBusinessDto implements StandardDtoType<BusinessModelInterfa
     readonly ownerId: BusinessModelInterface["ownerId"];
     readonly countryCode: BusinessModelInterface["countryCode"];
     readonly createdAt: BusinessModelInterface["createdAt"];
-    readonly currencies?: BusinessModelInterface["currencies"];
+    readonly currencies?: StandardCurrencyDto[];
 
     constructor(body: BusinessModelInterface) {
         this.id = body.id;
