@@ -11,6 +11,8 @@ type RequiredProps = Pick<
     | "waiveWithdrawalCharges"
     | "waiveWalletInCharges"
     | "waiveWalletOutCharges"
+    | "fundingChargesPaidBy"
+    | "withdrawalChargesPaidBy"
 >;
 
 export class CreateWalletDto implements RequiredProps {
@@ -23,6 +25,8 @@ export class CreateWalletDto implements RequiredProps {
     waiveWithdrawalCharges: WalletModelInterface["waiveWithdrawalCharges"];
     waiveWalletInCharges: WalletModelInterface["waiveWalletInCharges"];
     waiveWalletOutCharges: WalletModelInterface["waiveWalletOutCharges"];
+    fundingChargesPaidBy: WalletModelInterface["fundingChargesPaidBy"];
+    withdrawalChargesPaidBy: WalletModelInterface["withdrawalChargesPaidBy"];
 
     constructor(body: RequiredProps) {
         this.businessId = body.businessId;
@@ -34,5 +38,7 @@ export class CreateWalletDto implements RequiredProps {
         this.waiveWithdrawalCharges = body.waiveWithdrawalCharges;
         this.waiveWalletInCharges = body.waiveWalletInCharges;
         this.waiveWalletOutCharges = body.waiveWalletOutCharges;
+        this.fundingChargesPaidBy = body.fundingChargesPaidBy;
+        this.withdrawalChargesPaidBy = body.withdrawalChargesPaidBy;
     }
 }
