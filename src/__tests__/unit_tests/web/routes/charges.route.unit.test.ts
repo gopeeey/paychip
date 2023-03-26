@@ -45,9 +45,9 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
                     // this is so the auth middleware can attach the account object to the request
                     if (mockMiddleware) mockMiddleware();
 
-                    const { name, ...noName } = chargeStackData.sender;
-                    const { paidBy, ...noPaidBy } = chargeStackData.sender;
-                    const wrongPaidBy = { ...chargeStackData.sender, paidBy: "me" };
+                    const { name, ...noName } = chargeStackData.wallet;
+                    const { paidBy, ...noPaidBy } = chargeStackData.wallet;
+                    const wrongPaidBy = { ...chargeStackData.wallet, paidBy: "me" };
 
                     const dataSet = [noName, noPaidBy, wrongPaidBy];
 
@@ -64,16 +64,16 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
 
             describe("Given valid data", () => {
                 it("should respond with a 201 and a standard charge stack object", async () => {
-                    chargesService.createStack.mockResolvedValue(chargeStackJson.sender);
+                    chargesService.createStack.mockResolvedValue(chargeStackJson.wallet);
 
-                    const { businessId, ...data } = chargeStackData.sender;
+                    const { businessId, ...data } = chargeStackData.wallet;
                     const { statusCode, body } = await testApp
                         .post(route)
                         .send(data)
                         .set({ Authorization: businessLevelToken });
 
                     expect(statusCode).toBe(201);
-                    expect(body).toHaveProperty("data.chargeStack", standardChargeStack.sender);
+                    expect(body).toHaveProperty("data.chargeStack", standardChargeStack.wallet);
                     expect(chargesService.createStack).toHaveBeenCalledTimes(1);
                     expect(chargesService.createStack).toHaveBeenCalledWith({
                         ...data,
@@ -160,11 +160,11 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
                 it("should respond with a 200 and the standard charge stack object", async () => {
                     if (mockMiddleware) mockMiddleware();
 
-                    chargesService.addChargesToStack.mockResolvedValue(chargeStackJson.sender);
+                    chargesService.addChargesToStack.mockResolvedValue(chargeStackJson.wallet);
                     validateBusinessObjectIdMock.mockImplementation(() => {});
 
                     const data = new AddChargesToStackDto({
-                        stackId: chargeStackJson.sender.id,
+                        stackId: chargeStackJson.wallet.id,
                         chargeIds: ["sdlkfj"],
                     });
 
@@ -174,7 +174,7 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
                         .set({ Authorization: businessLevelToken });
 
                     expect(statusCode).toBe(200);
-                    expect(body).toHaveProperty("data.chargeStack", standardChargeStack.sender);
+                    expect(body).toHaveProperty("data.chargeStack", standardChargeStack.wallet);
                     expect(chargesService.addChargesToStack).toHaveBeenCalledTimes(1);
                     expect(chargesService.addChargesToStack).toHaveBeenCalledWith(data);
                     expect(validateBusinessObjectIdMock).toHaveBeenCalledTimes(1);
@@ -197,7 +197,7 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
 
                     const dto = new AddChargeStackToWalletDto({
                         walletId: walletJson.id,
-                        chargeStackId: chargeStackJson.sender.id,
+                        chargeStackId: chargeStackJson.wallet.id,
                         chargeStackType: "funding",
                         isChildDefault: false,
                     });
@@ -229,7 +229,7 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
 
                     const dto = new AddChargeStackToWalletDto({
                         walletId: walletJson.id,
-                        chargeStackId: chargeStackJson.sender.id,
+                        chargeStackId: chargeStackJson.wallet.id,
                         chargeStackType: "funding",
                         isChildDefault: false,
                     });

@@ -1,11 +1,12 @@
 import { Account } from "./account";
 import { Business } from "./business";
 import { Country } from "./country";
-import { Currency, BusinessCurrency } from "./currency";
+import { Currency } from "./currency";
 import { Customer } from "./customer";
 import { Charge, ChargeStack, ChargeStackCharge, WalletChargeStack } from "./charges";
 import { Wallet } from "./wallet";
 import { Transaction } from "./transaction";
+import { BusinessWallet } from "./business_wallet";
 
 export const runAssociations = () => {
     // Associate
@@ -28,25 +29,25 @@ export const runAssociations = () => {
 
     // businesses and currencies
     Business.belongsToMany(Currency, {
-        through: BusinessCurrency,
+        through: BusinessWallet,
         sourceKey: "id",
         targetKey: "isoCode",
         as: "currencies",
     });
     Currency.belongsToMany(Business, {
-        through: BusinessCurrency,
+        through: BusinessWallet,
         sourceKey: "isoCode",
         targetKey: "id",
         as: "businesses",
     });
-    BusinessCurrency.belongsTo(Business, {
+    BusinessWallet.belongsTo(Business, {
         targetKey: "id",
         foreignKey: "businessId",
         as: "business",
     });
-    BusinessCurrency.belongsTo(Currency, {
+    BusinessWallet.belongsTo(Currency, {
         targetKey: "isoCode",
-        foreignKey: "currencyIsoCode",
+        foreignKey: "currencyCode",
         as: "currency",
     });
 

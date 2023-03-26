@@ -8,3 +8,4 @@ export * from "./charges";
 export * from "./wallet";
 export * from "./db";
 export * from "./transaction";
+export * from "./business_wallet";

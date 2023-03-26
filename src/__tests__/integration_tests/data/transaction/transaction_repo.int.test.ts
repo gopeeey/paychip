@@ -37,7 +37,7 @@ describe("TESTING TRANSACTION REPO", () => {
                 amount: 2000,
                 channel: "bank",
                 charge: 200,
-                chargePaidBy: "sender",
+                chargePaidBy: "wallet",
                 settledAmount: 1800,
                 status: "pending",
                 transactionType: "credit",

@@ -28,15 +28,15 @@ const chargesService = new ChargesService({
 describe("TESTING CHARGES SERVICE", () => {
     describe("Testing createStack", () => {
         it("should return a charge stack object", async () => {
-            repoMock.createChargeStack.mockResolvedValue(chargeStackJson.receiver);
+            repoMock.createChargeStack.mockResolvedValue(chargeStackJson.customer);
             const chargeStack = await chargesService.createStack(
-                chargeStackData.receiver,
+                chargeStackData.customer,
                 sessionMock
             );
-            expect(chargeStack).toEqual(chargeStackJson.receiver);
+            expect(chargeStack).toEqual(chargeStackJson.customer);
             expect(repoMock.createChargeStack).toHaveBeenCalledTimes(1);
             expect(repoMock.createChargeStack).toHaveBeenCalledWith(
-                chargeStackData.receiver,
+                chargeStackData.customer,
                 sessionMock
             );
         });
@@ -45,7 +45,7 @@ describe("TESTING CHARGES SERVICE", () => {
     describe("Testing addStackToWallet", () => {
         it("should call the appropriate method in the repo", async () => {
             const data = new AddChargeStackToWalletDto({
-                chargeStackId: chargeStackJson.sender.id,
+                chargeStackId: chargeStackJson.wallet.id,
                 walletId: walletJson.id,
                 chargeStackType: "funding",
                 isChildDefault: false,
@@ -71,7 +71,7 @@ describe("TESTING CHARGES SERVICE", () => {
             repoMock.addChargesToStack.mockResolvedValue(chargeStackJson);
             const data = {
                 chargeIds: [chargeJson.id],
-                stackId: chargeStackJson.receiver.id,
+                stackId: chargeStackJson.customer.id,
             };
             const result = await chargesService.addChargesToStack(data);
             expect(result).toEqual(chargeStackJson);

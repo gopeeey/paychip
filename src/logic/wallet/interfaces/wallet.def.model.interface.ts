@@ -4,7 +4,7 @@ import { ChargeStackModelInterfaceDef } from "@logic/charges";
 import { CurrencyModelInterfaceDef } from "@logic/currency";
 
 export const allowedWalletTypes = ["personal", "commercial"] as const;
-export const allowedChargesPaidBy = ["sender", "receiver", null] as const;
+export const allowedChargesPaidBy = ["wallet", "customer", null] as const;
 
 export type WalletChargesPaidByType = typeof allowedChargesPaidBy[number];
 

@@ -45,7 +45,7 @@ describe("TESTING CHARGES REPO", () => {
                 businessId: wallet.businessId,
                 name: "Sweet stack",
                 description: "stack with lots of sugar",
-                paidBy: "sender",
+                paidBy: "wallet",
             });
 
             const chargeStack = await chargesRepo.createChargeStack(data, session);

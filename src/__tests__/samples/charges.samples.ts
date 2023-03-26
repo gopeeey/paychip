@@ -17,23 +17,23 @@ const sharedData = {
 };
 
 export const chargeStackData = {
-    sender: new CreateChargeStackDto({ ...sharedData, paidBy: "sender" }),
-    receiver: new CreateChargeStackDto({ ...sharedData, paidBy: "receiver" }),
+    wallet: new CreateChargeStackDto({ ...sharedData, paidBy: "wallet" }),
+    customer: new CreateChargeStackDto({ ...sharedData, paidBy: "customer" }),
 };
 
 export const chargeStackObj = {
-    sender: new ChargeStack({ ...chargeStackData.sender, id: "some" }),
-    receiver: new ChargeStack({ ...chargeStackData.receiver, id: "some" }),
+    wallet: new ChargeStack({ ...chargeStackData.wallet, id: "some" }),
+    customer: new ChargeStack({ ...chargeStackData.customer, id: "some" }),
 };
 
 export const chargeStackJson = {
-    sender: chargeStackObj.sender.toJSON(),
-    receiver: chargeStackObj.receiver.toJSON(),
+    wallet: chargeStackObj.wallet.toJSON(),
+    customer: chargeStackObj.customer.toJSON(),
 };
 
 export const standardChargeStack = {
-    sender: new StandardChargeStackDto(chargeStackJson.sender),
-    receiver: new StandardChargeStackDto(chargeStackJson.receiver),
+    wallet: new StandardChargeStackDto(chargeStackJson.wallet),
+    customer: new StandardChargeStackDto(chargeStackJson.customer),
 };
 
 export const chargeData = new CreateChargeDto({
@@ -58,7 +58,7 @@ export const chargesSeeder = async () => {
         description: "Just an example",
         businessId: wallet.businessId,
         id: generateId(wallet.businessId),
-        paidBy: "sender",
+        paidBy: "wallet",
     });
 
     await Charge.create({
