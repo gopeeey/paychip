@@ -28,18 +28,6 @@ export const runAssociations = () => {
     Customer.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
 
     // businesses and currencies
-    Business.belongsToMany(Currency, {
-        through: BusinessWallet,
-        sourceKey: "id",
-        targetKey: "isoCode",
-        as: "currencies",
-    });
-    Currency.belongsToMany(Business, {
-        through: BusinessWallet,
-        sourceKey: "isoCode",
-        targetKey: "id",
-        as: "businesses",
-    });
     BusinessWallet.belongsTo(Business, {
         targetKey: "id",
         foreignKey: "businessId",

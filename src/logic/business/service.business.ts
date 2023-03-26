@@ -30,7 +30,7 @@ export class BusinessService implements BusinessServiceInterface {
             const business = await new BusinessCreator({
                 dto: createBusinessDto,
                 session,
-                createWallet: this._dep.createWallet,
+                createBusinessWallet: this._dep.createBusinessWallet,
                 getCountry: this._dep.getCountry,
                 getOwner: this._dep.getAccount,
                 repo: this._dep.repo,

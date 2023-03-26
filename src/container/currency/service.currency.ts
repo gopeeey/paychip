@@ -5,6 +5,6 @@ export const currencyService = new CurrencyService({
     repo: currencyRepo,
 });
 
-export const updateBusinessCurrencies = currencyService.updateBusinessCurrencies;
+export const updateBusinessCurrencies = async () => {};
 
-export const isSupportedBusinessCurrency = currencyService.isSupportedBusinessCurrency;
+export const isSupportedBusinessCurrency = async () => {};

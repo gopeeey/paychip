@@ -4,7 +4,7 @@ import { businessSeeder } from "./business.samples";
 import { Business } from "@data/business";
 import { SeedingError } from "../test_utils";
 import { generateId } from "src/utils";
-import { BusinessModelInterface } from "@logic/index";
+import { BusinessModelInterface } from "@logic/business";
 
 export const customerData = {
     complete: new CreateCustomerDto({

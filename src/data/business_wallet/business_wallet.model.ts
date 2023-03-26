@@ -1,5 +1,5 @@
 import { BusinessWalletModelInterface } from "@logic/business_wallet";
-import { allowedPaidBy } from "@logic/index";
+import { allowedPaidBy } from "@logic/charges";
 import {
     CreationOptional,
     DataTypes,
@@ -8,7 +8,7 @@ import {
     InferCreationAttributes,
     Model,
 } from "sequelize";
-import { db } from "..";
+import { db } from "../db";
 
 export class BusinessWallet
     extends Model<InferAttributes<BusinessWallet>, InferCreationAttributes<BusinessWallet>>
@@ -17,19 +17,29 @@ export class BusinessWallet
     declare id: CreationOptional<BusinessWalletModelInterface["id"]>;
     declare businessId: ForeignKey<BusinessWalletModelInterface["businessId"]>;
     declare currencyCode: ForeignKey<BusinessWalletModelInterface["currencyCode"]>;
-    declare balance: BusinessWalletModelInterface["balance"];
-    declare customFundingCs: BusinessWalletModelInterface["customFundingCs"];
-    declare customWithdrawalCs: BusinessWalletModelInterface["customWithdrawalCs"];
-    declare customWalletInCs: BusinessWalletModelInterface["customWalletInCs"];
-    declare customWalletOutCs: BusinessWalletModelInterface["customWalletOutCs"];
-    declare fundingChargesPaidBy: BusinessWalletModelInterface["fundingChargesPaidBy"];
-    declare withdrawalChargesPaidBy: BusinessWalletModelInterface["withdrawalChargesPaidBy"];
-    declare w_fundingCs: BusinessWalletModelInterface["w_fundingCs"];
-    declare w_withdrawalCs: BusinessWalletModelInterface["w_withdrawalCs"];
-    declare w_walletInCs: BusinessWalletModelInterface["w_walletInCs"];
-    declare w_walletOutCs: BusinessWalletModelInterface["w_walletOutCs"];
-    declare w_fundingChargesPaidBy: BusinessWalletModelInterface["w_fundingChargesPaidBy"];
-    declare w_withdrawalChargesPaidBy: BusinessWalletModelInterface["w_withdrawalChargesPaidBy"];
+    declare balance: CreationOptional<BusinessWalletModelInterface["balance"]>;
+    declare customFundingCs: CreationOptional<BusinessWalletModelInterface["customFundingCs"]>;
+    declare customWithdrawalCs: CreationOptional<
+        BusinessWalletModelInterface["customWithdrawalCs"]
+    >;
+    declare customWalletInCs: CreationOptional<BusinessWalletModelInterface["customWalletInCs"]>;
+    declare customWalletOutCs: CreationOptional<BusinessWalletModelInterface["customWalletOutCs"]>;
+    declare fundingChargesPaidBy: CreationOptional<
+        BusinessWalletModelInterface["fundingChargesPaidBy"]
+    >;
+    declare withdrawalChargesPaidBy: CreationOptional<
+        BusinessWalletModelInterface["withdrawalChargesPaidBy"]
+    >;
+    declare w_fundingCs: CreationOptional<BusinessWalletModelInterface["w_fundingCs"]>;
+    declare w_withdrawalCs: CreationOptional<BusinessWalletModelInterface["w_withdrawalCs"]>;
+    declare w_walletInCs: CreationOptional<BusinessWalletModelInterface["w_walletInCs"]>;
+    declare w_walletOutCs: CreationOptional<BusinessWalletModelInterface["w_walletOutCs"]>;
+    declare w_fundingChargesPaidBy: CreationOptional<
+        BusinessWalletModelInterface["w_fundingChargesPaidBy"]
+    >;
+    declare w_withdrawalChargesPaidBy: CreationOptional<
+        BusinessWalletModelInterface["w_withdrawalChargesPaidBy"]
+    >;
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;

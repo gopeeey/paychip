@@ -4,7 +4,7 @@ interface RequiredProps extends CreateWalletDto {
     parentWalletId: string;
 }
 
-export class CreateBusinessWalletDto extends CreateWalletDto implements RequiredProps {
+export class CreateBwalletDto extends CreateWalletDto implements RequiredProps {
     parentWalletId: string;
 
     constructor(body: RequiredProps) {

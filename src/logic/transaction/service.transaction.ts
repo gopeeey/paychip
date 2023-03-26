@@ -1,6 +1,3 @@
-import { SessionInterface } from "..";
-import { CreateTransactionDto } from "./dtos";
-import { TransactionModelInterface } from "./interfaces";
 import {
     TransactionServiceDependencies,
     TransactionServiceInterface,

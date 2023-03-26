@@ -2,7 +2,7 @@ import { Customer } from "@data/customer";
 import { StartSequelizeSession } from "@data/sequelize_session";
 import { Transaction, TransactionRepo } from "@data/transaction";
 import { Wallet } from "@data/wallet";
-import { BusinessModelInterface } from "@logic/index";
+import { BusinessModelInterface } from "@logic/business";
 import { CreateTransactionDto } from "@logic/transaction";
 import { transactionSeeder } from "src/__tests__/samples";
 import { DBSetup, SeedingError } from "src/__tests__/test_utils";

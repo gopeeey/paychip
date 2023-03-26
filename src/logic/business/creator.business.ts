@@ -1,5 +1,4 @@
 import { CreateBusinessDto } from "./dtos";
-import { CreateWalletDto, WalletModelInterface } from "@logic/wallet";
 import {
     BusinessCreatorDependencies,
     BusinessCreatorInterface,
@@ -9,7 +8,8 @@ import {
 import { AccountModelInterface } from "@logic/account";
 import { CountryModelInterface } from "@logic/country";
 import { CurrencyModelInterface } from "@logic/currency";
-import { SessionInterface } from "..";
+import { SessionInterface } from "@logic/session_interface";
+import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@logic/business_wallet";
 
 export class BusinessCreator implements BusinessCreatorInterface {
     private declare createBusinessDto: CreateBusinessDto;
@@ -18,7 +18,7 @@ export class BusinessCreator implements BusinessCreatorInterface {
     private declare country: CountryModelInterface;
     private declare business: BusinessModelInterface;
     private declare owner: AccountModelInterface;
-    private declare wallet: WalletModelInterface;
+    private declare wallet: BusinessWalletModelInterface;
     private declare currencies: CurrencyModelInterface[];
 
     constructor(private readonly _dep: BusinessCreatorDependencies) {
@@ -33,7 +33,7 @@ export class BusinessCreator implements BusinessCreatorInterface {
         await this.persistBusiness();
         await this.createBusinessWallet();
         // add currency of the country to the business currencies
-        await this.addFirstCurrency();
+        // await this.addFirstCurrency();
         return this.business;
     }
 
@@ -50,25 +50,18 @@ export class BusinessCreator implements BusinessCreatorInterface {
     };
 
     private createBusinessWallet = async () => {
-        const createWalletDto = new CreateWalletDto({
+        const createWalletDto = new CreateBusinessWalletDto({
             businessId: this.business.id,
-            currency: this.country.currencyCode,
-            email: this.owner.email,
-            parentWalletId: null,
-            walletType: "commercial",
-            waiveFundingCharges: false,
-            waiveWithdrawalCharges: false,
-            waiveWalletInCharges: false,
-            waiveWalletOutCharges: false,
+            currencyCode: this.country.currencyCode,
         });
-        this.wallet = await this._dep.createWallet(createWalletDto, this.session);
+        this.wallet = await this._dep.createBusinessWallet(createWalletDto, this.session);
     };
 
-    private addFirstCurrency = async () => {
-        this.currencies = await this._dep.updateCurrencies(
-            this.business.id,
-            [this.country.currencyCode],
-            this.session
-        );
-    };
+    // private addFirstCurrency = async () => {
+    //     this.currencies = await this._dep.updateCurrencies(
+    //         this.business.id,
+    //         [this.country.currencyCode],
+    //         this.session
+    //     );
+    // };
 }

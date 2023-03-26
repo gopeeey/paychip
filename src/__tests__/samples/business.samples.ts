@@ -1,6 +1,8 @@
 import { Account } from "@data/account";
 import { Business } from "@data/business";
+import { Country } from "@data/country";
 import { CreateBusinessDto, StandardBusinessDto } from "@logic/business";
+import { SeedingError } from "../test_utils";
 import { accountJson, accountSeeder } from "./account.samples";
 import { countryJson, countrySeeder } from "./country.samples";
 import { currencyJsonArr, currencySeeder } from "./currency.samples";
@@ -23,8 +25,10 @@ export const standardBusinessWithCurrencies = new StandardBusinessDto({
 
 export const businessSeeder = async () => {
     await accountSeeder();
-    await currencySeeder();
+    await countrySeeder();
     const account = await Account.findOne();
+    const country = await Country.findOne();
     if (!account) throw new Error("BUSINESS SEEDER: Could not create account");
-    await Business.create({ ...businessData, ownerId: account.id });
+    if (!country) throw new SeedingError("Country not found");
+    await Business.create({ ...businessData, ownerId: account.id, countryCode: country.isoCode });
 };

@@ -2,7 +2,7 @@ import { Account } from "@data/account";
 import { BusinessRepo, Business } from "@data/business";
 import { Country } from "@data/country";
 import { StartSequelizeSession } from "@data/sequelize_session";
-import { CreateBusinessDto } from "@logic/index";
+import { CreateBusinessDto } from "@logic/business";
 import { businessSeeder } from "src/__tests__/samples";
 import { DBSetup, SeedingError } from "src/__tests__/test_utils";
 

@@ -1,6 +1,6 @@
 import { AccountRepo, Account } from "@data/account";
 import { StartSequelizeSession } from "@data/sequelize_session";
-import { CreateAccountDto } from "@logic/index";
+import { CreateAccountDto } from "@logic/account";
 import { accountData, accountSeeder } from "src/__tests__/samples";
 import { DBSetup } from "src/__tests__/test_utils";
 
