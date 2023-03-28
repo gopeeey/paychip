@@ -9,14 +9,14 @@ export class WalletController extends BaseController {
         super();
     }
 
-    createBusinessWallet: AuthRequiredController = async (req, res, next) => {
-        await this.handleReq(next, async () => {
-            if (!req.business) throw new ProtectedRouteAccessError(req.path);
-            const createWalletDto = new CreateWalletDto(req.body);
-            createWalletDto.businessId = req.business.id;
-            const wallet = await this._service.createBusinessWallet(createWalletDto);
-            const standardWallet = new StandardWalletDto(wallet);
-            sendResponse(res, { code: 201, data: { wallet: standardWallet } });
-        });
-    };
+    // createBusinessWallet: AuthRequiredController = async (req, res, next) => {
+    //     await this.handleReq(next, async () => {
+    //         if (!req.business) throw new ProtectedRouteAccessError(req.path);
+    //         const createWalletDto = new CreateWalletDto(req.body);
+    //         createWalletDto.businessId = req.business.id;
+    //         const wallet = await this._service.createBusinessWallet(createWalletDto);
+    //         const standardWallet = new StandardWalletDto(wallet);
+    //         sendResponse(res, { code: 201, data: { wallet: standardWallet } });
+    //     });
+    // };
 }

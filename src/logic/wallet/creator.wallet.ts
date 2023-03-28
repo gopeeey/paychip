@@ -6,7 +6,7 @@ import {
     WalletRepoInterface,
 } from "./interfaces";
 import { DuplicateWalletError } from "./errors";
-import { SessionInterface } from "..";
+import { SessionInterface } from "../session_interface";
 
 export class WalletCreator implements WalletCreatorInterface {
     private declare createWalletDto: CreateWalletDto;

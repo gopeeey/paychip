@@ -29,7 +29,7 @@ const dependencies = {
     getCountry: jest.fn(),
     updateCurrencies: jest.fn(),
     getAccount: jest.fn(),
-    createWallet: jest.fn(),
+    createBusinessWallet: jest.fn(),
 };
 
 const businessService = new BusinessService(

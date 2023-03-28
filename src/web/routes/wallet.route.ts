@@ -12,12 +12,12 @@ export class WalletRoute {
         const controller = new WalletController(this._deps.walletService);
         const restrictTo = this._deps.authMiddleware.restrictTo;
 
-        router.post(
-            "/create",
-            restrictTo(["business", "apiKey"]),
-            validateBody(CreateBusinessWalletValidator),
-            controller.createBusinessWallet
-        );
+        // router.post(
+        //     "/create",
+        //     restrictTo(["business", "apiKey"]),
+        //     validateBody(CreateBusinessWalletValidator),
+        //     controller.createBusinessWallet
+        // );
 
         return router;
     };

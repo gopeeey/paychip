@@ -8,13 +8,9 @@ export interface WalletServiceInterface {
         createWalletDto: CreateWalletDto,
         session?: SessionInterface
     ) => Promise<WalletModelInterface>;
-    createBusinessWallet: (createWalletDto: CreateWalletDto) => Promise<WalletModelInterface>;
 }
 
 export interface WalletServiceDependencies {
     repo: WalletRepoInterface;
-    isSupportedBusinessCurrency: (
-        businessId: WalletModelInterface["businessId"],
-        currencyCode: WalletModelInterface["currency"]
-    ) => Promise<boolean>;
+    isSupportedBusinessCurrency: () => void;
 }
