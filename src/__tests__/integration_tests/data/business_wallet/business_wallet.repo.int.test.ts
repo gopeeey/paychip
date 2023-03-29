@@ -4,10 +4,13 @@ import { Country } from "@data/country";
 import { Currency } from "@data/currency";
 import { StartSequelizeSession } from "@data/sequelize_session";
 import { CreateBusinessWalletDto } from "@logic/business_wallet";
+import { createClassSpies } from "src/__tests__/mocks";
 import { bwSeeder } from "src/__tests__/samples/business_wallet.samples";
 import { DBSetup, SeedingError } from "src/__tests__/test_utils";
 
 const bwRepo = new BusinessWalletRepo();
+
+const bwMock = createClassSpies(BusinessWallet, ["create"]);
 
 DBSetup(bwSeeder);
 
@@ -37,6 +40,7 @@ describe("TESTING BUSINESS WALLET REPO", () => {
             if (!persistedBw) throw new Error("Failed to persist business");
             expect(persistedBw).toMatchObject(dto);
             expect(persistedBw.id.endsWith(business.id.toString())).toBe(true);
+            expect(bwMock.create.mock.calls[1][1]).toEqual({ transaction: session });
         });
     });
 });

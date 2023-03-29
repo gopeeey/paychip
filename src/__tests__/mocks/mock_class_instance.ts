@@ -4,7 +4,7 @@ export const createSpies = <T extends {}>(theClass: T) => {
 
     for (let key in theClass) {
         const theKey = key as unknown as keyof jest.ConstructorProperties<Required<T>>;
-        spies[key] = jest.spyOn(theClass, theKey);
+        if (typeof theClass[theKey] === "function") spies[key] = jest.spyOn(theClass, theKey);
     }
 
     return spies;
