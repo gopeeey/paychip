@@ -1,9 +1,4 @@
-import {
-    CreateWalletDto,
-    IncrementBalanceDto,
-    WalletModelInterface,
-    WalletRepoInterface,
-} from "@logic/wallet";
+import { WalletModelInterface, WalletRepoInterface } from "@logic/wallet";
 import { generateId } from "src/utils";
 import { Wallet } from "./wallet.model";
 import { Op, Transaction } from "sequelize";
@@ -27,18 +22,6 @@ export class WalletRepo implements WalletRepoInterface {
 
     getUnique: WalletRepoInterface["getUnique"] = async (getUniqueDto) => {
         const wallet = await this._modelContext.findOne({ where: { ...getUniqueDto } });
-        return wallet ? wallet.toJSON() : null;
-    };
-
-    getBusinessRootWallet: WalletRepoInterface["getBusinessRootWallet"] = async (
-        businessId,
-        currency
-    ) => {
-        const wallet = await this._modelContext.findOne({
-            where: {
-                [Op.and]: [{ businessId }, { currency }, { parentWalletId: { [Op.is]: null } }],
-            },
-        });
         return wallet ? wallet.toJSON() : null;
     };
 

@@ -48,7 +48,6 @@ describe("TESTING CHARGES SERVICE", () => {
                 chargeStackId: chargeStackJson.wallet.id,
                 walletId: walletJson.id,
                 chargeStackType: "funding",
-                isChildDefault: false,
             });
             await chargesService.addStackToWallet(data);
             expect(repoMock.addStackToWallet).toHaveBeenCalledTimes(1);

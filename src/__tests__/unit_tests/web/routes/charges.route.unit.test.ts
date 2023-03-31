@@ -199,7 +199,6 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
                         walletId: walletJson.id,
                         chargeStackId: chargeStackJson.wallet.id,
                         chargeStackType: "funding",
-                        isChildDefault: false,
                     });
 
                     const { walletId, ...noWalletId } = dto;
@@ -231,20 +230,17 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
                         walletId: walletJson.id,
                         chargeStackId: chargeStackJson.wallet.id,
                         chargeStackType: "funding",
-                        isChildDefault: false,
                     });
-
-                    const { isChildDefault, ...data } = dto;
 
                     const { statusCode } = await testApp
                         .post(route)
-                        .send(data)
+                        .send(dto)
                         .set({ Authorization: businessLevelToken });
 
                     expect(statusCode).toBe(200);
                     expect(validateBusinessObjectIdMock).toHaveBeenCalledTimes(1);
                     expect(validateBusinessObjectIdMock).toHaveBeenCalledWith(
-                        [data.walletId, data.chargeStackId],
+                        [dto.walletId, dto.chargeStackId],
                         businessJson.id
                     );
                 });

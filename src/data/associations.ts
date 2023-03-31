@@ -28,10 +28,21 @@ export const runAssociations = () => {
     Customer.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
 
     // businesses and currencies
+    Business.hasMany(BusinessWallet, {
+        sourceKey: "id",
+        foreignKey: "businessId",
+        as: "businessWallets",
+    });
     BusinessWallet.belongsTo(Business, {
         targetKey: "id",
         foreignKey: "businessId",
         as: "business",
+    });
+
+    Currency.hasMany(BusinessWallet, {
+        sourceKey: "isoCode",
+        foreignKey: "currencyCode",
+        as: "businessWallets",
     });
     BusinessWallet.belongsTo(Currency, {
         targetKey: "isoCode",
@@ -55,6 +66,9 @@ export const runAssociations = () => {
     Business.hasMany(Wallet, { sourceKey: "id", foreignKey: "businessId", as: "wallets" });
     Wallet.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
 
+    BusinessWallet.hasMany(Wallet, { sourceKey: "id", foreignKey: "bwId", as: "wallets" });
+    Wallet.belongsTo(BusinessWallet, { targetKey: "id", foreignKey: "bwId", as: "businessWallet" });
+
     // charge stacks and businesses
     Business.hasMany(ChargeStack, {
         sourceKey: "id",
@@ -76,11 +90,22 @@ export const runAssociations = () => {
     //     targetKey: "id",
     //     as: "chargeStacks",
     // });
+    ChargeStack.hasMany(WalletChargeStack, {
+        sourceKey: "id",
+        foreignKey: "chargeStackId",
+        as: "walletChargeStacks",
+    });
     WalletChargeStack.belongsTo(ChargeStack, {
         targetKey: "id",
         foreignKey: "chargeStackId",
         as: "chargeStack",
         onDelete: "CASCADE",
+    });
+
+    Wallet.hasMany(WalletChargeStack, {
+        sourceKey: "id",
+        foreignKey: "walletId",
+        as: "walletChargeStacks",
     });
     WalletChargeStack.belongsTo(Wallet, {
         targetKey: "id",

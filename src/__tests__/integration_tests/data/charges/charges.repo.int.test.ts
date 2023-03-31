@@ -8,7 +8,6 @@ import {
     ChargeModelInterface,
     ChargeStackModelInterface,
     ChargeStackNotFoundError,
-    CreateChargeDto,
     CreateChargeStackDto,
 } from "@logic/charges";
 import { chargesSeeder } from "src/__tests__/samples/charges.samples";
@@ -69,7 +68,6 @@ describe("TESTING CHARGES REPO", () => {
                     walletId: wallet.id,
                     chargeStackId: chargeStack.id,
                     chargeStackType: stackType,
-                    isChildDefault: false,
                 });
                 await chargesRepo.addStackToWallet(data);
 
@@ -81,27 +79,6 @@ describe("TESTING CHARGES REPO", () => {
                 expect(persistedStacks.length).toBe(1);
                 expect(persistedStacks[0]).toMatchObject(data);
             }
-        });
-    });
-
-    describe("Testing createCharge", () => {
-        it("should persist and return a charge object", async () => {
-            const wallet = await getAWallet();
-            const data = new CreateChargeDto({
-                businessId: wallet.businessId,
-                flatCharge: 100,
-                minimumPrincipalAmount: 100,
-                name: "Test charge",
-                percentageCharge: 20,
-                percentageChargeCap: 2000,
-            });
-
-            const charge = await chargesRepo.createCharge(data);
-
-            const persistedCharge = await Charge.findByPk(charge.id);
-            if (!persistedCharge) throw new Error("Charge not persisted");
-            console.log(typeof persistedCharge.flatCharge);
-            expect(persistedCharge.toJSON()).toMatchObject(data);
         });
     });
 

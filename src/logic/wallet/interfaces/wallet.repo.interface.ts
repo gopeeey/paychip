@@ -11,10 +11,5 @@ export interface WalletRepoInterface {
 
     getUnique: (getUniqueDto: GetUniqueWalletDto) => Promise<WalletModelInterface | null>;
 
-    getBusinessRootWallet: (
-        businessId: WalletModelInterface["businessId"],
-        currency: WalletModelInterface["currency"]
-    ) => Promise<WalletModelInterface | null>;
-
     incrementBalance: (incrementBalanceDto: IncrementBalanceDto) => Promise<void>;
 }

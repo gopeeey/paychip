@@ -19,21 +19,25 @@ const sharedData = {
 export const chargeStackData = {
     wallet: new CreateChargeStackDto({ ...sharedData, paidBy: "wallet" }),
     customer: new CreateChargeStackDto({ ...sharedData, paidBy: "customer" }),
+    noPaidBy: new CreateChargeStackDto({ ...sharedData }),
 };
 
 export const chargeStackObj = {
     wallet: new ChargeStack({ ...chargeStackData.wallet, id: "some" }),
     customer: new ChargeStack({ ...chargeStackData.customer, id: "some" }),
+    noPaidBy: new ChargeStack({ ...chargeStackData.noPaidBy, id: "some" }),
 };
 
 export const chargeStackJson = {
     wallet: chargeStackObj.wallet.toJSON(),
     customer: chargeStackObj.customer.toJSON(),
+    noPaidBy: chargeStackObj.noPaidBy.toJSON(),
 };
 
 export const standardChargeStack = {
     wallet: new StandardChargeStackDto(chargeStackJson.wallet),
     customer: new StandardChargeStackDto(chargeStackJson.customer),
+    noPaidBy: new StandardChargeStackDto(chargeStackJson.noPaidBy),
 };
 
 export const chargeData = new CreateChargeDto({

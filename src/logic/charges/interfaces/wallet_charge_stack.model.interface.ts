@@ -14,6 +14,5 @@ export interface WalletChargeStackModelInterface extends BaseModelInterface {
     id: string;
     walletId: WalletModelInterfaceDef["id"];
     chargeStackId: ChargeStackModelInterfaceDef["id"];
-    isChildDefault: boolean;
     chargeStackType: ChargeStackType;
 }

@@ -1,44 +1,45 @@
+import { PickWithOptional } from "@logic/types";
 import { WalletModelInterface } from "../interfaces";
 
-type RequiredProps = Pick<
+type RequiredProps = PickWithOptional<
     WalletModelInterface,
     | "businessId"
-    | "parentWalletId"
+    | "bwId"
     | "currency"
     | "email"
-    | "walletType"
     | "waiveFundingCharges"
     | "waiveWithdrawalCharges"
     | "waiveWalletInCharges"
-    | "waiveWalletOutCharges"
-    // | "fundingChargesPaidBy"
-    // | "withdrawalChargesPaidBy"
+    | "waiveWalletOutCharges",
+    "fundingChargesPaidBy" | "withdrawalChargesPaidBy"
 >;
 
 export class CreateWalletDto implements RequiredProps {
-    businessId: WalletModelInterface["businessId"];
-    parentWalletId: WalletModelInterface["parentWalletId"];
-    currency: WalletModelInterface["currency"];
-    email: WalletModelInterface["email"];
-    walletType: WalletModelInterface["walletType"];
-    waiveFundingCharges: WalletModelInterface["waiveFundingCharges"];
-    waiveWithdrawalCharges: WalletModelInterface["waiveWithdrawalCharges"];
-    waiveWalletInCharges: WalletModelInterface["waiveWalletInCharges"];
-    waiveWalletOutCharges: WalletModelInterface["waiveWalletOutCharges"];
-    // fundingChargesPaidBy: WalletModelInterface["fundingChargesPaidBy"];
-    // withdrawalChargesPaidBy: WalletModelInterface["withdrawalChargesPaidBy"];
+    businessId: RequiredProps["businessId"];
+    bwId: RequiredProps["bwId"];
+    currency: RequiredProps["currency"];
+    email: RequiredProps["email"];
+    waiveFundingCharges: RequiredProps["waiveFundingCharges"];
+    waiveWithdrawalCharges: RequiredProps["waiveWithdrawalCharges"];
+    waiveWalletInCharges: RequiredProps["waiveWalletInCharges"];
+    waiveWalletOutCharges: RequiredProps["waiveWalletOutCharges"];
+    fundingChargesPaidBy: RequiredProps["fundingChargesPaidBy"];
+    withdrawalChargesPaidBy: RequiredProps["withdrawalChargesPaidBy"];
 
-    constructor(body: RequiredProps) {
+    constructor({
+        fundingChargesPaidBy = null,
+        withdrawalChargesPaidBy = null,
+        ...body
+    }: RequiredProps) {
         this.businessId = body.businessId;
-        this.parentWalletId = body.parentWalletId;
+        this.bwId = body.bwId;
         this.currency = body.currency;
         this.email = body.email;
-        this.walletType = body.walletType;
         this.waiveFundingCharges = body.waiveFundingCharges;
         this.waiveWithdrawalCharges = body.waiveWithdrawalCharges;
         this.waiveWalletInCharges = body.waiveWalletInCharges;
         this.waiveWalletOutCharges = body.waiveWalletOutCharges;
-        // this.fundingChargesPaidBy = body.fundingChargesPaidBy;
-        // this.withdrawalChargesPaidBy = body.withdrawalChargesPaidBy;
+        this.fundingChargesPaidBy = fundingChargesPaidBy;
+        this.withdrawalChargesPaidBy = withdrawalChargesPaidBy;
     }
 }

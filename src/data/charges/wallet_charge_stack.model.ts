@@ -20,7 +20,6 @@ export class WalletChargeStack
     declare id: WalletChargeStackModelInterface["id"];
     declare walletId: ForeignKey<WalletChargeStackModelInterface["walletId"]>;
     declare chargeStackId: ForeignKey<ChargeStackModelInterface["id"]>;
-    declare isChildDefault: WalletChargeStackModelInterface["isChildDefault"];
     declare chargeStackType: WalletChargeStackModelInterface["chargeStackType"];
 
     declare createdAt: CreationOptional<Date>;
@@ -36,7 +35,6 @@ WalletChargeStack.init(
             unique: true,
             allowNull: false,
         },
-        isChildDefault: { type: DataTypes.BOOLEAN, defaultValue: false, allowNull: false },
         chargeStackType: { type: DataTypes.ENUM(...allowedChargeStackTypes), allowNull: false },
 
         createdAt: DataTypes.DATE,

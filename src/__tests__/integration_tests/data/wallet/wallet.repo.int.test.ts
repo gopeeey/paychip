@@ -1,10 +1,11 @@
 import { Wallet, WalletRepo } from "@data/wallet";
-import { getAWallet, walletSeeder } from "src/__tests__/samples";
+import { bwJson, getAWallet, walletSeeder } from "src/__tests__/samples";
 import { DBSetup, SeedingError } from "src/__tests__/test_utils";
 import { Business } from "@data/business";
 import { Country } from "@data/country";
 import { CreateWalletDto, GetUniqueWalletDto, IncrementBalanceDto } from "@logic/wallet";
 import { StartSequelizeSession } from "@data/sequelize_session";
+import { BusinessWallet } from "@data/business_wallet";
 
 const testWalletRepo = new WalletRepo(Wallet);
 
@@ -18,20 +19,22 @@ describe("TESTING WALLET REPO", () => {
             const session = await StartSequelizeSession();
             const business = await Business.findOne();
             if (!business) throw new SeedingError("business not found");
+            const bw = await BusinessWallet.findOne({ where: { businessId: business.id } });
+            if (!bw) throw new SeedingError("business wallet not found");
             const country = await Country.findByPk(business.countryCode);
             if (!country) throw new SeedingError("country not found");
 
-            const data: CreateWalletDto = {
+            const data = new CreateWalletDto({
                 businessId: business.id,
                 currency: country.currencyCode,
                 email: "new@wallet.com",
-                walletType: "personal",
-                parentWalletId: null,
+                bwId: bw.id,
                 waiveFundingCharges: false,
                 waiveWithdrawalCharges: false,
                 waiveWalletInCharges: false,
                 waiveWalletOutCharges: false,
-            };
+            });
+
             const wallet = await testWalletRepo.create(data, session);
             await session.commit();
 
@@ -83,20 +86,6 @@ describe("TESTING WALLET REPO", () => {
                 });
                 expect(wallet).toBeNull();
             });
-        });
-    });
-
-    describe("Testing getBusinessRootWallet", () => {
-        it("should return a wallet object for the business", async () => {
-            const existing = await Wallet.findOne({ where: { parentWalletId: null } });
-            if (!existing) throw new SeedingError("root wallet not found");
-            const wallet = await testWalletRepo.getBusinessRootWallet(
-                existing.businessId,
-                existing.currency
-            );
-            if (!wallet) throw new Error("wallet not found");
-            expect(wallet.parentWalletId).toBeNull();
-            expect(existing).toMatchObject(wallet);
         });
     });
 

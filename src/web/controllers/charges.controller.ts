@@ -65,7 +65,7 @@ export class ChargeStackController extends BaseController {
         this.handleReq(next, async () => {
             if (!req.business) throw new ProtectedRouteAccessError(req.path);
 
-            const data = new AddChargeStackToWalletDto({ ...req.body, isChildDefault: false });
+            const data = new AddChargeStackToWalletDto({ ...req.body });
             validateBusinessObjectId([data.walletId, data.chargeStackId], req.business.id);
             await this._service.addStackToWallet(data);
 

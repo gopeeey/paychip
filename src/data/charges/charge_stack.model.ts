@@ -36,7 +36,7 @@ ChargeStack.init(
         },
         name: { type: DataTypes.STRING, allowNull: false },
         description: { type: DataTypes.STRING },
-        paidBy: { type: DataTypes.ENUM(...allowedPaidBy), allowNull: false },
+        paidBy: { type: DataTypes.ENUM(...allowedPaidBy), allowNull: true },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,
         deletedAt: DataTypes.DATE,
