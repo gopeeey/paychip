@@ -7,7 +7,7 @@ import { CreateWalletDto, GetUniqueWalletDto, IncrementBalanceDto } from "@logic
 import { StartSequelizeSession } from "@data/sequelize_session";
 import { BusinessWallet } from "@data/business_wallet";
 
-const testWalletRepo = new WalletRepo(Wallet);
+const testWalletRepo = new WalletRepo();
 
 DBSetup(walletSeeder);
 

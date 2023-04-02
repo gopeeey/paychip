@@ -1,13 +1,11 @@
+import { WalletRepo } from "@data/wallet";
 import { WalletCreator, WalletCreatorDependencies, DuplicateWalletError } from "@logic/wallet";
-import { sessionMock } from "src/__tests__/mocks";
+import { createClassSpies, sessionMock } from "src/__tests__/mocks";
 import { walletData, walletJson } from "src/__tests__/samples";
 
 const dep = {
     dto: walletData,
-    repo: {
-        create: jest.fn(),
-        getUnique: jest.fn(),
-    },
+    repo: createClassSpies(new WalletRepo(), ["create", "getUnique"]),
     session: sessionMock,
 };
 
@@ -19,6 +17,8 @@ const mockAll = () => {
 };
 
 describe("TESTING WALLET CREATOR", () => {
+    it("should fetch the corresponding business wallet", async () => {});
+
     it("should check if a wallet with the same currency, businessId and email already exists", async () => {
         mockAll();
         await walletCreator.create();

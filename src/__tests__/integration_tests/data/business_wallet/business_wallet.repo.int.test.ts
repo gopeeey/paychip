@@ -4,13 +4,14 @@ import { Country } from "@data/country";
 import { Currency } from "@data/currency";
 import { StartSequelizeSession } from "@data/sequelize_session";
 import { CreateBusinessWalletDto } from "@logic/business_wallet";
+import { businessWalletRepo } from "src/container/business_wallet";
 import { createClassSpies } from "src/__tests__/mocks";
 import { bwSeeder } from "src/__tests__/samples/business_wallet.samples";
 import { DBSetup, SeedingError } from "src/__tests__/test_utils";
 
 const bwRepo = new BusinessWalletRepo();
 
-const bwMock = createClassSpies(BusinessWallet, ["create"]);
+const bwMock = createClassSpies(BusinessWallet, ["create", "findOne"]);
 
 DBSetup(bwSeeder);
 
@@ -23,6 +24,12 @@ const getBC = async () => {
     if (!currency) throw new SeedingError("currency not found");
 
     return { business, currency };
+};
+
+const getBw = async () => {
+    const bw = await BusinessWallet.findOne();
+    if (!bw) throw new SeedingError("Business wallet not found");
+    return bw;
 };
 
 describe("TESTING BUSINESS WALLET REPO", () => {
@@ -41,6 +48,26 @@ describe("TESTING BUSINESS WALLET REPO", () => {
             expect(persistedBw).toMatchObject(dto);
             expect(persistedBw.id.endsWith(business.id.toString())).toBe(true);
             expect(bwMock.create.mock.calls[1][1]).toEqual({ transaction: session });
+        });
+    });
+
+    describe("Testing getByCurrency", () => {
+        describe("Given the wallet exists", () => {
+            it("should return a wallet object", async () => {
+                const existing = await getBw();
+                const bw = await businessWalletRepo.getByCurrency(
+                    existing.businessId,
+                    existing.currencyCode
+                );
+                expect(bw).toMatchObject(existing.toJSON());
+            });
+        });
+
+        describe("Given the wallet does not exist", () => {
+            it("should return null", async () => {
+                const bw = await businessWalletRepo.getByCurrency(33333, "GHN");
+                expect(bw).toBeNull();
+            });
         });
     });
 });

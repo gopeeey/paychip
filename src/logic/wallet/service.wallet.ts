@@ -3,8 +3,6 @@ import {
     WalletServiceDependencies,
     WalletServiceInterface,
 } from "./interfaces";
-import { BusinessRootWalletNotFoundError } from "./errors";
-import { BusinessCurrencyNotSupportedError } from "@logic/currency";
 import { WalletCreator } from "./creator.wallet";
 
 export class WalletService implements WalletServiceInterface {

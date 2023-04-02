@@ -8,19 +8,19 @@ import {
     businessLevelToken,
     standardAccount,
     standardWallet,
-    walletJsons,
-    walletSampleData,
+    walletJson,
+    walletData,
 } from "src/__tests__/samples";
+import { createClassSpies } from "src/__tests__/mocks";
+import { BusinessService } from "@logic/business";
+import { AccountService } from "@logic/account";
+import { WalletService } from "@logic/wallet";
 
-const businessService = {
-    getById: jest.fn(),
-};
+const businessService = createClassSpies(BusinessService.prototype, ["getById"]);
 
-const accountService = { getById: jest.fn() };
+const accountService = createClassSpies(AccountService.prototype, ["getById"]);
 
-const walletService = {
-    createBusinessWallet: jest.fn(),
-};
+const walletService = createClassSpies(WalletService.prototype, ["createWallet"]);
 
 const authMiddleware = new AuthMiddleware({
     businessService,
@@ -75,16 +75,16 @@ describe("TESTING WALLET ROUTES", () => {
 
         describe("Given valid data", () => {
             it("should return a standard wallet dto", async () => {
-                walletService.createBusinessWallet.mockResolvedValue(walletJsons.withParent);
-                const { businessId, parentWalletId, ...form } = walletSampleData.noParent;
+                walletService.createWallet.mockResolvedValue(walletJson);
+                const { businessId, ...form } = walletData;
                 const { statusCode, body } = await testApp
                     .post(route)
                     .send(form)
                     .set({ Authorization: businessLevelToken });
                 expect(statusCode).toBe(201);
                 expect(body).toHaveProperty("message");
-                expect(body).toHaveProperty("data.wallet", standardWallet.withParent);
-                expect(walletService.createBusinessWallet).toHaveBeenCalledTimes(1);
+                expect(body).toHaveProperty("data.wallet", standardWallet);
+                expect(walletService.createWallet).toHaveBeenCalledTimes(1);
             });
         });
 

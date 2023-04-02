@@ -1,15 +1,20 @@
 import { SessionInterface } from "@logic/session_interface";
 import { CreateBusinessWalletDto } from "../dtos";
-import { BusinessWalletModelInterface } from "./business_wallet.model.interface";
-import { BusinessWalletRepoInterface } from "./business_wallet.repo.interface";
+import { BusinessWalletModelInterface as BwModelInterface } from "./business_wallet.model.interface";
+import { BusinessWalletRepoInterface as BwRepoInterface } from "./business_wallet.repo.interface";
 
 export interface BusinessWalletServiceInterface {
     createBusinessWallet: (
         createBusinessWalletDto: CreateBusinessWalletDto,
         session?: SessionInterface
-    ) => Promise<BusinessWalletModelInterface>;
+    ) => Promise<BwModelInterface>;
+
+    getBusinessWalletByCurrency: (
+        businessId: BwModelInterface["businessId"],
+        currencyCode: BwModelInterface["currencyCode"]
+    ) => Promise<BwModelInterface>;
 }
 
 export interface BusinessWalletServiceDeps {
-    repo: BusinessWalletRepoInterface;
+    repo: BwRepoInterface;
 }
