@@ -17,4 +17,5 @@ export interface BusinessWalletServiceInterface {
 
 export interface BusinessWalletServiceDeps {
     repo: BwRepoInterface;
+    validateCurrencySupported: (currencyCode: BwModelInterface["currencyCode"]) => Promise<void>;
 }

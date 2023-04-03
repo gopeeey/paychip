@@ -16,6 +16,8 @@ export class BusinessWalletService implements BwServiceInterface {
         createBusinessWalletDto,
         session
     ) => {
+        await this._deps.validateCurrencySupported(createBusinessWalletDto.currencyCode);
+
         const businessWallet = await this._repo.create(createBusinessWalletDto, session);
         return businessWallet;
     };

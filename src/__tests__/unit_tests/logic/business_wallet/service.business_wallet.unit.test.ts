@@ -10,11 +10,25 @@ import { businessJson, bwData, bwJson } from "src/__tests__/samples";
 const repo = new BusinessWalletRepo();
 
 const repoSpies = createSpies(repo);
+const validateCurrencySupportedMock = jest.fn(async () => {});
 
-const bwService = new BusinessWalletService({ repo });
+const bwService = new BusinessWalletService({
+    repo,
+    validateCurrencySupported: validateCurrencySupportedMock,
+});
 
 describe("TESTING BUSINESS WALLET SERVICE", () => {
     describe("Testing createBusinessWallet", () => {
+        it("should check if the passed in currency is supported", async () => {
+            repoSpies.create.mockResolvedValue(bwJson);
+            validateCurrencySupportedMock.mockResolvedValue();
+            const data = new CreateBusinessWalletDto(bwData);
+            await bwService.createBusinessWallet(data, sessionMock);
+
+            expect(validateCurrencySupportedMock).toHaveBeenCalledTimes(1);
+            expect(validateCurrencySupportedMock).toHaveBeenCalledWith(data.currencyCode);
+        });
+
         it("should call the repo create function", async () => {
             repoSpies.create.mockResolvedValue(bwJson);
             const data = new CreateBusinessWalletDto(bwData);

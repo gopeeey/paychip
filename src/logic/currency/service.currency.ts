@@ -1,3 +1,4 @@
+import { CurrencyNotSupportedError } from "./errors";
 import { CurrencyServiceDependencies, CurrencyServiceInterface } from "./interfaces";
 
 export class CurrencyService implements CurrencyServiceInterface {
@@ -12,11 +13,11 @@ export class CurrencyService implements CurrencyServiceInterface {
         return currencies;
     };
 
-    checkIsSupported: CurrencyServiceInterface["checkIsSupported"] = async (currencyCode) => {
+    validateIsSupported: CurrencyServiceInterface["validateIsSupported"] = async (currencyCode) => {
         const activeCurrencies = await this.getActive();
         const supported = Boolean(
             activeCurrencies.find((currency) => currency.isoCode === currencyCode)
         );
-        return supported;
+        if (!supported) throw new CurrencyNotSupportedError(currencyCode);
     };
 }

@@ -5,7 +5,7 @@ import { CurrencyRepoInterface } from "./currency.repo.interface";
 
 export interface CurrencyServiceInterface {
     getActive: () => Promise<CurrencyModelInterface[]>;
-    checkIsSupported: (currencyCode: CurrencyModelInterface["isoCode"]) => Promise<boolean>;
+    validateIsSupported: (currencyCode: CurrencyModelInterface["isoCode"]) => Promise<void>;
 }
 
 export interface CurrencyServiceDependencies {
