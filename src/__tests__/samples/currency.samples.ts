@@ -42,7 +42,7 @@ export const currencyData: CreateCurrencyDto = new CreateCurrencyDto({
     ),
 });
 
-export const currencyObj = new Currency(currencyData);
+export const currencyObj = new Currency({ ...currencyData, active: true });
 
 export const currencyObjArr = [currencyObj];
 

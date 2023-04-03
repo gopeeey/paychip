@@ -16,6 +16,7 @@ export class WalletService implements WalletServiceInterface {
         const wallet = await new WalletCreator({
             dto: createWalletDto,
             repo: this._repo,
+            getBusinessWallet: this._dep.getBusinessWallet,
             session,
         }).create();
         return wallet;

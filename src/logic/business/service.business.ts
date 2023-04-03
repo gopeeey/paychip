@@ -34,7 +34,6 @@ export class BusinessService implements BusinessServiceInterface {
                 getCountry: this._dep.getCountry,
                 getOwner: this._dep.getAccount,
                 repo: this._dep.repo,
-                updateCurrencies: this._dep.updateCurrencies,
             }).create();
 
             if (selfStartedSession) await session.commit();

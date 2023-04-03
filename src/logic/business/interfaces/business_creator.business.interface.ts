@@ -24,5 +24,4 @@ export interface BusinessCreatorDependencies {
         createBusinessWalletDto: CreateBusinessWalletDto,
         session: SessionInterface
     ) => Promise<BusinessWalletModelInterface>;
-    updateCurrencies: () => Promise<void>;
 }

@@ -6,3 +6,4 @@ export const businessWalletService = new BusinessWalletService({
 });
 
 export const createBusinessWallet = businessWalletService.createBusinessWallet;
+export const getBusinessWalletByCurrency = businessWalletService.getBusinessWalletByCurrency;

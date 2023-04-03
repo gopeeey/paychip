@@ -1,3 +1,3 @@
-import { Currency, BusinessCurrency, CurrencyRepo } from "@data/currency";
+import { CurrencyRepo } from "@data/currency";
 
-export const currencyRepo = new CurrencyRepo(Currency, BusinessCurrency);
+export const currencyRepo = new CurrencyRepo();

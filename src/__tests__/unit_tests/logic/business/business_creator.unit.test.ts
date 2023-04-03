@@ -20,7 +20,6 @@ const dependencies = {
     getCountry: jest.fn(),
     createBusinessWallet: jest.fn(),
     getOwner: jest.fn(),
-    updateCurrencies: jest.fn(),
 };
 
 const businessCreator = new BusinessCreator(dependencies as unknown as BusinessCreatorDependencies);
@@ -96,18 +95,6 @@ describe("TESTING BUSINESS CREATOR", () => {
                     sessionMock
                 );
             });
-
-            // add currency of the country to the business currencies
-            // it("should update the business currencies", async () => {
-            //     mockSuccess();
-            //     await runCreator();
-            //     expect(dependencies.updateCurrencies).toHaveBeenCalledTimes(1);
-            //     expect(dependencies.updateCurrencies).toHaveBeenCalledWith(
-            //         businessJson.id,
-            //         [countryJson.currencyCode],
-            //         sessionMock
-            //     );
-            // });
         });
     });
 });

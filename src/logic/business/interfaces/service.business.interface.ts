@@ -25,7 +25,6 @@ export interface BusinessServiceDependenciesInterface {
     repo: BusinessRepoInterface;
     startSession: () => Promise<SessionInterface>;
     getCountry: CountryServiceInterface["getByCode"];
-    updateCurrencies: () => Promise<void>;
     createBusinessWallet: (
         createBusinessWalletDto: CreateBusinessWalletDto,
         session: SessionInterface

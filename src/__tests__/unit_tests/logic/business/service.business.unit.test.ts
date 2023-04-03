@@ -27,7 +27,6 @@ const dependencies = {
     repo,
     startSession: jest.fn(async () => sessionMock),
     getCountry: jest.fn(),
-    updateCurrencies: jest.fn(),
     getAccount: jest.fn(),
     createBusinessWallet: jest.fn(),
 };

@@ -17,7 +17,6 @@ const deps = {
         getUnique: jest.fn(),
         getBusinessRootWallet: jest.fn(),
     },
-    isSupportedBusinessCurrency: jest.fn(),
 };
 
 const walletService = new WalletService(deps as unknown as WalletServiceDependencies);

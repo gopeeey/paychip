@@ -50,18 +50,10 @@ export class BusinessCreator implements BusinessCreatorInterface {
     };
 
     private createBusinessWallet = async () => {
-        const createWalletDto = new CreateBusinessWalletDto({
+        const createBusinessWalletDto = new CreateBusinessWalletDto({
             businessId: this.business.id,
             currencyCode: this.country.currencyCode,
         });
-        this.wallet = await this._dep.createBusinessWallet(createWalletDto, this.session);
+        this.wallet = await this._dep.createBusinessWallet(createBusinessWalletDto, this.session);
     };
-
-    // private addFirstCurrency = async () => {
-    //     this.currencies = await this._dep.updateCurrencies(
-    //         this.business.id,
-    //         [this.country.currencyCode],
-    //         this.session
-    //     );
-    // };
 }

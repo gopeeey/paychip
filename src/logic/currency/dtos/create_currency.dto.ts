@@ -12,6 +12,7 @@ export class CreateCurrencyDto implements RequiredProps {
     withdrawalCs: CurrencyModelInterface["withdrawalCs"];
     walletInCs: CurrencyModelInterface["walletInCs"];
     walletOutCs: CurrencyModelInterface["walletOutCs"];
+    active: CurrencyModelInterface["active"] = true;
 
     constructor(body: RequiredProps) {
         this.name = body.name;

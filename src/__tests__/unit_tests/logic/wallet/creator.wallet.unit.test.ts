@@ -1,11 +1,12 @@
 import { WalletRepo } from "@data/wallet";
 import { WalletCreator, WalletCreatorDependencies, DuplicateWalletError } from "@logic/wallet";
-import { createClassSpies, sessionMock } from "src/__tests__/mocks";
+import { createSpies, sessionMock } from "src/__tests__/mocks";
 import { walletData, walletJson } from "src/__tests__/samples";
 
 const dep = {
     dto: walletData,
-    repo: createClassSpies(new WalletRepo(), ["create", "getUnique"]),
+    repo: createSpies(new WalletRepo()),
+    getBusinessWallet: jest.fn(),
     session: sessionMock,
 };
 
