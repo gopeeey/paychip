@@ -7,12 +7,14 @@ import {
 } from "./interfaces";
 import { DuplicateWalletError } from "./errors";
 import { SessionInterface } from "../session_interface";
+import { BusinessWalletModelInterface } from "@logic/business_wallet";
 
 export class WalletCreator implements WalletCreatorInterface {
     private declare createWalletDto: CreateWalletDto;
     private declare _repo: WalletRepoInterface;
     private declare session?: SessionInterface;
     private declare wallet: WalletModelInterface;
+    private declare businessWallet: BusinessWalletModelInterface;
 
     constructor(private readonly _dep: WalletCreatorDependencies) {
         this.createWalletDto = this._dep.dto;
@@ -22,6 +24,7 @@ export class WalletCreator implements WalletCreatorInterface {
 
     async create() {
         await this.checkExists();
+        await this.fetchBusinessWallet();
         await this.persistWallet();
         return this.wallet;
     }
@@ -32,7 +35,15 @@ export class WalletCreator implements WalletCreatorInterface {
         if (existing) throw new DuplicateWalletError({ businessId, email, currency });
     };
 
+    private fetchBusinessWallet = async () => {
+        const { businessId, currency } = this.createWalletDto;
+        this.businessWallet = await this._dep.getBusinessWallet(businessId, currency);
+    };
+
     private persistWallet = async () => {
-        this.wallet = await this._repo.create(this.createWalletDto, this.session);
+        this.wallet = await this._repo.create(
+            { ...this.createWalletDto, bwId: this.businessWallet.id },
+            this.session
+        );
     };
 }

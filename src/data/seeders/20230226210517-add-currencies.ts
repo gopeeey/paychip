@@ -5,6 +5,7 @@ import { Currency } from "../currency";
 
 const naira: CurrencyModelInterface = {
     name: "Nigerian Naira",
+    active: true,
     isoCode: "NGN",
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -44,6 +45,7 @@ const naira: CurrencyModelInterface = {
 
 const dollar: CurrencyModelInterface = {
     name: "United States Dollar",
+    active: true,
     isoCode: "USD",
     createdAt: new Date(),
     updatedAt: new Date(),
