@@ -8,7 +8,7 @@ import {
     ForeignKey,
     NonAttribute,
 } from "sequelize";
-import { db } from "../db";
+import { db } from "@data/db_old";
 
 export class Business
     extends Model<InferAttributes<Business>, InferCreationAttributes<Business>>

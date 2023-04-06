@@ -1,1 +1,1 @@
-export * from "./db_setup";
+export * from "@data/db_old_setup";

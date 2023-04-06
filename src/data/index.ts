@@ -6,6 +6,6 @@ export * from "./customer";
 export * from "./currency";
 export * from "./charges";
 export * from "./wallet";
-export * from "./db";
+export * from "@data/db_old";
 export * from "./transaction";
 export * from "./business_wallet";

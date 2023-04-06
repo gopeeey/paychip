@@ -7,7 +7,7 @@ import {
     UUIDV4,
     NonAttribute,
 } from "sequelize";
-import { db } from "../db";
+import { db } from "@data/db_old";
 import { AccountModelInterface } from "@logic/account";
 import { BusinessModelInterface } from "@logic/business";
 

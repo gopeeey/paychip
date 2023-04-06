@@ -1,5 +1,5 @@
 import { runAssociations } from "@data/associations";
-import { db } from "@data/db";
+import { db } from "@data/db_old";
 
 export const syncDbForce = async () => {
     // runAssociations();

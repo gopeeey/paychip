@@ -8,7 +8,7 @@ import {
     DataTypes,
     NonAttribute,
 } from "sequelize";
-import { db } from "../db";
+import { db } from "@data/db_old";
 
 export class Currency
     extends Model<InferAttributes<Currency>, InferCreationAttributes<Currency>>

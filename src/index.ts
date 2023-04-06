@@ -2,7 +2,7 @@ import App from "./app";
 import startServer from "./server";
 import { container } from "./container";
 import appConfig from "./config";
-import { db } from "@data/db";
+import { db } from "@data/db_old";
 import { runAssociations } from "@data/associations";
 
 const run = async () => {

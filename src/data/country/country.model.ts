@@ -7,7 +7,7 @@ import {
     NonAttribute,
     ForeignKey,
 } from "sequelize";
-import { db } from "../db";
+import { db } from "@data/db_old";
 import { BusinessModelInterface } from "@logic/business";
 import { CountryModelInterface } from "@logic/country";
 import { CurrencyModelInterface } from "@logic/currency";

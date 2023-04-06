@@ -7,7 +7,7 @@ import {
     Model,
     NonAttribute,
 } from "sequelize";
-import { db } from "../db";
+import { db } from "@data/db_old";
 import { WalletModelInterface } from "@logic/wallet";
 import { allowedPaidBy } from "@logic/charges";
 

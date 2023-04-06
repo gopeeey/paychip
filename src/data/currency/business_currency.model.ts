@@ -7,7 +7,7 @@ import {
 } from "sequelize";
 import { BusinessCurrencyModelInterface, CurrencyModelInterface } from "@logic/currency";
 import { BusinessModelInterface } from "@logic/business";
-import { db } from "../db";
+import { db } from "@data/db_old";
 
 export class BusinessCurrency
     extends Model<InferAttributes<BusinessCurrency>, InferCreationAttributes<BusinessCurrency>>

@@ -8,7 +8,7 @@ import {
     InferCreationAttributes,
     Model,
 } from "sequelize";
-import { db } from "../db";
+import { db } from "@data/db_old";
 
 export class BusinessWallet
     extends Model<InferAttributes<BusinessWallet>, InferCreationAttributes<BusinessWallet>>
