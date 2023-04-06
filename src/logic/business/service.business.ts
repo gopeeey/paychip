@@ -16,17 +16,32 @@ export class BusinessService implements BusinessServiceInterface {
         this._repository = this._dep.repo;
     }
 
-    createBusiness = async (createBusinessDto: CreateBusinessDto) => {
-        const business = await new BusinessCreator({
-            dto: createBusinessDto,
-            createWallet: this._dep.createWallet,
-            getCountry: this._dep.getCountry,
-            getOwner: this._dep.getAccount,
-            repo: this._dep.repo,
-            updateCurrencies: this._dep.updateCurrencies,
-        }).create();
+    createBusiness: BusinessServiceInterface["createBusiness"] = async (
+        createBusinessDto,
+        session
+    ) => {
+        let selfStartedSession = false;
+        if (!session) {
+            session = await this._dep.startSession();
+            selfStartedSession = true;
+        }
 
-        return business;
+        try {
+            const business = await new BusinessCreator({
+                dto: createBusinessDto,
+                session,
+                createBusinessWallet: this._dep.createBusinessWallet,
+                getCountry: this._dep.getCountry,
+                getOwner: this._dep.getAccount,
+                repo: this._dep.repo,
+            }).create();
+
+            if (selfStartedSession) await session.commit();
+            return business;
+        } catch (err) {
+            if (selfStartedSession) await session.rollback();
+            throw err;
+        }
     };
 
     getById = async (id: BusinessModelInterface["id"]) => {

@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 import { Response } from "express";
 import { AccountModelInterface } from "@logic/account";
 import { BusinessModelInterface } from "@logic/business";
+import { PermissionDeniedError } from "@logic/base_errors";
 
 export const hashString = async (string: string) => {
     const salt = await bcrypt.genSalt(10);
@@ -61,4 +62,12 @@ export const sendResponse = (
     });
 };
 
-export const generateId = () => nanoid();
+export const generateId = (suffix?: number | string) => {
+    const id = nanoid();
+    return id + (suffix ? suffix?.toString() : "");
+};
+
+export const validateBusinessObjectId = (strings: string[], businessId: number) => {
+    const valid = strings.every((str) => str.endsWith(businessId.toString()));
+    if (!valid) throw new PermissionDeniedError();
+};

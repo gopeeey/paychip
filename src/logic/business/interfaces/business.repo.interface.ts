@@ -1,9 +1,12 @@
 import { AccountModelInterface } from "@logic/account";
+import { SessionInterface } from "@logic/session_interface";
+import { CreateBusinessDto } from "../dtos";
 import { BusinessModelInterface } from "./business.model.interface";
 
 export interface BusinessRepoInterface {
     create: (
-        doc: Pick<BusinessModelInterface, "name" | "ownerId" | "countryCode">
+        createBusinessDto: CreateBusinessDto,
+        session?: SessionInterface
     ) => Promise<BusinessModelInterface>;
 
     findById: (id: BusinessModelInterface["id"]) => Promise<BusinessModelInterface | null>;

@@ -10,12 +10,12 @@ export class CountryRepo implements CountryRepoInterface {
     };
 
     getByCode = async (code: CountryModelInterface["isoCode"]) => {
-        const country = await this._modelContext.findByPk(code, { include: "currency" });
+        const country = await this._modelContext.findByPk(code);
         return country ? country.toJSON() : country;
     };
 
     getAll = async () => {
-        const countries = await this._modelContext.findAll({ include: "currency" });
+        const countries = await this._modelContext.findAll();
         return countries.map((country) => country.toJSON());
     };
 }

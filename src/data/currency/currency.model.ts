@@ -14,9 +14,14 @@ export class Currency
     extends Model<InferAttributes<Currency>, InferCreationAttributes<Currency>>
     implements CurrencyModelInterface
 {
-    declare isoCode: string;
-    declare name: string;
+    declare isoCode: CurrencyModelInterface["isoCode"];
+    declare name: CurrencyModelInterface["name"];
+    declare active: CurrencyModelInterface["active"];
     declare countries?: NonAttribute<CountryModelInterface[]>;
+    declare fundingCs: CurrencyModelInterface["fundingCs"];
+    declare withdrawalCs: CurrencyModelInterface["withdrawalCs"];
+    declare walletInCs: CurrencyModelInterface["walletInCs"];
+    declare walletOutCs: CurrencyModelInterface["walletOutCs"];
 
     declare createdAt?: CreationOptional<Date>;
     declare updatedAt?: CreationOptional<Date>;
@@ -33,6 +38,23 @@ Currency.init(
         },
         name: {
             type: DataTypes.STRING(20),
+            allowNull: false,
+        },
+        active: { type: DataTypes.BOOLEAN, defaultValue: true, allowNull: false },
+        fundingCs: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        withdrawalCs: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        walletInCs: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        walletOutCs: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
         createdAt: DataTypes.DATE,

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { WalletRouteDependencies } from "./interfaces";
 import { WalletController } from "../controllers/wallet.controller";
 import { validateBody } from "../middleware/validation";
-import { CreateBusinessWalletValidator } from "../validators";
+import { CreateWalletValidator } from "../validators";
 
 export class WalletRoute {
     constructor(private readonly _deps: WalletRouteDependencies) {}
@@ -13,10 +13,10 @@ export class WalletRoute {
         const restrictTo = this._deps.authMiddleware.restrictTo;
 
         router.post(
-            "/create",
+            "",
             restrictTo(["business", "apiKey"]),
-            validateBody(CreateBusinessWalletValidator),
-            controller.createBusinessWallet
+            validateBody(CreateWalletValidator),
+            controller.createWallet
         );
 
         return router;

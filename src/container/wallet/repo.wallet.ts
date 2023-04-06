@@ -1,3 +1,3 @@
-import { Wallet, WalletRepo } from "@data/wallet";
+import { WalletRepo } from "@data/wallet";
 
-export const walletRepo = new WalletRepo(Wallet);
+export const walletRepo = new WalletRepo();

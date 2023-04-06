@@ -5,6 +5,4 @@ export const currencyService = new CurrencyService({
     repo: currencyRepo,
 });
 
-export const updateBusinessCurrencies = currencyService.updateBusinessCurrencies;
-
-export const isSupportedBusinessCurrency = currencyService.isSupportedBusinessCurrency;
+export const validateCurrencySupported = currencyService.validateIsSupported;

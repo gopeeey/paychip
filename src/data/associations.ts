@@ -1,10 +1,12 @@
 import { Account } from "./account";
 import { Business } from "./business";
 import { Country } from "./country";
-import { Currency, BusinessCurrency } from "./currency";
+import { Currency } from "./currency";
 import { Customer } from "./customer";
-import { ChargeScheme } from "./charge_scheme";
+import { Charge, ChargeStack, ChargeStackCharge, WalletChargeStack } from "./charges";
 import { Wallet } from "./wallet";
+import { Transaction } from "./transaction";
+import { BusinessWallet } from "./business_wallet";
 
 export const runAssociations = () => {
     // Associate
@@ -26,26 +28,25 @@ export const runAssociations = () => {
     Customer.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
 
     // businesses and currencies
-    Business.belongsToMany(Currency, {
-        through: BusinessCurrency,
+    Business.hasMany(BusinessWallet, {
         sourceKey: "id",
-        targetKey: "isoCode",
-        as: "currencies",
+        foreignKey: "businessId",
+        as: "businessWallets",
     });
-    Currency.belongsToMany(Business, {
-        through: BusinessCurrency,
-        sourceKey: "isoCode",
-        targetKey: "id",
-        as: "businesses",
-    });
-    BusinessCurrency.belongsTo(Business, {
+    BusinessWallet.belongsTo(Business, {
         targetKey: "id",
         foreignKey: "businessId",
         as: "business",
     });
-    BusinessCurrency.belongsTo(Currency, {
+
+    Currency.hasMany(BusinessWallet, {
+        sourceKey: "isoCode",
+        foreignKey: "currencyCode",
+        as: "businessWallets",
+    });
+    BusinessWallet.belongsTo(Currency, {
         targetKey: "isoCode",
-        foreignKey: "currencyIsoCode",
+        foreignKey: "currencyCode",
         as: "currency",
     });
 
@@ -65,25 +66,104 @@ export const runAssociations = () => {
     Business.hasMany(Wallet, { sourceKey: "id", foreignKey: "businessId", as: "wallets" });
     Wallet.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
 
-    // charge schemes and businesses
-    Business.hasMany(ChargeScheme, {
+    BusinessWallet.hasMany(Wallet, { sourceKey: "id", foreignKey: "bwId", as: "wallets" });
+    Wallet.belongsTo(BusinessWallet, { targetKey: "id", foreignKey: "bwId", as: "businessWallet" });
+
+    // charge stacks and businesses
+    Business.hasMany(ChargeStack, {
         sourceKey: "id",
         foreignKey: "businessId",
-        as: "chargeSchemes",
+        as: "chargeStacks",
     });
-    ChargeScheme.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
+    ChargeStack.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
 
-    // charge schemes and wallets
-    ChargeScheme.hasMany(Wallet, { sourceKey: "id", foreignKey: "chargeSchemeId", as: "wallets" });
-    Wallet.belongsTo(ChargeScheme, {
+    // charge stacks and wallets
+    // ChargeStack.belongsToMany(Wallet, {
+    //     through: WalletChargeStack,
+    //     sourceKey: "id",
+    //     targetKey: "id",
+    //     as: "wallets",
+    // });
+    // Wallet.belongsToMany(ChargeStack, {
+    //     through: WalletChargeStack,
+    //     sourceKey: "id",
+    //     targetKey: "id",
+    //     as: "chargeStacks",
+    // });
+    ChargeStack.hasMany(WalletChargeStack, {
+        sourceKey: "id",
+        foreignKey: "chargeStackId",
+        as: "walletChargeStacks",
+    });
+    WalletChargeStack.belongsTo(ChargeStack, {
         targetKey: "id",
-        foreignKey: "chargeSchemeId",
-        as: "chargeScheme",
+        foreignKey: "chargeStackId",
+        as: "chargeStack",
+        onDelete: "CASCADE",
+    });
+
+    Wallet.hasMany(WalletChargeStack, {
+        sourceKey: "id",
+        foreignKey: "walletId",
+        as: "walletChargeStacks",
+    });
+    WalletChargeStack.belongsTo(Wallet, {
+        targetKey: "id",
+        foreignKey: "walletId",
+        as: "wallet",
+        onDelete: "CASCADE",
+    });
+
+    // charges and charge stacks
+    Charge.belongsToMany(ChargeStack, {
+        through: ChargeStackCharge,
+        sourceKey: "id",
+        targetKey: "id",
+        as: "chargeStacks",
+    });
+
+    // charges and businesses
+    Business.hasMany(Charge, { sourceKey: "id", foreignKey: "businessId", as: "charges" });
+    Charge.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
+
+    ChargeStack.belongsToMany(Charge, {
+        through: ChargeStackCharge,
+        sourceKey: "id",
+        targetKey: "id",
+        as: "charges",
     });
 
     // wallets and wallets
     Wallet.hasMany(Wallet, { sourceKey: "id", foreignKey: "parentWalletId", as: "childWallets" });
     Wallet.belongsTo(Wallet, { targetKey: "id", foreignKey: "parentWalletId", as: "parentWallet" });
 
-    console.log("\n\n\nCAUSED TO RUN");
+    // wallets and currencies
+    Currency.hasMany(Wallet, { sourceKey: "isoCode", foreignKey: "currency", as: "wallets" });
+    Wallet.belongsTo(Currency, {
+        targetKey: "isoCode",
+        foreignKey: "currency",
+        as: "walletCurrency",
+    });
+
+    // transactions and wallets
+    Transaction.belongsTo(Wallet, { targetKey: "id", foreignKey: "walletId", as: "wallet" });
+    Wallet.hasMany(Transaction, { sourceKey: "id", foreignKey: "walletId", as: "transactions" });
+
+    // transactions and customers
+    Transaction.belongsTo(Customer, { targetKey: "id", foreignKey: "customerId", as: "customer" });
+    Customer.hasMany(Transaction, {
+        sourceKey: "id",
+        foreignKey: "customerId",
+        as: "transactions",
+    });
+
+    // transactions and businesses
+    Transaction.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
+    Business.hasMany(Transaction, {
+        sourceKey: "id",
+        foreignKey: "businessId",
+        as: "transactions",
+    });
+
+    console.log("Running associations...");
 };

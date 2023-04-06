@@ -1,35 +1,33 @@
-import { CreateWalletDto, WalletModelInterface, WalletRepoInterface } from "@logic/wallet";
+import { WalletModelInterface, WalletRepoInterface } from "@logic/wallet";
 import { generateId } from "src/utils";
 import { Wallet } from "./wallet.model";
-import { Op } from "sequelize";
+import { Op, Transaction } from "sequelize";
+import { walletJson } from "src/__tests__/samples";
 
 export class WalletRepo implements WalletRepoInterface {
-    constructor(private readonly _modelContext: typeof Wallet) {}
-
-    create = async (createWalletDto: CreateWalletDto) => {
-        const wallet = await this._modelContext.create({ ...createWalletDto, id: generateId() });
+    create: WalletRepoInterface["create"] = async (createWalletDto, session) => {
+        const wallet = await Wallet.create(
+            { ...createWalletDto, id: generateId(createWalletDto.businessId) },
+            { transaction: session as Transaction }
+        );
         return wallet.toJSON();
     };
 
     getById = async (id: WalletModelInterface["id"]) => {
-        const wallet = await this._modelContext.findByPk(id);
+        const wallet = await Wallet.findByPk(id);
         return wallet ? wallet.toJSON() : null;
     };
 
-    getUnique: WalletRepoInterface["getUnique"] = async ({ businessId, email, currency }) => {
-        const wallet = await this._modelContext.findOne({ where: { businessId, email, currency } });
+    getUnique: WalletRepoInterface["getUnique"] = async (getUniqueDto) => {
+        const wallet = await Wallet.findOne({ where: { ...getUniqueDto } });
         return wallet ? wallet.toJSON() : null;
     };
 
-    getBusinessRootWallet: WalletRepoInterface["getBusinessRootWallet"] = async (
-        businessId,
-        currency
-    ) => {
-        const wallet = await this._modelContext.findOne({
-            where: {
-                [Op.and]: [{ businessId }, { currency }, { parentWalletId: { [Op.is]: null } }],
-            },
+    incrementBalance: WalletRepoInterface["incrementBalance"] = async (incrementBalanceDto) => {
+        await Wallet.increment("balance", {
+            by: Math.round(incrementBalanceDto.amount),
+            where: { id: incrementBalanceDto.walletId },
+            transaction: incrementBalanceDto.session as Transaction,
         });
-        return wallet ? wallet.toJSON() : null;
     };
 }

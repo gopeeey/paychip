@@ -1,21 +1,15 @@
-import { CreateWalletDto } from "../dtos";
+import { SessionInterface } from "@logic/session_interface";
+import { CreateWalletDto, GetUniqueWalletDto, IncrementBalanceDto } from "../dtos";
 import { WalletModelInterface } from "./wallet.model.interface";
 
 export interface WalletRepoInterface {
-    create: (createWalletDto: CreateWalletDto) => Promise<WalletModelInterface>;
+    create: (
+        createWalletDto: CreateWalletDto,
+        session?: SessionInterface
+    ) => Promise<WalletModelInterface>;
     getById: (id: WalletModelInterface["id"]) => Promise<WalletModelInterface | null>;
 
-    getUnique: ({
-        businessId,
-        email,
-        currency,
-    }: Pick<
-        WalletModelInterface,
-        "businessId" | "email" | "currency"
-    >) => Promise<WalletModelInterface | null>;
+    getUnique: (getUniqueDto: GetUniqueWalletDto) => Promise<WalletModelInterface | null>;
 
-    getBusinessRootWallet: (
-        businessId: WalletModelInterface["businessId"],
-        currency: WalletModelInterface["currency"]
-    ) => Promise<WalletModelInterface | null>;
+    incrementBalance: (incrementBalanceDto: IncrementBalanceDto) => Promise<void>;
 }

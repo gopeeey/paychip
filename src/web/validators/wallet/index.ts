@@ -1,1 +1,1 @@
-export * from "./create_business_wallet.validator";
+export * from "./create_wallet_validator";

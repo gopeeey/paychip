@@ -1,35 +1,45 @@
+import { PickWithOptional } from "@logic/types";
 import { WalletModelInterface } from "../interfaces";
 
-type RequiredProps = Pick<
+type RequiredProps = PickWithOptional<
     WalletModelInterface,
     | "businessId"
-    | "parentWalletId"
+    | "bwId"
     | "currency"
+    | "email"
     | "waiveFundingCharges"
     | "waiveWithdrawalCharges"
-    | "email"
-    | "chargeSchemeId"
-    | "walletType"
+    | "waiveWalletInCharges"
+    | "waiveWalletOutCharges",
+    "fundingChargesPaidBy" | "withdrawalChargesPaidBy"
 >;
 
 export class CreateWalletDto implements RequiredProps {
-    businessId: WalletModelInterface["businessId"];
-    parentWalletId: WalletModelInterface["parentWalletId"];
-    currency: WalletModelInterface["currency"];
-    waiveFundingCharges: WalletModelInterface["waiveFundingCharges"];
-    waiveWithdrawalCharges: WalletModelInterface["waiveWithdrawalCharges"];
-    email: WalletModelInterface["email"];
-    chargeSchemeId: WalletModelInterface["chargeSchemeId"];
-    walletType: WalletModelInterface["walletType"];
+    businessId: RequiredProps["businessId"];
+    bwId: RequiredProps["bwId"];
+    currency: RequiredProps["currency"];
+    email: RequiredProps["email"];
+    waiveFundingCharges: RequiredProps["waiveFundingCharges"];
+    waiveWithdrawalCharges: RequiredProps["waiveWithdrawalCharges"];
+    waiveWalletInCharges: RequiredProps["waiveWalletInCharges"];
+    waiveWalletOutCharges: RequiredProps["waiveWalletOutCharges"];
+    fundingChargesPaidBy: RequiredProps["fundingChargesPaidBy"];
+    withdrawalChargesPaidBy: RequiredProps["withdrawalChargesPaidBy"];
 
-    constructor(body: RequiredProps) {
+    constructor({
+        fundingChargesPaidBy = null,
+        withdrawalChargesPaidBy = null,
+        ...body
+    }: RequiredProps) {
         this.businessId = body.businessId;
-        this.parentWalletId = body.parentWalletId;
+        this.bwId = body.bwId;
         this.currency = body.currency;
+        this.email = body.email;
         this.waiveFundingCharges = body.waiveFundingCharges;
         this.waiveWithdrawalCharges = body.waiveWithdrawalCharges;
-        this.email = body.email;
-        this.chargeSchemeId = body.chargeSchemeId;
-        this.walletType = body.walletType;
+        this.waiveWalletInCharges = body.waiveWalletInCharges;
+        this.waiveWalletOutCharges = body.waiveWalletOutCharges;
+        this.fundingChargesPaidBy = fundingChargesPaidBy;
+        this.withdrawalChargesPaidBy = withdrawalChargesPaidBy;
     }
 }

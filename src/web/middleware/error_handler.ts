@@ -1,6 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { sendResponse } from "src/utils";
-import { NotFoundError, ValidationError, UnauthorizedError, BaseError } from "@logic/base_errors";
+import {
+    NotFoundError,
+    ValidationError,
+    UnauthorizedError,
+    BaseError,
+    PermissionDeniedError,
+} from "@logic/base_errors";
 
 export const errorHandler = async (
     error: unknown,
@@ -21,6 +27,7 @@ export const errorHandler = async (
     if (error instanceof ValidationError) code = 400;
     if (error instanceof NotFoundError) code = 404;
     if (error instanceof UnauthorizedError) code = 401;
+    if (error instanceof PermissionDeniedError) code = 403;
     if (code === 500 || logData) {
         if (code === 500) message = "Sorry an error occurred";
         console.log(error, logData);

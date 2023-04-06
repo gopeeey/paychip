@@ -1,5 +1,4 @@
 import { CreateBusinessDto } from "./dtos";
-import { CreateWalletDto, WalletModelInterface } from "@logic/wallet";
 import {
     BusinessCreatorDependencies,
     BusinessCreatorInterface,
@@ -9,19 +8,23 @@ import {
 import { AccountModelInterface } from "@logic/account";
 import { CountryModelInterface } from "@logic/country";
 import { CurrencyModelInterface } from "@logic/currency";
+import { SessionInterface } from "@logic/session_interface";
+import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@logic/business_wallet";
 
 export class BusinessCreator implements BusinessCreatorInterface {
     private declare createBusinessDto: CreateBusinessDto;
     private _repo: BusinessRepoInterface;
+    private session: SessionInterface;
     private declare country: CountryModelInterface;
     private declare business: BusinessModelInterface;
     private declare owner: AccountModelInterface;
-    private declare wallet: WalletModelInterface;
+    private declare wallet: BusinessWalletModelInterface;
     private declare currencies: CurrencyModelInterface[];
 
     constructor(private readonly _dep: BusinessCreatorDependencies) {
         this._repo = this._dep.repo;
         this.createBusinessDto = this._dep.dto;
+        this.session = this._dep.session;
     }
 
     async create() {
@@ -30,7 +33,7 @@ export class BusinessCreator implements BusinessCreatorInterface {
         await this.persistBusiness();
         await this.createBusinessWallet();
         // add currency of the country to the business currencies
-        await this.addFirstCurrency();
+        // await this.addFirstCurrency();
         return this.business;
     }
 
@@ -43,27 +46,14 @@ export class BusinessCreator implements BusinessCreatorInterface {
     };
 
     private persistBusiness = async () => {
-        this.business = await this._repo.create(this.createBusinessDto);
+        this.business = await this._repo.create(this.createBusinessDto, this.session);
     };
 
     private createBusinessWallet = async () => {
-        this.wallet = await this._dep.createWallet(
-            new CreateWalletDto({
-                businessId: this.business.id,
-                chargeSchemeId: null,
-                currency: this.country.currencyCode,
-                email: this.owner.email,
-                parentWalletId: null,
-                waiveFundingCharges: false,
-                waiveWithdrawalCharges: false,
-                walletType: "commercial",
-            })
-        );
-    };
-
-    private addFirstCurrency = async () => {
-        this.currencies = await this._dep.updateCurrencies(this.business.id, [
-            this.country.currencyCode,
-        ]);
+        const createBusinessWalletDto = new CreateBusinessWalletDto({
+            businessId: this.business.id,
+            currencyCode: this.country.currencyCode,
+        });
+        this.wallet = await this._dep.createBusinessWallet(createBusinessWalletDto, this.session);
     };
 }
