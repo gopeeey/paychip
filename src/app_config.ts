@@ -1,5 +1,6 @@
 import config from "config";
-import { ServerConfigType, DbConfigType, MiscConfigType } from "../config/default";
+import { ServerConfigType, DbConfigType, MiscConfigType } from "./config/default";
+config.util.loadFileConfigs("./config");
 
 const serverConfig = config.get<ServerConfigType>("server");
 const dbConfig = config.get<DbConfigType>("db");

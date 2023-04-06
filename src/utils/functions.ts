@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import config from "../config";
+import config from "../app_config";
 import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 import { Response } from "express";

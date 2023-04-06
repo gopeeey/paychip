@@ -1,4 +1,4 @@
-import config from "../config";
+import config from "../app_config";
 
 const postgresConfig = config.db.postgres;
 
