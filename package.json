@@ -9,8 +9,10 @@
     "test:int": "cross-env NODE_ENV=test jest --runInBand --config ./jest.int-config.js",
     "dev": "cross-env NODE_ENV=development nodemon",
     "build": "rm -rf build/ && tsc",
-    "migrate-dev": "npm run build && cross-env NODE_ENV=development sequelize db:migrate",
-    "migrate-prod": "npm run build && cross-env NODE_ENV=production sequelize db:migrate"
+    "migrate": "node-pg-migrate -f ./migration-config.json --migration-filename-format utc",
+    "migrate:dev": "node-pg-migrate -f ./migration-config.json --envPath ./.env.development -d MIGRATIONS_DATABASE_URL --migration-filename-format utc",
+    "migrate:prod": "node-pg-migrate -f ./migration-config.json --envPath ./.env.production -d MIGRATIONS_DATABASE_URL --migration-filename-format utc",
+    "migrate:test": "node-pg-migrate -f ./migration-config.json --envPath ./.env.test -d MIGRATIONS_DATABASE_URL --migration-filename-format utc"
   },
   "author": "Samuel Gopeh",
   "license": "ISC",

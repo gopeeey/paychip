@@ -14,7 +14,7 @@ const POSTGRES_DB_USERNAME = process.env.POSTGRES_DB_USERNAME as string;
 const POSTGRES_DB_PASSWORD = process.env.POSTGRES_DB_PASSWORD as string;
 const POSTGRES_DB_HOST = process.env.POSTGRES_DB_HOST as string;
 const POSTGRES_DB_PORT = process.env.POSTGRES_DB_PORT as string;
-const DATABASE_URL = process.env.DATABASE_URL as string;
+// const MIGRATIONS_DATABASE_URL = process.env.MIGRATIONS_DATABASE_URL as string;
 
 // misc
 const JWT_SECRET = process.env.JWT_SECRET as string;
@@ -33,7 +33,6 @@ const dbConfig = {
         host: POSTGRES_DB_HOST,
         port: Number(POSTGRES_DB_PORT),
     },
-    db_url: DATABASE_URL,
 };
 
 const misc = {
