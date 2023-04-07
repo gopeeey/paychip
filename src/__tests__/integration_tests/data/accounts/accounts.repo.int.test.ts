@@ -1,6 +1,7 @@
 import { AccountRepo, Account } from "@data/accounts";
-import { StartSequelizeSession } from "@data/sequelize_session";
-import { CreateAccountDto } from "@logic/accounts";
+import { getClient, runQuery } from "@data/db";
+import { AccountModelInterface, CreateAccountDto } from "@logic/accounts";
+import SQL from "sql-template-strings";
 import { accountData, accountSeeder } from "src/__tests__/samples";
 import { DBSetup } from "src/__tests__/test_utils";
 
@@ -10,24 +11,28 @@ DBSetup(accountSeeder);
 
 describe("Testing AccountRepo", () => {
     describe("Testing create method", () => {
-        it("should return a new account instance", async () => {
-            const session = await StartSequelizeSession();
+        it.only("should return a new account instance", async () => {
+            const client = await getClient();
             try {
-                const createSpy = jest.spyOn(Account, "create");
+                await client.query("BEGIN");
                 const data: CreateAccountDto = {
                     email: "myemail@mail.com",
                     name: "Email owner",
                     password: "emaillpassword",
                 };
-                const account = await accountRepo.create(data, session);
-                await session.commit();
+                const created = await accountRepo.create(data, client);
+                await client.query("COMMIT");
+                const res = await runQuery<AccountModelInterface>(
+                    SQL`SELECT * FROM accounts WHERE email = ${data.email}`
+                );
+                const account = res.rows[0];
                 expect(account).toBeDefined();
-                expect(account?.email).toEqual(data.email);
-                expect(account?.id).toBeDefined();
-                expect(createSpy).toHaveBeenCalledWith(data, { transaction: session });
+                expect(created).toEqual(account);
+                expect(account).toMatchObject(data);
             } catch (err) {
-                await session.rollback();
+                await client.query("ROLLBACK");
                 console.log(err);
+                throw err;
             }
         });
     });

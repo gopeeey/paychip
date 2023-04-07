@@ -15,12 +15,12 @@ export const dropAll = async () => {
 };
 
 export const DBSetup = async (seeder: () => Promise<void>) => {
-    beforeAll((done: jest.DoneCallback) => {
-        (async () => {
-            runAssociations();
-            done();
-        })();
-    });
+    // beforeAll((done: jest.DoneCallback) => {
+    //     (async () => {
+    //         // runAssociations();
+    //         done();
+    //     })();
+    // });
 
     // seed data
     beforeEach((done: jest.DoneCallback) => {

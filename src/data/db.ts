@@ -1,4 +1,4 @@
-import { Pool, QueryResult, QueryResultRow } from "pg";
+import { Pool, QueryResult, QueryResultRow, PoolClient } from "pg";
 import { SQLStatement } from "sql-template-strings";
 import config from "../config";
 
@@ -13,12 +13,18 @@ export const pool = new Pool({
     // logging: false,
 });
 
-export const runQuery: <R extends QueryResultRow>(
-    query: SQLStatement
-) => Promise<QueryResult<R>> = (query) => {
-    return new Promise((resolve, reject) => {
-        pool.query(query)
-            .then((res) => resolve(res))
-            .catch((err) => reject(err));
-    });
+export const getClient = async () => {
+    const client = await pool.connect();
+    return client;
+};
+
+export type QueryRunner = <R extends QueryResultRow>(
+    query: SQLStatement,
+    client?: PoolClient
+) => Promise<QueryResult<R>>;
+
+export const runQuery: QueryRunner = async (query, client) => {
+    const runner = client || pool;
+    const result = await runner.query(query);
+    return result;
 };

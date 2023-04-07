@@ -1,14 +1,18 @@
 import { SessionInterface } from "@logic/session_interface";
 import { CreateAccountDto } from "../dtos";
 import { AccountModelInterface } from "./accounts.model.interface";
+import { PoolClient } from "pg";
 
 export interface AccountRepoInterface {
     create: (
         createAccountDto: CreateAccountDto,
-        session?: SessionInterface
+        client?: PoolClient
     ) => Promise<AccountModelInterface>;
 
-    findByEmail: (email: string) => Promise<AccountModelInterface | null>;
+    findByEmail: (email: string, client?: PoolClient) => Promise<AccountModelInterface | null>;
 
-    findById: (id: AccountModelInterface["id"]) => Promise<AccountModelInterface | null>;
+    findById: (
+        id: AccountModelInterface["id"],
+        client?: PoolClient
+    ) => Promise<AccountModelInterface | null>;
 }

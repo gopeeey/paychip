@@ -1,5 +1,8 @@
 import { StandardAccountDto, LoginDto, CreateAccountDto } from "@logic/accounts";
 import { Account } from "@data/accounts";
+import { generateId } from "src/utils";
+import { createAccountQuery } from "@data/accounts/queries";
+import { runQuery } from "@data/db";
 
 export const accountData: CreateAccountDto = {
     name: "Sam",
@@ -17,5 +20,7 @@ export const loginDetails = new LoginDto({
 });
 
 export const accountSeeder = async () => {
-    await Account.create(accountData);
+    const data = { ...accountData, id: generateId() };
+    const query = createAccountQuery(data);
+    await runQuery(query);
 };
