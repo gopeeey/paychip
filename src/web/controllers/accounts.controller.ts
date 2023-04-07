@@ -5,7 +5,7 @@ import {
     LoginDto,
     StandardAccountDto,
     AccountServiceInterface,
-} from "@logic/account";
+} from "@logic/accounts";
 import { sendResponse } from "src/utils";
 
 export class AccountController extends BaseController {

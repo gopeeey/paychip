@@ -1,6 +1,6 @@
 import { SessionInterface } from "@logic/session_interface";
 import { CreateAccountDto } from "../dtos";
-import { AccountModelInterface } from "./account.model.interface";
+import { AccountModelInterface } from "./accounts.model.interface";
 
 export interface AccountRepoInterface {
     create: (

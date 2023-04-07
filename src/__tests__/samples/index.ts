@@ -1,4 +1,4 @@
-export * from "./account.samples";
+export * from "./accounts.samples";
 export * from "./country.samples";
 export * from "./business.samples";
 export * from "./tokens.samples";

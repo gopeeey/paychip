@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { CreateAccountDto } from "@logic/account";
+import { CreateAccountDto } from "@logic/accounts";
 
 export const CreateAccountValidator = Joi.object<CreateAccountDto>({
     name: Joi.string().required(),

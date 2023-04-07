@@ -1,9 +1,9 @@
-import { Account } from "@data/account";
+import { Account } from "@data/accounts";
 import { Business } from "@data/business";
 import { Country } from "@data/country";
 import { CreateBusinessDto, StandardBusinessDto } from "@logic/business";
 import { SeedingError } from "../test_utils";
-import { accountJson, accountSeeder } from "./account.samples";
+import { accountJson, accountSeeder } from "./accounts.samples";
 import { countryJson, countrySeeder } from "./country.samples";
 import { currencyJsonArr, currencySeeder } from "./currency.samples";
 

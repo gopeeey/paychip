@@ -1,4 +1,4 @@
-import { AccountModelInterface } from "@logic/account";
+import { AccountModelInterface } from "@logic/accounts";
 import { SessionInterface } from "@logic/session_interface";
 import { CreateBusinessDto } from "../dtos";
 import { BusinessModelInterface } from "./business.model.interface";

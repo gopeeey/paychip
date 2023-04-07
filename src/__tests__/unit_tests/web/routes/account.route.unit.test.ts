@@ -5,7 +5,7 @@ import { DependencyContainerInterface } from "src/container";
 import { testRoute } from "./helpers";
 import { loginDetails, standardAccount, accountData, accountJson } from "src/__tests__/samples";
 import { ValidationError } from "@logic/base_errors";
-import { InvalidLoginDetailsError } from "@logic/account";
+import { InvalidLoginDetailsError } from "@logic/accounts";
 
 const accountService = {
     signup: jest.fn(),

@@ -3,7 +3,7 @@ import config from "../config";
 import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 import { Response } from "express";
-import { AccountModelInterface } from "@logic/account";
+import { AccountModelInterface } from "@logic/accounts";
 import { BusinessModelInterface } from "@logic/business";
 import { PermissionDeniedError } from "@logic/base_errors";
 

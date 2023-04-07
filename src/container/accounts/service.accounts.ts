@@ -1,5 +1,5 @@
-import { AccountService } from "@logic/account";
-import { accountRepo } from "./repo.account";
+import { AccountService } from "@logic/accounts";
+import { accountRepo } from "./repo.accounts";
 
 export const accountService = new AccountService({
     repo: accountRepo,

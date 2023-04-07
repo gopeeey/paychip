@@ -1,5 +1,5 @@
 export * from "./associations";
-export * from "./account";
+export * from "./accounts";
 export * from "./country";
 export * from "./business";
 export * from "./customer";

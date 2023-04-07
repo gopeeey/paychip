@@ -1,5 +1,5 @@
-import { StandardAccountDto, LoginDto, CreateAccountDto } from "@logic/account";
-import { Account } from "@data/account";
+import { StandardAccountDto, LoginDto, CreateAccountDto } from "@logic/accounts";
+import { Account } from "@data/accounts";
 
 export const accountData: CreateAccountDto = {
     name: "Sam",

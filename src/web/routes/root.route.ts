@@ -1,6 +1,6 @@
 import { DependencyContainerInterface } from "src/container";
 import { Router } from "express";
-import AccountRoute from "./account.route";
+import AccountRoute from "./accounts.route";
 import { BusinessRoute } from "./buisness.route";
 import { WalletRoute } from "./wallet.route";
 import { ChargesRoute } from "./charges.route";

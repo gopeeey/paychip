@@ -1,0 +1,11 @@
+-- Up Migration
+CREATE TABLE accounts (
+    id VARCHAR(255) PRIMARY KEY UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL 
+);
+
+-- Down Migration
+DROP TABLE accounts;

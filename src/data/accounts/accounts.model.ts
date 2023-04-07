@@ -8,7 +8,7 @@ import {
     NonAttribute,
 } from "sequelize";
 import { db } from "@data/db_old";
-import { AccountModelInterface } from "@logic/account";
+import { AccountModelInterface } from "@logic/accounts";
 import { BusinessModelInterface } from "@logic/business";
 
 export class Account

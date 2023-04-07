@@ -3,11 +3,9 @@ import startServer from "./server";
 import { container } from "./container";
 import config from "./config";
 import { db } from "@data/db_old";
-import { runAssociations } from "@data/associations";
 
 const run = async () => {
     try {
-        runAssociations();
         if (config.server.nodeEnv !== "production") await db.sync();
         startServer(new App(container).init());
     } catch (err) {

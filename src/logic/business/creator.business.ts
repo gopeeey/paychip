@@ -5,7 +5,7 @@ import {
     BusinessModelInterface,
     BusinessRepoInterface,
 } from "./interfaces";
-import { AccountModelInterface } from "@logic/account";
+import { AccountModelInterface } from "@logic/accounts";
 import { CountryModelInterface } from "@logic/country";
 import { CurrencyModelInterface } from "@logic/currency";
 import { SessionInterface } from "@logic/session_interface";

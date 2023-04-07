@@ -1,6 +1,6 @@
 import { CreateAccountDto, LoginDto } from "../dtos";
-import { AccountModelInterface } from "./account.model.interface";
-import { AccountRepoInterface } from "./account.repo.interface";
+import { AccountModelInterface } from "./accounts.model.interface";
+import { AccountRepoInterface } from "./accounts.repo.interface";
 
 export interface AccountServiceInterface {
     createAccount: (createAccountDto: CreateAccountDto) => Promise<AccountModelInterface>;

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AccountServiceInterface } from "@logic/account";
+import { AccountServiceInterface } from "@logic/accounts";
 import { AccountController } from "../controllers";
 import { CreateAccountValidator, LoginValidator } from "../validators";
 import { validateBody } from "../middleware/validation";

@@ -1,4 +1,4 @@
-import { Account } from "@data/account";
+import { Account } from "@data/accounts";
 import { BusinessRepo, Business } from "@data/business";
 import { Country } from "@data/country";
 import { StartSequelizeSession } from "@data/sequelize_session";

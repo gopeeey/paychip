@@ -1,4 +1,3 @@
 {
-    "tsconfig": "./tsconfig.json",
-    "migrations-dir": "./src/data/migrations"
+    "migration-file-language": "sql"
 }

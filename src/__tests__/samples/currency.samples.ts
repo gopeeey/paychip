@@ -2,7 +2,7 @@ import { CreateCurrencyDto, StandardCurrencyDto } from "@logic/currency";
 import { Currency, BusinessCurrency } from "@data/currency";
 import { Business } from "@data/business";
 import { Country } from "@data/country";
-import { Account } from "@data/account";
+import { Account } from "@data/accounts";
 import { ChargeDto } from "@logic/charges";
 
 export const currencyData: CreateCurrencyDto = new CreateCurrencyDto({

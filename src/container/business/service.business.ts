@@ -1,7 +1,7 @@
 import { BusinessService } from "@logic/business";
 import { businessRepo } from "./repo.business";
 import { getCountry } from "../country";
-import { getAccountById } from "../account";
+import { getAccountById } from "../accounts";
 import { startSession } from "../session";
 import { createBusinessWallet } from "../business_wallet";
 

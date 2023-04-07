@@ -1,4 +1,4 @@
-import { Account } from "./account";
+import { Account } from "./accounts";
 import { Business } from "./business";
 import { Country } from "./country";
 import { Currency } from "./currency";

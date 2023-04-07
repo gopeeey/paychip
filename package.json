@@ -48,6 +48,7 @@
     "nanoid": "^3.3.4",
     "node-pg-migrate": "^6.2.2",
     "pg": "^8.10.0",
-    "sequelize": "^6.28.0"
+    "sequelize": "^6.28.0",
+    "sql-template-strings": "^2.2.2"
   }
 }

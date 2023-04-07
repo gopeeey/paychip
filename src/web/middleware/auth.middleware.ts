@@ -7,7 +7,7 @@ import {
     AuthenticatedRequestType,
 } from "./interfaces";
 import { UnauthorizedError } from "@logic/base_errors";
-import { AccountNotFoundError } from "@logic/account";
+import { AccountNotFoundError } from "@logic/accounts";
 import { BusinessNotFoundError } from "@logic/business";
 import { sendResponse, verifyJwt } from "src/utils";
 

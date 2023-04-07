@@ -1,5 +1,5 @@
 import { DependencyContainerInterface } from "./dependencies.container";
-import { accountService } from "./account";
+import { accountService } from "./accounts";
 import { businessService } from "./business";
 import { countryService } from "./country";
 import { walletService } from "./wallet";
