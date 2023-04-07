@@ -1,6 +1,6 @@
 import http from "http";
 import { Application } from "express";
-import config from "./app_config";
+import config from "./config";
 
 const startServer = (app: Application) => {
     const server = http.createServer(app);

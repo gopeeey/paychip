@@ -7,7 +7,7 @@
     "prepare": "npx ts-patch install -s",
     "test": "jest --watch",
     "test:int": "cross-env NODE_ENV=test jest --runInBand --config ./jest.int-config.js",
-    "dev": "cross-env NODE_CONFIG_DIR=./src/config nodemon",
+    "dev": "cross-env NODE_ENV=development nodemon",
     "build": "rm -rf build/ && tsc",
     "migrate-dev": "npm run build && cross-env NODE_ENV=development sequelize db:migrate",
     "migrate-prod": "npm run build && cross-env NODE_ENV=production sequelize db:migrate"
@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
-    "config": "^3.3.8",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "joi": "^17.7.0",

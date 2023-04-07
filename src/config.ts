@@ -1,17 +1,20 @@
 import dotenv from "dotenv";
+import path from "path";
 
-dotenv.config();
+const NODE_ENV = process.env.NODE_ENV as "production" | "development" | "test";
+dotenv.config({ path: path.join(__dirname, `../.env.${NODE_ENV}`) });
 
 // server
 const SERVER_PORT = process.env.SERVER_PORT as string;
 const HOST_URL = process.env.HOST_URL as string;
-const NODE_ENV = process.env.NODE_ENV as string;
 
 // postgres
 const POSTGRES_DB_NAME = process.env.POSTGRES_DB_NAME as string;
 const POSTGRES_DB_USERNAME = process.env.POSTGRES_DB_USERNAME as string;
 const POSTGRES_DB_PASSWORD = process.env.POSTGRES_DB_PASSWORD as string;
 const POSTGRES_DB_HOST = process.env.POSTGRES_DB_HOST as string;
+const POSTGRES_DB_PORT = process.env.POSTGRES_DB_PORT as string;
+const DATABASE_URL = process.env.DATABASE_URL as string;
 
 // misc
 const JWT_SECRET = process.env.JWT_SECRET as string;
@@ -28,7 +31,9 @@ const dbConfig = {
         username: POSTGRES_DB_USERNAME,
         password: POSTGRES_DB_PASSWORD,
         host: POSTGRES_DB_HOST,
+        port: Number(POSTGRES_DB_PORT),
     },
+    db_url: DATABASE_URL,
 };
 
 const misc = {
@@ -40,9 +45,5 @@ const config = {
     db: dbConfig,
     misc,
 };
-
-export type ServerConfigType = typeof serverConfig;
-export type DbConfigType = typeof dbConfig;
-export type MiscConfigType = typeof misc;
 
 export default config;
