@@ -16,6 +16,12 @@ const POSTGRES_DB_HOST = process.env.POSTGRES_DB_HOST as string;
 const POSTGRES_DB_PORT = process.env.POSTGRES_DB_PORT as string;
 // const MIGRATIONS_DATABASE_URL = process.env.MIGRATIONS_DATABASE_URL as string;
 
+const POSTGRES_TEST_DB_NAME = process.env.POSTGRES_TEST_DB_NAME as string;
+const POSTGRES_TEST_DB_USERNAME = process.env.POSTGRES_TEST_DB_USERNAME as string;
+const POSTGRES_TEST_DB_PASSWORD = process.env.POSTGRES_TEST_DB_PASSWORD as string;
+const POSTGRES_TEST_DB_HOST = process.env.POSTGRES_TEST_DB_HOST as string;
+const POSTGRES_TEST_DB_PORT = process.env.POSTGRES_TEST_DB_PORT as string;
+
 // misc
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -32,6 +38,13 @@ const dbConfig = {
         password: POSTGRES_DB_PASSWORD,
         host: POSTGRES_DB_HOST,
         port: Number(POSTGRES_DB_PORT),
+    },
+    postgresTest: {
+        name: POSTGRES_TEST_DB_NAME,
+        username: POSTGRES_TEST_DB_USERNAME,
+        password: POSTGRES_TEST_DB_PASSWORD,
+        host: POSTGRES_TEST_DB_HOST,
+        port: Number(POSTGRES_TEST_DB_PORT),
     },
 };
 

@@ -3,24 +3,40 @@ import { SQLStatement } from "sql-template-strings";
 import config from "../config";
 
 const postgresConfig = config.db.postgres;
+const postgresTestConfig = config.db.postgresTest;
 
-export const pool = new Pool({
-    database: postgresConfig.name,
-    user: postgresConfig.username,
-    password: postgresConfig.password,
-    host: postgresConfig.host,
-    // dialect: "postgres",
-    // logging: false,
-});
+const envConfig = {
+    test: {
+        database: postgresTestConfig.name,
+        user: postgresTestConfig.username,
+        password: postgresTestConfig.password,
+        host: postgresTestConfig.host,
+    },
+    development: {
+        database: postgresConfig.name,
+        user: postgresConfig.username,
+        password: postgresConfig.password,
+        host: postgresConfig.host,
+    },
+    production: {
+        database: postgresConfig.name,
+        user: postgresConfig.username,
+        password: postgresConfig.password,
+        host: postgresConfig.host,
+    },
+};
 
-export const getClient = async () => {
-    const client = await pool.connect();
+export const pool = new Pool(envConfig[config.server.nodeEnv]);
+
+export const getClient = async (customPool?: Pool) => {
+    const dPool = customPool || pool;
+    const client = await dPool.connect();
     return client;
 };
 
 export type QueryRunner = <R extends QueryResultRow>(
     query: SQLStatement,
-    client?: PoolClient
+    client?: PoolClient | Pool
 ) => Promise<QueryResult<R>>;
 
 export const runQuery: QueryRunner = async (query, client) => {

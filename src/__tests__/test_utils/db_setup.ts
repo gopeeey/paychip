@@ -1,41 +1,60 @@
-import { runAssociations } from "@data/associations";
 import { db } from "@data/db_old";
+import config from "src/config";
+import runnerFunc from "node-pg-migrate";
+import { pool } from "@data/db";
+import path from "path";
 
-export const syncDbForce = async () => {
-    // runAssociations();
-    await db.sync({ force: true, logging: false });
+const postgresTestConfig = config.db.postgresTest;
+
+export const runMigrations = async (direction: "up" | "down") => {
+    console.log("Running migrations", direction);
+
+    // const client = await pool.connect();
+    await runnerFunc({
+        databaseUrl: {
+            database: postgresTestConfig.name,
+            user: postgresTestConfig.username,
+            password: postgresTestConfig.password,
+            host: postgresTestConfig.host,
+        },
+        direction,
+        dir: path.join(__dirname, "../../../migrations"),
+        migrationsTable: "pgmigrations",
+    });
+    // client.release();
 };
 
 export const closeDbConnection = async () => {
     await db.close();
 };
 
-export const dropAll = async () => {
-    await db.drop();
-};
-
-export const DBSetup = async (seeder: () => Promise<void>) => {
+export const DBSetup = (seeder: () => Promise<void>) => {
+    // seed data
     // beforeAll((done: jest.DoneCallback) => {
     //     (async () => {
-    //         // runAssociations();
+    //         pool = new Pool({
+    //             database: pgTestConfig.name,
+    //             user: pgTestConfig.username,
+    //             password: pgTestConfig.password,
+    //             host: pgTestConfig.host,
+    //         });
     //         done();
     //     })();
     // });
 
-    // seed data
-    beforeEach((done: jest.DoneCallback) => {
-        (async () => {
-            await syncDbForce();
+    beforeEach(() => {
+        return (async () => {
+            await runMigrations("up");
             await seeder();
-            done();
         })();
     });
 
-    afterAll((done: jest.DoneCallback) => {
-        (async () => {
-            await closeDbConnection();
-            done();
-        })();
+    afterEach(() => {
+        return runMigrations("down");
+    });
+
+    afterAll(() => {
+        return pool.end();
     });
 };
 
