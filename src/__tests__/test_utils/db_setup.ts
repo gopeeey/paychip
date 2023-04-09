@@ -1,34 +1,36 @@
 import { db } from "@data/db_old";
 import config from "src/config";
 import runnerFunc from "node-pg-migrate";
-import { pool } from "@data/db";
 import path from "path";
+import { Pool } from "pg";
 
 const postgresTestConfig = config.db.postgresTest;
 
-export const runMigrations = async (direction: "up" | "down") => {
+export const runMigrations = async (direction: "up" | "down", pool: Pool) => {
     console.log("Running migrations", direction);
 
-    // const client = await pool.connect();
+    const client = await pool.connect();
     await runnerFunc({
-        databaseUrl: {
-            database: postgresTestConfig.name,
-            user: postgresTestConfig.username,
-            password: postgresTestConfig.password,
-            host: postgresTestConfig.host,
-        },
+        dbClient: client,
         direction,
         dir: path.join(__dirname, "../../../migrations"),
         migrationsTable: "pgmigrations",
     });
-    // client.release();
+    client.release();
 };
 
 export const closeDbConnection = async () => {
     await db.close();
 };
 
-export const DBSetup = (seeder: () => Promise<void>) => {
+export const DBSetup = (seeder: (pool: Pool) => Promise<void>) => {
+    const pool = new Pool({
+        database: postgresTestConfig.name,
+        user: postgresTestConfig.username,
+        password: postgresTestConfig.password,
+        host: postgresTestConfig.host,
+    });
+
     // seed data
     // beforeAll((done: jest.DoneCallback) => {
     //     (async () => {
@@ -44,18 +46,16 @@ export const DBSetup = (seeder: () => Promise<void>) => {
 
     beforeEach(() => {
         return (async () => {
-            await runMigrations("up");
-            await seeder();
+            await runMigrations("up", pool);
+            await seeder(pool);
         })();
     });
 
-    afterEach(() => {
-        return runMigrations("down");
-    });
+    afterEach(() => runMigrations("down", pool));
 
-    afterAll(() => {
-        return pool.end();
-    });
+    afterAll(() => pool.end());
+
+    return pool;
 };
 
 export class SeedingError extends Error {

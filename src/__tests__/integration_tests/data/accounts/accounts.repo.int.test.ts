@@ -4,11 +4,10 @@ import { QueryResult } from "pg";
 import SQL from "sql-template-strings";
 import { accountData, accountSeeder } from "src/__tests__/samples";
 import { DBSetup } from "src/__tests__/test_utils";
-import { pool } from "@data/db";
 
-const accountRepo = new AccountRepo();
+const pool = DBSetup(accountSeeder);
 
-DBSetup(accountSeeder);
+const accountRepo = new AccountRepo(pool);
 
 describe("Testing AccountRepo", () => {
     describe.only("Testing create method", () => {

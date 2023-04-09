@@ -6,6 +6,7 @@ import { Country } from "@data/country";
 import { generateId } from "src/utils";
 import { bwJson, bwSeeder } from "./business_wallet.samples";
 import { BusinessWallet } from "@data/business_wallet";
+import { Pool } from "pg";
 
 export const walletData = new CreateWalletDto({
     businessId: 1234,
@@ -23,8 +24,8 @@ export const walletJson = walletObj.toJSON();
 
 export const standardWallet = new StandardWalletDto(walletJson);
 
-export const walletSeeder = async () => {
-    await bwSeeder();
+export const walletSeeder = async (pool: Pool) => {
+    await bwSeeder(pool);
     const business = await Business.findOne();
     if (!business) throw new SeedingError("business not found");
     const businessWallet = await BusinessWallet.findOne({ where: { businessId: business.id } });

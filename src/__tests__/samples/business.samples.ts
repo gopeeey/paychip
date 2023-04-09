@@ -6,6 +6,7 @@ import { SeedingError } from "../test_utils";
 import { accountJson, accountSeeder } from "./accounts.samples";
 import { countryJson, countrySeeder } from "./country.samples";
 import { currencyJsonArr, currencySeeder } from "./currency.samples";
+import { Pool } from "pg";
 
 export const businessData = new CreateBusinessDto({
     name: "My Business",
@@ -23,9 +24,9 @@ export const standardBusinessWithCurrencies = new StandardBusinessDto({
     currencies: currencyJsonArr,
 });
 
-export const businessSeeder = async () => {
-    await accountSeeder();
-    await countrySeeder();
+export const businessSeeder = async (pool: Pool) => {
+    await accountSeeder(pool);
+    await countrySeeder(pool);
     const account = await Account.findOne();
     const country = await Country.findOne();
     if (!account) throw new Error("BUSINESS SEEDER: Could not create account");

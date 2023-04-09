@@ -6,6 +6,7 @@ import { generateId } from "src/utils";
 import { SeedingError } from "../test_utils";
 import { customerJson, customerSeeder } from "./customer.samples";
 import { walletJson, walletSeeder } from "./wallet.samples";
+import { Pool } from "pg";
 
 export const transactionData = new CreateTransactionDto({
     walletId: walletJson.id,
@@ -29,12 +30,12 @@ export const transactionObj = new Transaction({ ...transactionData, id: "someher
 
 export const transactionJson = transactionObj.toJSON();
 
-export const transactionSeeder = async () => {
-    await walletSeeder();
+export const transactionSeeder = async (pool: Pool) => {
+    await walletSeeder(pool);
     const wallet = await Wallet.findOne();
     if (!wallet) throw new SeedingError("wallet not found");
 
-    await customerSeeder(wallet.businessId);
+    await customerSeeder(pool, wallet.businessId);
     const customer = await Customer.findOne({ where: { businessId: wallet.businessId } });
     if (!customer) throw new SeedingError("customer not found");
 

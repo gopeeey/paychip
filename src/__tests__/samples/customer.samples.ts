@@ -5,6 +5,7 @@ import { Business } from "@data/business";
 import { SeedingError } from "../test_utils";
 import { generateId } from "src/utils";
 import { BusinessModelInterface } from "@logic/business";
+import { Pool } from "pg";
 
 export const customerData = {
     complete: new CreateCustomerDto({
@@ -53,9 +54,9 @@ export const standardCustomerArr = {
     mixed: [standardCustomer.complete, standardCustomer.incomplete],
 };
 
-export const customerSeeder = async (businessId?: BusinessModelInterface["id"]) => {
+export const customerSeeder = async (pool: Pool, businessId?: BusinessModelInterface["id"]) => {
     if (!businessId) {
-        await businessSeeder();
+        await businessSeeder(pool);
         const business = await Business.findOne();
         if (!business) throw new SeedingError("Business not found");
         businessId = business.id;

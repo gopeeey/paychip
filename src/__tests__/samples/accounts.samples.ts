@@ -3,6 +3,7 @@ import { Account } from "@data/accounts";
 import { generateId } from "src/utils";
 import { createAccountQuery } from "@data/accounts/queries";
 import { runQuery } from "@data/db";
+import { Pool } from "pg";
 
 export const accountData: CreateAccountDto = {
     name: "Sam",
@@ -19,8 +20,8 @@ export const loginDetails = new LoginDto({
     password: accountData.password,
 });
 
-export const accountSeeder = async () => {
+export const accountSeeder = async (pool: Pool) => {
     const data = { ...accountData, id: generateId() };
     const query = createAccountQuery(data);
-    await runQuery(query);
+    await runQuery(query, pool);
 };

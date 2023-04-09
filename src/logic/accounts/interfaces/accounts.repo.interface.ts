@@ -1,7 +1,7 @@
 import { SessionInterface } from "@logic/session_interface";
 import { CreateAccountDto } from "../dtos";
 import { AccountModelInterface } from "./accounts.model.interface";
-import { PoolClient } from "pg";
+import { Pool, PoolClient } from "pg";
 
 export interface AccountRepoInterface {
     create: (

@@ -9,6 +9,7 @@ import {
 import { generateId } from "src/utils";
 import { SeedingError } from "../test_utils";
 import { walletJson, walletSeeder } from "./wallet.samples";
+import { Pool } from "pg";
 
 const sharedData = {
     businessId: walletJson.businessId,
@@ -53,8 +54,8 @@ export const chargeObj = new Charge({ ...chargeData, id: "charge_id" });
 export const chargeJson = chargeObj.toJSON();
 export const standardCharge = new StandardChargeDto(chargeJson);
 
-export const chargesSeeder = async () => {
-    await walletSeeder();
+export const chargesSeeder = async (pool: Pool) => {
+    await walletSeeder(pool);
     const wallet = await Wallet.findOne();
     if (!wallet) throw new SeedingError("wallet not found");
     await ChargeStack.create({

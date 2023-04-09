@@ -7,6 +7,7 @@ import { generateId } from "src/utils";
 import { SeedingError } from "../test_utils";
 import { businessJson, businessSeeder } from "./business.samples";
 import { currencyJson } from "./currency.samples";
+import { Pool } from "pg";
 
 export const bwData = new CreateBusinessWalletDto({
     businessId: businessJson.id,
@@ -33,8 +34,8 @@ export const bwObj = new BusinessWallet({
 
 export const bwJson = bwObj.toJSON();
 
-export const bwSeeder = async () => {
-    await businessSeeder();
+export const bwSeeder = async (pool: Pool) => {
+    await businessSeeder(pool);
     const business = await Business.findOne();
     if (!business) throw new SeedingError("Business not found");
     const country = await Country.findByPk(business.countryCode);

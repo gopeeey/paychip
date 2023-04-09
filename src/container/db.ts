@@ -1,6 +1,5 @@
-import { Pool, QueryResult, QueryResultRow, PoolClient } from "pg";
-import { SQLStatement } from "sql-template-strings";
-import config from "../config";
+import { Pool } from "pg";
+import config from "src/config";
 
 const postgresConfig = config.db.postgres;
 const postgresTestConfig = config.db.postgresTest;
@@ -26,14 +25,4 @@ const envConfig = {
     },
 };
 
-export type QueryRunner = <R extends QueryResultRow>(
-    query: SQLStatement,
-    pool: Pool,
-    client?: PoolClient
-) => Promise<QueryResult<R>>;
-
-export const runQuery: QueryRunner = async (query, pool, client) => {
-    const runner = client || pool;
-    const result = await runner.query(query);
-    return result;
-};
+export const pool = new Pool(envConfig[config.server.nodeEnv]);
