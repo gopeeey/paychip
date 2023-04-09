@@ -11,7 +11,7 @@ import {
     CreationOptional,
     ForeignKey,
 } from "sequelize";
-import { db } from "..";
+import { db } from "../db_old";
 
 export class WalletChargeStack
     extends Model<InferAttributes<WalletChargeStack>, InferCreationAttributes<WalletChargeStack>>

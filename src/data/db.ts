@@ -26,6 +26,19 @@ const envConfig = {
     },
 };
 
+export const connectToDb: () => Promise<Pool> = () => {
+    return new Promise((resolve, reject) => {
+        console.log("Connecting to database...");
+        const pool = new Pool(envConfig[config.server.nodeEnv]);
+        pool.query("SELECT 1+1;")
+            .then((res) => {
+                console.log("Database connected");
+                resolve(pool);
+            })
+            .catch((err) => reject(err));
+    });
+};
+
 export type QueryRunner = <R extends QueryResultRow>(
     query: SQLStatement,
     pool: Pool,

@@ -7,7 +7,7 @@ import {
     InferCreationAttributes,
     Model,
 } from "sequelize";
-import { db } from "..";
+import { db } from "../db_old";
 
 export class ChargeStackCharge
     extends Model<InferAttributes<ChargeStackCharge>, InferCreationAttributes<ChargeStackCharge>>

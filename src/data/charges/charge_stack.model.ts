@@ -8,7 +8,7 @@ import {
     ForeignKey,
     NonAttribute,
 } from "sequelize";
-import { db } from "..";
+import { db } from "../db_old";
 
 export class ChargeStack
     extends Model<InferAttributes<ChargeStack>, InferCreationAttributes<ChargeStack>>

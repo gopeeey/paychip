@@ -1,12 +1,12 @@
+import { connectToDb } from "@data/db";
 import App from "./app";
+import { buildContainer } from "./container";
 import startServer from "./server";
-import { container } from "./container";
-import config from "./config";
-import { db } from "@data/db_old";
 
 const run = async () => {
     try {
-        if (config.server.nodeEnv !== "production") await db.sync();
+        const pool = await connectToDb();
+        const container = await buildContainer(pool);
         startServer(new App(container).init());
     } catch (err) {
         console.log(err);
