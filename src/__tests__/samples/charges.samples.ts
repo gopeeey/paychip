@@ -1,5 +1,5 @@
 import { ChargeStack, Charge } from "@data/charges";
-import { Wallet } from "@data/index";
+import { Wallet } from "@data/wallet";
 import {
     CreateChargeDto,
     CreateChargeStackDto,

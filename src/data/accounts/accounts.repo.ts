@@ -19,12 +19,14 @@ export class AccountRepo implements AccountRepoInterface {
     findByEmail: AccountRepoInterface["findByEmail"] = async (email, client) => {
         const query = queries.findByEmailQuery(email);
         const res = await runQuery<AccountModelInterface>(query, this._pool, client);
-        return res.rows[0];
+        const account = res.rows[0] || null;
+        return account;
     };
 
     findById: AccountRepoInterface["findById"] = async (id, client) => {
         const query = queries.findByIdQuery(id);
         const res = await runQuery<AccountModelInterface>(query, this._pool, client);
-        return res.rows[0];
+        const account = res.rows[0] || null;
+        return account;
     };
 }

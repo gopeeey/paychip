@@ -1,4 +1,9 @@
-import { StandardAccountDto, LoginDto, CreateAccountDto } from "@logic/accounts";
+import {
+    StandardAccountDto,
+    LoginDto,
+    CreateAccountDto,
+    AccountModelInterface,
+} from "@logic/accounts";
 import { Account } from "@data/accounts";
 import { generateId } from "src/utils";
 import { createAccountQuery } from "@data/accounts/queries";
@@ -24,4 +29,10 @@ export const accountSeeder = async (pool: Pool) => {
     const data = { ...accountData, id: generateId() };
     const query = createAccountQuery(data);
     await runQuery(query, pool);
+};
+
+export const getAnAccount = async (pool: Pool) => {
+    const query = "SELECT * FROM accounts LIMIT 1;";
+    const res = await runQuery<AccountModelInterface>(query, pool);
+    return res.rows[0];
 };

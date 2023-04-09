@@ -40,7 +40,7 @@ export const connectToDb: () => Promise<Pool> = () => {
 };
 
 export type QueryRunner = <R extends QueryResultRow>(
-    query: SQLStatement,
+    query: SQLStatement | string,
     pool: Pool,
     client?: PoolClient
 ) => Promise<QueryResult<R>>;

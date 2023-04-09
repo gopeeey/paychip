@@ -1,4 +1,4 @@
-import { ChargeStackCharge } from "@data/index";
+import { ChargeStackCharge } from "@data/charges";
 import {} from "@logic/charges";
 import {
     ChargesService,
