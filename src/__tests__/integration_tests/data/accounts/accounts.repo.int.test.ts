@@ -1,6 +1,6 @@
 import { AccountRepo } from "@data/accounts";
+import { runQuery } from "@data/db";
 import { AccountModelInterface, CreateAccountDto } from "@logic/accounts";
-import { QueryResult } from "pg";
 import SQL from "sql-template-strings";
 import { accountSeeder, getAnAccount } from "src/__tests__/samples";
 import { DBSetup } from "src/__tests__/test_utils";
@@ -22,8 +22,9 @@ describe("Testing AccountRepo", () => {
                 };
                 const created = await accountRepo.create(data, client);
                 await client.query("COMMIT");
-                const res: QueryResult<AccountModelInterface> = await pool.query(
-                    SQL`SELECT * FROM accounts WHERE email = ${data.email}`
+                const res = await runQuery<AccountModelInterface>(
+                    SQL`SELECT * FROM accounts WHERE email = ${data.email}`,
+                    pool
                 );
                 const account = res.rows[0];
                 expect(account).toBeDefined();

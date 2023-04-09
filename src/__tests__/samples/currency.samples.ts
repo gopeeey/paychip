@@ -1,10 +1,8 @@
 import { CreateCurrencyDto, StandardCurrencyDto } from "@logic/currency";
-import { Currency, BusinessCurrency } from "@data/currency";
-import { Business } from "@data/business";
-import { Country } from "@data/country";
-import { Account } from "@data/accounts";
+import { Currency, createCurrencyQuery } from "@data/currency";
 import { ChargeDto } from "@logic/charges";
 import { Pool } from "pg";
+import { runQuery } from "@data/db";
 
 export const currencyData: CreateCurrencyDto = new CreateCurrencyDto({
     name: "Nigerian Naira",
@@ -55,7 +53,9 @@ export const standardCurrency = new StandardCurrencyDto(currencyJson);
 export const standardCurrencyArr = [standardCurrency];
 
 export const currencySeeder = async (pool: Pool) => {
-    await Currency.create(currencyData);
+    const query = createCurrencyQuery(currencyData);
+    await runQuery(query, pool);
+
     // await Currency.create({
     //     name: "Nigerian Naira",
     //     isoCode: "NGN",

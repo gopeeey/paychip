@@ -6,9 +6,10 @@ import {
 } from "@logic/currency";
 import { CurrencyRepo } from "@data/currency";
 import { createSpies } from "src/__tests__/mocks";
-import { currencyJson, currencyObj } from "src/__tests__/samples";
+import { currencyJson } from "src/__tests__/samples";
+import { Pool } from "pg";
 
-const repo = new CurrencyRepo();
+const repo = new CurrencyRepo({} as Pool);
 
 const repoSpies = createSpies(repo);
 
