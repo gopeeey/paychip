@@ -1,12 +1,12 @@
-import { Account } from "@data/accounts";
 import { Business } from "@data/business";
-import { Country } from "@data/country";
-import { CreateBusinessDto, StandardBusinessDto } from "@logic/business";
+import { BusinessModelInterface, CreateBusinessDto, StandardBusinessDto } from "@logic/business";
 import { SeedingError } from "../test_utils";
-import { accountJson, accountSeeder } from "./accounts.samples";
-import { countryJson, countrySeeder } from "./country.samples";
-import { currencyJsonArr, currencySeeder } from "./currency.samples";
+import { accountJson, accountSeeder, getAnAccount } from "./accounts.samples";
+import { countryJson, countrySeeder, getACountry } from "./country.samples";
+import { currencyJsonArr } from "./currency.samples";
 import { Pool } from "pg";
+import { runQuery } from "@data/db";
+import { createBusinessQuery } from "@data/business/queries";
 
 export const businessData = new CreateBusinessDto({
     name: "My Business",
@@ -27,9 +27,18 @@ export const standardBusinessWithCurrencies = new StandardBusinessDto({
 export const businessSeeder = async (pool: Pool) => {
     await accountSeeder(pool);
     await countrySeeder(pool);
-    const account = await Account.findOne();
-    const country = await Country.findOne();
-    if (!account) throw new Error("BUSINESS SEEDER: Could not create account");
-    if (!country) throw new SeedingError("Country not found");
-    await Business.create({ ...businessData, ownerId: account.id, countryCode: country.isoCode });
+    const account = await getAnAccount(pool);
+    const country = await getACountry(pool);
+    await runQuery(
+        createBusinessQuery({ ...businessData, ownerId: account.id, countryCode: country.isoCode }),
+        pool
+    );
+};
+
+export const getABusiness = async (pool: Pool) => {
+    const query = "SELECT * FROM businesses LIMIT 1;";
+    const res = await runQuery<BusinessModelInterface>(query, pool);
+    const business = res.rows[0];
+    if (!business) throw new SeedingError("No businesses found");
+    return business;
 };

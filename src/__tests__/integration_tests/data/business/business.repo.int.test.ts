@@ -1,10 +1,9 @@
-import { Account } from "@data/accounts";
-import { BusinessRepo, Business } from "@data/business";
-import { Country } from "@data/country";
-import { StartSequelizeSession } from "@data/sequelize_session";
-import { CreateBusinessDto } from "@logic/business";
-import { businessSeeder } from "src/__tests__/samples";
-import { DBSetup, SeedingError } from "src/__tests__/test_utils";
+import { BusinessRepo } from "@data/business";
+import { runQuery } from "@data/db";
+import { BusinessModelInterface, CreateBusinessDto } from "@logic/business";
+import SQL from "sql-template-strings";
+import { businessSeeder, getABusiness, getACountry, getAnAccount } from "src/__tests__/samples";
+import { DBSetup } from "src/__tests__/test_utils";
 
 const pool = DBSetup(businessSeeder);
 
@@ -13,37 +12,32 @@ const businessRepo = new BusinessRepo(pool);
 describe("TESTING BUSINESS REPO", () => {
     describe("Testing create", () => {
         it("should return business object", async () => {
-            const session = await StartSequelizeSession();
-            const owner = await Account.findOne();
-            if (!owner) throw new Error("Seeding error: account not found");
-            const country = await Country.findOne();
-            if (!country) throw new Error("Seeding error: country not found");
+            const owner = await getAnAccount(pool);
+            const country = await getACountry(pool);
             const data: CreateBusinessDto = {
                 countryCode: country.isoCode,
                 name: "The business",
                 ownerId: owner.id,
             };
 
-            const business = await businessRepo.create(data, session);
-            await session.commit();
-            expect(business.id).toBeDefined();
-
-            const persistedBusiness = await Business.findByPk(business.id);
-            if (!persistedBusiness) throw new Error("Business not persisted");
-            expect(persistedBusiness).toMatchObject(data);
+            const business = await businessRepo.create(data);
+            if (!business) throw new Error("Failed to persist business");
+            const res = await runQuery<BusinessModelInterface>(
+                SQL`SELECT * FROM businesses WHERE id = ${business.id}`,
+                pool
+            );
+            const persisted = res.rows[0];
+            expect(business).toMatchObject(persisted);
         });
     });
 
     describe("Testing findById method", () => {
         describe("Given the business exists", () => {
             it("should return an business object", async () => {
-                const existing = await Business.findOne();
-                if (!existing) throw new Error("Seeding error: business not found");
+                const existing = await getABusiness(pool);
                 const result = await businessRepo.findById(existing.id);
-                expect(result).not.toBeNull();
-                expect(result).toBeDefined();
                 if (!result) throw new Error("Business not found");
-                expect(existing).toMatchObject(result);
+                expect(result).toMatchObject(existing);
             });
         });
 
@@ -57,9 +51,8 @@ describe("TESTING BUSINESS REPO", () => {
 
     describe("Testing getOwnerBusinesses", () => {
         describe("Given the owner has businesses", () => {
-            it("should return a business json array", async () => {
-                const existing = await Business.findOne({ include: "currencies" });
-                if (!existing) throw new SeedingError("business not found");
+            it("should return an array of the owner's businesses", async () => {
+                const existing = await getABusiness(pool);
                 const result = await businessRepo.getOwnerBusinesses(existing.ownerId);
                 result.forEach((business) => {
                     expect(business.ownerId).toBe(existing.ownerId);

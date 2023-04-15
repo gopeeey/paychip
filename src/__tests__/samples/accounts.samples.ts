@@ -9,6 +9,7 @@ import { generateId } from "src/utils";
 import { createAccountQuery } from "@data/accounts/queries";
 import { runQuery } from "@data/db";
 import { Pool } from "pg";
+import { SeedingError } from "../test_utils";
 
 export const accountData: CreateAccountDto = {
     name: "Sam",
@@ -34,5 +35,7 @@ export const accountSeeder = async (pool: Pool) => {
 export const getAnAccount = async (pool: Pool) => {
     const query = "SELECT * FROM accounts LIMIT 1;";
     const res = await runQuery<AccountModelInterface>(query, pool);
-    return res.rows[0];
+    const account = res.rows[0];
+    if (!account) throw new SeedingError("No accounts found");
+    return account;
 };
