@@ -6,13 +6,14 @@ import { Pool } from "pg";
 
 const postgresTestConfig = config.db.postgresTest;
 
-export const runMigrations = async (direction: "up" | "down", pool: Pool) => {
+export const runMigrations = async (direction: "up" | "down", pool: Pool, count = 10000) => {
     console.log("Running migrations", direction);
 
     const client = await pool.connect();
     await runnerFunc({
         dbClient: client,
         direction,
+        count,
         dir: path.join(__dirname, "../../../migrations"),
         migrationsTable: "pgmigrations",
     });

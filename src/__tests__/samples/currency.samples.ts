@@ -1,8 +1,10 @@
-import { CreateCurrencyDto, StandardCurrencyDto } from "@logic/currency";
+import { CreateCurrencyDto, CurrencyModelInterface, StandardCurrencyDto } from "@logic/currency";
 import { Currency, createCurrencyQuery } from "@data/currency";
 import { ChargeDto } from "@logic/charges";
 import { Pool } from "pg";
 import { runQuery } from "@data/db";
+import SQL from "sql-template-strings";
+import { SeedingError } from "../test_utils";
 
 export const currencyData: CreateCurrencyDto = new CreateCurrencyDto({
     name: "Nigerian Naira",
@@ -92,4 +94,12 @@ export const currencySeeder = async (pool: Pool) => {
     //         })
     //     ),
     // });
+};
+
+export const getACurrency = async (pool: Pool) => {
+    const query = SQL`SELECT * FROM currencies LIMIT 1;`;
+    const res = await runQuery<CurrencyModelInterface>(query, pool);
+    const currency = res.rows[0];
+    if (!currency) throw new SeedingError("No currencies found");
+    return currency;
 };

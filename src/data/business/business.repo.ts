@@ -1,33 +1,38 @@
 import { BusinessModelInterface, BusinessRepoInterface } from "@logic/business";
-import { Transaction } from "sequelize";
-import { Business } from "./business.model";
+import { runQuery } from "@data/db";
+import { Pool } from "pg";
+import * as queries from "./queries";
 
 export class BusinessRepo implements BusinessRepoInterface {
-    constructor(private readonly _modelContext: typeof Business) {}
+    constructor(private readonly __pool: Pool) {}
 
-    create: BusinessRepoInterface["create"] = async (createBusinessDto, session) => {
-        const business = await this._modelContext.create(createBusinessDto, {
-            transaction: session as Transaction,
-        });
-        return business.toJSON();
+    create: BusinessRepoInterface["create"] = async (createBusinessDto, client) => {
+        const res = await runQuery<BusinessModelInterface>(
+            queries.createBusinessQuery(createBusinessDto),
+            this.__pool,
+            client
+        );
+        const business = res.rows[0];
+        if (!business) throw new Error("Error creating business");
+        return business;
     };
 
     findById = async (id: BusinessModelInterface["id"]) => {
-        const business = await this._modelContext.findByPk(id);
-        return business ? business.toJSON() : null;
+        const res = await runQuery<BusinessModelInterface>(queries.findById(id), this.__pool);
+        return res.rows[0] || null;
     };
 
     getOwnerBusinesses = async (ownerId: BusinessModelInterface["ownerId"]) => {
-        const businesses = await this._modelContext.findAll({
-            where: { ownerId },
-            include: "currencies",
-        });
-        return businesses.map((business) => business.toJSON());
+        const res = await runQuery<BusinessModelInterface>(
+            queries.getOwnerBusinesses(ownerId),
+            this.__pool
+        );
+        return res.rows;
     };
 
-    getFullBusiness = async (businessId: BusinessModelInterface["id"]) => {
-        const business = await this._modelContext.findByPk(businessId, { include: "currencies" });
-        if (!business) return null;
-        return business.toJSON();
-    };
+    // getFullBusiness = async (businessId: BusinessModelInterface["id"]) => {
+    //     const business = await this._modelContext.findByPk(businessId, { include: "currencies" });
+    //     if (!business) return null;
+    //     return business.toJSON();
+    // };
 }

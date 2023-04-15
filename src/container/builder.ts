@@ -25,7 +25,7 @@ export const buildContainer = async (pool: Pool) => {
     const countryRepo = new CountryRepo(Country);
     const countryService = new CountryService({ repo: countryRepo });
 
-    const currencyRepo = new CurrencyRepo();
+    const currencyRepo = new CurrencyRepo(pool);
     const currencyService = new CurrencyService({ repo: currencyRepo });
 
     const businessWalletRepo = new BusinessWalletRepo();

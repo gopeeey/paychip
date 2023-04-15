@@ -1,41 +1,43 @@
-import { CountryRepo, Country } from "@data/country";
-import { CreateCountryDto } from "@logic/country";
-import { countrySeeder } from "src/__tests__/samples";
+import { CountryRepo } from "@data/country";
+import { runQuery } from "@data/db";
+import { CountryModelInterface, CreateCountryDto } from "@logic/country";
+import SQL from "sql-template-strings";
+import { countrySeeder, getACountry, getACurrency } from "src/__tests__/samples";
 import { DBSetup } from "src/__tests__/test_utils";
 
-const countryRepo = new CountryRepo(Country);
+const pool = DBSetup(countrySeeder);
 
-DBSetup(countrySeeder);
+const countryRepo = new CountryRepo(pool);
 
 describe("Testing country repo", () => {
     describe("Testing create", () => {
         it("should return a country object", async () => {
-            const createMock = jest.spyOn(countryRepo, "create");
+            const currency = await getACurrency(pool);
             const data = new CreateCountryDto({
-                currencyCode: "NGN",
+                currencyCode: currency.isoCode,
                 name: "Nigeria",
                 isoCode: "NGI",
             });
             const country = await countryRepo.create(data);
             expect(country).toBeDefined();
-            expect(country.name).toBe(data.name);
-            expect(country.isoCode).toBe(data.isoCode);
-            expect(createMock).toHaveBeenCalledTimes(1);
-            expect(createMock).toHaveBeenCalledWith(data);
+            const refRes = await runQuery<CountryModelInterface>(
+                SQL`SELECT * FROM countries WHERE "isoCode" = 'NGI';`,
+                pool
+            );
+            const savedCountry = refRes.rows[0];
+            if (!savedCountry) throw new Error("Failed to persist country");
+            expect(country).toMatchObject(savedCountry);
         });
     });
 
     describe("Testing getByCode", () => {
         describe("Given the country exists in the database", () => {
             it("should return the country object", async () => {
-                const existingCountry = await Country.findOne();
-                if (!existingCountry) throw new Error("Failed to seed countries");
+                const existingCountry = await getACountry(pool);
                 const country = await countryRepo.getByCode(existingCountry.isoCode);
                 if (!country) throw new Error("Country not found");
                 expect(country).toBeDefined();
-                expect(country.name).toBe(existingCountry.name);
-                expect(country.isoCode).toBe(existingCountry.isoCode);
-                expect(country.currencyCode).toBe(existingCountry.currencyCode);
+                expect(country).toMatchObject(existingCountry);
             });
         });
 
@@ -49,10 +51,10 @@ describe("Testing country repo", () => {
 
     describe("Testing getAll", () => {
         it("should return an array of supported countries", async () => {
-            const existingCountries = await Country.findAll();
-            const existingJsons = existingCountries.map((cou) => cou.toJSON());
+            const res = await runQuery<CountryModelInterface>(SQL`SELECT * FROM countries;`, pool);
+            const existingCountries = res.rows;
             const countries = await countryRepo.getAll();
-            expect(countries).toEqual(existingJsons);
+            expect(countries).toEqual(existingCountries);
         });
     });
 });
