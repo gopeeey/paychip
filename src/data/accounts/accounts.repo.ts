@@ -3,9 +3,12 @@ import { runQuery } from "@data/db";
 import * as queries from "./queries";
 import { generateId } from "src/utils";
 import { Pool } from "pg";
+import { PgBaseRepo } from "@data/pg_base_repo";
 
-export class AccountRepo implements AccountRepoInterface {
-    constructor(private readonly _pool: Pool) {}
+export class AccountRepo extends PgBaseRepo implements AccountRepoInterface {
+    constructor(private readonly _pool: Pool) {
+        super(_pool);
+    }
 
     create: AccountRepoInterface["create"] = async (createAccountDto, client) => {
         const id = generateId();

@@ -19,8 +19,9 @@ describe("TESTING BUSINESS REPO", () => {
                 name: "The business",
                 ownerId: owner.id,
             };
-
-            const business = await businessRepo.create(data);
+            const session = await businessRepo.startSession();
+            const business = await businessRepo.create(data, session);
+            await session.commit();
             if (!business) throw new Error("Failed to persist business");
             const res = await runQuery<BusinessModelInterface>(
                 SQL`SELECT * FROM businesses WHERE id = ${business.id}`,

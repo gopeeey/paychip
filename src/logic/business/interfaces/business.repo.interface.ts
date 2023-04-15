@@ -2,12 +2,12 @@ import { AccountModelInterface } from "@logic/accounts";
 import { SessionInterface } from "@logic/session_interface";
 import { CreateBusinessDto } from "../dtos";
 import { BusinessModelInterface } from "./business.model.interface";
-import { PoolClient } from "pg";
+import { BaseRepoInterface } from "@logic/base_repo_interface";
 
-export interface BusinessRepoInterface {
+export interface BusinessRepoInterface extends BaseRepoInterface {
     create: (
         createBusinessDto: CreateBusinessDto,
-        client?: PoolClient
+        session?: SessionInterface
     ) => Promise<BusinessModelInterface>;
 
     findById: (id: BusinessModelInterface["id"]) => Promise<BusinessModelInterface | null>;
