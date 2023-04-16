@@ -1,33 +1,51 @@
 import { WalletModelInterface, WalletRepoInterface } from "@logic/wallet";
 import { generateId } from "src/utils";
-import { Wallet } from "./wallet.model";
-import { Op, Transaction } from "sequelize";
-import { walletJson } from "src/__tests__/samples";
+import { Pool } from "pg";
+import { PgBaseRepo } from "@data/pg_base_repo";
+import * as queries from "./queries";
+import { runQuery } from "@data/db";
+import { PgSession } from "@data/pg_session";
 
-export class WalletRepo implements WalletRepoInterface {
+export class WalletRepo extends PgBaseRepo implements WalletRepoInterface {
+    constructor(private readonly __pool: Pool) {
+        super(__pool);
+    }
+
     create: WalletRepoInterface["create"] = async (createWalletDto, session) => {
-        const wallet = await Wallet.create(
-            { ...createWalletDto, id: generateId(createWalletDto.businessId) },
-            { transaction: session as Transaction }
+        const query = queries.createWalletQuery({
+            ...createWalletDto,
+            id: generateId(createWalletDto.businessId),
+        });
+
+        const res = await runQuery<WalletModelInterface>(
+            query,
+            this.__pool,
+            (session as PgSession)?.client
         );
-        return wallet.toJSON();
+        const wallet = res.rows[0];
+        return wallet;
     };
 
     getById = async (id: WalletModelInterface["id"]) => {
-        const wallet = await Wallet.findByPk(id);
-        return wallet ? wallet.toJSON() : null;
+        const res = await runQuery<WalletModelInterface>(queries.getByIdQuery(id), this.__pool);
+        const wallet = res.rows[0];
+        return wallet || null;
     };
 
     getUnique: WalletRepoInterface["getUnique"] = async (getUniqueDto) => {
-        const wallet = await Wallet.findOne({ where: { ...getUniqueDto } });
-        return wallet ? wallet.toJSON() : null;
+        const res = await runQuery<WalletModelInterface>(
+            queries.getUniqueQuery(getUniqueDto),
+            this.__pool
+        );
+        const wallet = res.rows[0];
+        return wallet || null;
     };
 
     incrementBalance: WalletRepoInterface["incrementBalance"] = async (incrementBalanceDto) => {
-        await Wallet.increment("balance", {
-            by: Math.round(incrementBalanceDto.amount),
-            where: { id: incrementBalanceDto.walletId },
-            transaction: incrementBalanceDto.session as Transaction,
-        });
+        await runQuery<WalletModelInterface>(
+            queries.incrementBalanceQuery(incrementBalanceDto),
+            this.__pool,
+            (incrementBalanceDto.session as PgSession)?.client
+        );
     };
 }

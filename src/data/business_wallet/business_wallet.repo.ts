@@ -22,7 +22,7 @@ export class BusinessWalletRepo extends PgBaseRepo implements BusinessWalletRepo
             ...createBusinessWalletDto,
             id: generateId(createBusinessWalletDto.businessId),
         };
-        console.log("\n\n\nDATA POINT 1: ", data);
+
         const query = queries.createBusinessWalletQuery(data);
         const res = await runQuery<BusinessWalletModelInterface>(
             query,

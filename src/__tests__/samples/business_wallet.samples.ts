@@ -45,7 +45,6 @@ export const bwSeeder = async (pool: Pool) => {
         currencyCode: currency.isoCode,
         id: generateId(business.id),
     };
-    console.log("\n\n\nDATA POINT 2", data);
     await runQuery(createBusinessWalletQuery(data), pool);
 };
 
@@ -54,6 +53,18 @@ export const getABusinessWallet = async (pool: Pool) => {
         SQL`SELECT * FROM "businessWallets" LIMIT 1;`,
         pool
     );
+    const bw = res.rows[0];
+    if (!bw) throw new SeedingError("No business wallets found");
+    return bw;
+};
+
+export const getABusinessWalletByBusinessId = async (
+    pool: Pool,
+    businessId?: BusinessWalletModelInterface["businessId"]
+) => {
+    let query = SQL`SELECT * FROM "businessWallets" LIMIT 1;`;
+    if (businessId) query = SQL`SELECT * FROM "businessWallets" WHERE "businessId" = ${businessId}`;
+    const res = await runQuery<BusinessWalletModelInterface>(query, pool);
     const bw = res.rows[0];
     if (!bw) throw new SeedingError("No business wallets found");
     return bw;

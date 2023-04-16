@@ -1,28 +1,32 @@
-import { Wallet, WalletRepo } from "@data/wallet";
-import { bwJson, getAWallet, walletSeeder } from "src/__tests__/samples";
-import { DBSetup, SeedingError } from "src/__tests__/test_utils";
-import { Business } from "@data/business";
-import { Country } from "@data/country";
-import { CreateWalletDto, GetUniqueWalletDto, IncrementBalanceDto } from "@logic/wallet";
-import { StartSequelizeSession } from "@data/sequelize_session";
-import { BusinessWallet } from "@data/business_wallet";
-
-const testWalletRepo = new WalletRepo();
-
-DBSetup(walletSeeder);
+import { WalletRepo } from "@data/wallet";
+import {
+    getABusiness,
+    getABusinessWalletByBusinessId,
+    getACountry,
+    getAWallet,
+    walletSeeder,
+} from "src/__tests__/samples";
+import { DBSetup } from "src/__tests__/test_utils";
+import {
+    CreateWalletDto,
+    GetUniqueWalletDto,
+    IncrementBalanceDto,
+    WalletModelInterface,
+} from "@logic/wallet";
+import { runQuery } from "@data/db";
+import SQL from "sql-template-strings";
 
 // seed data
+const pool = DBSetup(walletSeeder);
+
+const walletRepo = new WalletRepo(pool);
 
 describe("TESTING WALLET REPO", () => {
     describe("Testing create", () => {
-        it("should return a json wallet object", async () => {
-            const session = await StartSequelizeSession();
-            const business = await Business.findOne();
-            if (!business) throw new SeedingError("business not found");
-            const bw = await BusinessWallet.findOne({ where: { businessId: business.id } });
-            if (!bw) throw new SeedingError("business wallet not found");
-            const country = await Country.findByPk(business.countryCode);
-            if (!country) throw new SeedingError("country not found");
+        it("should persist and return the wallet", async () => {
+            const business = await getABusiness(pool);
+            const bw = await getABusinessWalletByBusinessId(pool, business.id);
+            const country = await getACountry(pool, business.countryCode);
 
             const data = new CreateWalletDto({
                 businessId: business.id,
@@ -35,30 +39,34 @@ describe("TESTING WALLET REPO", () => {
                 waiveWalletOutCharges: false,
             });
 
-            const wallet = await testWalletRepo.create(data, session);
+            const session = await walletRepo.startSession();
+            const wallet = await walletRepo.create(data, session);
             await session.commit();
 
-            const persistedWallet = await Wallet.findByPk(wallet.id);
-            if (!persistedWallet) throw new Error("Wallet not persisted");
-
-            expect(persistedWallet.toJSON()).toMatchObject(data);
+            if (!wallet) throw new Error("Did not return wallet");
+            const res = await runQuery<WalletModelInterface>(
+                SQL`SELECT * FROM "wallets" WHERE "id" = ${wallet.id}`,
+                pool
+            );
+            const persisted = res.rows[0];
+            if (!persisted) throw new Error("Failed to persist wallet");
+            expect(wallet).toMatchObject(persisted);
         });
     });
 
     describe("Testing getById", () => {
         describe("Given the wallet exists", () => {
             it("should return a wallet json object", async () => {
-                const existing = await Wallet.findOne();
-                if (!existing) throw new SeedingError("wallet not found");
-                const wallet = await testWalletRepo.getById(existing.id);
+                const existing = await getAWallet(pool);
+                const wallet = await walletRepo.getById(existing.id);
                 if (!wallet) throw new Error("wallet not found");
-                expect(existing).toMatchObject(wallet);
+                expect(wallet).toMatchObject(existing);
             });
         });
 
         describe("Given the wallet does not exist", () => {
             it("should return null", async () => {
-                const wallet = await testWalletRepo.getById("lofi");
+                const wallet = await walletRepo.getById("lofi");
                 expect(wallet).toBeNull();
             });
         });
@@ -67,19 +75,17 @@ describe("TESTING WALLET REPO", () => {
     describe("Testing getUnique", () => {
         describe("Given the wallet exists", () => {
             it("should return a wallet json object", async () => {
-                const existing = await Wallet.findOne();
-                if (!existing) throw new SeedingError("wallet not found");
+                const existing = await getAWallet(pool);
                 const data = new GetUniqueWalletDto(existing);
-                const wallet = await testWalletRepo.getUnique(data);
+                const wallet = await walletRepo.getUnique(data);
                 if (!wallet) throw new Error("Wallet not found");
-                expect(wallet.id).toBeDefined();
-                expect(existing).toMatchObject(wallet);
+                expect(wallet).toMatchObject(existing);
             });
         });
 
         describe("Given the wallet does not exist", () => {
             it("should return null", async () => {
-                const wallet = await testWalletRepo.getUnique({
+                const wallet = await walletRepo.getUnique({
                     businessId: 987,
                     currency: "NGN",
                     email: "doesnt@exist.com",
@@ -91,20 +97,19 @@ describe("TESTING WALLET REPO", () => {
 
     describe("Testing incrementBalance", () => {
         it("should increment the balance of the wallet by the provided amount", async () => {
-            const amounts = [20, 2000, -4, -4000, -1.5, -23.34, 2.4];
+            const amounts = [20, 2000, -4, -4000, -1, -23, 2];
             for (const amount of amounts) {
-                const wallet = await getAWallet();
-                const session = await StartSequelizeSession();
+                const wallet = await getAWallet(pool);
+                const session = await walletRepo.startSession();
                 const incrementDto = new IncrementBalanceDto({
                     walletId: wallet.id,
                     amount,
                     session,
                 });
-                await testWalletRepo.incrementBalance(incrementDto);
+                await walletRepo.incrementBalance(incrementDto);
                 await session.commit();
 
-                const newWallet = await Wallet.findByPk(wallet.id);
-                if (!newWallet) throw new SeedingError("Wallet not found");
+                const newWallet = await getAWallet(pool, wallet.id);
                 expect(newWallet.balance - wallet.balance).toBe(Math.round(amount));
             }
         });

@@ -1,12 +1,13 @@
-import { CreateWalletDto, StandardWalletDto } from "@logic/wallet";
-import { Wallet } from "@data/wallet";
-import { Business } from "@data/business";
+import { CreateWalletDto, StandardWalletDto, WalletModelInterface } from "@logic/wallet";
+import { Wallet, createWalletQuery } from "@data/wallet";
 import { SeedingError } from "../test_utils";
-import { Country } from "@data/country";
 import { generateId } from "src/utils";
-import { bwJson, bwSeeder } from "./business_wallet.samples";
-import { BusinessWallet } from "@data/business_wallet";
+import { bwJson, bwSeeder, getABusinessWalletByBusinessId } from "./business_wallet.samples";
 import { Pool } from "pg";
+import { getABusiness } from "./business.samples";
+import { getACountry } from "./country.samples";
+import { runQuery } from "@data/db";
+import SQL from "sql-template-strings";
 
 export const walletData = new CreateWalletDto({
     businessId: 1234,
@@ -26,12 +27,9 @@ export const standardWallet = new StandardWalletDto(walletJson);
 
 export const walletSeeder = async (pool: Pool) => {
     await bwSeeder(pool);
-    const business = await Business.findOne();
-    if (!business) throw new SeedingError("business not found");
-    const businessWallet = await BusinessWallet.findOne({ where: { businessId: business.id } });
-    if (!businessWallet) throw new SeedingError("business wallet not found");
-    const country = await Country.findByPk(business.countryCode);
-    if (!country) throw new SeedingError("country not found");
+    const business = await getABusiness(pool);
+    const businessWallet = await getABusinessWalletByBusinessId(pool, business.id);
+    const country = await getACountry(pool, business.countryCode);
 
     const data = new CreateWalletDto({
         businessId: business.id,
@@ -44,11 +42,14 @@ export const walletSeeder = async (pool: Pool) => {
         waiveWalletOutCharges: false,
     });
 
-    await Wallet.create({ ...data, id: generateId(business.id) });
+    await runQuery(createWalletQuery({ ...data, id: generateId(business.id) }), pool);
 };
 
-export const getAWallet = async () => {
-    const wallet = await Wallet.findOne();
-    if (!wallet) throw new SeedingError("Wallet not found");
+export const getAWallet = async (pool: Pool, id?: WalletModelInterface["id"]) => {
+    let query = SQL`SELECT * FROM "wallets" LIMIT 1;`;
+    if (id) query = SQL`SELECT * FROM "wallets" WHERE "id" = ${id} LIMIT 1;`;
+    const res = await runQuery<WalletModelInterface>(query, pool);
+    const wallet = res.rows[0];
+    if (!wallet) throw new SeedingError("No wallets found");
     return wallet;
 };

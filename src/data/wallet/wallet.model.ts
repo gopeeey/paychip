@@ -22,6 +22,7 @@ export class Wallet
     declare currency: ForeignKey<WalletModelInterface["currency"]>;
     declare balance: CreationOptional<WalletModelInterface["balance"]>;
     declare email: WalletModelInterface["email"];
+    declare active: CreationOptional<WalletModelInterface["active"]>;
     declare waiveFundingCharges: WalletModelInterface["waiveFundingCharges"];
     declare waiveWithdrawalCharges: WalletModelInterface["waiveWithdrawalCharges"];
     declare waiveWalletInCharges: WalletModelInterface["waiveWalletInCharges"];
@@ -42,6 +43,7 @@ Wallet.init(
         },
         balance: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
         email: { type: DataTypes.STRING(150), allowNull: false },
+        active: { type: DataTypes.BOOLEAN, defaultValue: true },
         waiveFundingCharges: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
         waiveWithdrawalCharges: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
         waiveWalletInCharges: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },

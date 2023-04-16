@@ -61,9 +61,31 @@ CREATE TABLE "businessWallets" (
     FOREIGN KEY("currencyCode") REFERENCES "currencies"("isoCode") ON DELETE RESTRICT
 );
 
+CREATE TABLE "wallets" (
+    "id" VARCHAR(60) PRIMARY KEY NOT NULL,
+    "businessId" INTEGER NOT NULL,
+    "businessWalletId" VARCHAR(60) NOT NULL,
+    "currency" VARCHAR(60) NOT NULL,
+    "active" BOOLEAN NOT NULL DEFAULT TRUE,
+    "balance" BIGINT NOT NULL DEFAULT 0,
+    "email" VARCHAR(100) NOT NULL,
+    "waiveFundingCharges" BOOLEAN NOT NULL DEFAULT FALSE,
+    "waiveWithdrawalCharges" BOOLEAN NOT NULL DEFAULT FALSE,
+    "waiveWalletInCharges" BOOLEAN NOT NULL DEFAULT FALSE,
+    "waiveWalletOutCharges" BOOLEAN NOT NULL DEFAULT FALSE,
+    "fundingChargesPaidBy" PAIDBY DEFAULT NULL,
+    "withdrawalChargesPaidBy" PAIDBY DEFAULT NULL,
+    FOREIGN KEY("businessId") REFERENCES "businesses"("id") ON DELETE CASCADE,
+    FOREIGN KEY("businessWalletId") REFERENCES "businessWallets"("id") ON DELETE CASCADE,
+    FOREIGN KEY("currency") REFERENCES "currencies"("isoCode") ON DELETE RESTRICT,
+    UNIQUE("businessId", "currency", "email")
+);
+
 
 
 -- Down Migration
+DROP TABLE "wallets";
+
 DROP TABLE "businessWallets";
 
 DROP TABLE "businesses";

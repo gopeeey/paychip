@@ -11,6 +11,7 @@ export interface WalletModelInterfaceDef extends BaseModelInterface {
     businessId: BusinessModelInterfaceDef["id"];
     businessWalletId: BusinessWalletModelInterfaceDef["id"];
     currency: CurrencyModelInterfaceDef["isoCode"];
+    active: boolean;
     balance: number;
     email: string;
     waiveFundingCharges: boolean;

@@ -5,7 +5,6 @@ interface CreateQueryInputInterface extends CreateBusinessWalletDto {
     id: BusinessWalletModelInterface["id"];
 }
 export const createBusinessWalletQuery = (businessWallet: CreateQueryInputInterface) => {
-    console.log("\n\n\nBW: ", businessWallet);
     return SQL`
         INSERT INTO "businessWallets" 
         ("id", "businessId", "currencyCode")
