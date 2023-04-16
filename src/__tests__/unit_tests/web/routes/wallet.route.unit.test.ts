@@ -62,7 +62,7 @@ describe("TESTING WALLET ROUTES", () => {
             describe("Given valid data", () => {
                 it("should return a standard wallet dto", async () => {
                     walletService.createWallet.mockResolvedValue(walletJson);
-                    const { businessId, bwId, ...form } = walletData;
+                    const { businessId, businessWalletId, ...form } = walletData;
                     const { statusCode, body } = await testApp
                         .post(route)
                         .send(form)

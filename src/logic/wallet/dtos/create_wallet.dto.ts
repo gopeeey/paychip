@@ -4,7 +4,7 @@ import { WalletModelInterface } from "../interfaces";
 type RequiredProps = PickWithOptional<
     WalletModelInterface,
     | "businessId"
-    | "bwId"
+    | "businessWalletId"
     | "currency"
     | "email"
     | "waiveFundingCharges"
@@ -16,7 +16,7 @@ type RequiredProps = PickWithOptional<
 
 export class CreateWalletDto implements RequiredProps {
     businessId: RequiredProps["businessId"];
-    bwId: RequiredProps["bwId"];
+    businessWalletId: RequiredProps["businessWalletId"];
     currency: RequiredProps["currency"];
     email: RequiredProps["email"];
     waiveFundingCharges: RequiredProps["waiveFundingCharges"];
@@ -32,7 +32,7 @@ export class CreateWalletDto implements RequiredProps {
         ...body
     }: RequiredProps) {
         this.businessId = body.businessId;
-        this.bwId = body.bwId;
+        this.businessWalletId = body.businessWalletId;
         this.currency = body.currency;
         this.email = body.email;
         this.waiveFundingCharges = body.waiveFundingCharges;

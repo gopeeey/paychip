@@ -24,7 +24,9 @@ CREATE TABLE "countries" (
     "isoCode" VARCHAR(3) PRIMARY KEY UNIQUE NOT NULL,
     "name" VARCHAR(50) NOT NULL,
     "currencyCode" VARCHAR(3) NOT NULL,
-    "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL 
+    "active" BOOLEAN NOT NULL DEFAULT TRUE,
+    "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    FOREIGN KEY("currencyCode") REFERENCES "currencies"("isoCode") ON DELETE RESTRICT
 );
 
 CREATE TABLE "businesses" (
@@ -32,7 +34,9 @@ CREATE TABLE "businesses" (
     "ownerId" VARCHAR(60) NOT NULL,
     "name" VARCHAR(150) NOT NULL,
     "countryCode" VARCHAR(3) NOT NULL,
-    "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL 
+    "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    FOREIGN KEY("ownerId") REFERENCES "accounts"("id") ON DELETE SET NULL,
+    FOREIGN KEY("countryCode") REFERENCES "countries"("isoCode") ON DELETE RESTRICT
 );
 
 CREATE TABLE "businessWallets" (
@@ -52,7 +56,9 @@ CREATE TABLE "businessWallets" (
     "w_walletInCs" VARCHAR,
     "w_walletOutCs" VARCHAR,
     "w_fundingChargesPaidBy" PAIDBY NOT NULL DEFAULT 'wallet',
-    "w_withdrawalChargesPaidBy" PAIDBY NOT NULL DEFAULT 'wallet'
+    "w_withdrawalChargesPaidBy" PAIDBY NOT NULL DEFAULT 'wallet',
+    FOREIGN KEY("businessId") REFERENCES "businesses"("id") ON DELETE SET NULL,
+    FOREIGN KEY("currencyCode") REFERENCES "currencies"("isoCode") ON DELETE RESTRICT
 );
 
 

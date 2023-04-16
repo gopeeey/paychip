@@ -66,8 +66,16 @@ export const runAssociations = () => {
     Business.hasMany(Wallet, { sourceKey: "id", foreignKey: "businessId", as: "wallets" });
     Wallet.belongsTo(Business, { targetKey: "id", foreignKey: "businessId", as: "business" });
 
-    BusinessWallet.hasMany(Wallet, { sourceKey: "id", foreignKey: "bwId", as: "wallets" });
-    Wallet.belongsTo(BusinessWallet, { targetKey: "id", foreignKey: "bwId", as: "businessWallet" });
+    BusinessWallet.hasMany(Wallet, {
+        sourceKey: "id",
+        foreignKey: "businessWalletId",
+        as: "wallets",
+    });
+    Wallet.belongsTo(BusinessWallet, {
+        targetKey: "id",
+        foreignKey: "businessWalletId",
+        as: "businessWallet",
+    });
 
     // charge stacks and businesses
     Business.hasMany(ChargeStack, {

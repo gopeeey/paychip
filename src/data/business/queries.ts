@@ -6,8 +6,8 @@ export const createBusinessQuery = (business: CreateBusinessDto) => {
     INSERT INTO businesses 
     ("ownerId", "name", "countryCode") 
     VALUES (
-        ${business.name}, 
         ${business.ownerId}, 
+        ${business.name}, 
         ${business.countryCode}
     ) RETURNING *;`;
 };

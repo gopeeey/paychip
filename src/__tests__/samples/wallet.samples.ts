@@ -12,7 +12,7 @@ export const walletData = new CreateWalletDto({
     businessId: 1234,
     currency: "NGN",
     email: "sammygopeh@gmail.com",
-    bwId: bwJson.id,
+    businessWalletId: bwJson.id,
     waiveFundingCharges: false,
     waiveWithdrawalCharges: false,
     waiveWalletInCharges: false,
@@ -36,7 +36,7 @@ export const walletSeeder = async (pool: Pool) => {
     const data = new CreateWalletDto({
         businessId: business.id,
         currency: country.currencyCode,
-        bwId: businessWallet.id,
+        businessWalletId: businessWallet.id,
         email: "sammygopeh@gmail.com",
         waiveFundingCharges: false,
         waiveWithdrawalCharges: false,

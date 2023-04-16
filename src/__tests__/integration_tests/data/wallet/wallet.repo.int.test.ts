@@ -28,7 +28,7 @@ describe("TESTING WALLET REPO", () => {
                 businessId: business.id,
                 currency: country.currencyCode,
                 email: "new@wallet.com",
-                bwId: bw.id,
+                businessWalletId: bw.id,
                 waiveFundingCharges: false,
                 waiveWithdrawalCharges: false,
                 waiveWalletInCharges: false,

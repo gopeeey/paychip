@@ -18,7 +18,7 @@ export class Wallet
     declare id: CreationOptional<WalletModelInterface["id"]>;
     declare businessId: ForeignKey<WalletModelInterface["businessId"]>;
     declare business?: NonAttribute<WalletModelInterface["business"]>;
-    declare bwId: ForeignKey<WalletModelInterface["bwId"]>;
+    declare businessWalletId: ForeignKey<WalletModelInterface["businessWalletId"]>;
     declare currency: ForeignKey<WalletModelInterface["currency"]>;
     declare balance: CreationOptional<WalletModelInterface["balance"]>;
     declare email: WalletModelInterface["email"];

@@ -9,7 +9,7 @@ export const allowedWalletTypes = ["personal", "commercial"] as const;
 export interface WalletModelInterfaceDef extends BaseModelInterface {
     id: string;
     businessId: BusinessModelInterfaceDef["id"];
-    bwId: BusinessWalletModelInterfaceDef["id"];
+    businessWalletId: BusinessWalletModelInterfaceDef["id"];
     currency: CurrencyModelInterfaceDef["isoCode"];
     balance: number;
     email: string;
