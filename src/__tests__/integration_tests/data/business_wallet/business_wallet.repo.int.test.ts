@@ -1,13 +1,10 @@
-import { BusinessWallet, BusinessWalletRepo } from "@data/business_wallet";
+import { BusinessWalletRepo } from "@data/business_wallet";
 import { runQuery } from "@data/db";
 import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@logic/business_wallet";
 import SQL from "sql-template-strings";
-import { createClassSpies } from "src/__tests__/mocks";
 import { getABusiness, getACountry, getACurrency } from "src/__tests__/samples";
 import { bwSeeder, getABusinessWallet } from "src/__tests__/samples/business_wallet.samples";
 import { DBSetup } from "src/__tests__/test_utils";
-
-const bwMock = createClassSpies(BusinessWallet, ["create", "findOne"]);
 
 const pool = DBSetup(bwSeeder);
 
