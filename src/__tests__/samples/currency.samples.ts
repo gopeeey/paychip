@@ -96,8 +96,9 @@ export const currencySeeder = async (pool: Pool) => {
     // });
 };
 
-export const getACurrency = async (pool: Pool) => {
-    const query = SQL`SELECT * FROM currencies LIMIT 1;`;
+export const getACurrency = async (pool: Pool, isoCode?: CurrencyModelInterface["isoCode"]) => {
+    let query = SQL`SELECT * FROM currencies LIMIT 1;`;
+    if (isoCode) query = SQL`SELECT * FROM currencies WHERE "isoCode" = ${isoCode} LIMIT 1;`;
     const res = await runQuery<CurrencyModelInterface>(query, pool);
     const currency = res.rows[0];
     if (!currency) throw new SeedingError("No currencies found");

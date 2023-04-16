@@ -1,35 +1,24 @@
-import { Business } from "@data/business";
 import { BusinessWallet, BusinessWalletRepo } from "@data/business_wallet";
-import { Country } from "@data/country";
-import { Currency } from "@data/currency";
-import { StartSequelizeSession } from "@data/sequelize_session";
-import { CreateBusinessWalletDto } from "@logic/business_wallet";
-import { businessWalletRepo } from "src/container/business_wallet";
+import { runQuery } from "@data/db";
+import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@logic/business_wallet";
+import SQL from "sql-template-strings";
 import { createClassSpies } from "src/__tests__/mocks";
-import { bwSeeder } from "src/__tests__/samples/business_wallet.samples";
-import { DBSetup, SeedingError } from "src/__tests__/test_utils";
-
-const bwRepo = new BusinessWalletRepo();
+import { getABusiness, getACountry, getACurrency } from "src/__tests__/samples";
+import { bwSeeder, getABusinessWallet } from "src/__tests__/samples/business_wallet.samples";
+import { DBSetup } from "src/__tests__/test_utils";
 
 const bwMock = createClassSpies(BusinessWallet, ["create", "findOne"]);
 
-DBSetup(bwSeeder);
+const pool = DBSetup(bwSeeder);
+
+const bwRepo = new BusinessWalletRepo(pool);
 
 const getBC = async () => {
-    const business = await Business.findOne();
-    if (!business) throw new SeedingError("business not found");
-    const country = await Country.findByPk(business.countryCode);
-    if (!country) throw new SeedingError("country not found");
-    const currency = await Currency.findByPk(country.currencyCode);
-    if (!currency) throw new SeedingError("currency not found");
+    const business = await getABusiness(pool);
+    const country = await getACountry(pool, business.countryCode);
+    const currency = await getACurrency(pool, country.currencyCode);
 
     return { business, currency };
-};
-
-const getBw = async () => {
-    const bw = await BusinessWallet.findOne();
-    if (!bw) throw new SeedingError("Business wallet not found");
-    return bw;
 };
 
 describe("TESTING BUSINESS WALLET REPO", () => {
@@ -40,32 +29,33 @@ describe("TESTING BUSINESS WALLET REPO", () => {
                 businessId: business.id,
                 currencyCode: currency.isoCode,
             });
-            const session = await StartSequelizeSession();
+            const session = await bwRepo.startSession();
             const bw = await bwRepo.create(dto, session);
             await session.commit();
-            const persistedBw = await BusinessWallet.findByPk(bw.id);
-            if (!persistedBw) throw new Error("Failed to persist business");
-            expect(persistedBw).toMatchObject(dto);
-            expect(persistedBw.id.endsWith(business.id.toString())).toBe(true);
-            expect(bwMock.create.mock.calls[1][1]).toEqual({ transaction: session });
+            if (!bw) throw new Error("Failed to persist business wallet");
+            const res = await runQuery<BusinessWalletModelInterface>(
+                SQL`SELECT * FROM "businessWallets" WHERE id = ${bw.id}`,
+                pool
+            );
+            const persisted = res.rows[0];
+            if (!persisted) throw new Error("Failed to persist business wallet");
+            expect(persisted).toMatchObject(dto);
+            expect(persisted.id.endsWith(business.id.toString())).toBe(true);
         });
     });
 
     describe("Testing getByCurrency", () => {
         describe("Given the wallet exists", () => {
             it("should return a wallet object", async () => {
-                const existing = await getBw();
-                const bw = await businessWalletRepo.getByCurrency(
-                    existing.businessId,
-                    existing.currencyCode
-                );
-                expect(bw).toMatchObject(existing.toJSON());
+                const existing = await getABusinessWallet(pool);
+                const bw = await bwRepo.getByCurrency(existing.businessId, existing.currencyCode);
+                expect(bw).toMatchObject(existing);
             });
         });
 
         describe("Given the wallet does not exist", () => {
             it("should return null", async () => {
-                const bw = await businessWalletRepo.getByCurrency(33333, "GHN");
+                const bw = await bwRepo.getByCurrency(33333, "GHN");
                 expect(bw).toBeNull();
             });
         });

@@ -4,9 +4,8 @@ import {
     CreateAccountDto,
     AccountModelInterface,
 } from "@logic/accounts";
-import { Account } from "@data/accounts";
+import { Account, createAccountQuery } from "@data/accounts";
 import { generateId } from "src/utils";
-import { createAccountQuery } from "@data/accounts/queries";
 import { runQuery } from "@data/db";
 import { Pool } from "pg";
 import { SeedingError } from "../test_utils";

@@ -1,12 +1,11 @@
 import { CountryModelInterface, CreateCountryDto, StandardCountryDto } from "@logic/country";
-import { Country } from "@data/country";
+import { Country, createQuery } from "@data/country";
 import { currencySeeder } from "./currency.samples";
 import { Pool } from "pg";
 import { runQuery } from "@data/db";
 import SQL from "sql-template-strings";
 import { CurrencyModelInterface } from "@logic/currency";
 import { SeedingError } from "../test_utils";
-import { createQuery } from "@data/country/queries";
 
 export const countryData = new CreateCountryDto({
     isoCode: "NGA",
@@ -32,8 +31,9 @@ export const countrySeeder = async (pool: Pool) => {
     await runQuery(createQuery({ ...countryData, currencyCode: currency.isoCode }), pool);
 };
 
-export const getACountry = async (pool: Pool) => {
-    const query = SQL`SELECT * FROM countries LIMIT 1;`;
+export const getACountry = async (pool: Pool, isoCode?: CountryModelInterface["isoCode"]) => {
+    let query = SQL`SELECT * FROM countries LIMIT 1;`;
+    if (isoCode) query = SQL`SELECT * FROM countries WHERE "isoCode" = ${isoCode} LIMIT 1;`;
     const res = await runQuery<CountryModelInterface>(query, pool);
     const country = res.rows[0];
     if (!country) throw new SeedingError("No currencies found");

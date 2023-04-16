@@ -1,4 +1,4 @@
-import { Business } from "@data/business";
+import { Business, createBusinessQuery } from "@data/business";
 import { BusinessModelInterface, CreateBusinessDto, StandardBusinessDto } from "@logic/business";
 import { SeedingError } from "../test_utils";
 import { accountJson, accountSeeder, getAnAccount } from "./accounts.samples";
@@ -6,7 +6,6 @@ import { countryJson, countrySeeder, getACountry } from "./country.samples";
 import { currencyJsonArr } from "./currency.samples";
 import { Pool } from "pg";
 import { runQuery } from "@data/db";
-import { createBusinessQuery } from "@data/business/queries";
 
 export const businessData = new CreateBusinessDto({
     name: "My Business",
