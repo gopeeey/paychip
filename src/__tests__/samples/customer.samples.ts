@@ -1,11 +1,13 @@
-import { CreateCustomerDto, StandardCustomerDto } from "@logic/customer";
+import { CreateCustomerDto, CustomerModelInterface, StandardCustomerDto } from "@logic/customer";
 import { Customer } from "@data/customer";
-import { businessSeeder } from "./business.samples";
-import { Business } from "@data/business";
-import { SeedingError } from "../test_utils";
+import { businessSeeder, getABusiness } from "./business.samples";
 import { generateId } from "src/utils";
 import { BusinessModelInterface } from "@logic/business";
 import { Pool } from "pg";
+import { runQuery } from "@data/db";
+import { createCustomerQuery } from "@data/customer";
+import SQL from "sql-template-strings";
+import { SeedingError } from "../test_utils";
 
 export const customerData = {
     complete: new CreateCustomerDto({
@@ -57,13 +59,25 @@ export const standardCustomerArr = {
 export const customerSeeder = async (pool: Pool, businessId?: BusinessModelInterface["id"]) => {
     if (!businessId) {
         await businessSeeder(pool);
-        const business = await Business.findOne();
-        if (!business) throw new SeedingError("Business not found");
+        const business = await getABusiness(pool);
         businessId = business.id;
     }
-    await Customer.create({
+
+    const customer: CustomerModelInterface = {
         id: generateId(businessId),
         ...customerData.complete,
         businessId: businessId,
-    });
+    };
+
+    await runQuery(createCustomerQuery(customer), pool);
+};
+
+export const getACustomer = async (pool: Pool) => {
+    const res = await runQuery<CustomerModelInterface>(
+        SQL`SELECT * FROM "customers" LIMIT 1;`,
+        pool
+    );
+    const customer = res.rows[0];
+    if (!customer) throw new SeedingError("No customers found");
+    return customer;
 };

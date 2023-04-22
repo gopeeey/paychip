@@ -99,8 +99,19 @@ CREATE TABLE "walletChargeStacks" (
     UNIQUE("walletId", "chargeType")
 );
 
+CREATE TABLE "customers" (
+    "id" VARCHAR(60) PRIMARY KEY NOT NULL,
+    "businessId" INTEGER NOT NULL,
+    "name" VARCHAR(100),
+    "email" VARCHAR(100) NOT NULL,
+    "phone" VARCHAR(20),
+    UNIQUE("businessId", "email")
+);
+
 
 -- Down Migration
+DROP TABLE "customers";
+
 DROP TABLE "walletChargeStacks";
 
 DROP TABLE "chargeStacks";
