@@ -86,109 +86,6 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
     );
 
     testRoute(
-        "/charges",
-        (route, mockMiddleware) => () => {
-            describe("Given invalid data", () => {
-                it("should respond with a 400", async () => {
-                    if (mockMiddleware) mockMiddleware();
-
-                    const { name, businessId, ...noName } = chargeData;
-
-                    const { statusCode, body } = await testApp
-                        .post(route)
-                        .send(noName)
-                        .set({ Authorization: businessLevelToken });
-
-                    expect(statusCode).toBe(400);
-                    expect(body).toHaveProperty("message");
-                });
-            });
-
-            describe("Given valid data", () => {
-                it("should create and respond with a new standard charge object", async () => {
-                    if (mockMiddleware) mockMiddleware();
-
-                    const { businessId, ...data } = new CreateChargeDto({
-                        ...chargeData,
-                        businessId: businessJson.id,
-                    });
-                    chargesService.createCharge.mockResolvedValue(chargeJson);
-                    const { statusCode, body } = await testApp
-                        .post(route)
-                        .send(data)
-                        .set({ Authorization: businessLevelToken });
-
-                    expect(statusCode).toBe(201);
-                    expect(body).toHaveProperty("data.charge", standardCharge);
-                    expect(chargesService.createCharge).toHaveBeenCalledTimes(1);
-                    expect(chargesService.createCharge).toHaveBeenCalledWith({
-                        ...data,
-                        businessId: businessJson.id,
-                    });
-                });
-            });
-        },
-        { middlewareDeps }
-    );
-
-    testRoute(
-        "/charges/stacks/add-charges",
-        (route, mockMiddleware) => () => {
-            describe("Given invalid data", () => {
-                it("should respond with a 400", async () => {
-                    if (mockMiddleware) mockMiddleware();
-
-                    const dataSet = [
-                        { stackId: "saldfjald" },
-                        { chargeIds: [], stackId: "a;dlfkajsd" },
-                        { chargeIds: ["aldkfj", "asdlfajsld"] },
-                    ];
-
-                    for (const data of dataSet) {
-                        const { statusCode, body } = await testApp
-                            .post(route)
-                            .send(data)
-                            .set({ Authorization: businessLevelToken });
-
-                        expect(statusCode).toBe(400);
-                        expect(body).toHaveProperty("message");
-                    }
-                });
-            });
-
-            describe("Given valid data", () => {
-                it("should respond with a 200 and the standard charge stack object", async () => {
-                    if (mockMiddleware) mockMiddleware();
-
-                    chargesService.addChargesToStack.mockResolvedValue(chargeStackJson.wallet);
-                    validateBusinessObjectIdMock.mockImplementation(() => {});
-
-                    const data = new AddChargesToStackDto({
-                        stackId: chargeStackJson.wallet.id,
-                        chargeIds: ["sdlkfj"],
-                    });
-
-                    const { statusCode, body } = await testApp
-                        .post(route)
-                        .send(data)
-                        .set({ Authorization: businessLevelToken });
-
-                    expect(statusCode).toBe(200);
-                    expect(body).toHaveProperty("data.chargeStack", standardChargeStack.wallet);
-                    expect(chargesService.addChargesToStack).toHaveBeenCalledTimes(1);
-                    expect(chargesService.addChargesToStack).toHaveBeenCalledWith(data);
-                    expect(validateBusinessObjectIdMock).toHaveBeenCalledTimes(1);
-                    expect(validateBusinessObjectIdMock).toHaveBeenCalledWith(
-                        [...data.chargeIds, data.stackId],
-                        businessJson.id
-                    );
-                });
-            });
-        },
-        { middlewareDeps }
-    );
-
-    testRoute(
         "/charges/stacks/add-to-wallet",
         (route, mockMiddleware) => () => {
             describe("Given invalid data", () => {
@@ -198,14 +95,14 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
                     const dto = new AddChargeStackToWalletDto({
                         walletId: walletJson.id,
                         chargeStackId: chargeStackJson.wallet.id,
-                        chargeStackType: "funding",
+                        chargeType: "funding",
                     });
 
                     const { walletId, ...noWalletId } = dto;
                     const { chargeStackId, ...noChargeStackId } = dto;
-                    const { chargeStackType, ...noChargeStackType } = dto;
+                    const { chargeType, ...noChargeType } = dto;
 
-                    const invalidData = [noWalletId, noChargeStackId, noChargeStackType];
+                    const invalidData = [noWalletId, noChargeStackId, noChargeType];
 
                     for (const data of invalidData) {
                         const { statusCode, body } = await testApp
@@ -229,7 +126,7 @@ describe("TESTING CHARGE SCHEME ROUTES", () => {
                     const dto = new AddChargeStackToWalletDto({
                         walletId: walletJson.id,
                         chargeStackId: chargeStackJson.wallet.id,
-                        chargeStackType: "funding",
+                        chargeType: "funding",
                     });
 
                     const { statusCode } = await testApp

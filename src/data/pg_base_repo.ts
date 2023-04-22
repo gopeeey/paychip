@@ -3,13 +3,10 @@ import { Pool } from "pg";
 import { PgSession } from "./pg_session";
 
 export class PgBaseRepo implements BaseRepoInterface {
-    pool: Pool;
-    constructor(pool: Pool) {
-        this.pool = pool;
-    }
+    constructor(private readonly pgPool: Pool) {}
 
     startSession: BaseRepoInterface["startSession"] = async () => {
-        const client = await this.pool.connect();
+        const client = await this.pgPool.connect();
         const session = await PgSession.start(client);
         return session;
     };

@@ -47,35 +47,11 @@ describe("TESTING CHARGES SERVICE", () => {
             const data = new AddChargeStackToWalletDto({
                 chargeStackId: chargeStackJson.wallet.id,
                 walletId: walletJson.id,
-                chargeStackType: "funding",
+                chargeType: "funding",
             });
             await chargesService.addStackToWallet(data);
             expect(repoMock.addStackToWallet).toHaveBeenCalledTimes(1);
             expect(repoMock.addStackToWallet).toHaveBeenCalledWith(data);
-        });
-    });
-
-    describe("Testing createCharge", () => {
-        it("should create and return a charge object", async () => {
-            repoMock.createCharge.mockResolvedValue(chargeJson);
-            const charge = await chargesService.createCharge(chargeData);
-            expect(charge).toEqual(chargeJson);
-            expect(repoMock.createCharge).toHaveBeenCalledTimes(1);
-            expect(repoMock.createCharge).toHaveBeenCalledWith(chargeData);
-        });
-    });
-
-    describe("Testing addChargesToStack", () => {
-        it("should call the appropriate methods and return a stack object", async () => {
-            repoMock.addChargesToStack.mockResolvedValue(chargeStackJson);
-            const data = {
-                chargeIds: [chargeJson.id],
-                stackId: chargeStackJson.customer.id,
-            };
-            const result = await chargesService.addChargesToStack(data);
-            expect(result).toEqual(chargeStackJson);
-            expect(repoMock.addChargesToStack).toHaveBeenCalledTimes(1);
-            expect(repoMock.addChargesToStack).toHaveBeenCalledWith(data);
         });
     });
 });

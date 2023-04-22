@@ -1,5 +1,6 @@
 -- Up Migration
 CREATE TYPE PAIDBY AS ENUM ('wallet', 'customer');
+CREATE TYPE CHARGETYPE AS ENUM ('funding', 'withdrawal', 'walletIn', 'walletOut');
 
 CREATE TABLE "accounts" (
     "id" VARCHAR(60) PRIMARY KEY UNIQUE NOT NULL,
@@ -81,9 +82,29 @@ CREATE TABLE "wallets" (
     UNIQUE("businessId", "currency", "email")
 );
 
+CREATE TABLE "chargeStacks" (
+    "id" VARCHAR(60) PRIMARY KEY NOT NULL,
+    "businessId" INTEGER NOT NULL,
+    "name" VARCHAR(100) NOT NULL,
+    "description" VARCHAR(140),
+    "charges" VARCHAR NOT NULL,
+    "paidBy" PAIDBY,
+    FOREIGN KEY("businessId") REFERENCES "businesses"("id") ON DELETE CASCADE
+);
+
+CREATE TABLE "walletChargeStacks" (
+    "chargeStackId" VARCHAR(60) NOT NULL,
+    "walletId" VARCHAR(60) NOT NULL,
+    "chargeType" CHARGETYPE NOT NULL,
+    UNIQUE("walletId", "chargeType")
+);
 
 
 -- Down Migration
+DROP TABLE "walletChargeStacks";
+
+DROP TABLE "chargeStacks";
+
 DROP TABLE "wallets";
 
 DROP TABLE "businessWallets";
@@ -96,6 +117,10 @@ DROP TABLE "currencies";
 
 DROP TABLE "accounts";
 
+DROP TYPE IF EXISTS CHARGETYPE;
+
 DROP TYPE IF EXISTS PAIDBY;
+
+
 
 

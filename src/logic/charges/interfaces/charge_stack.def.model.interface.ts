@@ -9,5 +9,6 @@ export interface ChargeStackModelInterfaceDef extends BaseModelInterface {
     businessId: BusinessModelInterfaceDef["id"];
     name: string;
     description: string | null;
+    charges: string;
     paidBy: PaidByType | null;
 }

@@ -1,5 +1,5 @@
 import {
-    allowedChargeStackTypes,
+    allowedChargeTypes,
     ChargeStackModelInterface,
     WalletChargeStackModelInterface,
 } from "@logic/charges";
@@ -20,7 +20,7 @@ export class WalletChargeStack
     declare id: WalletChargeStackModelInterface["id"];
     declare walletId: ForeignKey<WalletChargeStackModelInterface["walletId"]>;
     declare chargeStackId: ForeignKey<ChargeStackModelInterface["id"]>;
-    declare chargeStackType: WalletChargeStackModelInterface["chargeStackType"];
+    declare chargeType: WalletChargeStackModelInterface["chargeType"];
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
@@ -35,7 +35,7 @@ WalletChargeStack.init(
             unique: true,
             allowNull: false,
         },
-        chargeStackType: { type: DataTypes.ENUM(...allowedChargeStackTypes), allowNull: false },
+        chargeType: { type: DataTypes.ENUM(...allowedChargeTypes), allowNull: false },
 
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,

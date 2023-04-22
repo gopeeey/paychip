@@ -20,6 +20,7 @@ export class ChargeStack
     declare name: ChargeStackModelInterface["name"];
     declare description: ChargeStackModelInterface["description"];
     declare paidBy: ChargeStackModelInterface["paidBy"];
+    declare charges: ChargeStackModelInterface["charges"];
 
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
@@ -37,6 +38,7 @@ ChargeStack.init(
         name: { type: DataTypes.STRING, allowNull: false },
         description: { type: DataTypes.STRING },
         paidBy: { type: DataTypes.ENUM(...allowedPaidBy), allowNull: true },
+        charges: { type: DataTypes.STRING },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE,
         deletedAt: DataTypes.DATE,
