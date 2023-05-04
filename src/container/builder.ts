@@ -1,10 +1,9 @@
 import { AccountRepo } from "@data/accounts";
-import { Business, BusinessRepo } from "@data/business";
+import { BusinessRepo } from "@data/business";
 import { BusinessWalletRepo } from "@data/business_wallet";
 import { ChargesRepo } from "@data/charges";
-import { Country, CountryRepo } from "@data/country";
+import { CountryRepo } from "@data/country";
 import { CurrencyRepo } from "@data/currency";
-import { StartSequelizeSession } from "@data/sequelize_session";
 import { WalletRepo } from "@data/wallet";
 import { AccountService } from "@logic/accounts";
 import { BusinessService } from "@logic/business";
@@ -22,31 +21,31 @@ export const buildContainer = async (pool: Pool) => {
     const accountRepo = new AccountRepo(pool);
     const accountService = new AccountService({ repo: accountRepo });
 
-    const countryRepo = new CountryRepo(Country);
+    const countryRepo = new CountryRepo(pool);
     const countryService = new CountryService({ repo: countryRepo });
 
     const currencyRepo = new CurrencyRepo(pool);
     const currencyService = new CurrencyService({ repo: currencyRepo });
 
-    const businessWalletRepo = new BusinessWalletRepo();
+    const businessWalletRepo = new BusinessWalletRepo(pool);
     const businessWalletService = new BusinessWalletService({
         repo: businessWalletRepo,
         validateCurrencySupported: currencyService.validateIsSupported,
     });
 
-    const businessRepo = new BusinessRepo(Business);
+    const businessRepo = new BusinessRepo(pool);
     const businessService = new BusinessService({
         repo: businessRepo,
         getAccount: accountService.getById,
         getCountry: countryService.getByCode,
-        startSession: StartSequelizeSession,
+        startSession: businessRepo.startSession,
         createBusinessWallet: businessWalletService.createBusinessWallet,
     });
 
-    const chargesRepo = new ChargesRepo();
+    const chargesRepo = new ChargesRepo(pool);
     const chargesService = new ChargesService({ repo: chargesRepo });
 
-    const walletRepo = new WalletRepo();
+    const walletRepo = new WalletRepo(pool);
     const walletService = new WalletService({
         repo: walletRepo,
         getBusinessWallet: businessWalletService.getBusinessWalletByCurrency,

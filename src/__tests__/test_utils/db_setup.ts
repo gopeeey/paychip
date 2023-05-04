@@ -1,4 +1,3 @@
-import { db } from "@data/db_old";
 import config from "src/config";
 import runnerFunc from "node-pg-migrate";
 import path from "path";
@@ -18,10 +17,6 @@ export const runMigrations = async (direction: "up" | "down", pool: Pool, count 
         migrationsTable: "pgmigrations",
     });
     client.release();
-};
-
-export const closeDbConnection = async () => {
-    await db.close();
 };
 
 export const DBSetup = (seeder: (pool: Pool) => Promise<void>) => {

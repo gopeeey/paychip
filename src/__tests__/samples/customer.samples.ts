@@ -1,5 +1,4 @@
 import { CreateCustomerDto, CustomerModelInterface, StandardCustomerDto } from "@logic/customer";
-import { Customer } from "@data/customer";
 import { businessSeeder, getABusiness } from "./business.samples";
 import { generateId } from "src/utils";
 import { BusinessModelInterface } from "@logic/business";
@@ -24,20 +23,11 @@ export const customerData = {
     }),
 };
 
-export const customerObj = {
-    complete: new Customer({ ...customerData.complete, id: "something" }),
-    incomplete: new Customer({ ...customerData.incomplete, id: "something" }),
-};
-
-export const customerObjArr = {
-    complete: [customerObj.complete],
-    incomplete: [customerObj.incomplete],
-    mixed: [customerObj.complete, customerObj.incomplete],
-};
-
-export const customerJson = {
-    complete: customerObj.complete.toJSON(),
-    incomplete: customerObj.incomplete.toJSON(),
+export const customerJson: {
+    [key: string]: CustomerModelInterface;
+} = {
+    complete: { ...customerData.complete, id: "something" },
+    incomplete: { ...customerData.incomplete, id: "something" },
 };
 
 export const customerJsonArray = {

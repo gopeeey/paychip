@@ -1,7 +1,5 @@
-import { CreateCustomerDto, CustomerModelInterface, CustomerRepoInterface } from "@logic/customer";
-import { Transaction } from "sequelize";
+import { CustomerModelInterface, CustomerRepoInterface } from "@logic/customer";
 import { generateId } from "src/utils";
-import { Customer } from "./customer.model";
 import { PgBaseRepo } from "@data/pg_base_repo";
 import { Pool } from "pg";
 import { runQuery } from "@data/db";

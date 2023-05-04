@@ -4,7 +4,7 @@ import {
     CreateAccountDto,
     AccountModelInterface,
 } from "@logic/accounts";
-import { Account, createAccountQuery } from "@data/accounts";
+import { createAccountQuery } from "@data/accounts";
 import { generateId } from "src/utils";
 import { runQuery } from "@data/db";
 import { Pool } from "pg";
@@ -16,9 +16,7 @@ export const accountData: CreateAccountDto = {
     password: "goldfish",
 };
 
-export const account = new Account({ ...accountData, id: "accountId" });
-
-export const accountJson = account.toJSON();
+export const accountJson: AccountModelInterface = { ...accountData, id: "accountId" };
 export const standardAccount = new StandardAccountDto(accountJson);
 export const loginDetails = new LoginDto({
     email: accountData.email,

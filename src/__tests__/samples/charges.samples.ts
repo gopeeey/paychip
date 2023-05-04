@@ -1,10 +1,7 @@
-import { ChargeStack, Charge } from "@data/charges";
 import {
     ChargeDto,
     ChargeStackModelInterface,
-    CreateChargeDto,
     CreateChargeStackDto,
-    StandardChargeDto,
     StandardChargeStackDto,
 } from "@logic/charges";
 import { generateId } from "src/utils";
@@ -28,16 +25,10 @@ export const chargeStackData = {
     noPaidBy: new CreateChargeStackDto({ ...sharedData }),
 };
 
-export const chargeStackObj = {
-    wallet: new ChargeStack({ ...chargeStackData.wallet, id: "some" }),
-    customer: new ChargeStack({ ...chargeStackData.customer, id: "some" }),
-    noPaidBy: new ChargeStack({ ...chargeStackData.noPaidBy, id: "some" }),
-};
-
 export const chargeStackJson = {
-    wallet: chargeStackObj.wallet.toJSON(),
-    customer: chargeStackObj.customer.toJSON(),
-    noPaidBy: chargeStackObj.noPaidBy.toJSON(),
+    wallet: { ...chargeStackData.wallet, id: "some" },
+    customer: { ...chargeStackData.customer, id: "some" },
+    noPaidBy: { ...chargeStackData.noPaidBy, id: "some" },
 };
 
 export const standardChargeStack = {
@@ -45,19 +36,6 @@ export const standardChargeStack = {
     customer: new StandardChargeStackDto(chargeStackJson.customer),
     noPaidBy: new StandardChargeStackDto(chargeStackJson.noPaidBy),
 };
-
-export const chargeData = new CreateChargeDto({
-    businessId: 1234,
-    flatCharge: 4000,
-    minimumPrincipalAmount: 120000,
-    name: "For something",
-    percentageCharge: 34.5,
-    percentageChargeCap: 4000,
-});
-
-export const chargeObj = new Charge({ ...chargeData, id: "charge_id" });
-export const chargeJson = chargeObj.toJSON();
-export const standardCharge = new StandardChargeDto(chargeJson);
 
 export const chargesSeeder = async (pool: Pool) => {
     await walletSeeder(pool);

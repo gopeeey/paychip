@@ -2,7 +2,6 @@ import {
     CurrencyModelInterface,
     CurrencyNotSupportedError,
     CurrencyService,
-    CurrencyServiceDependencies,
 } from "@logic/currency";
 import { CurrencyRepo } from "@data/currency";
 import { createSpies } from "src/__tests__/mocks";

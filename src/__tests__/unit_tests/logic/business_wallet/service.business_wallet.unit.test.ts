@@ -4,10 +4,11 @@ import {
     BusinessWalletService,
     CreateBusinessWalletDto,
 } from "@logic/business_wallet";
+import { Pool } from "pg";
 import { createSpies, sessionMock } from "src/__tests__/mocks";
 import { businessJson, bwData, bwJson } from "src/__tests__/samples";
 
-const repo = new BusinessWalletRepo();
+const repo = new BusinessWalletRepo({} as unknown as Pool);
 
 const repoSpies = createSpies(repo);
 const validateCurrencySupportedMock = jest.fn(async () => {});

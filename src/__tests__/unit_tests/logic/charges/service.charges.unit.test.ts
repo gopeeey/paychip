@@ -1,4 +1,3 @@
-import { ChargeStackCharge } from "@data/charges";
 import {} from "@logic/charges";
 import {
     ChargesService,
@@ -6,13 +5,7 @@ import {
     AddChargeStackToWalletDto,
 } from "@logic/charges";
 import { sessionMock } from "src/__tests__/mocks";
-import {
-    chargeData,
-    chargeJson,
-    chargeStackData,
-    chargeStackJson,
-    walletJson,
-} from "src/__tests__/samples";
+import { chargeStackData, chargeStackJson, walletJson } from "src/__tests__/samples";
 
 const repoMock = {
     createChargeStack: jest.fn(),

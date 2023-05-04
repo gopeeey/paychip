@@ -1,5 +1,5 @@
 import { CreateCurrencyDto, CurrencyModelInterface, StandardCurrencyDto } from "@logic/currency";
-import { Currency, createCurrencyQuery } from "@data/currency";
+import { createCurrencyQuery } from "@data/currency";
 import { ChargeDto } from "@logic/charges";
 import { Pool } from "pg";
 import { runQuery } from "@data/db";
@@ -43,11 +43,7 @@ export const currencyData: CreateCurrencyDto = new CreateCurrencyDto({
     ),
 });
 
-export const currencyObj = new Currency({ ...currencyData, active: true });
-
-export const currencyObjArr = [currencyObj];
-
-export const currencyJson = currencyObj.toJSON();
+export const currencyJson: CurrencyModelInterface = { ...currencyData, active: true };
 
 export const currencyJsonArr = [currencyJson];
 

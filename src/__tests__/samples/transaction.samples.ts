@@ -1,9 +1,6 @@
-import { Customer } from "@data/customer";
-import { Transaction, createTransactionQuery } from "@data/transaction";
-import { Wallet } from "@data/wallet";
-import { CreateTransactionDto } from "@logic/transaction";
+import { createTransactionQuery } from "@data/transaction";
+import { CreateTransactionDto, TransactionModelInterface } from "@logic/transaction";
 import { generateId } from "src/utils";
-import { SeedingError } from "../test_utils";
 import { customerJson, customerSeeder, getACustomer } from "./customer.samples";
 import { getAWallet, walletJson, walletSeeder } from "./wallet.samples";
 import { bwJson } from "./business_wallet.samples";
@@ -36,13 +33,11 @@ export const transactionData = new CreateTransactionDto({
     provider: "paystack",
 });
 
-export const transactionObj = new Transaction({
+export const transactionJson: TransactionModelInterface = {
     ...transactionData,
     id: "somehere",
     status: "pending",
-});
-
-export const transactionJson = transactionObj.toJSON();
+};
 
 export const transactionSeeder = async (pool: Pool) => {
     await walletSeeder(pool);

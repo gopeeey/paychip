@@ -1,11 +1,9 @@
-import { Business } from "@data/business";
-import { CustomerRepo, Customer } from "@data/customer";
+import { CustomerRepo } from "@data/customer";
 import { runQuery } from "@data/db";
-import { StartSequelizeSession } from "@data/sequelize_session";
 import { CreateCustomerDto, CustomerModelInterface } from "@logic/customer";
 import SQL from "sql-template-strings";
 import { customerSeeder, getABusiness, getACustomer } from "src/__tests__/samples";
-import { DBSetup, SeedingError } from "src/__tests__/test_utils";
+import { DBSetup } from "src/__tests__/test_utils";
 
 const pool = DBSetup(customerSeeder);
 

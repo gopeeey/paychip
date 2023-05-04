@@ -1,5 +1,5 @@
 import { CreateWalletDto, StandardWalletDto, WalletModelInterface } from "@logic/wallet";
-import { Wallet, createWalletQuery } from "@data/wallet";
+import { createWalletQuery } from "@data/wallet";
 import { SeedingError } from "../test_utils";
 import { generateId } from "src/utils";
 import { bwJson, bwSeeder, getABusinessWalletByBusinessId } from "./business_wallet.samples";
@@ -20,8 +20,12 @@ export const walletData = new CreateWalletDto({
     waiveWalletOutCharges: false,
 });
 
-export const walletObj = new Wallet({ ...walletData, id: "parentwallet" });
-export const walletJson = walletObj.toJSON();
+export const walletJson: WalletModelInterface = {
+    ...walletData,
+    id: "parentwallet",
+    active: true,
+    balance: 0,
+};
 
 export const standardWallet = new StandardWalletDto(walletJson);
 

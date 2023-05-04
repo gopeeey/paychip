@@ -2,10 +2,7 @@ import {
     BusinessWalletModelInterface,
     BusinessWalletRepoInterface as BusinessWalletRepoInterface,
 } from "@logic/business_wallet";
-import { Op, Transaction } from "sequelize";
 import { generateId } from "src/utils";
-import { bwJson } from "src/__tests__/samples/business_wallet.samples";
-import { BusinessWallet } from "./business_wallet.model";
 import { Pool } from "pg";
 import { PgBaseRepo } from "@data/pg_base_repo";
 import { runQuery } from "@data/db";

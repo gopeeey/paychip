@@ -18,6 +18,6 @@ export interface WalletModelInterfaceDef extends BaseModelInterface {
     waiveWithdrawalCharges: boolean;
     waiveWalletInCharges: boolean;
     waiveWalletOutCharges: boolean;
-    fundingChargesPaidBy: ChargeStackModelInterfaceDef["paidBy"] | null;
-    withdrawalChargesPaidBy: ChargeStackModelInterfaceDef["paidBy"] | null;
+    fundingChargesPaidBy: ChargeStackModelInterfaceDef["paidBy"] | null | undefined;
+    withdrawalChargesPaidBy: ChargeStackModelInterfaceDef["paidBy"] | null | undefined;
 }

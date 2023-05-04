@@ -1,4 +1,4 @@
-import { BusinessWallet, createBusinessWalletQuery } from "@data/business_wallet";
+import { createBusinessWalletQuery } from "@data/business_wallet";
 import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@logic/business_wallet";
 import { generateId } from "src/utils";
 import { businessJson, businessSeeder, getABusiness } from "./business.samples";
@@ -14,7 +14,7 @@ export const bwData = new CreateBusinessWalletDto({
     currencyCode: currencyJson.isoCode,
 });
 
-export const bwObj = new BusinessWallet({
+export const bwJson: BusinessWalletModelInterface = {
     ...bwData,
     id: "something",
     balance: 0,
@@ -30,9 +30,7 @@ export const bwObj = new BusinessWallet({
     w_walletOutCs: "[]",
     w_fundingChargesPaidBy: "wallet",
     w_withdrawalChargesPaidBy: "wallet",
-});
-
-export const bwJson = bwObj.toJSON();
+};
 
 export const bwSeeder = async (pool: Pool) => {
     await businessSeeder(pool);
