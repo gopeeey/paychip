@@ -9,6 +9,7 @@ export class CreateTransactionDto implements RequiredProps {
     currency: TransactionModelInterface["currency"];
     bwId: TransactionModelInterface["bwId"];
     channel: TransactionModelInterface["channel"];
+    status: TransactionModelInterface["status"];
     amount: TransactionModelInterface["amount"];
     settledAmount: TransactionModelInterface["settledAmount"];
     senderPaid: TransactionModelInterface["senderPaid"];
@@ -49,15 +50,16 @@ export class CreateTransactionDto implements RequiredProps {
         this.platformGot = body.platformGot;
         this.businessChargePaidBy = body.businessChargePaidBy;
         this.platformChargePaidBy = body.platformChargePaidBy;
-        this.senderWalletId = body.senderWalletId;
-        this.receiverWalletId = body.receiverWalletId;
-        this.provider = body.provider;
-        this.providerRef = body.providerRef;
-        this.bankName = body.bankName;
-        this.accountNumber = body.accountNumber;
-        this.bankCode = body.bankCode;
-        this.accountName = body.accountName;
-        this.cardNumber = body.cardNumber;
-        this.cardType = body.cardType;
+        this.senderWalletId = body.senderWalletId || null;
+        this.receiverWalletId = body.receiverWalletId || null;
+        this.provider = body.provider || null;
+        this.providerRef = body.providerRef || null;
+        this.bankName = body.bankName || null;
+        this.accountNumber = body.accountNumber || null;
+        this.bankCode = body.bankCode || null;
+        this.accountName = body.accountName || null;
+        this.cardNumber = body.cardNumber || null;
+        this.cardType = body.cardType || null;
+        this.status = "pending";
     }
 }

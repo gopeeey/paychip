@@ -5,7 +5,6 @@ CREATE TYPE TRANSACTIONTYPE AS ENUM ('credit', 'debit');
 CREATE TYPE TRANSACTIONSTATUS AS ENUM ('pending', 'successful', 'failed');
 CREATE TYPE TRANSACTIONCHANNEL AS ENUM('bank', 'card', 'wallet');
 
-
 CREATE TABLE "accounts" (
     "id" VARCHAR(60) PRIMARY KEY UNIQUE NOT NULL,
     "name" VARCHAR(100) NOT NULL,
@@ -48,7 +47,7 @@ CREATE TABLE "businessWallets" (
     "id" VARCHAR(60) PRIMARY KEY NOT NULL,
     "businessId" INTEGER NOT NULL,
     "currencyCode" VARCHAR(3) NOT NULL,
-    "balance" BIGINT NOT NULL DEFAULT 0,
+    "balance" NUMERIC(15, 2) NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "customFundingCs" VARCHAR,
     "customWithdrawalCs" VARCHAR,
@@ -72,7 +71,7 @@ CREATE TABLE "wallets" (
     "businessWalletId" VARCHAR(60) NOT NULL,
     "currency" VARCHAR(60) NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT TRUE,
-    "balance" BIGINT NOT NULL DEFAULT 0,
+    "balance" NUMERIC(15, 2) NOT NULL DEFAULT 0,
     "email" VARCHAR(100) NOT NULL,
     "waiveFundingCharges" BOOLEAN NOT NULL DEFAULT FALSE,
     "waiveWithdrawalCharges" BOOLEAN NOT NULL DEFAULT FALSE,
@@ -80,6 +79,7 @@ CREATE TABLE "wallets" (
     "waiveWalletOutCharges" BOOLEAN NOT NULL DEFAULT FALSE,
     "fundingChargesPaidBy" PAIDBY DEFAULT NULL,
     "withdrawalChargesPaidBy" PAIDBY DEFAULT NULL,
+    "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY("businessId") REFERENCES "businesses"("id") ON DELETE CASCADE,
     FOREIGN KEY("businessWalletId") REFERENCES "businessWallets"("id") ON DELETE CASCADE,
     FOREIGN KEY("currency") REFERENCES "currencies"("isoCode") ON DELETE RESTRICT,
@@ -93,6 +93,7 @@ CREATE TABLE "chargeStacks" (
     "description" VARCHAR(140),
     "charges" VARCHAR NOT NULL,
     "paidBy" PAIDBY,
+    "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY("businessId") REFERENCES "businesses"("id") ON DELETE CASCADE
 );
 
@@ -100,6 +101,7 @@ CREATE TABLE "walletChargeStacks" (
     "chargeStackId" VARCHAR(60) NOT NULL,
     "walletId" VARCHAR(60) NOT NULL,
     "chargeType" CHARGETYPE NOT NULL,
+    "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     UNIQUE("walletId", "chargeType"),
     FOREIGN KEY("chargeStackId") REFERENCES "chargeStacks"("id") ON DELETE CASCADE,
     FOREIGN KEY("walletId") REFERENCES "wallets"("id") ON DELETE CASCADE
@@ -111,31 +113,37 @@ CREATE TABLE "customers" (
     "name" VARCHAR(100),
     "email" VARCHAR(100) NOT NULL,
     "phone" VARCHAR(20),
+    "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     UNIQUE("businessId", "email"),
-    FOREIGN KEY("businessId") REFERENCES "businesses"("id") ON DELETE SET NULL,
+    FOREIGN KEY("businessId") REFERENCES "businesses"("id") ON DELETE SET NULL
+);
 
+CREATE TABLE "walletCustomers" (
+    "walletId" VARCHAR(60) NOT NULL,
+    "customerId" VARCHAR(60) NOT NULL,
+    "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TABLE "transactions" (
     "id" VARCHAR(60) PRIMARY KEY NOT NULL,
-    "businessId" VARCHAR(60) NOT NULL,
+    "businessId" INTEGER NOT NULL,
     "customerId" VARCHAR(60),
-    "transactionsType" TRANSACTIONTYPE NOT NULL,
+    "transactionType" TRANSACTIONTYPE NOT NULL,
     "currency" VARCHAR(3) NOT NULL,
-    "bwId": VARCHAR(60) NOT NULL,
+    "bwId" VARCHAR(60) NOT NULL,
     "status" TRANSACTIONSTATUS NOT NULL DEFAULT 'pending',
     "channel" TRANSACTIONCHANNEL NOT NULL,
-    "amount" BIGINT NOT NULL,
-    "settledAmount" BIGINT NOT NULL,
-    "senderPaid" BIGINT NOT NULL DEFAULT 0,
-    "receiverPaid" BIGINT NOT NULL DEFAULT 0,
-    "businessPaid" BIGINT NOT NULL DEFAULT 0,
-    "businessCharge" BIGINT NOT NULL DEFAULT 0,
-    "platformCharge" BIGINT NOT NULL DEFAULT 0,
-    "businessGot" BIGINT NOT NULL DEFAULT 0,
-    "platformGot" BIGINT NOT NULL DEFAULT 0,
-    "businessChargePaidBy" BIGINT NOT NULL DEFAULT 0,
-    "platformChargePaidBy" BIGINT NOT NULL DEFAULT 0,
+    "amount" NUMERIC(15, 2) NOT NULL,
+    "settledAmount" NUMERIC(15, 2) NOT NULL,
+    "senderPaid" NUMERIC(15, 2) NOT NULL DEFAULT 0,
+    "receiverPaid" NUMERIC(15, 2) NOT NULL DEFAULT 0,
+    "businessPaid" NUMERIC(15, 2) NOT NULL DEFAULT 0,
+    "businessCharge" NUMERIC(15, 2) NOT NULL DEFAULT 0,
+    "platformCharge" NUMERIC(15, 2) NOT NULL DEFAULT 0,
+    "businessGot" NUMERIC(15, 2) NOT NULL DEFAULT 0,
+    "platformGot" NUMERIC(15, 2) NOT NULL DEFAULT 0,
+    "businessChargePaidBy" PAIDBY NOT NULL,
+    "platformChargePaidBy" PAIDBY NOT NULL,
     "senderWalletId" VARCHAR(60),
     "receiverWalletId" VARCHAR(60),
     "provider" VARCHAR(20),
@@ -146,6 +154,7 @@ CREATE TABLE "transactions" (
     "accountName" VARCHAR(100),
     "cardNumber" VARCHAR(20),
     "cardType" VARCHAR(10),
+    "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY("businessId") REFERENCES "businesses"("id") ON DELETE CASCADE,
     FOREIGN KEY("customerId") REFERENCES "customers"("id") ON DELETE SET NULL,
     FOREIGN KEY("currency") REFERENCES "currencies"("isoCode") ON DELETE CASCADE,
@@ -157,6 +166,8 @@ CREATE TABLE "transactions" (
 
 -- Down Migration
 DROP TABLE "transactions";
+
+DROP TABLE "walletCustomers";
 
 DROP TABLE "customers";
 

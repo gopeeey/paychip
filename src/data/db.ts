@@ -1,7 +1,7 @@
-import { Pool, QueryResult, QueryResultRow, PoolClient } from "pg";
+import { Pool, QueryResult, QueryResultRow, PoolClient, types } from "pg";
 import { SQLStatement } from "sql-template-strings";
 import config from "../config";
-
+types.setTypeParser(types.builtins.NUMERIC, (num) => parseFloat(num));
 const postgresConfig = config.db.postgres;
 const postgresTestConfig = config.db.postgresTest;
 

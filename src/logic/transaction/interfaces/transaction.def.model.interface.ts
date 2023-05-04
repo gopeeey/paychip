@@ -41,14 +41,14 @@ export interface TransactionModelInterfaceDef extends BaseModelInterface {
     platformGot: number;
     businessChargePaidBy: PaidByType;
     platformChargePaidBy: PaidByType;
-    senderWalletId?: WalletModelInterfaceDef["id"];
-    receiverWalletId?: WalletModelInterfaceDef["id"];
-    provider?: PaymentProviderType;
-    providerRef?: string;
-    bankName?: string;
-    accountNumber?: string;
-    bankCode?: string;
-    accountName?: string;
-    cardNumber?: string;
-    cardType?: string;
+    senderWalletId?: WalletModelInterfaceDef["id"] | null;
+    receiverWalletId?: WalletModelInterfaceDef["id"] | null;
+    provider?: PaymentProviderType | null;
+    providerRef?: string | null;
+    bankName?: string | null;
+    accountNumber?: string | null;
+    bankCode?: string | null;
+    accountName?: string | null;
+    cardNumber?: string | null;
+    cardType?: string | null;
 }

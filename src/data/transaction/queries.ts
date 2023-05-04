@@ -1,0 +1,68 @@
+import { TransactionModelInterface } from "@logic/transaction";
+import SQL from "sql-template-strings";
+
+export const createTransactionQuery = (transaction: TransactionModelInterface) => {
+    return SQL`
+        INSERT INTO "transactions" (
+            "id",
+            "businessId",
+            "customerId",
+            "transactionType",
+            "currency",
+            "bwId",
+            "status",
+            "channel",
+            "amount",
+            "settledAmount",
+            "senderPaid",
+            "receiverPaid",
+            "businessPaid",
+            "businessCharge",
+            "platformCharge",
+            "businessGot",
+            "platformGot",
+            "businessChargePaidBy",
+            "platformChargePaidBy",
+            "senderWalletId",
+            "receiverWalletId",
+            "provider",
+            "providerRef",
+            "bankName",
+            "accountNumber",
+            "bankCode",
+            "accountName",
+            "cardNumber",
+            "cardType"
+        ) VALUES (
+            ${transaction.id},
+            ${transaction.businessId},
+            ${transaction.customerId},
+            ${transaction.transactionType},
+            ${transaction.currency},
+            ${transaction.bwId},
+            ${transaction.status},
+            ${transaction.channel},
+            ${transaction.amount},
+            ${transaction.settledAmount},
+            ${transaction.senderPaid},
+            ${transaction.receiverPaid},
+            ${transaction.businessPaid},
+            ${transaction.businessCharge},
+            ${transaction.platformCharge},
+            ${transaction.businessGot},
+            ${transaction.platformGot},
+            ${transaction.businessChargePaidBy},
+            ${transaction.platformChargePaidBy},
+            ${transaction.senderWalletId},
+            ${transaction.receiverWalletId},
+            ${transaction.provider},
+            ${transaction.providerRef},
+            ${transaction.bankName},
+            ${transaction.accountNumber},
+            ${transaction.bankCode},
+            ${transaction.accountName},
+            ${transaction.cardNumber},
+            ${transaction.cardType}
+        ) RETURNING *;
+    `;
+};
