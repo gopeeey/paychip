@@ -1,33 +1,42 @@
 import { BusinessModelInterface, BusinessRepoInterface } from "@logic/business";
-import { Transaction } from "sequelize";
-import { Business } from "./business.model";
+import { runQuery } from "@data/db";
+import { Pool } from "pg";
+import * as queries from "./queries";
+import { PgSession } from "@data/pg_session";
+import { PgBaseRepo } from "@data/pg_base_repo";
 
-export class BusinessRepo implements BusinessRepoInterface {
-    constructor(private readonly _modelContext: typeof Business) {}
+export class BusinessRepo extends PgBaseRepo implements BusinessRepoInterface {
+    constructor(private readonly __pool: Pool) {
+        super(__pool);
+    }
 
     create: BusinessRepoInterface["create"] = async (createBusinessDto, session) => {
-        const business = await this._modelContext.create(createBusinessDto, {
-            transaction: session as Transaction,
-        });
-        return business.toJSON();
+        const res = await runQuery<BusinessModelInterface>(
+            queries.createBusinessQuery(createBusinessDto),
+            this.__pool,
+            (session as PgSession)?.client
+        );
+        const business = res.rows[0];
+        if (!business) throw new Error("Error creating business");
+        return business;
     };
 
     findById = async (id: BusinessModelInterface["id"]) => {
-        const business = await this._modelContext.findByPk(id);
-        return business ? business.toJSON() : null;
+        const res = await runQuery<BusinessModelInterface>(queries.findById(id), this.__pool);
+        return res.rows[0] || null;
     };
 
     getOwnerBusinesses = async (ownerId: BusinessModelInterface["ownerId"]) => {
-        const businesses = await this._modelContext.findAll({
-            where: { ownerId },
-            include: "currencies",
-        });
-        return businesses.map((business) => business.toJSON());
+        const res = await runQuery<BusinessModelInterface>(
+            queries.getOwnerBusinesses(ownerId),
+            this.__pool
+        );
+        return res.rows;
     };
 
-    getFullBusiness = async (businessId: BusinessModelInterface["id"]) => {
-        const business = await this._modelContext.findByPk(businessId, { include: "currencies" });
-        if (!business) return null;
-        return business.toJSON();
-    };
+    // getFullBusiness = async (businessId: BusinessModelInterface["id"]) => {
+    //     const business = await this._modelContext.findByPk(businessId, { include: "currencies" });
+    //     if (!business) return null;
+    //     return business.toJSON();
+    // };
 }

@@ -1,25 +1,32 @@
-import { CurrencyRepo, Currency, BusinessCurrency } from "@data/currency";
+import { CurrencyRepo } from "@data/currency";
+import { runQuery } from "@data/db";
+import { CurrencyModelInterface } from "@logic/currency";
 import { currencySeeder } from "src/__tests__/samples";
 import { DBSetup } from "src/__tests__/test_utils";
 
-const currencyRepo = new CurrencyRepo();
+const pool = DBSetup(currencySeeder);
 
-DBSetup(currencySeeder);
+const currencyRepo = new CurrencyRepo(pool);
 
 describe("TESTING CURRENCY REPO", () => {
     describe("Testing getAll", () => {
         it("should return an array of currencyJson objects", async () => {
-            const expected = await Currency.findAll();
+            const res = await runQuery<CurrencyModelInterface>("SELECT * FROM currencies", pool);
+            const expected = res.rows;
             const currencies = await currencyRepo.getAll();
-            expect(currencies).toEqual(expected.map((ex) => ex.toJSON()));
+            expect(currencies).toEqual(expected);
         });
     });
 
     describe("Testing getActive", () => {
         it("should return an array of active currency json objects", async () => {
-            const expected = await Currency.findAll({ where: { active: true } });
+            const res = await runQuery<CurrencyModelInterface>(
+                "SELECT * FROM currencies WHERE active = true",
+                pool
+            );
+            const expected = res.rows;
             const currencies = await currencyRepo.getActive();
-            expect(currencies).toEqual(expected.map((ex) => ex.toJSON()));
+            expect(currencies).toEqual(expected);
         });
     });
 });

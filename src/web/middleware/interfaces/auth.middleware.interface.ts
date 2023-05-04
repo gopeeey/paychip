@@ -1,4 +1,4 @@
-import { AccountServiceInterface, AccountModelInterface } from "@logic/account";
+import { AccountServiceInterface, AccountModelInterface } from "@logic/accounts";
 import { BusinessServiceInterface, BusinessModelInterface } from "@logic/business";
 import { NextFunction, Request, Response } from "express";
 

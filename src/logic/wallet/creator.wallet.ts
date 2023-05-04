@@ -42,7 +42,7 @@ export class WalletCreator implements WalletCreatorInterface {
 
     private persistWallet = async () => {
         this.wallet = await this._repo.create(
-            { ...this.createWalletDto, bwId: this.businessWallet.id },
+            { ...this.createWalletDto, businessWalletId: this.businessWallet.id },
             this.session
         );
     };

@@ -1,24 +1,44 @@
-import { BusinessWalletRepoInterface as BwRepoInterface } from "@logic/business_wallet";
-import { Op, Transaction } from "sequelize";
+import {
+    BusinessWalletModelInterface,
+    BusinessWalletRepoInterface as BusinessWalletRepoInterface,
+} from "@logic/business_wallet";
 import { generateId } from "src/utils";
-import { bwJson } from "src/__tests__/samples/business_wallet.samples";
-import { BusinessWallet } from "./business_wallet.model";
+import { Pool } from "pg";
+import { PgBaseRepo } from "@data/pg_base_repo";
+import { runQuery } from "@data/db";
+import * as queries from "./queries";
+import { PgSession } from "@data/pg_session";
 
-export class BusinessWalletRepo implements BwRepoInterface {
-    create: BwRepoInterface["create"] = async (createBusinessWalletDto, session) => {
-        const bw = await BusinessWallet.create(
-            {
-                ...createBusinessWalletDto,
-                id: generateId(createBusinessWalletDto.businessId),
-            },
-            { transaction: session as Transaction }
+export class BusinessWalletRepo extends PgBaseRepo implements BusinessWalletRepoInterface {
+    constructor(private readonly __pool: Pool) {
+        super(__pool);
+    }
+
+    create: BusinessWalletRepoInterface["create"] = async (createBusinessWalletDto, session) => {
+        const data = {
+            ...createBusinessWalletDto,
+            id: generateId(createBusinessWalletDto.businessId),
+        };
+
+        const query = queries.createBusinessWalletQuery(data);
+        const res = await runQuery<BusinessWalletModelInterface>(
+            query,
+            this.__pool,
+            (session as PgSession)?.client
         );
+        const businessWallet = res.rows[0];
 
-        return bw.toJSON();
+        return businessWallet;
     };
 
-    getByCurrency: BwRepoInterface["getByCurrency"] = async (businessId, currencyCode) => {
-        const bw = await BusinessWallet.findOne({ where: { businessId, currencyCode } });
-        return bw ? bw.toJSON() : null;
+    getByCurrency: BusinessWalletRepoInterface["getByCurrency"] = async (
+        businessId,
+        currencyCode
+    ) => {
+        const query = queries.getByCurrencyQuery(businessId, currencyCode);
+        const res = await runQuery<BusinessWalletModelInterface>(query, this.__pool);
+        const businessWallet = res.rows[0];
+
+        return businessWallet || null;
     };
 }

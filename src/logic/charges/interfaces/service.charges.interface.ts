@@ -16,12 +16,6 @@ export interface ChargesServiceInterface {
     ) => Promise<ChargeStackModelInterface>;
 
     addStackToWallet: (addStackToWalletDto: AddChargeStackToWalletDto) => Promise<void>;
-
-    createCharge: (createChargeDto: CreateChargeDto) => Promise<ChargeModelInterface>;
-
-    addChargesToStack: (
-        addChargesToStackDto: AddChargesToStackDto
-    ) => Promise<ChargeStackModelInterface>;
 }
 
 export interface ChargesServiceDependencies {

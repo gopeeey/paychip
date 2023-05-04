@@ -1,9 +1,10 @@
-import { AccountModelInterface } from "@logic/account";
+import { AccountModelInterface } from "@logic/accounts";
 import { SessionInterface } from "@logic/session_interface";
 import { CreateBusinessDto } from "../dtos";
 import { BusinessModelInterface } from "./business.model.interface";
+import { BaseRepoInterface } from "@logic/base_repo_interface";
 
-export interface BusinessRepoInterface {
+export interface BusinessRepoInterface extends BaseRepoInterface {
     create: (
         createBusinessDto: CreateBusinessDto,
         session?: SessionInterface
@@ -13,5 +14,5 @@ export interface BusinessRepoInterface {
 
     getOwnerBusinesses: (ownerId: AccountModelInterface["id"]) => Promise<BusinessModelInterface[]>;
 
-    getFullBusiness: (id: BusinessModelInterface["id"]) => Promise<BusinessModelInterface | null>;
+    // getFullBusiness: (id: BusinessModelInterface["id"]) => Promise<BusinessModelInterface | null>;
 }

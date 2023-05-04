@@ -1,5 +1,5 @@
 import { generateAuthToken } from "src/utils";
-import { accountJson } from "./account.samples";
+import { accountJson } from "./accounts.samples";
 import { businessJson } from "./business.samples";
 
 export const accountLevelToken = `Bearer ${generateAuthToken("account", {

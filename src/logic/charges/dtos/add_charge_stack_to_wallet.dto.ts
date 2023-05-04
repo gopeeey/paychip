@@ -2,17 +2,17 @@ import { WalletChargeStackModelInterface } from "../interfaces";
 
 type RequiredProps = Pick<
     WalletChargeStackModelInterface,
-    "walletId" | "chargeStackId" | "chargeStackType"
+    "walletId" | "chargeStackId" | "chargeType"
 >;
 
 export class AddChargeStackToWalletDto implements RequiredProps {
     walletId: WalletChargeStackModelInterface["walletId"];
     chargeStackId: WalletChargeStackModelInterface["chargeStackId"];
-    chargeStackType: WalletChargeStackModelInterface["chargeStackType"];
+    chargeType: WalletChargeStackModelInterface["chargeType"];
 
     constructor(body: RequiredProps) {
         this.walletId = body.walletId;
         this.chargeStackId = body.chargeStackId;
-        this.chargeStackType = body.chargeStackType;
+        this.chargeType = body.chargeType;
     }
 }

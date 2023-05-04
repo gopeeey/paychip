@@ -1,20 +1,19 @@
-import { Business } from "@data/business";
-import { CustomerRepo, Customer } from "@data/customer";
-import { StartSequelizeSession } from "@data/sequelize_session";
-import { CreateCustomerDto } from "@logic/customer";
-import { customerSeeder } from "src/__tests__/samples";
-import { DBSetup, SeedingError } from "src/__tests__/test_utils";
+import { CustomerRepo } from "@data/customer";
+import { runQuery } from "@data/db";
+import { CreateCustomerDto, CustomerModelInterface } from "@logic/customer";
+import SQL from "sql-template-strings";
+import { customerSeeder, getABusiness, getACustomer } from "src/__tests__/samples";
+import { DBSetup } from "src/__tests__/test_utils";
 
-const customerRepo = new CustomerRepo(Customer);
+const pool = DBSetup(customerSeeder);
 
-DBSetup(customerSeeder);
+const customerRepo = new CustomerRepo(pool);
 
 describe("TESTING CUSTOMER REPO", () => {
     describe("testing create", () => {
         it("should return a new customer object", async () => {
-            const session = await StartSequelizeSession();
-            const business = await Business.findOne();
-            if (!business) throw new SeedingError("business not found");
+            const session = await customerRepo.startSession();
+            const business = await getABusiness(pool);
 
             const data: CreateCustomerDto = {
                 businessId: business.id,
@@ -25,24 +24,26 @@ describe("TESTING CUSTOMER REPO", () => {
 
             const customer = await customerRepo.create(data, session);
             await session.commit();
-            const persistedCustomer = await Customer.findByPk(customer.id);
+            const res = await runQuery<CustomerModelInterface>(
+                SQL`SELECT * FROM "customers" WHERE "id" = ${customer.id};`,
+                pool
+            );
+
+            const persistedCustomer = res.rows[0];
             if (!persistedCustomer) throw new Error("Customer not persisted");
 
-            expect(persistedCustomer.toJSON()).toMatchObject(data);
+            expect(persistedCustomer).toMatchObject(data);
         });
     });
 
     describe("testing getByBusinessId", () => {
         describe("given a customer with passed businessId exists", () => {
             it("should return an array of customers", async () => {
-                const existing = await Customer.findOne();
-                if (!existing) throw new SeedingError("customer not found");
+                const existing = await getACustomer(pool);
 
                 const customers = await customerRepo.getByBusinessId(existing.businessId);
-                const existingMatch = customers.find((cust) => cust.id === existing.id);
-                if (!existingMatch) throw new Error("Existing not returned as part of list");
 
-                expect(existing).toMatchObject(existingMatch);
+                expect(customers).toEqual([existing]);
             });
         });
 

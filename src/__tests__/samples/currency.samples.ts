@@ -1,9 +1,10 @@
-import { CreateCurrencyDto, StandardCurrencyDto } from "@logic/currency";
-import { Currency, BusinessCurrency } from "@data/currency";
-import { Business } from "@data/business";
-import { Country } from "@data/country";
-import { Account } from "@data/account";
+import { CreateCurrencyDto, CurrencyModelInterface, StandardCurrencyDto } from "@logic/currency";
+import { createCurrencyQuery } from "@data/currency";
 import { ChargeDto } from "@logic/charges";
+import { Pool } from "pg";
+import { runQuery } from "@data/db";
+import SQL from "sql-template-strings";
+import { SeedingError } from "../test_utils";
 
 export const currencyData: CreateCurrencyDto = new CreateCurrencyDto({
     name: "Nigerian Naira",
@@ -42,19 +43,17 @@ export const currencyData: CreateCurrencyDto = new CreateCurrencyDto({
     ),
 });
 
-export const currencyObj = new Currency({ ...currencyData, active: true });
-
-export const currencyObjArr = [currencyObj];
-
-export const currencyJson = currencyObj.toJSON();
+export const currencyJson: CurrencyModelInterface = { ...currencyData, active: true };
 
 export const currencyJsonArr = [currencyJson];
 
 export const standardCurrency = new StandardCurrencyDto(currencyJson);
 export const standardCurrencyArr = [standardCurrency];
 
-export const currencySeeder = async () => {
-    await Currency.create(currencyData);
+export const currencySeeder = async (pool: Pool) => {
+    const query = createCurrencyQuery(currencyData);
+    await runQuery(query, pool);
+
     // await Currency.create({
     //     name: "Nigerian Naira",
     //     isoCode: "NGN",
@@ -91,4 +90,13 @@ export const currencySeeder = async () => {
     //         })
     //     ),
     // });
+};
+
+export const getACurrency = async (pool: Pool, isoCode?: CurrencyModelInterface["isoCode"]) => {
+    let query = SQL`SELECT * FROM currencies LIMIT 1;`;
+    if (isoCode) query = SQL`SELECT * FROM currencies WHERE "isoCode" = ${isoCode} LIMIT 1;`;
+    const res = await runQuery<CurrencyModelInterface>(query, pool);
+    const currency = res.rows[0];
+    if (!currency) throw new SeedingError("No currencies found");
+    return currency;
 };

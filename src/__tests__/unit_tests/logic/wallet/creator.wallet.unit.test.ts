@@ -1,11 +1,12 @@
 import { WalletRepo } from "@data/wallet";
 import { WalletCreator, WalletCreatorDependencies, DuplicateWalletError } from "@logic/wallet";
+import { Pool } from "pg";
 import { createSpies, sessionMock } from "src/__tests__/mocks";
 import { bwJson, walletData, walletJson } from "src/__tests__/samples";
 
 const dep = {
     dto: walletData,
-    repo: createSpies(new WalletRepo()),
+    repo: createSpies(new WalletRepo({} as Pool)),
     getBusinessWallet: jest.fn(),
     session: sessionMock,
 };
