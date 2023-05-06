@@ -27,7 +27,7 @@ export const DBSetup = (seeder: (pool: Pool) => Promise<void>) => {
 
     beforeEach(() => {
         return (async () => {
-            await runMigrations("up", pool);
+            await runMigrations("up", pool, 1);
             await seeder(pool);
         })();
     });

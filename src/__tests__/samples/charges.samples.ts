@@ -1,5 +1,6 @@
 import {
     ChargeDto,
+    ChargeStackDto,
     ChargeStackModelInterface,
     CreateChargeStackDto,
     StandardChargeStackDto,
@@ -8,7 +9,7 @@ import { generateId } from "src/utils";
 import { SeedingError } from "../test_utils";
 import { getAWallet, walletJson, walletSeeder } from "./wallet.samples";
 import { Pool } from "pg";
-import { createChargeStackQuery } from "@data/charges";
+import { DbChargeStack, createChargeStackQuery } from "@data/charges";
 import { runQuery } from "@data/db";
 import SQL from "sql-template-strings";
 
@@ -16,25 +17,22 @@ const sharedData = {
     businessId: walletJson.businessId,
     description: "Something here",
     name: "Sample charge stack",
-    charges: "[]",
+    charges: [],
 };
 
 export const chargeStackData = {
     wallet: new CreateChargeStackDto({ ...sharedData, paidBy: "wallet" }),
     customer: new CreateChargeStackDto({ ...sharedData, paidBy: "customer" }),
-    noPaidBy: new CreateChargeStackDto({ ...sharedData }),
 };
 
 export const chargeStackJson = {
     wallet: { ...chargeStackData.wallet, id: "some" },
     customer: { ...chargeStackData.customer, id: "some" },
-    noPaidBy: { ...chargeStackData.noPaidBy, id: "some" },
 };
 
 export const standardChargeStack = {
     wallet: new StandardChargeStackDto(chargeStackJson.wallet),
     customer: new StandardChargeStackDto(chargeStackJson.customer),
-    noPaidBy: new StandardChargeStackDto(chargeStackJson.noPaidBy),
 };
 
 export const chargesSeeder = async (pool: Pool) => {
@@ -45,24 +43,20 @@ export const chargesSeeder = async (pool: Pool) => {
         description: "Just an example",
         businessId: wallet.businessId,
         paidBy: "wallet",
-        charges: `[${
-            (JSON.stringify(
-                new ChargeDto({
-                    flatCharge: 2000,
-                    minimumPrincipalAmount: 0,
-                    percentageCharge: 1,
-                    percentageChargeCap: 400000,
-                })
-            ),
-            JSON.stringify(
-                new ChargeDto({
-                    flatCharge: 1000,
-                    minimumPrincipalAmount: 500000,
-                    percentageCharge: 1,
-                    percentageChargeCap: 400000,
-                })
-            ))
-        }]`,
+        charges: [
+            new ChargeDto({
+                flatCharge: 2000,
+                minimumPrincipalAmount: 0,
+                percentageCharge: 1,
+                percentageChargeCap: 400000,
+            }),
+            new ChargeDto({
+                flatCharge: 1000,
+                minimumPrincipalAmount: 500000,
+                percentageCharge: 1,
+                percentageChargeCap: 400000,
+            }),
+        ],
     });
 
     await runQuery(
@@ -85,8 +79,8 @@ export const getAChargeStackWithBusinessId = async (
     businessId: ChargeStackModelInterface["businessId"]
 ) => {
     let query = SQL`SELECT * FROM "chargeStacks" WHERE "businessId" = ${businessId} LIMIT 1;`;
-    const res = await runQuery<ChargeStackModelInterface>(query, pool);
+    const res = await runQuery<DbChargeStack>(query, pool);
     const stack = res.rows[0];
     if (!stack) throw new SeedingError("No charge stacks found");
-    return stack;
+    return new ChargeStackDto({ ...stack, charges: JSON.parse(stack.charges) });
 };

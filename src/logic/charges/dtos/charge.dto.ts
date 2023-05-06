@@ -1,15 +1,15 @@
-import { ChargeModelInterface } from "../interfaces";
+import { ChargeInterface } from "../interfaces";
 
 type RequiredProps = Pick<
-    ChargeModelInterface,
+    ChargeInterface,
     "flatCharge" | "minimumPrincipalAmount" | "percentageCharge" | "percentageChargeCap"
 >;
 
 export class ChargeDto implements RequiredProps {
-    flatCharge: ChargeModelInterface["flatCharge"];
-    minimumPrincipalAmount: ChargeModelInterface["minimumPrincipalAmount"];
-    percentageCharge: ChargeModelInterface["percentageCharge"];
-    percentageChargeCap: ChargeModelInterface["percentageChargeCap"];
+    flatCharge: ChargeInterface["flatCharge"];
+    minimumPrincipalAmount: ChargeInterface["minimumPrincipalAmount"];
+    percentageCharge: ChargeInterface["percentageCharge"];
+    percentageChargeCap: ChargeInterface["percentageChargeCap"];
 
     constructor(body: RequiredProps) {
         this.flatCharge = body.flatCharge;

@@ -4,7 +4,7 @@ import { StandardDtoType } from "@logic/types";
 export class StandardCountryDto implements StandardDtoType<CountryModelInterface> {
     readonly isoCode: string;
     readonly name: string;
-    readonly createdAt: Date | undefined;
+    readonly createdAt: CountryModelInterface["createdAt"];
     readonly currencyCode: CountryModelInterface["currencyCode"];
 
     constructor(body: CountryModelInterface) {
