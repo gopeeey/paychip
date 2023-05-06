@@ -7,4 +7,5 @@ export const CreateChargeStackValidator = Joi.object<CreateChargeStackDto>({
     paidBy: Joi.string()
         .valid(...allowedPaidBy)
         .required(),
+    charges: Joi.string().required(),
 });

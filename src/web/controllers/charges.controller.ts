@@ -2,9 +2,6 @@ import {
     CreateChargeStackDto,
     StandardChargeStackDto,
     ChargesServiceInterface,
-    CreateChargeDto,
-    StandardChargeDto,
-    AddChargesToStackDto,
     AddChargeStackToWalletDto,
 } from "@logic/charges";
 import { AuthRequiredController } from "../middleware";
@@ -28,36 +25,6 @@ export class ChargeStackController extends BaseController {
             const data = await this._service.createStack(createDto);
             const chargeStack = new StandardChargeStackDto(data);
             sendResponse(res, { code: 201, data: { chargeStack } });
-        });
-    };
-
-    create_charge: AuthRequiredController = async (req, res, next) => {
-        this.handleReq(next, async () => {
-            if (!req.business) throw new ProtectedRouteAccessError(req.path);
-            const data = new CreateChargeDto({ ...req.body, businessId: req.business.id });
-            const charge = await this._service.createCharge(data);
-            const standardCharge = new StandardChargeDto(charge);
-
-            sendResponse(res, {
-                code: 201,
-                data: { charge: standardCharge },
-            });
-        });
-    };
-
-    add_charges_to_stack: AuthRequiredController = async (req, res, next) => {
-        this.handleReq(next, async () => {
-            if (!req.business) throw new ProtectedRouteAccessError(req.path);
-
-            const data = new AddChargesToStackDto(req.body);
-            const objectIds = [...data.chargeIds, data.stackId];
-
-            validateBusinessObjectId(objectIds, req.business.id);
-
-            const stack = await this._service.addChargesToStack(data);
-            const standardStack = new StandardChargeStackDto(stack);
-
-            sendResponse(res, { code: 200, data: { chargeStack: standardStack } });
         });
     };
 

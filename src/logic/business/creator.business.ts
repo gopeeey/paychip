@@ -30,7 +30,7 @@ export class BusinessCreator implements BusinessCreatorInterface {
     async create() {
         await this.checkOwner();
         await this.checkCountry();
-        // await this.persistBusiness();
+        await this.persistBusiness();
         await this.createBusinessWallet();
         // add currency of the country to the business currencies
         // await this.addFirstCurrency();
@@ -45,9 +45,9 @@ export class BusinessCreator implements BusinessCreatorInterface {
         this.country = await this._dep.getCountry(this.createBusinessDto.countryCode);
     };
 
-    // private persistBusiness = async () => {
-    //     this.business = await this._repo.create(this.createBusinessDto, this.session);
-    // };
+    private persistBusiness = async () => {
+        this.business = await this._repo.create(this.createBusinessDto, this.session);
+    };
 
     private createBusinessWallet = async () => {
         const createBusinessWalletDto = new CreateBusinessWalletDto({

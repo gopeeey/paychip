@@ -17,4 +17,9 @@ export class ChargeDto implements RequiredProps {
         this.percentageCharge = body.percentageCharge;
         this.percentageChargeCap = body.percentageChargeCap;
     }
+
+    static fromString(chargeString: string) {
+        const parsed = JSON.parse(chargeString) as ChargeDto;
+        return new ChargeDto(parsed);
+    }
 }
