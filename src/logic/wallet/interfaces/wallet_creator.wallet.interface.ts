@@ -11,7 +11,6 @@ export interface WalletCreatorInterface {
 export interface WalletCreatorDependencies {
     dto: CreateWalletDto;
     repo: WalletRepoInterface;
-
     getBusinessWallet: (
         businessId: BwModelInterface["businessId"],
         currencyCode: BwModelInterface["currencyCode"]
