@@ -1,23 +1,8 @@
 import config from "src/config";
-import runnerFunc from "node-pg-migrate";
-import path from "path";
 import { Pool } from "pg";
+import { runMigrations } from "@data/db";
 
 const postgresTestConfig = config.db.postgresTest;
-
-export const runMigrations = async (direction: "up" | "down", pool: Pool, count = 10000) => {
-    console.log("Running migrations", direction);
-
-    const client = await pool.connect();
-    await runnerFunc({
-        dbClient: client,
-        direction,
-        count,
-        dir: path.join(__dirname, "../../../migrations"),
-        migrationsTable: "pgmigrations",
-    });
-    client.release();
-};
 
 export const DBSetup = (seeder: (pool: Pool) => Promise<void>) => {
     const pool = new Pool({
@@ -42,7 +27,7 @@ export const DBSetup = (seeder: (pool: Pool) => Promise<void>) => {
 
     beforeEach(() => {
         return (async () => {
-            await runMigrations("up", pool);
+            await runMigrations("up", pool, 1);
             await seeder(pool);
         })();
     });

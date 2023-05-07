@@ -1,5 +1,12 @@
 import Joi from "joi";
-import { allowedPaidBy, CreateChargeStackDto } from "@logic/charges";
+import { allowedPaidBy, ChargeDto, CreateChargeStackDto } from "@logic/charges";
+
+const charge = Joi.object<ChargeDto>({
+    flatCharge: Joi.number(),
+    minimumPrincipalAmount: Joi.number(),
+    percentageCharge: Joi.number(),
+    percentageChargeCap: Joi.number(),
+});
 
 export const CreateChargeStackValidator = Joi.object<CreateChargeStackDto>({
     name: Joi.string().required(),
@@ -7,4 +14,5 @@ export const CreateChargeStackValidator = Joi.object<CreateChargeStackDto>({
     paidBy: Joi.string()
         .valid(...allowedPaidBy)
         .required(),
+    charges: Joi.array().items(charge),
 });

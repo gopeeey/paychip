@@ -5,7 +5,7 @@ export type StandardDtoType<
 > = Omit<ModelInterface, standardOmits | prop>;
 
 export interface BaseModelInterface {
-    createdAt?: Date;
+    createdAt?: string;
     // updatedAt?: Date;
     // deletedAt?: Date | null;
 }

@@ -15,7 +15,7 @@ export const createChargeStackQuery = (chargeStack: ChargeStackModelInterface) =
             ${chargeStack.name}, 
             ${chargeStack.description}, 
             ${chargeStack.paidBy},
-            ${chargeStack.charges}
+            ${JSON.stringify(chargeStack.charges)}
         ) RETURNING *;
     `;
 };

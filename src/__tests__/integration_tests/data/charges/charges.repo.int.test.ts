@@ -1,7 +1,8 @@
-import { ChargesRepo } from "@data/charges/charges.repo";
+import { ChargesRepo, DbChargeStack } from "@data/charges";
 import {
     AddChargeStackToWalletDto,
     allowedChargeTypes,
+    ChargeStackDto,
     ChargeStackModelInterface,
     CreateChargeStackDto,
     WalletChargeStackModelInterface,
@@ -20,6 +21,24 @@ const pool = DBSetup(chargesSeeder);
 const chargesRepo = new ChargesRepo(pool);
 
 describe("TESTING CHARGES REPO", () => {
+    describe("Testing parseChargeStack", () => {
+        it("should return a ChargeStackDto", () => {
+            const data: DbChargeStack = {
+                id: "asdlkj",
+                businessId: 1,
+                name: "Sweet stack",
+                description: "stack with lots of sugar",
+                paidBy: "wallet",
+                charges: "[]",
+                createdAt: new Date().toISOString(),
+            };
+
+            const result = chargesRepo.parseChargeStack(data);
+            const expected = { ...data, charges: JSON.parse(data.charges) };
+            expect(expected).toMatchObject(result);
+        });
+    });
+
     describe("Testing createChargeStack", () => {
         it("should persist and return a charge stack object", async () => {
             const session = await chargesRepo.startSession();
@@ -29,20 +48,20 @@ describe("TESTING CHARGES REPO", () => {
                 name: "Sweet stack",
                 description: "stack with lots of sugar",
                 paidBy: "wallet",
-                charges: "[]",
+                charges: [],
             });
 
             const chargeStack = await chargesRepo.createChargeStack(data, session);
             await session.commit();
 
             if (!chargeStack) throw new Error("Did not return charge stack");
-            const res = await runQuery<ChargeStackModelInterface>(
+            const res = await runQuery<DbChargeStack>(
                 SQL`SELECT * FROM "chargeStacks" WHERE id = ${chargeStack.id}`,
                 pool
             );
             const persistedStack = res.rows[0];
             if (!persistedStack) throw new Error("Failed to persist charge stack");
-            expect(persistedStack).toMatchObject(data);
+            expect(chargesRepo.parseChargeStack(persistedStack)).toMatchObject(data);
         });
     });
 

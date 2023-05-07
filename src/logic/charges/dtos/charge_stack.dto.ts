@@ -1,23 +1,21 @@
-import { PickWithOptional } from "@logic/types";
 import { ChargeStackModelInterface } from "../interfaces";
 
-type RequiredProps = PickWithOptional<
-    ChargeStackModelInterface,
-    "businessId" | "name" | "description" | "charges" | "paidBy"
->;
-
-export class CreateChargeStackDto implements RequiredProps {
+export class ChargeStackDto implements ChargeStackModelInterface {
+    id: ChargeStackModelInterface["id"];
     businessId: ChargeStackModelInterface["businessId"];
     name: ChargeStackModelInterface["name"];
     description: ChargeStackModelInterface["description"];
+    charges: ChargeStackModelInterface["charges"];
     paidBy: ChargeStackModelInterface["paidBy"];
-    charges: RequiredProps["charges"];
+    createdAt?: ChargeStackModelInterface["createdAt"];
 
-    constructor(body: RequiredProps) {
+    constructor(body: ChargeStackModelInterface) {
+        this.id = body.id;
         this.businessId = body.businessId;
         this.name = body.name;
         this.description = body.description;
-        this.paidBy = body.paidBy;
         this.charges = body.charges;
+        this.paidBy = body.paidBy;
+        this.createdAt = body.createdAt;
     }
 }

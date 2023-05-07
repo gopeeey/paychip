@@ -29,16 +29,20 @@ export class CreateWalletDto implements RequiredProps {
     constructor({
         fundingChargesPaidBy = null,
         withdrawalChargesPaidBy = null,
+        waiveFundingCharges = false,
+        waiveWithdrawalCharges = false,
+        waiveWalletInCharges = false,
+        waiveWalletOutCharges = false,
         ...body
     }: RequiredProps) {
         this.businessId = body.businessId;
         this.businessWalletId = body.businessWalletId;
         this.currency = body.currency;
         this.email = body.email;
-        this.waiveFundingCharges = body.waiveFundingCharges;
-        this.waiveWithdrawalCharges = body.waiveWithdrawalCharges;
-        this.waiveWalletInCharges = body.waiveWalletInCharges;
-        this.waiveWalletOutCharges = body.waiveWalletOutCharges;
+        this.waiveFundingCharges = waiveFundingCharges;
+        this.waiveWithdrawalCharges = waiveWithdrawalCharges;
+        this.waiveWalletInCharges = waiveWalletInCharges;
+        this.waiveWalletOutCharges = waiveWalletOutCharges;
         this.fundingChargesPaidBy = fundingChargesPaidBy;
         this.withdrawalChargesPaidBy = withdrawalChargesPaidBy;
     }
