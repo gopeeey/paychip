@@ -18,8 +18,8 @@ export class WalletFunder {
 
     async exec() {
         await this.fetchWallet();
-        // fetch customer
-        // calculate and amounts
+        // fetch or create customer
+        // calculate charges and amounts
         // create transaction
         // generate payment link
     }

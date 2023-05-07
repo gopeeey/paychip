@@ -29,4 +29,11 @@ export class CustomerRepo extends PgBaseRepo implements CustomerRepoInterface {
 
         return res.rows;
     };
+
+    getSingleBusinessCustomer: CustomerRepoInterface["getSingleBusinessCustomer"] = async (dto) => {
+        const query = queries.getSingleBusinessCustomerQuery(dto);
+        const res = await runQuery<CustomerModelInterface>(query, this.__pool);
+        const customer = res.rows[0];
+        return customer || null;
+    };
 }

@@ -1,4 +1,4 @@
-import { CreateCustomerDto } from "./dtos";
+import { CreateCustomerDto, GetSingleBusinessCustomerDto } from "./dtos";
 import {
     CustomerServiceInterface,
     CustomerServiceDependencies,
@@ -11,13 +11,27 @@ export class CustomerService implements CustomerServiceInterface {
         this._repo = this._dependencies.repo;
     }
 
-    createCustomer = async (createCustomerDto: CreateCustomerDto) => {
+    createCustomer: CustomerServiceInterface["createCustomer"] = async (
+        createCustomerDto: CreateCustomerDto
+    ) => {
         const customer = await this._repo.create(createCustomerDto);
         return customer;
     };
 
-    getBusinessCustomers = async (businessId: CustomerModelInterface["businessId"]) => {
+    getBusinessCustomers: CustomerServiceInterface["getBusinessCustomers"] = async (
+        businessId: CustomerModelInterface["businessId"]
+    ) => {
         const customers = await this._repo.getByBusinessId(businessId);
         return customers;
+    };
+
+    getOrCreateCustomer: CustomerServiceInterface["getOrCreateCustomer"] = async (
+        data: GetSingleBusinessCustomerDto
+    ) => {
+        const existing = await this._repo.getSingleBusinessCustomer(data);
+        if (existing) return existing;
+        const createDto = new CreateCustomerDto(data);
+        const newCustomer = await this.createCustomer(createDto);
+        return newCustomer;
     };
 }

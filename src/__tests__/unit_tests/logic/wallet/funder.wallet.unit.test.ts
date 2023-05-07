@@ -29,6 +29,21 @@ const dto = new FundWalletDto({
 const walletFunder = new WalletFunder(dto, dependencies);
 
 describe("Testing WalletFunder", () => {
+    describe("given walletId is not present and currency or email is missing", () => {
+        it("should throw an invalid funding data error", async () => {
+            const badData: FundWalletDto[] = [
+                { ...dto, email: undefined },
+                { ...dto, currency: undefined },
+                { ...dto, email: undefined, currency: undefined },
+            ];
+
+            for (const data of badData) {
+                const setToFail = new WalletFunder(data, dependencies);
+                await expect(setToFail.exec()).rejects.toThrow(new InvalidFundingData());
+            }
+        });
+    });
+
     describe("given valid walletId or currency and email", () => {
         it("should fetch the wallet", async () => {
             walletRepoMock.getById.mockResolvedValue(walletJson);
@@ -58,21 +73,6 @@ describe("Testing WalletFunder", () => {
                         throw new Error("You not set the test data up properly then");
                     }
                 }
-            }
-        });
-    });
-
-    describe("given walletId is not present and currency or email is missing", () => {
-        it("should throw an invalid funding data error", async () => {
-            const badData: FundWalletDto[] = [
-                { ...dto, email: undefined },
-                { ...dto, currency: undefined },
-                { ...dto, email: undefined, currency: undefined },
-            ];
-
-            for (const data of badData) {
-                const setToFail = new WalletFunder(data, dependencies);
-                await expect(setToFail.exec()).rejects.toThrow(new InvalidFundingData());
             }
         });
     });

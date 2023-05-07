@@ -24,7 +24,7 @@ export const customerData = {
 };
 
 export const customerJson: {
-    [key: string]: CustomerModelInterface;
+    [key in "complete" | "incomplete"]: CustomerModelInterface;
 } = {
     complete: { ...customerData.complete, id: "something" },
     incomplete: { ...customerData.incomplete, id: "something" },

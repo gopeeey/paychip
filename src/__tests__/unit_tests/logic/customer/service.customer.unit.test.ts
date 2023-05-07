@@ -1,13 +1,18 @@
-import { CustomerService, CustomerServiceDependencies } from "@logic/customer";
+import { CustomerRepo } from "@data/customer";
+import {
+    CreateCustomerDto,
+    CustomerService,
+    CustomerServiceDependencies,
+    GetSingleBusinessCustomerDto,
+} from "@logic/customer";
+import { Pool } from "pg";
+import { createSpies } from "src/__tests__/mocks";
 import { customerData, customerJson, customerJsonArray } from "src/__tests__/samples";
 
-const repo = {
-    create: jest.fn(),
-    getByBusinessId: jest.fn(),
-};
+const repoMock = createSpies(new CustomerRepo({} as Pool));
 
-const dependencies = {
-    repo: repo as unknown as CustomerServiceDependencies["repo"],
+const dependencies: CustomerServiceDependencies = {
+    repo: repoMock as unknown as CustomerServiceDependencies["repo"],
 };
 
 const customerService = new CustomerService(dependencies);
@@ -15,24 +20,24 @@ const customerService = new CustomerService(dependencies);
 describe("TESTING CUSTOMER SERVICE", () => {
     describe("testing createCustomer", () => {
         it("should return a customer object", async () => {
-            repo.create.mockResolvedValue(customerJson.complete);
+            repoMock.create.mockResolvedValue(customerJson.complete);
             const customer = await customerService.createCustomer(customerData.complete);
             expect(customer).toEqual(customerJson.complete);
-            expect(repo.create).toHaveBeenCalledTimes(1);
-            expect(repo.create).toHaveBeenCalledWith(customerData.complete);
+            expect(repoMock.create).toHaveBeenCalledTimes(1);
+            expect(repoMock.create).toHaveBeenCalledWith(customerData.complete);
         });
     });
 
     describe("testing getBusinessCustomers", () => {
         describe("given customers with passed businessId exist", () => {
             it("should return an array of standard customer objects", async () => {
-                repo.getByBusinessId.mockResolvedValue(customerJsonArray.complete);
+                repoMock.getByBusinessId.mockResolvedValue(customerJsonArray.complete);
                 const customers = await customerService.getBusinessCustomers(
                     customerJson.complete.businessId
                 );
                 expect(customers).toEqual(customerJsonArray.complete);
-                expect(repo.getByBusinessId).toHaveBeenCalledTimes(1);
-                expect(repo.getByBusinessId).toHaveBeenLastCalledWith(
+                expect(repoMock.getByBusinessId).toHaveBeenCalledTimes(1);
+                expect(repoMock.getByBusinessId).toHaveBeenLastCalledWith(
                     customerJson.complete.businessId
                 );
             });
@@ -40,11 +45,43 @@ describe("TESTING CUSTOMER SERVICE", () => {
 
         describe("given no customer with passed businessId exists", () => {
             it("should return an array of customer objects", async () => {
-                repo.getByBusinessId.mockResolvedValue([]);
+                repoMock.getByBusinessId.mockResolvedValue([]);
                 const customers = await customerService.getBusinessCustomers(
                     customerJson.complete.businessId
                 );
                 expect(customers).toEqual([]);
+            });
+        });
+    });
+
+    describe("testing getOrCreateCustomer", () => {
+        const data = new GetSingleBusinessCustomerDto(customerJson.complete);
+
+        it("should try to fetch the customer", async () => {
+            repoMock.getSingleBusinessCustomer.mockResolvedValue(customerJson.complete);
+            await customerService.getOrCreateCustomer(data);
+            expect(repoMock.getSingleBusinessCustomer).toHaveBeenCalledTimes(1);
+            expect(repoMock.getSingleBusinessCustomer).toHaveBeenCalledWith(data);
+        });
+
+        describe("given the customer exists", () => {
+            it("should return the customer object", async () => {
+                const customer = await customerService.getOrCreateCustomer(data);
+                expect(customer).toMatchObject(data);
+                expect(repoMock.create).toHaveBeenCalledTimes(0);
+            });
+        });
+
+        describe("given the customer does not exist", () => {
+            it("should create and return a new customer", async () => {
+                repoMock.getSingleBusinessCustomer.mockResolvedValue(null);
+                repoMock.create.mockResolvedValue(customerJson.complete);
+                const customer = await customerService.getOrCreateCustomer(data);
+                expect(customer).toMatchObject(data);
+                expect(repoMock.create).toHaveBeenCalledTimes(1);
+
+                const createDto = new CreateCustomerDto(data);
+                expect(repoMock.create).toHaveBeenCalledWith(createDto);
             });
         });
     });
