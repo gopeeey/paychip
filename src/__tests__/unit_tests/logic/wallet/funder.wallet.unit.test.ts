@@ -1,4 +1,5 @@
 import { WalletRepo } from "@data/wallet";
+import { GetSingleBusinessCustomerDto } from "@logic/customer";
 import {
     FundWalletDto,
     GetUniqueWalletDto,
@@ -8,14 +9,19 @@ import {
 } from "@logic/wallet";
 import { Pool } from "pg";
 import { createSpies } from "src/__tests__/mocks";
-import { walletData, walletJson } from "src/__tests__/samples";
+import { customerJson, walletData, walletJson } from "src/__tests__/samples";
 
 const walletRepoMock = createSpies(new WalletRepo({} as unknown as Pool));
+
+const depMocks = {
+    getOrCreateCustomer: jest.fn(),
+};
 
 const dependencies: WalletFunderDependencies = {
     getUniqueWallet:
         walletRepoMock.getUnique as unknown as WalletFunderDependencies["getUniqueWallet"],
     getWalletById: walletRepoMock.getById as unknown as WalletFunderDependencies["getWalletById"],
+    ...depMocks,
 };
 
 const dto = new FundWalletDto({
@@ -74,6 +80,18 @@ describe("Testing WalletFunder", () => {
                     }
                 }
             }
+        });
+
+        it("should fetch the customer", async () => {
+            depMocks.getOrCreateCustomer.mockResolvedValue(customerJson.complete);
+            await walletFunder.exec();
+            expect(depMocks.getOrCreateCustomer).toHaveBeenCalledTimes(1);
+
+            const customerData = new GetSingleBusinessCustomerDto({
+                businessId: dto.businessId,
+                email: walletData.email,
+            });
+            expect(depMocks.getOrCreateCustomer).toHaveBeenCalledWith(customerData);
         });
     });
 });
