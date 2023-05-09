@@ -1,15 +1,9 @@
 import { BusinessModelInterfaceDef } from "@logic/business";
 import { BaseModelInterface } from "@logic/types";
+import { ChargeInterface } from "./charge.interface";
 
 export const allowedPaidBy = ["wallet", "customer"] as const;
 export type PaidByType = (typeof allowedPaidBy)[number];
-
-export interface ChargeInterface {
-    flatCharge: number;
-    percentageCharge: number;
-    percentageChargeCap: number;
-    minimumPrincipalAmount: number;
-}
 
 export interface ChargeStackModelInterfaceDef extends BaseModelInterface {
     id: string;

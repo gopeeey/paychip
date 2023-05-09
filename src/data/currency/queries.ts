@@ -10,10 +10,10 @@ export const createCurrencyQuery = (currency: CurrencyModelInterface) => {
             ${currency.isoCode}, 
             ${currency.name}, 
             ${currency.active}, 
-            ${currency.fundingCs}, 
-            ${currency.withdrawalCs}, 
-            ${currency.walletInCs}, 
-            ${currency.walletOutCs}
+            ${JSON.stringify(currency.fundingCs)}, 
+            ${JSON.stringify(currency.withdrawalCs)}, 
+            ${JSON.stringify(currency.walletInCs)}, 
+            ${JSON.stringify(currency.walletOutCs)}
         );
     `;
 };
