@@ -9,38 +9,38 @@ import { SeedingError } from "../test_utils";
 export const currencyData: CreateCurrencyDto = new CreateCurrencyDto({
     name: "Nigerian Naira",
     isoCode: "NGN",
-    fundingCs: JSON.stringify([
+    fundingCs: [
         new ChargeDto({
             flatCharge: 1000,
             minimumPrincipalAmount: 0,
             percentageCharge: 2,
             percentageChargeCap: 400000,
         }),
-    ]),
-    withdrawalCs: JSON.stringify([
+    ],
+    withdrawalCs: [
         new ChargeDto({
             flatCharge: 500,
             minimumPrincipalAmount: 0,
             percentageCharge: 1,
             percentageChargeCap: 400000,
         }),
-    ]),
-    walletInCs: JSON.stringify([
+    ],
+    walletInCs: [
         new ChargeDto({
             flatCharge: 0,
             minimumPrincipalAmount: 0,
             percentageCharge: 0,
             percentageChargeCap: 0,
         }),
-    ]),
-    walletOutCs: JSON.stringify([
+    ],
+    walletOutCs: [
         new ChargeDto({
             flatCharge: 0,
             minimumPrincipalAmount: 0,
             percentageCharge: 0,
             percentageChargeCap: 0,
         }),
-    ]),
+    ],
 });
 
 export const currencyJson: CurrencyModelInterface = { ...currencyData, active: true };

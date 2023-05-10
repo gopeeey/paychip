@@ -1,8 +1,4 @@
-import {
-    CurrencyModelInterface,
-    CurrencyModelInterfaceDef,
-    CurrencyRepoInterface,
-} from "@logic/currency";
+import { CurrencyDto, CurrencyModelInterfaceDef, CurrencyRepoInterface } from "@logic/currency";
 import { Pool } from "pg";
 import { runQuery } from "@data/db";
 import * as queries from "./queries";
@@ -21,20 +17,27 @@ export interface DbCurrency
 export class CurrencyRepo implements CurrencyRepoInterface {
     constructor(private readonly _pool: Pool) {}
 
-    parseCurrency = async (data: DbCurrency) => {
+    parseCurrency = (data: DbCurrency) => {
         let { fundingCs, withdrawalCs, walletInCs, walletOutCs } = data;
-        fundingCs = JSON.parse(fundingCs);
+
+        return new CurrencyDto({
+            ...data,
+            fundingCs: JSON.parse(fundingCs),
+            withdrawalCs: JSON.parse(withdrawalCs),
+            walletInCs: JSON.parse(walletInCs),
+            walletOutCs: JSON.parse(walletOutCs),
+        });
     };
 
     getAll: CurrencyRepoInterface["getAll"] = async () => {
         const query = queries.getAllQuery();
-        const res = await runQuery<CurrencyModelInterface>(query, this._pool);
-        return res.rows;
+        const res = await runQuery<DbCurrency>(query, this._pool);
+        return res.rows.map((row) => this.parseCurrency(row));
     };
 
     getActive: CurrencyRepoInterface["getActive"] = async () => {
         const query = queries.getActiveQuery();
-        const res = await runQuery<CurrencyModelInterface>(query, this._pool);
-        return res.rows;
+        const res = await runQuery<DbCurrency>(query, this._pool);
+        return res.rows.map((row) => this.parseCurrency(row));
     };
 }

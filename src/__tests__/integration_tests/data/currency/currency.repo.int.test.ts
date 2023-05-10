@@ -11,14 +11,16 @@ const currencyRepo = new CurrencyRepo(pool);
 
 describe("TESTING CURRENCY REPO", () => {
     describe("Testing parseChargeStack", () => {
-        it("should return a ChargeStackDto", () => {
-            const chargeStack = new ChargeDto({
-                flatCharge: 200,
-                percentageCharge: 20,
-                minimumPrincipalAmount: 2000,
-                percentageChargeCap: 20000,
-            });
-            const stringStack = JSON.stringify([chargeStack]);
+        it("should return a currency object with the charge stacks parsed", () => {
+            const chargeStack = [
+                new ChargeDto({
+                    flatCharge: 200,
+                    percentageCharge: 20,
+                    minimumPrincipalAmount: 2000,
+                    percentageChargeCap: 20000,
+                }),
+            ];
+            const stringStack = JSON.stringify(chargeStack);
             const data: DbCurrency = {
                 isoCode: "NGN",
                 name: "Naira",
@@ -29,13 +31,13 @@ describe("TESTING CURRENCY REPO", () => {
                 walletOutCs: stringStack,
             };
 
-            const result = currencyRepo.parseChargeStack(data);
+            const result = currencyRepo.parseCurrency(data);
             const expected = {
                 ...data,
                 fundingCs: chargeStack,
                 withdrawalCs: chargeStack,
-                walletIn: chargeStack,
-                walletOut: chargeStack,
+                walletInCs: chargeStack,
+                walletOutCs: chargeStack,
             };
             expect(expected).toMatchObject(result);
         });
@@ -43,8 +45,8 @@ describe("TESTING CURRENCY REPO", () => {
 
     describe("Testing getAll", () => {
         it("should return an array of currencyJson objects", async () => {
-            const res = await runQuery<CurrencyModelInterface>("SELECT * FROM currencies", pool);
-            const expected = res.rows;
+            const res = await runQuery<DbCurrency>("SELECT * FROM currencies", pool);
+            const expected = res.rows.map((row) => currencyRepo.parseCurrency(row));
             const currencies = await currencyRepo.getAll();
             expect(currencies).toEqual(expected);
         });
@@ -52,11 +54,11 @@ describe("TESTING CURRENCY REPO", () => {
 
     describe("Testing getActive", () => {
         it("should return an array of active currency json objects", async () => {
-            const res = await runQuery<CurrencyModelInterface>(
+            const res = await runQuery<DbCurrency>(
                 "SELECT * FROM currencies WHERE active = true",
                 pool
             );
-            const expected = res.rows;
+            const expected = res.rows.map((row) => currencyRepo.parseCurrency(row));
             const currencies = await currencyRepo.getActive();
             expect(currencies).toEqual(expected);
         });
