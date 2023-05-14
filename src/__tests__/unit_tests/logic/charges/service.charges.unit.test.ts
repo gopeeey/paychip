@@ -1,4 +1,4 @@
-import {} from "@logic/charges";
+import { ChargeDto, ChargeStackDto } from "@logic/charges";
 import {
     ChargesService,
     ChargesServiceDependencies,
@@ -45,6 +45,97 @@ describe("TESTING CHARGES SERVICE", () => {
             await chargesService.addStackToWallet(data);
             expect(repoMock.addStackToWallet).toHaveBeenCalledTimes(1);
             expect(repoMock.addStackToWallet).toHaveBeenCalledWith(data);
+        });
+    });
+
+    describe("Testing getCompatibleCharge", () => {
+        const charges: ChargeDto[] = [
+            {
+                flatCharge: 0,
+                minimumPrincipalAmount: 4000,
+                percentageCharge: 20,
+                percentageChargeCap: 3000,
+            },
+            {
+                flatCharge: 0,
+                minimumPrincipalAmount: 7000,
+                percentageCharge: 20,
+                percentageChargeCap: 3000,
+            },
+            {
+                flatCharge: 0,
+                minimumPrincipalAmount: 11000,
+                percentageCharge: 20,
+                percentageChargeCap: 3000,
+            },
+        ];
+
+        describe("given no charge with minimumPrincipalAmount less than the amount is present in the stack", () => {
+            it("should return null", () => {
+                const amount = 2000;
+                const charge = chargesService.getCompatibleCharge(amount, charges);
+                expect(charge).toBeNull();
+            });
+        });
+
+        describe("given the minimumPrincipalAmount requirement is met by several charges", () => {
+            it("should return the charge with the minimumPrincipalAmount closest and less than the amount", () => {
+                const amount = 8000;
+                const charge = chargesService.getCompatibleCharge(amount, charges);
+                expect(charge).toEqual(charges[1]);
+            });
+        });
+    });
+
+    describe("Testing calculateChargeAmounts", () => {
+        it("should return the correct charge and got values", () => {
+            const charges = [
+                new ChargeDto({
+                    flatCharge: 20,
+                    percentageCharge: 20,
+                    minimumPrincipalAmount: 400,
+                    percentageChargeCap: 5000,
+                }),
+                new ChargeDto({
+                    flatCharge: 0,
+                    percentageCharge: 50,
+                    minimumPrincipalAmount: 400,
+                    percentageChargeCap: 500,
+                }),
+                new ChargeDto({
+                    flatCharge: 200,
+                    percentageCharge: 10,
+                    minimumPrincipalAmount: 400,
+                    percentageChargeCap: 500,
+                }),
+            ];
+
+            const amounts = [
+                {
+                    amount: 2000,
+                    expected: [
+                        { charge: 420, got: 2420 },
+                        { charge: 500, got: 2500 },
+                        { charge: 400, got: 2400 },
+                    ],
+                },
+                {
+                    amount: 5000,
+                    expected: [
+                        { charge: 1020, got: 6020 },
+                        { charge: 500, got: 5500 },
+                        { charge: 700, got: 5700 },
+                    ],
+                },
+            ];
+
+            for (const amount of amounts) {
+                for (let i = 0; i < charges.length; i++) {
+                    const charge = charges[i];
+                    const result = chargesService.calculateChargeAmounts(amount.amount, charge);
+                    expect(result).toEqual(amount.expected[i]);
+                }
+            }
         });
     });
 });

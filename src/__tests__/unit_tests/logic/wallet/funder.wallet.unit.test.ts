@@ -9,12 +9,22 @@ import {
 } from "@logic/wallet";
 import { Pool } from "pg";
 import { createSpies } from "src/__tests__/mocks";
-import { customerJson, walletData, walletJson } from "src/__tests__/samples";
+import {
+    bwJson,
+    chargeStackJson,
+    currencyJson,
+    customerJson,
+    walletData,
+    walletJson,
+} from "src/__tests__/samples";
 
 const walletRepoMock = createSpies(new WalletRepo({} as unknown as Pool));
 
 const depMocks = {
     getOrCreateCustomer: jest.fn(),
+    getBusinessWallet: jest.fn(),
+    getCurrency: jest.fn(),
+    getWalletChargeStack: jest.fn(),
 };
 
 const dependencies: WalletFunderDependencies = {
@@ -33,6 +43,13 @@ const dto = new FundWalletDto({
 });
 
 const walletFunder = new WalletFunder(dto, dependencies);
+
+const mockAllDeps = () => {
+    depMocks.getOrCreateCustomer.mockResolvedValue(customerJson.complete);
+    depMocks.getBusinessWallet.mockResolvedValue(bwJson);
+    depMocks.getCurrency.mockResolvedValue(currencyJson);
+    depMocks.getWalletChargeStack.mockResolvedValue(chargeStackJson.wallet);
+};
 
 describe("Testing WalletFunder", () => {
     describe("given walletId is not present and currency or email is missing", () => {
@@ -54,6 +71,7 @@ describe("Testing WalletFunder", () => {
         it("should fetch the wallet", async () => {
             walletRepoMock.getById.mockResolvedValue(walletJson);
             walletRepoMock.getUnique.mockResolvedValue(walletJson);
+            mockAllDeps();
 
             const goodData: FundWalletDto[] = [
                 dto,
@@ -83,7 +101,7 @@ describe("Testing WalletFunder", () => {
         });
 
         it("should fetch the customer", async () => {
-            depMocks.getOrCreateCustomer.mockResolvedValue(customerJson.complete);
+            mockAllDeps();
             await walletFunder.exec();
             expect(depMocks.getOrCreateCustomer).toHaveBeenCalledTimes(1);
 
@@ -92,6 +110,39 @@ describe("Testing WalletFunder", () => {
                 email: walletData.email,
             });
             expect(depMocks.getOrCreateCustomer).toHaveBeenCalledWith(customerData);
+        });
+
+        it("should fetch the businessWallet", async () => {
+            mockAllDeps();
+            await walletFunder.exec();
+            expect(depMocks.getBusinessWallet).toHaveBeenCalledTimes(1);
+
+            expect(depMocks.getBusinessWallet).toHaveBeenCalledWith(
+                bwJson.businessId,
+                bwJson.currencyCode
+            );
+        });
+
+        describe("given the fetched businessWallet has no customerFunding ChargeStack", () => {
+            it("should fetch the currency", async () => {
+                mockAllDeps();
+                depMocks.getBusinessWallet.mockResolvedValue({
+                    ...bwJson,
+                    customFundingCs: null,
+                });
+                await walletFunder.exec();
+                expect(depMocks.getCurrency).toHaveBeenCalledTimes(1);
+
+                expect(depMocks.getCurrency).toHaveBeenCalledWith(bwJson.currencyCode);
+            });
+        });
+
+        it("should fetch the wallet's charge stack", async () => {
+            mockAllDeps();
+            await walletFunder.exec();
+            expect(depMocks.getWalletChargeStack).toHaveBeenCalledTimes(1);
+
+            expect(depMocks.getWalletChargeStack).toHaveBeenCalledWith(walletJson.id, "funding");
         });
     });
 });
