@@ -4,6 +4,7 @@ import {
     ChargesServiceInterface,
 } from "./interfaces/service.charges.interface";
 import { CalculateTransactionChargesDto, ChargeDto } from "./dtos";
+import { SettlementError } from "./errors";
 
 export class ChargesService implements ChargesServiceInterface {
     private readonly _repo: ChargesServiceDependencies["repo"];
@@ -39,10 +40,7 @@ export class ChargesService implements ChargesServiceInterface {
         return charge;
     };
 
-    calculateChargeAmounts: ChargesServiceInterface["calculateChargeAmounts"] = (
-        amount,
-        charge
-    ) => {
+    calculateCharge: ChargesServiceInterface["calculateCharge"] = (amount, charge) => {
         let totalCharge = 0;
         if (charge.flatCharge) totalCharge += charge.flatCharge;
         let percentageChargeAmount = 0;
@@ -54,7 +52,7 @@ export class ChargesService implements ChargesServiceInterface {
 
         totalCharge += percentageChargeAmount;
 
-        return { charge: totalCharge, got: amount + totalCharge };
+        return totalCharge;
     };
 
     calculateTransactionCharges: ChargesServiceInterface["calculateTransactionCharges"] = async (
@@ -72,24 +70,53 @@ export class ChargesService implements ChargesServiceInterface {
         } = data;
 
         let platformCharge = 0;
-        let platformGot = 0;
+        let platformGot = amount;
         let businessCharge = 0;
-        let businessGot = 0;
+        let businessGot = amount;
+        let businessPaid = 0;
+        let senderPaid = 0;
+        let receiverPaid = 0;
+        let settledAmount = amount;
+
+        // calculate business charges
+        if (!waiveBusinessCharges) {
+            let businessChargeObj = this.getCompatibleCharge(amount, businessChargeStack);
+            if (businessChargeObj) {
+                const charge = this.calculateCharge(amount, businessChargeObj);
+
+                businessCharge += charge;
+                businessGot += charge;
+
+                if (businessChargesPaidBy === "wallet") {
+                    if (settledAmount < businessCharge) {
+                        throw new SettlementError({
+                            charge: businessCharge,
+                            settlement: settledAmount,
+                        });
+                    }
+
+                    settledAmount -= businessCharge;
+                    receiverPaid += businessCharge;
+                } else {
+                    senderPaid += businessCharge;
+                }
+            }
+        }
 
         // calculate platform charges
         let platformChargeObj = this.getCompatibleCharge(amount, platformChargeStack);
         if (platformChargeObj) {
-            const { charge, got } = this.calculateChargeAmounts(amount, platformChargeObj);
-            platformCharge = charge;
-            platformGot = got;
-        }
-
-        // calculate business charges
-        let businessChargeObj = this.getCompatibleCharge(amount, businessChargeStack);
-        if (businessChargeObj) {
-            const { charge, got } = this.calculateChargeAmounts(amount, businessChargeObj);
-            businessCharge = charge;
-            businessGot = got;
+            const charge = this.calculateCharge(amount, platformChargeObj);
+            platformCharge += charge;
+            platformGot += charge;
+            if (platformChargesPaidBy === "wallet") {
+                if (businessGot < platformCharge)
+                    throw new SettlementError({ charge: platformCharge, settlement: businessGot });
+                businessGot -= platformCharge;
+                businessPaid += platformCharge;
+            } else {
+                senderPaid += platformCharge;
+            }
         }
     };
 }

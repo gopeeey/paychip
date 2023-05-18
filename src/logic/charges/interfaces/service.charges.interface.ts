@@ -19,7 +19,7 @@ export interface ChargesServiceInterface {
 
     getCompatibleCharge: (amount: number, charges: ChargeStackDto["charges"]) => ChargeDto | null;
 
-    calculateChargeAmounts: (amount: number, charge: ChargeDto) => { charge: number; got: number };
+    calculateCharge: (amount: number, charge: ChargeDto) => number;
 
     calculateTransactionCharges: (data: CalculateTransactionChargesDto) => Promise<void>;
 }

@@ -113,27 +113,19 @@ describe("TESTING CHARGES SERVICE", () => {
             const amounts = [
                 {
                     amount: 2000,
-                    expected: [
-                        { charge: 420, got: 2420 },
-                        { charge: 500, got: 2500 },
-                        { charge: 400, got: 2400 },
-                    ],
+                    expected: [420, 500, 400],
                 },
                 {
                     amount: 5000,
-                    expected: [
-                        { charge: 1020, got: 6020 },
-                        { charge: 500, got: 5500 },
-                        { charge: 700, got: 5700 },
-                    ],
+                    expected: [1020, 500, 700],
                 },
             ];
 
             for (const amount of amounts) {
                 for (let i = 0; i < charges.length; i++) {
                     const charge = charges[i];
-                    const result = chargesService.calculateChargeAmounts(amount.amount, charge);
-                    expect(result).toEqual(amount.expected[i]);
+                    const result = chargesService.calculateCharge(amount.amount, charge);
+                    expect(result).toBe(amount.expected[i]);
                 }
             }
         });
