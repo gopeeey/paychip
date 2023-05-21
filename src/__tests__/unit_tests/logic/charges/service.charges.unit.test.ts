@@ -87,7 +87,7 @@ describe("TESTING CHARGES SERVICE", () => {
         });
     });
 
-    describe("Testing calculateChargeAmounts", () => {
+    describe("Testing calculateCharge", () => {
         it("should return the correct charge and got values", () => {
             const charges = [
                 new ChargeDto({

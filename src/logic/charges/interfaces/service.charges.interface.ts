@@ -4,6 +4,7 @@ import {
     CalculateTransactionChargesDto,
     ChargeDto,
     ChargeStackDto,
+    ChargesCalculationResultDto,
     CreateChargeStackDto,
 } from "../dtos";
 import { ChargesRepoInterface } from "./charges_repo.interface";
@@ -21,7 +22,9 @@ export interface ChargesServiceInterface {
 
     calculateCharge: (amount: number, charge: ChargeDto) => number;
 
-    calculateTransactionCharges: (data: CalculateTransactionChargesDto) => Promise<void>;
+    calculateTransactionCharges: (
+        data: CalculateTransactionChargesDto
+    ) => ChargesCalculationResultDto;
 }
 
 export interface ChargesServiceDependencies {

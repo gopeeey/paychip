@@ -1,8 +1,9 @@
-import { ChargeDto, ChargeType, PaidByType } from "@logic/charges";
+import { ChargeDto, PaidByType } from "@logic/charges";
+import { TransactionType } from "@logic/transaction";
 
 type ArgsType = {
     amount: number;
-    chargeType: ChargeType;
+    transactionType: TransactionType;
     waiveBusinessCharges: boolean;
     businessChargesPaidBy: PaidByType;
     customWalletChargeStack: ChargeDto[];
@@ -13,7 +14,7 @@ type ArgsType = {
 
 export class CalculateTransactionChargesDto implements ArgsType {
     amount: ArgsType["amount"];
-    chargeType: ArgsType["chargeType"];
+    transactionType: ArgsType["transactionType"];
     waiveBusinessCharges: ArgsType["waiveBusinessCharges"];
     businessChargesPaidBy: ArgsType["businessChargesPaidBy"];
     customWalletChargeStack: ArgsType["customWalletChargeStack"];
@@ -23,7 +24,7 @@ export class CalculateTransactionChargesDto implements ArgsType {
 
     constructor(body: ArgsType) {
         this.amount = body.amount;
-        this.chargeType = body.chargeType;
+        this.transactionType = body.transactionType;
         this.waiveBusinessCharges = body.waiveBusinessCharges;
         this.businessChargesPaidBy = body.businessChargesPaidBy;
         this.customWalletChargeStack = body.customWalletChargeStack;
