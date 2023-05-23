@@ -76,7 +76,7 @@ export class ChargesService implements ChargesServiceInterface {
         let businessCharge = 0;
         let businessGot = isCredit ? amount : 0;
         let businessPaid = isCredit ? 0 : amount;
-        let senderPaid = isCredit ? 0 : amount;
+        let senderPaid = amount;
         let receiverPaid = 0;
         let settledAmount = amount;
 
@@ -90,7 +90,6 @@ export class ChargesService implements ChargesServiceInterface {
                 const charge = this.calculateCharge(amount, businessChargeObj);
 
                 businessCharge += charge;
-                if (isCredit) businessGot += charge;
 
                 if (businessChargesPaidBy === "wallet") {
                     if (isCredit) {
@@ -109,6 +108,8 @@ export class ChargesService implements ChargesServiceInterface {
                 } else {
                     if (isCredit) {
                         senderPaid += businessCharge;
+                        businessGot += charge;
+                        platformGot += charge;
                     } else {
                         if (settledAmount <= businessCharge) {
                             throw new SettlementError({
@@ -118,6 +119,7 @@ export class ChargesService implements ChargesServiceInterface {
                         }
                         settledAmount -= businessCharge;
                         receiverPaid += businessCharge;
+                        businessPaid -= businessCharge;
                     }
                 }
             }
@@ -129,7 +131,6 @@ export class ChargesService implements ChargesServiceInterface {
             const charge = this.calculateCharge(amount, platformChargeObj);
 
             platformCharge += charge;
-            if (isCredit) platformGot += charge;
 
             if (platformChargesPaidBy === "wallet") {
                 if (isCredit) {
@@ -147,6 +148,7 @@ export class ChargesService implements ChargesServiceInterface {
             } else {
                 if (isCredit) {
                     senderPaid += platformCharge;
+                    platformGot += charge;
                 } else {
                     if (settledAmount <= platformCharge) {
                         throw new SettlementError({

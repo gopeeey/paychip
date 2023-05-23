@@ -1,4 +1,9 @@
-import { ChargeDto, ChargeStackDto } from "@logic/charges";
+import {
+    CalculateTransactionChargesDto,
+    ChargeDto,
+    ChargeStackDto,
+    ChargesCalculationResultDto,
+} from "@logic/charges";
 import {
     ChargesService,
     ChargesServiceDependencies,
@@ -127,6 +132,184 @@ describe("TESTING CHARGES SERVICE", () => {
                     const result = chargesService.calculateCharge(amount.amount, charge);
                     expect(result).toBe(amount.expected[i]);
                 }
+            }
+        });
+    });
+
+    describe("Testing calculateTransactionCharges", () => {
+        it("should return the expected results", () => {
+            const businessCharges: ChargeDto[] = [
+                {
+                    flatCharge: 200,
+                    minimumPrincipalAmount: 2000,
+                    percentageCharge: 10,
+                    percentageChargeCap: 500,
+                },
+                {
+                    flatCharge: 100,
+                    minimumPrincipalAmount: 4000,
+                    percentageCharge: 15,
+                    percentageChargeCap: 600,
+                },
+                {
+                    flatCharge: 300,
+                    minimumPrincipalAmount: 7000,
+                    percentageCharge: 12,
+                    percentageChargeCap: 470,
+                },
+            ];
+            const platformCharges: ChargeDto[] = [
+                {
+                    flatCharge: 0,
+                    minimumPrincipalAmount: 1000,
+                    percentageCharge: 10,
+                    percentageChargeCap: 500,
+                },
+                {
+                    flatCharge: 100,
+                    minimumPrincipalAmount: 5000,
+                    percentageCharge: 10,
+                    percentageChargeCap: 700,
+                },
+                {
+                    flatCharge: 50,
+                    minimumPrincipalAmount: 7000,
+                    percentageCharge: 15,
+                    percentageChargeCap: 700,
+                },
+            ];
+
+            const dataSet: CalculateTransactionChargesDto[] = [
+                {
+                    amount: 5000,
+                    businessChargesPaidBy: "wallet",
+                    businessChargeStack: businessCharges,
+                    customWalletChargeStack: null,
+                    platformChargesPaidBy: "wallet",
+                    platformChargeStack: platformCharges,
+                    transactionType: "credit",
+                    waiveBusinessCharges: false,
+                },
+                {
+                    amount: 2000,
+                    businessChargesPaidBy: "customer",
+                    businessChargeStack: businessCharges,
+                    customWalletChargeStack: null,
+                    platformChargesPaidBy: "wallet",
+                    platformChargeStack: platformCharges,
+                    transactionType: "credit",
+                    waiveBusinessCharges: false,
+                },
+                {
+                    amount: 8000,
+                    businessChargesPaidBy: "wallet",
+                    businessChargeStack: businessCharges,
+                    customWalletChargeStack: null,
+                    platformChargesPaidBy: "customer",
+                    platformChargeStack: platformCharges,
+                    transactionType: "credit",
+                    waiveBusinessCharges: false,
+                },
+                {
+                    amount: 5000,
+                    businessChargesPaidBy: "wallet",
+                    businessChargeStack: businessCharges,
+                    customWalletChargeStack: null,
+                    platformChargesPaidBy: "wallet",
+                    platformChargeStack: platformCharges,
+                    transactionType: "debit",
+                    waiveBusinessCharges: false,
+                },
+                {
+                    amount: 2000,
+                    businessChargesPaidBy: "customer",
+                    businessChargeStack: businessCharges,
+                    customWalletChargeStack: null,
+                    platformChargesPaidBy: "customer",
+                    platformChargeStack: platformCharges,
+                    transactionType: "debit",
+                    waiveBusinessCharges: false,
+                },
+                {
+                    amount: 8000,
+                    businessChargesPaidBy: "wallet",
+                    businessChargeStack: businessCharges,
+                    customWalletChargeStack: null,
+                    platformChargesPaidBy: "customer",
+                    platformChargeStack: platformCharges,
+                    transactionType: "debit",
+                    waiveBusinessCharges: false,
+                },
+            ];
+
+            const expectedResults: ChargesCalculationResultDto[] = [
+                {
+                    businessCharge: 700,
+                    businessGot: 4400,
+                    businessPaid: 600,
+                    platformCharge: 600,
+                    platformGot: 5000,
+                    receiverPaid: 700,
+                    senderPaid: 5000,
+                    settledAmount: 4300,
+                },
+                {
+                    businessCharge: 400,
+                    businessGot: 2200,
+                    businessPaid: 200,
+                    platformCharge: 200,
+                    platformGot: 2400,
+                    receiverPaid: 0,
+                    senderPaid: 2400,
+                    settledAmount: 2000,
+                },
+                {
+                    businessCharge: 770,
+                    businessGot: 8000,
+                    businessPaid: 0,
+                    platformCharge: 750,
+                    platformGot: 8750,
+                    receiverPaid: 770,
+                    senderPaid: 8750,
+                    settledAmount: 7230,
+                },
+                {
+                    businessCharge: 700,
+                    businessGot: 0,
+                    businessPaid: 5600,
+                    platformCharge: 600,
+                    platformGot: 0,
+                    receiverPaid: 0,
+                    senderPaid: 5700,
+                    settledAmount: 5000,
+                },
+                {
+                    businessCharge: 400,
+                    businessGot: 0,
+                    businessPaid: 1600,
+                    platformCharge: 200,
+                    platformGot: 0,
+                    receiverPaid: 600,
+                    senderPaid: 2000,
+                    settledAmount: 1400,
+                },
+                {
+                    businessCharge: 770,
+                    businessGot: 0,
+                    businessPaid: 8000,
+                    platformCharge: 750,
+                    platformGot: 0,
+                    receiverPaid: 750,
+                    senderPaid: 8770,
+                    settledAmount: 7250,
+                },
+            ];
+
+            for (let i = 0; i < dataSet.length; i++) {
+                const data = dataSet[i];
+                const expected = expectedResults[i];
+                const result = chargesService.calculateTransactionCharges(data);
+                expect(result).toEqual(expected);
             }
         });
     });

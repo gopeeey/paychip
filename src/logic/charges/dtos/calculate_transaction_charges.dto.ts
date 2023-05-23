@@ -6,7 +6,7 @@ type ArgsType = {
     transactionType: TransactionType;
     waiveBusinessCharges: boolean;
     businessChargesPaidBy: PaidByType;
-    customWalletChargeStack: ChargeDto[];
+    customWalletChargeStack: ChargeDto[] | null;
     businessChargeStack: ChargeDto[];
     platformChargesPaidBy: PaidByType;
     platformChargeStack: ChargeDto[];
