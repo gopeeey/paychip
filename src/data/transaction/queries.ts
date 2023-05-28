@@ -32,7 +32,8 @@ export const createTransactionQuery = (transaction: TransactionModelInterface) =
             "bankCode",
             "accountName",
             "cardNumber",
-            "cardType"
+            "cardType",
+            "callbackUrl"
         ) VALUES (
             ${transaction.id},
             ${transaction.businessId},
@@ -62,7 +63,8 @@ export const createTransactionQuery = (transaction: TransactionModelInterface) =
             ${transaction.bankCode},
             ${transaction.accountName},
             ${transaction.cardNumber},
-            ${transaction.cardType}
+            ${transaction.cardType},
+            ${transaction.callbackUrl}
         ) RETURNING *;
     `;
 };

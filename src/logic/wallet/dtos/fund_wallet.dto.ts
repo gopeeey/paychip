@@ -1,3 +1,4 @@
+import { PaymentProviderType, TransactionChannelType } from "@logic/transaction";
 import { WalletModelInterface } from "../interfaces";
 
 interface RequiredProps {

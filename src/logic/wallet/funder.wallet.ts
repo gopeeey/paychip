@@ -9,7 +9,17 @@ import {
 import { CustomerModelInterface, GetSingleBusinessCustomerDto } from "@logic/customer";
 import { BusinessWalletModelInterface } from "@logic/business_wallet";
 import { CurrencyModelInterface } from "@logic/currency";
-import { ChargeStackModelInterface } from "@logic/charges";
+import {
+    ChargeStackModelInterface,
+    ChargesCalculationResultDto,
+    ChargesServiceInterface,
+} from "@logic/charges";
+import {
+    CreateTransactionDto,
+    PaymentProviderType,
+    TransactionServiceInterface,
+} from "@logic/transaction";
+import config from "src/config";
 
 export interface WalletFunderDependencies {
     getWalletById: WalletServiceInterface["getWalletById"];
@@ -18,6 +28,8 @@ export interface WalletFunderDependencies {
     getBusinessWallet: WalletServiceDependencies["getBusinessWallet"];
     getCurrency: WalletServiceDependencies["getCurrency"];
     getWalletChargeStack: WalletServiceDependencies["getWalletChargeStack"];
+    calculateCharges: ChargesServiceInterface["calculateTransactionCharges"];
+    createTransaction: TransactionServiceInterface["createTransaction"];
 }
 
 export class WalletFunder {
@@ -26,6 +38,8 @@ export class WalletFunder {
     private declare businessWallet: BusinessWalletModelInterface;
     private currency?: CurrencyModelInterface;
     private chargeStack?: ChargeStackModelInterface;
+    private declare chargesResult: ChargesCalculationResultDto;
+    private provider: PaymentProviderType = config.payment.currentPaymentProvider;
 
     constructor(
         private readonly __dto: FundWalletDto,
@@ -38,8 +52,8 @@ export class WalletFunder {
         await this.fetchBusinessWallet();
         await this.fetchCurrencyIfNeeded();
         await this.fetchChargeStackIfNeeded();
-        // calculate charges and amounts
-        // create transaction
+        this.calculateChargesAndAmounts();
+        await this.createTransaction();
         // generate payment link
     }
 
@@ -84,5 +98,61 @@ export class WalletFunder {
 
     private async fetchChargeStackIfNeeded() {
         this.chargeStack = await this.__deps.getWalletChargeStack(this.wallet.id, "funding");
+    }
+
+    private calculateChargesAndAmounts() {
+        const { amount } = this.__dto;
+        this.chargesResult = this.__deps.calculateCharges({
+            amount,
+            businessChargesPaidBy:
+                this.chargeStack?.paidBy || this.businessWallet.w_fundingChargesPaidBy,
+            businessChargeStack: this.businessWallet.w_fundingCs || [],
+            customWalletChargeStack: this.chargeStack?.charges || null,
+            platformChargesPaidBy: this.businessWallet.fundingChargesPaidBy,
+            platformChargeStack:
+                this.businessWallet.customFundingCs || this.currency?.fundingCs || [],
+            transactionType: "credit",
+            waiveBusinessCharges: this.wallet.waiveFundingCharges,
+        });
+    }
+
+    private async createTransaction() {
+        const {
+            businessCharge,
+            businessGot,
+            businessPaid,
+            platformCharge,
+            platformGot,
+            receiverPaid,
+            senderPaid,
+            settledAmount,
+            businessChargesPaidBy,
+            platformChargesPaidBy,
+        } = this.chargesResult;
+        const { amount, businessId, callbackUrl } = this.__dto;
+
+        const transactionData = new CreateTransactionDto({
+            amount,
+            businessCharge,
+            businessChargePaidBy: businessChargesPaidBy,
+            platformChargePaidBy: platformChargesPaidBy,
+            businessGot,
+            businessId,
+            businessPaid,
+            bwId: this.businessWallet.id,
+            channel: null,
+            currency: this.wallet.currency,
+            platformCharge,
+            platformGot,
+            receiverPaid,
+            senderPaid,
+            settledAmount,
+            transactionType: "credit",
+            customerId: this.customer.id,
+            callbackUrl,
+            provider: this.provider,
+        });
+
+        const transaction = await this.__deps.createTransaction(transactionData);
     }
 }

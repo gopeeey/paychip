@@ -1,3 +1,5 @@
+import { PaidByType } from "../interfaces";
+
 interface ArgsInterface {
     platformCharge: number;
     platformGot: number;
@@ -7,6 +9,8 @@ interface ArgsInterface {
     senderPaid: number;
     receiverPaid: number;
     settledAmount: number;
+    businessChargesPaidBy: PaidByType | null;
+    platformChargesPaidBy: PaidByType;
 }
 
 export class ChargesCalculationResultDto implements ArgsInterface {
@@ -18,6 +22,8 @@ export class ChargesCalculationResultDto implements ArgsInterface {
     senderPaid: ArgsInterface["senderPaid"];
     receiverPaid: ArgsInterface["receiverPaid"];
     settledAmount: ArgsInterface["settledAmount"];
+    businessChargesPaidBy: ArgsInterface["businessChargesPaidBy"];
+    platformChargesPaidBy: ArgsInterface["platformChargesPaidBy"];
 
     constructor(body: ArgsInterface) {
         this.platformCharge = body.platformCharge;
@@ -28,5 +34,7 @@ export class ChargesCalculationResultDto implements ArgsInterface {
         this.senderPaid = body.senderPaid;
         this.receiverPaid = body.receiverPaid;
         this.settledAmount = body.settledAmount;
+        this.businessChargesPaidBy = body.businessChargesPaidBy;
+        this.platformChargesPaidBy = body.platformChargesPaidBy;
     }
 }

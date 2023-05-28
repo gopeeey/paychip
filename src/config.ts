@@ -1,3 +1,4 @@
+import { PaymentProviderType } from "@logic/transaction";
 import dotenv from "dotenv";
 import path from "path";
 
@@ -21,6 +22,10 @@ const POSTGRES_TEST_DB_USERNAME = process.env.POSTGRES_TEST_DB_USERNAME as strin
 const POSTGRES_TEST_DB_PASSWORD = process.env.POSTGRES_TEST_DB_PASSWORD as string;
 const POSTGRES_TEST_DB_HOST = process.env.POSTGRES_TEST_DB_HOST as string;
 const POSTGRES_TEST_DB_PORT = process.env.POSTGRES_TEST_DB_PORT as string;
+
+// payment settings
+const CURRENT_PAYMENT_PROVIDER = process.env.CURRENT_PAYMENT_PROVIDER as PaymentProviderType;
+const CURRENT_TRANSFER_PROVIDER = process.env.CURRENT_TRANSFER_PROVIDER as PaymentProviderType;
 
 // misc
 const JWT_SECRET = process.env.JWT_SECRET as string;
@@ -48,6 +53,11 @@ const dbConfig = {
     },
 };
 
+const paymentSettings = {
+    currentPaymentProvider: CURRENT_PAYMENT_PROVIDER,
+    currentTransferProvider: CURRENT_TRANSFER_PROVIDER,
+};
+
 const misc = {
     jwtSecret: JWT_SECRET,
 };
@@ -55,6 +65,7 @@ const misc = {
 const config = {
     server: serverConfig,
     db: dbConfig,
+    payment: paymentSettings,
     misc,
 };
 

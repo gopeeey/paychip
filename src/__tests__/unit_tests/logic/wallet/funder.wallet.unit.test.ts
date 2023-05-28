@@ -25,6 +25,8 @@ const depMocks = {
     getBusinessWallet: jest.fn(),
     getCurrency: jest.fn(),
     getWalletChargeStack: jest.fn(),
+    calculateCharges: jest.fn(),
+    createTransaction: jest.fn(),
 };
 
 const dependencies: WalletFunderDependencies = {
@@ -143,6 +145,12 @@ describe("Testing WalletFunder", () => {
             expect(depMocks.getWalletChargeStack).toHaveBeenCalledTimes(1);
 
             expect(depMocks.getWalletChargeStack).toHaveBeenCalledWith(walletJson.id, "funding");
+        });
+
+        it("should calculate charges and amounts", async () => {
+            mockAllDeps();
+            await walletFunder.exec();
+            expect(depMocks.calculateCharges).toHaveBeenCalledTimes(1);
         });
     });
 });

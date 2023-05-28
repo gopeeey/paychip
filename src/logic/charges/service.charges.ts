@@ -172,6 +172,8 @@ export class ChargesService implements ChargesServiceInterface {
             senderPaid,
             receiverPaid,
             settledAmount,
+            businessChargesPaidBy,
+            platformChargesPaidBy,
         });
     };
 }

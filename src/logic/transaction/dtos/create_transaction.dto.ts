@@ -1,6 +1,9 @@
 import { TransactionModelInterface } from "../interfaces";
 
-type RequiredProps = Omit<TransactionModelInterface, "id" | "status">;
+interface RequiredProps
+    extends Omit<TransactionModelInterface, "id" | "status" | "customer" | "channel"> {
+    channel: TransactionModelInterface["channel"] | null;
+}
 
 export class CreateTransactionDto implements RequiredProps {
     businessId: TransactionModelInterface["businessId"];
@@ -8,7 +11,7 @@ export class CreateTransactionDto implements RequiredProps {
     transactionType: TransactionModelInterface["transactionType"];
     currency: TransactionModelInterface["currency"];
     bwId: TransactionModelInterface["bwId"];
-    channel: TransactionModelInterface["channel"];
+    channel: TransactionModelInterface["channel"] | null;
     status: TransactionModelInterface["status"];
     amount: TransactionModelInterface["amount"];
     settledAmount: TransactionModelInterface["settledAmount"];
@@ -31,6 +34,7 @@ export class CreateTransactionDto implements RequiredProps {
     accountName: TransactionModelInterface["accountName"];
     cardNumber: TransactionModelInterface["cardNumber"];
     cardType: TransactionModelInterface["cardType"];
+    callbackUrl: TransactionModelInterface["callbackUrl"];
 
     constructor(body: RequiredProps) {
         this.businessId = body.businessId;
@@ -61,5 +65,6 @@ export class CreateTransactionDto implements RequiredProps {
         this.cardNumber = body.cardNumber || null;
         this.cardType = body.cardType || null;
         this.status = "pending";
+        this.callbackUrl = body.callbackUrl;
     }
 }
