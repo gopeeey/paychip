@@ -35,6 +35,7 @@ export const transactionData = new CreateTransactionDto({
 
 export const transactionJson: TransactionModelInterface = {
     ...transactionData,
+    channel: "bank",
     id: "somehere",
     status: "pending",
 };
@@ -55,7 +56,11 @@ export const transactionSeeder = async (pool: Pool) => {
         customerId: customer.id,
     });
 
-    const query = createTransactionQuery({ ...data, id: generateId(wallet.businessId) });
+    const query = createTransactionQuery({
+        ...data,
+        channel: "bank",
+        id: generateId(wallet.businessId),
+    });
     console.log("\n\n\nTHIS IS THE QUERY", query);
     await runQuery(query, pool);
 

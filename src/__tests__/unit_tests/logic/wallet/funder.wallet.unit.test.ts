@@ -1,4 +1,5 @@
 import { WalletRepo } from "@data/wallet";
+import { ChargesCalculationResultDto } from "@logic/charges";
 import { GetSingleBusinessCustomerDto } from "@logic/customer";
 import {
     FundWalletDto,
@@ -14,6 +15,7 @@ import {
     chargeStackJson,
     currencyJson,
     customerJson,
+    transactionJson,
     walletData,
     walletJson,
 } from "src/__tests__/samples";
@@ -27,6 +29,7 @@ const depMocks = {
     getWalletChargeStack: jest.fn(),
     calculateCharges: jest.fn(),
     createTransaction: jest.fn(),
+    generatePaymentLink: jest.fn(),
 };
 
 const dependencies: WalletFunderDependencies = {
@@ -46,11 +49,27 @@ const dto = new FundWalletDto({
 
 const walletFunder = new WalletFunder(dto, dependencies);
 
+const chargeCalculationResult = new ChargesCalculationResultDto({
+    businessCharge: 200,
+    businessChargesPaidBy: "customer",
+    businessGot: 2000,
+    businessPaid: 100,
+    platformCharge: 1000,
+    platformChargesPaidBy: "wallet",
+    platformGot: 2000,
+    receiverPaid: 10,
+    senderPaid: 100,
+    settledAmount: 5000,
+});
+
 const mockAllDeps = () => {
     depMocks.getOrCreateCustomer.mockResolvedValue(customerJson.complete);
     depMocks.getBusinessWallet.mockResolvedValue(bwJson);
     depMocks.getCurrency.mockResolvedValue(currencyJson);
     depMocks.getWalletChargeStack.mockResolvedValue(chargeStackJson.wallet);
+    depMocks.calculateCharges.mockReturnValue(chargeCalculationResult);
+    depMocks.createTransaction.mockResolvedValue(transactionJson);
+    depMocks.generatePaymentLink.mockResolvedValue("https://dontmatter.com/payme");
 };
 
 describe("Testing WalletFunder", () => {
@@ -151,6 +170,18 @@ describe("Testing WalletFunder", () => {
             mockAllDeps();
             await walletFunder.exec();
             expect(depMocks.calculateCharges).toHaveBeenCalledTimes(1);
+        });
+
+        it("should create a transaction", async () => {
+            mockAllDeps();
+            await walletFunder.exec();
+            expect(depMocks.createTransaction).toHaveBeenCalledTimes(1);
+        });
+
+        it("should generate a payment link", async () => {
+            mockAllDeps();
+            await walletFunder.exec();
+            expect(depMocks.generatePaymentLink).toHaveBeenCalledTimes(1);
         });
     });
 });

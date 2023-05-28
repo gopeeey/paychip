@@ -1,7 +1,11 @@
 import { TransactionModelInterface } from "@logic/transaction";
 import SQL from "sql-template-strings";
 
-export const createTransactionQuery = (transaction: TransactionModelInterface) => {
+interface CreateTransactionArgType extends Omit<TransactionModelInterface, "channel"> {
+    channel: TransactionModelInterface["channel"] | null;
+}
+
+export const createTransactionQuery = (transaction: CreateTransactionArgType) => {
     return SQL`
         INSERT INTO "transactions" (
             "id",

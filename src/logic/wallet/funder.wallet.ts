@@ -17,9 +17,11 @@ import {
 import {
     CreateTransactionDto,
     PaymentProviderType,
+    TransactionModelInterface,
     TransactionServiceInterface,
 } from "@logic/transaction";
 import config from "src/config";
+import { PaymentProviderServiceInterface } from "@logic/payment_providers/interfaces/service.payment_provider.interface";
 
 export interface WalletFunderDependencies {
     getWalletById: WalletServiceInterface["getWalletById"];
@@ -30,6 +32,7 @@ export interface WalletFunderDependencies {
     getWalletChargeStack: WalletServiceDependencies["getWalletChargeStack"];
     calculateCharges: ChargesServiceInterface["calculateTransactionCharges"];
     createTransaction: TransactionServiceInterface["createTransaction"];
+    generatePaymentLink: PaymentProviderServiceInterface["generatePaymentLink"];
 }
 
 export class WalletFunder {
@@ -40,6 +43,8 @@ export class WalletFunder {
     private chargeStack?: ChargeStackModelInterface;
     private declare chargesResult: ChargesCalculationResultDto;
     private provider: PaymentProviderType = config.payment.currentPaymentProvider;
+    private declare transaction: TransactionModelInterface;
+    private declare paymentLink: string;
 
     constructor(
         private readonly __dto: FundWalletDto,
@@ -54,7 +59,7 @@ export class WalletFunder {
         await this.fetchChargeStackIfNeeded();
         this.calculateChargesAndAmounts();
         await this.createTransaction();
-        // generate payment link
+        await this.generatePaymentLink();
     }
 
     private async fetchWallet() {
@@ -151,8 +156,21 @@ export class WalletFunder {
             customerId: this.customer.id,
             callbackUrl,
             provider: this.provider,
+            senderWalletId: this.wallet.id,
+            receiverWalletId: this.wallet.id,
         });
 
-        const transaction = await this.__deps.createTransaction(transactionData);
+        this.transaction = await this.__deps.createTransaction(transactionData);
+    }
+
+    private async generatePaymentLink() {
+        const { amount, currency, id } = this.transaction;
+        this.paymentLink = await this.__deps.generatePaymentLink({
+            amount,
+            allowedChannels: ["bank", "card"],
+            currency,
+            transactionId: id,
+            walletId: this.wallet.id,
+        });
     }
 }
