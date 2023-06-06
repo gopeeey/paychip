@@ -47,8 +47,8 @@ export class WalletFunder {
     private declare paymentLink: string;
 
     constructor(
-        private readonly __dto: FundWalletDto,
-        private readonly __deps: WalletFunderDependencies
+        private readonly _dto: FundWalletDto,
+        private readonly _deps: WalletFunderDependencies
     ) {}
 
     async exec() {
@@ -63,34 +63,34 @@ export class WalletFunder {
     }
 
     private async fetchWallet() {
-        const { walletId, email, currency, businessId } = this.__dto;
+        const { walletId, email, currency, businessId } = this._dto;
         if (!walletId && (!email || !currency)) {
             throw new InvalidFundingData();
         }
 
         if (walletId) {
-            this.wallet = await this.__deps.getWalletById(walletId);
+            this.wallet = await this._deps.getWalletById(walletId);
         } else {
             if (email && currency) {
                 const uniqueData = new GetUniqueWalletDto({ businessId, email, currency });
-                this.wallet = await this.__deps.getUniqueWallet(uniqueData);
+                this.wallet = await this._deps.getUniqueWallet(uniqueData);
             } else {
-                throw new InternalError("Wallet funding data not properly passed", this.__dto);
+                throw new InternalError("Wallet funding data not properly passed", this._dto);
             }
         }
     }
 
     private async fetchCustomer() {
         const data = new GetSingleBusinessCustomerDto({
-            businessId: this.__dto.businessId,
+            businessId: this._dto.businessId,
             email: this.wallet.email,
         });
 
-        this.customer = await this.__deps.getOrCreateCustomer(data);
+        this.customer = await this._deps.getOrCreateCustomer(data);
     }
 
     private async fetchBusinessWallet() {
-        this.businessWallet = await this.__deps.getBusinessWallet(
+        this.businessWallet = await this._deps.getBusinessWallet(
             this.wallet.businessId,
             this.wallet.currency
         );
@@ -98,16 +98,16 @@ export class WalletFunder {
 
     private async fetchCurrencyIfNeeded() {
         if (this.businessWallet.customFundingCs) return;
-        this.currency = await this.__deps.getCurrency(this.businessWallet.currencyCode);
+        this.currency = await this._deps.getCurrency(this.businessWallet.currencyCode);
     }
 
     private async fetchChargeStackIfNeeded() {
-        this.chargeStack = await this.__deps.getWalletChargeStack(this.wallet.id, "funding");
+        this.chargeStack = await this._deps.getWalletChargeStack(this.wallet.id, "funding");
     }
 
     private calculateChargesAndAmounts() {
-        const { amount } = this.__dto;
-        this.chargesResult = this.__deps.calculateCharges({
+        const { amount } = this._dto;
+        this.chargesResult = this._deps.calculateCharges({
             amount,
             businessChargesPaidBy:
                 this.chargeStack?.paidBy || this.businessWallet.w_fundingChargesPaidBy,
@@ -134,7 +134,7 @@ export class WalletFunder {
             businessChargesPaidBy,
             platformChargesPaidBy,
         } = this.chargesResult;
-        const { amount, businessId, callbackUrl } = this.__dto;
+        const { amount, businessId, callbackUrl } = this._dto;
 
         const transactionData = new CreateTransactionDto({
             amount,
@@ -160,12 +160,12 @@ export class WalletFunder {
             receiverWalletId: this.wallet.id,
         });
 
-        this.transaction = await this.__deps.createTransaction(transactionData);
+        this.transaction = await this._deps.createTransaction(transactionData);
     }
 
     private async generatePaymentLink() {
         const { amount, currency, id } = this.transaction;
-        this.paymentLink = await this.__deps.generatePaymentLink({
+        this.paymentLink = await this._deps.generatePaymentLink({
             amount,
             allowedChannels: ["bank", "card"],
             currency,

@@ -27,6 +27,11 @@ const POSTGRES_TEST_DB_PORT = process.env.POSTGRES_TEST_DB_PORT as string;
 const CURRENT_PAYMENT_PROVIDER = process.env.CURRENT_PAYMENT_PROVIDER as PaymentProviderType;
 const CURRENT_TRANSFER_PROVIDER = process.env.CURRENT_TRANSFER_PROVIDER as PaymentProviderType;
 
+// third party keys
+// paystack
+const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY as string;
+const PAYSTACK_PUBLIC_KEY = process.env.PAYSTACK_PUBLIC_KEY as string;
+
 // misc
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -58,6 +63,13 @@ const paymentSettings = {
     currentTransferProvider: CURRENT_TRANSFER_PROVIDER,
 };
 
+const thirdParty = {
+    paystack: {
+        secretKey: PAYSTACK_SECRET_KEY,
+        publicKey: PAYSTACK_PUBLIC_KEY,
+    },
+};
+
 const misc = {
     jwtSecret: JWT_SECRET,
 };
@@ -66,6 +78,7 @@ const config = {
     server: serverConfig,
     db: dbConfig,
     payment: paymentSettings,
+    thirdParty,
     misc,
 };
 

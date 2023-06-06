@@ -6,14 +6,14 @@ import { PgSession } from "@data/pg_session";
 import { PgBaseRepo } from "@data/pg_base_repo";
 
 export class BusinessRepo extends PgBaseRepo implements BusinessRepoInterface {
-    constructor(private readonly __pool: Pool) {
-        super(__pool);
+    constructor(private readonly _pool: Pool) {
+        super(_pool);
     }
 
     create: BusinessRepoInterface["create"] = async (createBusinessDto, session) => {
         const res = await runQuery<BusinessModelInterface>(
             queries.createBusinessQuery(createBusinessDto),
-            this.__pool,
+            this._pool,
             (session as PgSession)?.client
         );
         const business = res.rows[0];
@@ -22,14 +22,14 @@ export class BusinessRepo extends PgBaseRepo implements BusinessRepoInterface {
     };
 
     findById = async (id: BusinessModelInterface["id"]) => {
-        const res = await runQuery<BusinessModelInterface>(queries.findById(id), this.__pool);
+        const res = await runQuery<BusinessModelInterface>(queries.findById(id), this._pool);
         return res.rows[0] || null;
     };
 
     getOwnerBusinesses = async (ownerId: BusinessModelInterface["ownerId"]) => {
         const res = await runQuery<BusinessModelInterface>(
             queries.getOwnerBusinesses(ownerId),
-            this.__pool
+            this._pool
         );
         return res.rows;
     };

@@ -11,9 +11,9 @@ export class PaymentProviderService implements PaymentProviderServiceInterface {
     private readonly currentPaymentProvider: PaymentProviderRepoInterface;
     private readonly currentTransferProvider: PaymentProviderRepoInterface;
 
-    constructor(private readonly __providers: PaymentProviderServiceDependenciesInterface) {
-        this.currentPaymentProvider = __providers[this.currentPaymentProviderKey];
-        this.currentTransferProvider = __providers[this.currentTransferProviderKey];
+    constructor(private readonly _providers: PaymentProviderServiceDependenciesInterface) {
+        this.currentPaymentProvider = _providers[this.currentPaymentProviderKey];
+        this.currentTransferProvider = _providers[this.currentTransferProviderKey];
     }
 
     generatePaymentLink: PaymentProviderServiceInterface["generatePaymentLink"] = async (data) => {

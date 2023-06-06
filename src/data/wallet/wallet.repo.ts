@@ -7,8 +7,8 @@ import { runQuery } from "@data/db";
 import { PgSession } from "@data/pg_session";
 
 export class WalletRepo extends PgBaseRepo implements WalletRepoInterface {
-    constructor(private readonly __pool: Pool) {
-        super(__pool);
+    constructor(private readonly _pool: Pool) {
+        super(_pool);
     }
 
     create: WalletRepoInterface["create"] = async (createWalletDto, session) => {
@@ -19,7 +19,7 @@ export class WalletRepo extends PgBaseRepo implements WalletRepoInterface {
 
         const res = await runQuery<WalletModelInterface>(
             query,
-            this.__pool,
+            this._pool,
             (session as PgSession)?.client
         );
         const wallet = res.rows[0];
@@ -27,7 +27,7 @@ export class WalletRepo extends PgBaseRepo implements WalletRepoInterface {
     };
 
     getById = async (id: WalletModelInterface["id"]) => {
-        const res = await runQuery<WalletModelInterface>(queries.getByIdQuery(id), this.__pool);
+        const res = await runQuery<WalletModelInterface>(queries.getByIdQuery(id), this._pool);
         const wallet = res.rows[0];
         return wallet || null;
     };
@@ -35,7 +35,7 @@ export class WalletRepo extends PgBaseRepo implements WalletRepoInterface {
     getUnique: WalletRepoInterface["getUnique"] = async (getUniqueDto) => {
         const res = await runQuery<WalletModelInterface>(
             queries.getUniqueQuery(getUniqueDto),
-            this.__pool
+            this._pool
         );
         const wallet = res.rows[0];
         return wallet || null;
@@ -44,7 +44,7 @@ export class WalletRepo extends PgBaseRepo implements WalletRepoInterface {
     incrementBalance: WalletRepoInterface["incrementBalance"] = async (incrementBalanceDto) => {
         await runQuery<WalletModelInterface>(
             queries.incrementBalanceQuery(incrementBalanceDto),
-            this.__pool,
+            this._pool,
             (incrementBalanceDto.session as PgSession)?.client
         );
     };

@@ -34,8 +34,8 @@ export interface DbBusinessWallet
 }
 
 export class BusinessWalletRepo extends PgBaseRepo implements BusinessWalletRepoInterface {
-    constructor(private readonly __pool: Pool) {
-        super(__pool);
+    constructor(private readonly _pool: Pool) {
+        super(_pool);
     }
 
     parseBusinessWallet = (data: DbBusinessWallet) => {
@@ -72,7 +72,7 @@ export class BusinessWalletRepo extends PgBaseRepo implements BusinessWalletRepo
         const query = queries.createBusinessWalletQuery(data);
         const res = await runQuery<DbBusinessWallet>(
             query,
-            this.__pool,
+            this._pool,
             (session as PgSession)?.client
         );
         const businessWallet = res.rows[0];
@@ -85,7 +85,7 @@ export class BusinessWalletRepo extends PgBaseRepo implements BusinessWalletRepo
         currencyCode
     ) => {
         const query = queries.getByCurrencyQuery(businessId, currencyCode);
-        const res = await runQuery<DbBusinessWallet>(query, this.__pool);
+        const res = await runQuery<DbBusinessWallet>(query, this._pool);
         const businessWallet = res.rows[0];
 
         return businessWallet ? this.parseBusinessWallet(businessWallet) : null;
