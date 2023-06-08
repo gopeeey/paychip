@@ -24,6 +24,8 @@ const walletRepoMock = createSpies(new WalletRepo({} as Pool));
 const deps: WalletServiceDependencies = {
     repo: walletRepoMock as unknown as WalletRepo,
     getBusinessWallet: jest.fn(),
+    getCurrency: jest.fn(),
+    getWalletChargeStack: jest.fn(),
 };
 
 const walletService = new WalletService(deps);

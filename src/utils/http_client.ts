@@ -5,7 +5,7 @@ interface ClientConfigInterface {
     baseUrl?: string;
 }
 
-interface PostRequestArgsInterface {
+export interface PostRequestArgsInterface {
     url: string;
     body: { [key: string]: unknown };
 }
@@ -36,7 +36,7 @@ export class HttpClient {
         }
     }
 
-    static errorHandler(err: unknown) {
+    static errorHandler(err: unknown): never {
         if (err instanceof AxiosError) {
             const httpError = new HttpError({
                 message: err.response?.data?.message || err.message,
@@ -53,6 +53,8 @@ export class HttpClient {
 
             throw httpError;
         }
+
+        throw err;
     }
 
     async post<ResDataType>(args: PostRequestArgsInterface) {

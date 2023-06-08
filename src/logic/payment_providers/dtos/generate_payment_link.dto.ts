@@ -5,7 +5,7 @@ type ArgsType = {
     walletId: string;
     transactionId: string;
     currency: string;
-    allowedChannels: TransactionChannelType[];
+    allowedChannels: Exclude<TransactionChannelType, "wallet">[];
 };
 
 export class GeneratePaymentLinkDto {
