@@ -1,10 +1,11 @@
-import { ChargesRepo, DbChargeStack } from "@data/charges";
+import { ChargesRepo, DbChargeStack, geWalletChargeStackObjectQuery } from "@data/charges";
 import {
     AddChargeStackToWalletDto,
     allowedChargeTypes,
     ChargeStackDto,
     ChargeStackModelInterface,
     CreateChargeStackDto,
+    GetWalletChargeStackDto,
     WalletChargeStackModelInterface,
 } from "@logic/charges";
 import {
@@ -21,7 +22,7 @@ const pool = DBSetup(chargesSeeder);
 const chargesRepo = new ChargesRepo(pool);
 
 describe("TESTING CHARGES REPO", () => {
-    describe("Testing parseChargeStack", () => {
+    describe(">>> parseChargeStack", () => {
         it("should return a ChargeStackDto", () => {
             const data: DbChargeStack = {
                 id: "asdlkj",
@@ -39,7 +40,7 @@ describe("TESTING CHARGES REPO", () => {
         });
     });
 
-    describe("Testing createChargeStack", () => {
+    describe(">>> createChargeStack", () => {
         it("should persist and return a charge stack object", async () => {
             const session = await chargesRepo.startSession();
             const wallet = await getAWallet(pool);
@@ -65,7 +66,7 @@ describe("TESTING CHARGES REPO", () => {
         });
     });
 
-    describe("Testing addStackToWallet", () => {
+    describe(">>> addStackToWallet", () => {
         it("should create a new unique record in the wallet charge stack joining table", async () => {
             const wallet = await getAWallet(pool);
             const chargeStack = await getAChargeStackWithBusinessId(pool, wallet.businessId);
@@ -94,7 +95,7 @@ describe("TESTING CHARGES REPO", () => {
         });
     });
 
-    describe("Testing getStackById", () => {
+    describe(">>> getStackById", () => {
         describe("Given the charge stack exists", () => {
             it("should return the correct charge stack", async () => {
                 const wallet = await getAWallet(pool);
@@ -108,6 +109,43 @@ describe("TESTING CHARGES REPO", () => {
             it("should return null", async () => {
                 const result = await chargesRepo.getStackById("does not exist");
                 expect(result).toBeNull();
+            });
+        });
+    });
+
+    describe(">>> getWalletChargeStack", () => {
+        describe("given the charge stack exists", () => {
+            it("should return a parsed charge stack object", async () => {
+                const wallet = await getAWallet(pool);
+
+                const chargeStack = await chargesRepo.getWalletChargeStack(wallet.id, "funding");
+                if (!chargeStack) throw new Error("Failed to return a charge stack");
+                const data = new GetWalletChargeStackDto({
+                    walletId: wallet.id,
+                    chargeStackId: chargeStack.id,
+                    chargeType: "funding",
+                });
+
+                const res = await runQuery<WalletChargeStackModelInterface>(
+                    geWalletChargeStackObjectQuery(data),
+                    pool
+                );
+
+                const walletChargeStack = res.rows[0];
+                if (!walletChargeStack)
+                    throw new Error("Returned charge stack is not associated with wallet");
+
+                expect(chargeStack.id).toBe(walletChargeStack.chargeStackId);
+            });
+        });
+
+        describe("given the charge stack does not exist", () => {
+            it("should return null", async () => {
+                const chargeStack = await chargesRepo.getWalletChargeStack(
+                    "doesnotexist",
+                    "funding"
+                );
+                expect(chargeStack).toBeNull();
             });
         });
     });

@@ -40,7 +40,7 @@ export class WalletFunder {
     private declare customer: CustomerModelInterface;
     private declare businessWallet: BusinessWalletModelInterface;
     private currency?: CurrencyModelInterface;
-    private chargeStack?: ChargeStackModelInterface;
+    private chargeStack?: ChargeStackModelInterface | null;
     private declare chargesResult: ChargesCalculationResultDto;
     private provider: PaymentProviderType = config.payment.currentPaymentProvider;
     private declare transaction: TransactionModelInterface;

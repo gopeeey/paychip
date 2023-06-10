@@ -46,6 +46,7 @@ describe("TESTING TRANSACTION REPO", () => {
                 bankName: "Second bank",
                 senderWalletId: wallet.id,
                 receiverPaid: 0,
+                callbackUrl: null,
             });
             const transaction = await transactionRepo.create(data, session);
             await session.commit();

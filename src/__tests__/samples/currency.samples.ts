@@ -1,5 +1,5 @@
 import { CreateCurrencyDto, CurrencyModelInterface, StandardCurrencyDto } from "@logic/currency";
-import { createCurrencyQuery } from "@data/currency";
+import { DbCurrency, createCurrencyQuery } from "@data/currency";
 import { ChargeDto } from "@logic/charges";
 import { Pool } from "pg";
 import { runQuery } from "@data/db";
@@ -95,7 +95,7 @@ export const currencySeeder = async (pool: Pool) => {
 export const getACurrency = async (pool: Pool, isoCode?: CurrencyModelInterface["isoCode"]) => {
     let query = SQL`SELECT * FROM currencies LIMIT 1;`;
     if (isoCode) query = SQL`SELECT * FROM currencies WHERE "isoCode" = ${isoCode} LIMIT 1;`;
-    const res = await runQuery<CurrencyModelInterface>(query, pool);
+    const res = await runQuery<DbCurrency>(query, pool);
     const currency = res.rows[0];
     if (!currency) throw new SeedingError("No currencies found");
     return currency;

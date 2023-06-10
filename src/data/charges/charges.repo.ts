@@ -46,4 +46,14 @@ export class ChargesRepo extends PgBaseRepo implements ChargesRepoInterface {
         const row = res.rows[0];
         return row ? this.parseChargeStack(row) : null;
     };
+
+    getWalletChargeStack: ChargesRepoInterface["getWalletChargeStack"] = async (
+        walletId,
+        chargeType
+    ) => {
+        const query = queries.getWalletChargeStackQuery(walletId, chargeType);
+        const res = await runQuery<DbChargeStack>(query, this._pool);
+        const chargeStack = res.rows[0];
+        return chargeStack ? this.parseChargeStack(chargeStack) : null;
+    };
 }

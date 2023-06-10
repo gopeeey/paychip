@@ -1,8 +1,7 @@
 import { CurrencyRepo, DbCurrency } from "@data/currency";
 import { runQuery } from "@data/db";
 import { ChargeDto } from "@logic/charges";
-import { CurrencyModelInterface } from "@logic/currency";
-import { currencySeeder } from "src/__tests__/samples";
+import { currencySeeder, getACurrency } from "src/__tests__/samples";
 import { DBSetup } from "src/__tests__/test_utils";
 
 const pool = DBSetup(currencySeeder);
@@ -10,7 +9,7 @@ const pool = DBSetup(currencySeeder);
 const currencyRepo = new CurrencyRepo(pool);
 
 describe("TESTING CURRENCY REPO", () => {
-    describe("Testing parseChargeStack", () => {
+    describe(">>> parseCurrency", () => {
         it("should return a currency object with the charge stacks parsed", () => {
             const chargeStack = [
                 new ChargeDto({
@@ -43,7 +42,7 @@ describe("TESTING CURRENCY REPO", () => {
         });
     });
 
-    describe("Testing getAll", () => {
+    describe(">>> getAll", () => {
         it("should return an array of currencyJson objects", async () => {
             const res = await runQuery<DbCurrency>("SELECT * FROM currencies", pool);
             const expected = res.rows.map((row) => currencyRepo.parseCurrency(row));
@@ -52,7 +51,7 @@ describe("TESTING CURRENCY REPO", () => {
         });
     });
 
-    describe("Testing getActive", () => {
+    describe(">>> getActive", () => {
         it("should return an array of active currency json objects", async () => {
             const res = await runQuery<DbCurrency>(
                 "SELECT * FROM currencies WHERE active = true",
@@ -61,6 +60,24 @@ describe("TESTING CURRENCY REPO", () => {
             const expected = res.rows.map((row) => currencyRepo.parseCurrency(row));
             const currencies = await currencyRepo.getActive();
             expect(currencies).toEqual(expected);
+        });
+    });
+
+    describe(">>> getByIsoCode", () => {
+        describe("given the currency exists", () => {
+            it("should return a parsed currency object (charge stacks parsed)", async () => {
+                const testCurrency = await getACurrency(pool);
+                const parsedTestCurrency = currencyRepo.parseCurrency(testCurrency);
+                const currency = await currencyRepo.getByIsoCode(testCurrency.isoCode);
+                expect(currency).toEqual(parsedTestCurrency);
+            });
+        });
+
+        describe("given the currency does not exist", () => {
+            it("should return null", async () => {
+                const currency = await currencyRepo.getByIsoCode("DOESNTOEXIST");
+                expect(currency).toBeNull();
+            });
         });
     });
 });

@@ -5,3 +5,4 @@ export * from "./charge.dto";
 export * from "./charge_stack.dto";
 export * from "./calculate_transaction_charges.dto";
 export * from "./charges_calculation_result.dto";
+export * from "./get_wallet_charge_stack.dto";

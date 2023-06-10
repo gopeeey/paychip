@@ -1,4 +1,9 @@
-import { CurrencyDto, CurrencyModelInterfaceDef, CurrencyRepoInterface } from "@logic/currency";
+import {
+    CurrencyDto,
+    CurrencyModelInterface,
+    CurrencyModelInterfaceDef,
+    CurrencyRepoInterface,
+} from "@logic/currency";
 import { Pool } from "pg";
 import { runQuery } from "@data/db";
 import * as queries from "./queries";
@@ -39,5 +44,12 @@ export class CurrencyRepo implements CurrencyRepoInterface {
         const query = queries.getActiveQuery();
         const res = await runQuery<DbCurrency>(query, this._pool);
         return res.rows.map((row) => this.parseCurrency(row));
+    };
+
+    getByIsoCode: CurrencyRepoInterface["getByIsoCode"] = async (isoCode) => {
+        const query = queries.getByIsoCode(isoCode);
+        const res = await runQuery<DbCurrency>(query, this._pool);
+        const currency = res.rows[0];
+        return currency ? this.parseCurrency(currency) : null;
     };
 }

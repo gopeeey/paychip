@@ -49,6 +49,8 @@ export const buildContainer = async (pool: Pool) => {
     const walletService = new WalletService({
         repo: walletRepo,
         getBusinessWallet: businessWalletService.getBusinessWalletByCurrency,
+        getCurrency: currencyService.getCurrencyByIsoCode,
+        getWalletChargeStack: chargesService.getWalletChargeStack,
     });
 
     const authMiddleware = new AuthMiddleware({ accountService, businessService });

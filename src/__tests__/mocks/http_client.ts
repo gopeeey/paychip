@@ -1,4 +1,4 @@
-import * as HttpClientModule from "src/utils/http_client";
+import * as HttpClientModule from "src/utils/http_client/client";
 
 export const HttpClientInstanceMock = { post: jest.fn(), get: jest.fn() };
 export const HttpClientClassMock =

@@ -1,3 +1,4 @@
+import { ChargesRepo } from "@data/charges";
 import {
     CalculateTransactionChargesDto,
     ChargeDto,
@@ -9,51 +10,49 @@ import {
     ChargesServiceDependencies,
     AddChargeStackToWalletDto,
 } from "@logic/charges";
-import { sessionMock } from "src/__tests__/mocks";
+import { Pool } from "pg";
+import { createSpies, sessionMock } from "src/__tests__/mocks";
 import { chargeStackData, chargeStackJson, walletJson } from "src/__tests__/samples";
 
-const repoMock = {
-    createChargeStack: jest.fn(),
-    addStackToWallet: jest.fn(async () => {}),
-    createCharge: jest.fn(),
-    addChargesToStack: jest.fn(),
-};
+const repo = new ChargesRepo({} as Pool);
+const repoSpies = createSpies(repo);
 
 const chargesService = new ChargesService({
-    repo: repoMock,
+    repo: repoSpies,
 } as unknown as ChargesServiceDependencies);
 
 describe("TESTING CHARGES SERVICE", () => {
-    describe("Testing createStack", () => {
+    describe(">>> createStack", () => {
         it("should return a charge stack object", async () => {
-            repoMock.createChargeStack.mockResolvedValue(chargeStackJson.customer);
+            repoSpies.createChargeStack.mockResolvedValue(chargeStackJson.customer);
             const chargeStack = await chargesService.createStack(
                 chargeStackData.customer,
                 sessionMock
             );
             expect(chargeStack).toEqual(chargeStackJson.customer);
-            expect(repoMock.createChargeStack).toHaveBeenCalledTimes(1);
-            expect(repoMock.createChargeStack).toHaveBeenCalledWith(
+            expect(repoSpies.createChargeStack).toHaveBeenCalledTimes(1);
+            expect(repoSpies.createChargeStack).toHaveBeenCalledWith(
                 chargeStackData.customer,
                 sessionMock
             );
         });
     });
 
-    describe("Testing addStackToWallet", () => {
+    describe(">>> addStackToWallet", () => {
         it("should call the appropriate method in the repo", async () => {
+            repoSpies.addStackToWallet.mockImplementation(async () => {});
             const data = new AddChargeStackToWalletDto({
                 chargeStackId: chargeStackJson.wallet.id,
                 walletId: walletJson.id,
                 chargeType: "funding",
             });
             await chargesService.addStackToWallet(data);
-            expect(repoMock.addStackToWallet).toHaveBeenCalledTimes(1);
-            expect(repoMock.addStackToWallet).toHaveBeenCalledWith(data);
+            expect(repoSpies.addStackToWallet).toHaveBeenCalledTimes(1);
+            expect(repoSpies.addStackToWallet).toHaveBeenCalledWith(data);
         });
     });
 
-    describe("Testing getCompatibleCharge", () => {
+    describe(">>> getCompatibleCharge", () => {
         const charges: ChargeDto[] = [
             {
                 flatCharge: 0,
@@ -92,7 +91,7 @@ describe("TESTING CHARGES SERVICE", () => {
         });
     });
 
-    describe("Testing calculateCharge", () => {
+    describe(">>> calculateCharge", () => {
         it("should return the correct charge and got values", () => {
             const charges = [
                 new ChargeDto({
@@ -136,7 +135,7 @@ describe("TESTING CHARGES SERVICE", () => {
         });
     });
 
-    describe("Testing calculateTransactionCharges", () => {
+    describe(">>> calculateTransactionCharges", () => {
         it("should return the expected results", () => {
             const businessCharges: ChargeDto[] = [
                 {
@@ -252,6 +251,8 @@ describe("TESTING CHARGES SERVICE", () => {
                     receiverPaid: 700,
                     senderPaid: 5000,
                     settledAmount: 4300,
+                    businessChargesPaidBy: "wallet",
+                    platformChargesPaidBy: "wallet",
                 },
                 {
                     businessCharge: 400,
@@ -262,6 +263,8 @@ describe("TESTING CHARGES SERVICE", () => {
                     receiverPaid: 0,
                     senderPaid: 2400,
                     settledAmount: 2000,
+                    businessChargesPaidBy: "customer",
+                    platformChargesPaidBy: "wallet",
                 },
                 {
                     businessCharge: 770,
@@ -272,6 +275,8 @@ describe("TESTING CHARGES SERVICE", () => {
                     receiverPaid: 770,
                     senderPaid: 8750,
                     settledAmount: 7230,
+                    businessChargesPaidBy: "wallet",
+                    platformChargesPaidBy: "customer",
                 },
                 {
                     businessCharge: 700,
@@ -282,6 +287,8 @@ describe("TESTING CHARGES SERVICE", () => {
                     receiverPaid: 0,
                     senderPaid: 5700,
                     settledAmount: 5000,
+                    businessChargesPaidBy: "wallet",
+                    platformChargesPaidBy: "wallet",
                 },
                 {
                     businessCharge: 400,
@@ -292,6 +299,8 @@ describe("TESTING CHARGES SERVICE", () => {
                     receiverPaid: 600,
                     senderPaid: 2000,
                     settledAmount: 1400,
+                    businessChargesPaidBy: "customer",
+                    platformChargesPaidBy: "customer",
                 },
                 {
                     businessCharge: 770,
@@ -302,6 +311,8 @@ describe("TESTING CHARGES SERVICE", () => {
                     receiverPaid: 750,
                     senderPaid: 8770,
                     settledAmount: 7250,
+                    businessChargesPaidBy: "wallet",
+                    platformChargesPaidBy: "customer",
                 },
             ];
 
@@ -311,6 +322,32 @@ describe("TESTING CHARGES SERVICE", () => {
                 const result = chargesService.calculateTransactionCharges(data);
                 expect(result).toEqual(expected);
             }
+        });
+    });
+
+    describe(">>> getWalletChargeStack", () => {
+        describe("given the charge stack exists", () => {
+            it("should return the charge stack object", async () => {
+                repoSpies.getWalletChargeStack.mockResolvedValue(chargeStackJson.customer);
+                const chargeStack = await chargesService.getWalletChargeStack(
+                    walletJson.id,
+                    "funding"
+                );
+                expect(chargeStack).toEqual(chargeStackJson.customer);
+                expect(repoSpies.getWalletChargeStack).toHaveBeenCalledTimes(1);
+            });
+        });
+
+        describe("given the charge stack does not exist", () => {
+            it("should return null", async () => {
+                repoSpies.getWalletChargeStack.mockResolvedValue(null);
+                const chargeStack = await chargesService.getWalletChargeStack(
+                    walletJson.id,
+                    "funding"
+                );
+
+                expect(chargeStack).toBeNull();
+            });
         });
     });
 });

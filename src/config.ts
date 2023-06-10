@@ -34,6 +34,7 @@ const PAYSTACK_PUBLIC_KEY = process.env.PAYSTACK_PUBLIC_KEY as string;
 
 // misc
 const JWT_SECRET = process.env.JWT_SECRET as string;
+const DOMAIN_NAME = process.env.DOMAIN_NAME as string;
 
 const serverConfig = {
     port: Number(SERVER_PORT),
@@ -61,6 +62,7 @@ const dbConfig = {
 const paymentSettings = {
     currentPaymentProvider: CURRENT_PAYMENT_PROVIDER,
     currentTransferProvider: CURRENT_TRANSFER_PROVIDER,
+    providerErrorMessage: "Payment provider error",
 };
 
 const thirdParty = {
@@ -72,6 +74,8 @@ const thirdParty = {
 
 const misc = {
     jwtSecret: JWT_SECRET,
+    domainName: DOMAIN_NAME,
+    emailSuffix: `@${DOMAIN_NAME}`,
 };
 
 const config = {

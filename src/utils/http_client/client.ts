@@ -1,4 +1,5 @@
 import axios, { AxiosError } from "axios";
+import { HttpError } from "./errors";
 
 interface ClientConfigInterface {
     headers?: { Authorization?: string };
@@ -8,21 +9,6 @@ interface ClientConfigInterface {
 export interface PostRequestArgsInterface {
     url: string;
     body: { [key: string]: unknown };
-}
-
-interface HttpErrorInterface {
-    message: string;
-    statusCode?: number;
-}
-
-export class HttpError extends Error implements HttpErrorInterface {
-    statusCode: HttpErrorInterface["statusCode"];
-
-    constructor(body: HttpErrorInterface) {
-        super(body.message);
-        this.statusCode = body.statusCode;
-        this.name = "HttpError";
-    }
 }
 
 export class HttpClient {
@@ -40,6 +26,7 @@ export class HttpClient {
         if (err instanceof AxiosError) {
             const httpError = new HttpError({
                 message: err.response?.data?.message || err.message,
+                data: err.response?.data,
             });
             if (err.code) httpError.statusCode = parseInt(err.code, 10);
 

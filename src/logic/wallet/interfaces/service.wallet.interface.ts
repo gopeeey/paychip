@@ -28,5 +28,5 @@ export interface WalletServiceDependencies {
     getWalletChargeStack: (
         walletId: WalletModelInterface["id"],
         chargeType: WalletChargeStackModelInterface["chargeType"]
-    ) => Promise<ChargeStackModelInterface>;
+    ) => Promise<ChargeStackModelInterface | null>;
 }

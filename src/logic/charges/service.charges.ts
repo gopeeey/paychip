@@ -5,6 +5,7 @@ import {
 } from "./interfaces/service.charges.interface";
 import { CalculateTransactionChargesDto, ChargeDto, ChargesCalculationResultDto } from "./dtos";
 import { SettlementError } from "./errors";
+import { ChargeStackModelInterface } from "./interfaces";
 
 export class ChargesService implements ChargesServiceInterface {
     private readonly _repo: ChargesServiceDependencies["repo"];
@@ -175,5 +176,13 @@ export class ChargesService implements ChargesServiceInterface {
             businessChargesPaidBy,
             platformChargesPaidBy,
         });
+    };
+
+    getWalletChargeStack: ChargesServiceInterface["getWalletChargeStack"] = async (
+        walletId,
+        chargeType
+    ) => {
+        const chargeStack = await this._repo.getWalletChargeStack(walletId, chargeType);
+        return chargeStack;
     };
 }

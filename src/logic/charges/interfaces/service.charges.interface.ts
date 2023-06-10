@@ -9,6 +9,7 @@ import {
 } from "../dtos";
 import { ChargesRepoInterface } from "./charges_repo.interface";
 import { ChargeStackModelInterface } from "./charge_stack.model.interface";
+import { WalletChargeStackModelInterface } from "./wallet_charge_stack.model.interface";
 
 export interface ChargesServiceInterface {
     createStack: (
@@ -25,6 +26,11 @@ export interface ChargesServiceInterface {
     calculateTransactionCharges: (
         data: CalculateTransactionChargesDto
     ) => ChargesCalculationResultDto;
+
+    getWalletChargeStack: (
+        walletId: WalletChargeStackModelInterface["walletId"],
+        chargeType: WalletChargeStackModelInterface["chargeType"]
+    ) => Promise<ChargeStackModelInterface | null>;
 }
 
 export interface ChargesServiceDependencies {

@@ -29,3 +29,9 @@ export const getActiveQuery = () => {
         SELECT * FROM currencies WHERE active = true;
     `;
 };
+
+export const getByIsoCode = (isoCode: CurrencyModelInterface["isoCode"]) => {
+    return SQL`
+        SELECT * FROM currencies WHERE "isoCode" = ${isoCode} AND "active" = true;
+    `;
+};
