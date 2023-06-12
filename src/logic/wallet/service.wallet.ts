@@ -1,12 +1,11 @@
 import {
-    WalletModelInterface,
     WalletRepoInterface,
     WalletServiceDependencies,
     WalletServiceInterface,
 } from "./interfaces";
 import { WalletCreator } from "./creator.wallet";
+import { WalletFunder } from "./funder.wallet";
 import { WalletNotFoundError } from "./errors";
-import { GetUniqueWalletDto } from "./dtos";
 
 export class WalletService implements WalletServiceInterface {
     private _repo: WalletRepoInterface;
@@ -35,5 +34,21 @@ export class WalletService implements WalletServiceInterface {
         const wallet = await this._repo.getUnique(uniqueData);
         if (!wallet) throw new WalletNotFoundError(uniqueData);
         return wallet;
+    };
+
+    generateFundingLink: WalletServiceInterface["generateFundingLink"] = async (fundingDto) => {
+        const link = await new WalletFunder(fundingDto, {
+            calculateCharges: this._dep.calculateCharges,
+            createTransaction: this._dep.createTransaction,
+            generatePaymentLink: this._dep.generatePaymentLink,
+            getBusinessWallet: this._dep.getBusinessWallet,
+            getCurrency: this._dep.getCurrency,
+            getOrCreateCustomer: this._dep.getOrCreateCustomer,
+            getUniqueWallet: this.getUniqueWallet,
+            getWalletById: this.getWalletById,
+            getWalletChargeStack: this._dep.getWalletChargeStack,
+        }).exec();
+
+        return link;
     };
 }

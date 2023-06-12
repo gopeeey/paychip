@@ -1,4 +1,5 @@
 import {
+    FundWalletDto,
     GetUniqueWalletDto,
     WalletCreatorDependencies,
     WalletNotFoundError,
@@ -6,6 +7,7 @@ import {
     WalletServiceDependencies,
 } from "@logic/wallet";
 import * as WalletCreatorModule from "@logic/wallet/creator.wallet";
+import * as WalletFunderModule from "@logic/wallet/funder.wallet";
 import { walletData, walletJson } from "src/__tests__/samples";
 import { createSpies, sessionMock } from "src/__tests__/mocks";
 import { WalletRepo } from "@data/wallet";
@@ -16,8 +18,16 @@ jest.mock("../../../../logic/wallet/creator.wallet", () => ({
     WalletCreator: jest.fn(() => ({ create: createFn })),
 }));
 
+const execFunder = jest.fn();
+jest.mock("../../../../logic/wallet/funder.wallet", () => ({
+    WalletFunder: jest.fn(() => ({ exec: execFunder })),
+}));
+
 const WalletCreator =
     WalletCreatorModule.WalletCreator as unknown as jest.Mock<WalletCreatorModule.WalletCreator>;
+
+const WalletFunder =
+    WalletFunderModule.WalletFunder as unknown as jest.Mock<WalletFunderModule.WalletFunder>;
 
 const walletRepoMock = createSpies(new WalletRepo({} as Pool));
 
@@ -26,12 +36,16 @@ const deps: WalletServiceDependencies = {
     getBusinessWallet: jest.fn(),
     getCurrency: jest.fn(),
     getWalletChargeStack: jest.fn(),
+    calculateCharges: jest.fn(),
+    createTransaction: jest.fn(),
+    generatePaymentLink: jest.fn(),
+    getOrCreateCustomer: jest.fn(),
 };
 
 const walletService = new WalletService(deps);
 
 describe("TESTING WALLET SERVICE", () => {
-    describe("Testing createWallet", () => {
+    describe(">>> createWallet", () => {
         it("should run the wallet creator", async () => {
             createFn.mockResolvedValue(walletJson);
             await walletService.createWallet(walletData, sessionMock);
@@ -54,7 +68,7 @@ describe("TESTING WALLET SERVICE", () => {
         });
     });
 
-    describe("testing getWalletById", () => {
+    describe(">>> getWalletById", () => {
         describe("given the wallet exists", () => {
             it("should return a wallet object", async () => {
                 walletRepoMock.getById.mockResolvedValue(walletJson);
@@ -78,7 +92,7 @@ describe("TESTING WALLET SERVICE", () => {
         });
     });
 
-    describe("testing getUniqueWallet", () => {
+    describe(">>> getUniqueWallet", () => {
         describe("given the wallet exists", () => {
             it("should return a wallet object", async () => {
                 walletRepoMock.getUnique.mockResolvedValue(walletJson);
@@ -103,6 +117,26 @@ describe("TESTING WALLET SERVICE", () => {
                     new WalletNotFoundError(data)
                 );
             });
+        });
+    });
+
+    describe(">>> generateFundingLink", () => {
+        it("should return a link", async () => {
+            const expectedLink = "https://example.com";
+            execFunder.mockResolvedValue(expectedLink);
+            const fundingDto: FundWalletDto = {
+                amount: 300,
+                businessId: 2,
+                callbackUrl: "https://eg.com",
+                currency: "NGN",
+                email: "example@test.com",
+                walletId: "walletId",
+            };
+            const link = await walletService.generateFundingLink(fundingDto);
+
+            expect(link).toBe(expectedLink);
+            expect(WalletFunder).toHaveBeenCalledTimes(1);
+            expect(execFunder).toHaveBeenCalledTimes(1);
         });
     });
 });

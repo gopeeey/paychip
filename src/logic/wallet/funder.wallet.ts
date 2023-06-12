@@ -60,6 +60,7 @@ export class WalletFunder {
         this.calculateChargesAndAmounts();
         await this.createTransaction();
         await this.generatePaymentLink();
+        return this.paymentLink;
     }
 
     private async fetchWallet() {
