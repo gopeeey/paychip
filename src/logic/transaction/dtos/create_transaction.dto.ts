@@ -65,6 +65,6 @@ export class CreateTransactionDto implements RequiredProps {
         this.cardNumber = body.cardNumber || null;
         this.cardType = body.cardType || null;
         this.status = "pending";
-        this.callbackUrl = body.callbackUrl;
+        this.callbackUrl = body.callbackUrl || null;
     }
 }

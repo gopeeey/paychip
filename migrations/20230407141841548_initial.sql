@@ -132,7 +132,7 @@ CREATE TABLE "transactions" (
     "currency" VARCHAR(3) NOT NULL,
     "bwId" VARCHAR(60) NOT NULL,
     "status" TRANSACTIONSTATUS NOT NULL DEFAULT 'pending',
-    "channel" TRANSACTIONCHANNEL NOT NULL,
+    "channel" TRANSACTIONCHANNEL,
     "amount" NUMERIC(15, 2) NOT NULL,
     "settledAmount" NUMERIC(15, 2) NOT NULL,
     "senderPaid" NUMERIC(15, 2) NOT NULL DEFAULT 0,
