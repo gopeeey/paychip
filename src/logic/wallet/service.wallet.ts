@@ -47,7 +47,12 @@ export class WalletService implements WalletServiceInterface {
             getUniqueWallet: this.getUniqueWallet,
             getWalletById: this.getWalletById,
             getWalletChargeStack: this._dep.getWalletChargeStack,
+            startSession: this._dep.repo.startSession,
         }).exec();
+
+        // TO DO: pass a startSession function to wallet funder so
+        // you can use the session for persisting transactions only if the
+        // link was successfully generated
 
         return link;
     };

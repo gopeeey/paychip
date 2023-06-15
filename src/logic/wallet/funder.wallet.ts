@@ -16,12 +16,12 @@ import {
 } from "@logic/charges";
 import {
     CreateTransactionDto,
-    PaymentProviderType,
     TransactionModelInterface,
     TransactionServiceInterface,
 } from "@logic/transaction";
 import config from "src/config";
 import { PaymentProviderServiceInterface } from "@logic/payment_providers/interfaces/service.payment_provider.interface";
+import { SessionInterface } from "@logic/session_interface";
 
 export interface WalletFunderDependencies {
     getWalletById: WalletServiceInterface["getWalletById"];
@@ -33,6 +33,7 @@ export interface WalletFunderDependencies {
     calculateCharges: ChargesServiceInterface["calculateTransactionCharges"];
     createTransaction: TransactionServiceInterface["createTransaction"];
     generatePaymentLink: PaymentProviderServiceInterface["generatePaymentLink"];
+    startSession: () => Promise<SessionInterface>;
 }
 
 export class WalletFunder {
@@ -42,9 +43,10 @@ export class WalletFunder {
     private currency?: CurrencyModelInterface;
     private chargeStack?: ChargeStackModelInterface | null;
     private declare chargesResult: ChargesCalculationResultDto;
-    private provider: PaymentProviderType = config.payment.currentPaymentProvider;
+    private provider: TransactionModelInterface["provider"] = config.payment.currentPaymentProvider;
     private declare transaction: TransactionModelInterface;
     private declare paymentLink: string;
+    private declare session: SessionInterface;
 
     constructor(
         private readonly _dto: FundWalletDto,
@@ -52,15 +54,22 @@ export class WalletFunder {
     ) {}
 
     async exec() {
-        await this.fetchWallet();
-        await this.fetchCustomer();
-        await this.fetchBusinessWallet();
-        await this.fetchCurrencyIfNeeded();
-        await this.fetchChargeStackIfNeeded();
-        this.calculateChargesAndAmounts();
-        await this.createTransaction();
-        await this.generatePaymentLink();
-        return this.paymentLink;
+        this.session = await this._deps.startSession();
+        try {
+            await this.fetchWallet();
+            await this.fetchCustomer();
+            await this.fetchBusinessWallet();
+            await this.fetchCurrencyIfNeeded();
+            await this.fetchChargeStackIfNeeded();
+            this.calculateChargesAndAmounts();
+            await this.createTransaction();
+            await this.generatePaymentLink();
+            await this.session.commit();
+            return this.paymentLink;
+        } catch (err) {
+            if (!this.session.ended) await this.session.rollback();
+            throw err;
+        }
     }
 
     private async fetchWallet() {
@@ -161,7 +170,7 @@ export class WalletFunder {
             receiverWalletId: this.wallet.id,
         });
 
-        this.transaction = await this._deps.createTransaction(transactionData);
+        this.transaction = await this._deps.createTransaction(transactionData, this.session);
     }
 
     private async generatePaymentLink() {

@@ -15,12 +15,6 @@ export type TransactionChannelType = (typeof allowedTransactionChannels)[number]
 export const allowedStatuses = ["pending", "successful", "failed"] as const;
 export type TransactionStatusType = (typeof allowedStatuses)[number];
 
-export const allowedPaymentProviders = ["paystack"] as const;
-export const allowedTransferProviders = ["flutterwave"] as const;
-export type PaymentProviderType = (typeof allowedPaymentProviders)[number];
-export type TransferProviderType = (typeof allowedTransferProviders)[number];
-export type TransactionProviderType = PaymentProviderType | TransferProviderType;
-
 export interface TransactionModelInterfaceDef extends BaseModelInterface {
     id: string;
     businessId: BusinessModelInterfaceDef["id"];
@@ -43,7 +37,7 @@ export interface TransactionModelInterfaceDef extends BaseModelInterface {
     platformChargePaidBy: PaidByType;
     senderWalletId?: WalletModelInterfaceDef["id"] | null;
     receiverWalletId?: WalletModelInterfaceDef["id"] | null;
-    provider?: PaymentProviderType | null;
+    provider?: string | null;
     providerRef?: string | null;
     bankName?: string | null;
     accountNumber?: string | null;

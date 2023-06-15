@@ -1,4 +1,3 @@
-import { PaymentProviderType } from "@logic/transaction";
 import dotenv from "dotenv";
 import path from "path";
 
@@ -24,8 +23,8 @@ const POSTGRES_TEST_DB_HOST = process.env.POSTGRES_TEST_DB_HOST as string;
 const POSTGRES_TEST_DB_PORT = process.env.POSTGRES_TEST_DB_PORT as string;
 
 // payment settings
-const CURRENT_PAYMENT_PROVIDER = process.env.CURRENT_PAYMENT_PROVIDER as PaymentProviderType;
-const CURRENT_TRANSFER_PROVIDER = process.env.CURRENT_TRANSFER_PROVIDER as PaymentProviderType;
+const CURRENT_PAYMENT_PROVIDER = process.env.CURRENT_PAYMENT_PROVIDER as string;
+const CURRENT_TRANSFER_PROVIDER = process.env.CURRENT_TRANSFER_PROVIDER as string;
 
 // third party keys
 // paystack
