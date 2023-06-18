@@ -1,8 +1,7 @@
 import { DependencyContainerInterface } from "./container";
 import express from "express";
 import morgan from "morgan";
-import { RootRoutes } from "@web/routes";
-import { errorHandler } from "@web/middleware";
+import { errorHandler, RootRoutes } from "@bases/web";
 
 export default class App {
     constructor(private readonly _container: DependencyContainerInterface) {}

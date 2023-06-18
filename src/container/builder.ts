@@ -1,28 +1,28 @@
-import { AccountRepo } from "@data/accounts";
-import { BusinessRepo } from "@data/business";
-import { BusinessWalletRepo } from "@data/business_wallet";
-import { ChargesRepo } from "@data/charges";
-import { CountryRepo } from "@data/country";
-import { CurrencyRepo } from "@data/currency";
-import { WalletRepo } from "@data/wallet";
-import { TransactionRepo } from "@data/transaction";
-import { PaystackRepo } from "@data/payment_providers";
-import { CustomerRepo } from "@data/customer";
+import { AccountRepo } from "@accounts/data";
+import { BusinessRepo } from "@business/data";
+import { BusinessWalletRepo } from "@business_wallet/data";
+import { ChargesRepo } from "@charges/data";
+import { CountryRepo } from "@country/data";
+import { CurrencyRepo } from "@currency/data";
+import { WalletRepo } from "@wallet/data";
+import { TransactionRepo } from "@transaction/data";
+import { PaystackRepo } from "@third_party/payment_providers/data";
+import { CustomerRepo } from "@customer/data";
 
-import { AccountService } from "@logic/accounts";
-import { BusinessService } from "@logic/business";
-import { BusinessWalletService } from "@logic/business_wallet";
-import { ChargesService } from "@logic/charges";
-import { CountryService } from "@logic/country";
-import { CurrencyService } from "@logic/currency";
-import { WalletService } from "@logic/wallet";
-import { TransactionService } from "@logic/transaction";
-import { PaymentProviderService } from "@logic/payment_providers";
-import { CustomerService } from "@logic/customer";
+import { AccountService } from "@accounts/logic";
+import { BusinessService } from "@business/logic";
+import { BusinessWalletService } from "@business_wallet/logic";
+import { ChargesService } from "@charges/logic";
+import { CountryService } from "@country/logic";
+import { CurrencyService } from "@currency/logic";
+import { WalletService } from "@wallet/logic";
+import { TransactionService } from "@transaction/logic";
+import { PaymentProviderService } from "@third_party/payment_providers/logic";
+import { CustomerService } from "@customer/logic";
 
 import { Pool } from "pg";
 import { DependencyContainerInterface } from "./dependencies.container";
-import { AuthMiddleware } from "@web/middleware";
+import { AuthMiddleware } from "@bases/web";
 
 export const buildContainer = async (pool: Pool) => {
     // accounts

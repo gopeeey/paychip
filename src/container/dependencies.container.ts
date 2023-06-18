@@ -1,9 +1,9 @@
-import { AccountServiceInterface } from "@logic/accounts";
-import { BusinessServiceInterface } from "@logic/business";
-import { ChargesServiceInterface } from "@logic/charges";
-import { CountryServiceInterface } from "@logic/country";
-import { WalletServiceInterface } from "@logic/wallet";
-import { AuthMiddlewareInterface } from "@web/middleware";
+import { AccountServiceInterface } from "@accounts/logic";
+import { BusinessServiceInterface } from "@business/logic";
+import { ChargesServiceInterface } from "@charges/logic";
+import { CountryServiceInterface } from "@country/logic";
+import { WalletServiceInterface } from "@wallet/logic";
+import { AuthMiddlewareInterface } from "@bases/web";
 
 export interface DependencyContainerInterface {
     accountService: AccountServiceInterface;
