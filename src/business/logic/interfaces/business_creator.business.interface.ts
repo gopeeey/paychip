@@ -6,7 +6,7 @@ import { CurrencyServiceInterface } from "@logic/currency";
 import { CreateWalletDto, WalletModelInterface, WalletServiceInterface } from "@logic/wallet";
 import { AccountModelInterface } from "@accounts/logic";
 import { SessionInterface } from "@bases/logic";
-import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@logic/business_wallet";
+import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@business_wallet/logic";
 
 export interface BusinessCreatorInterface {
     create: () => Promise<BusinessModelInterface>;

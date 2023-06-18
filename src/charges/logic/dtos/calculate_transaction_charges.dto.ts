@@ -1,4 +1,4 @@
-import { ChargeDto, PaidByType } from "@logic/charges";
+import { ChargeDto, PaidByType } from "@charges/logic";
 import { TransactionType } from "@logic/transaction";
 
 type ArgsType = {

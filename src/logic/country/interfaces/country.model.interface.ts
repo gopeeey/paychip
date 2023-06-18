@@ -1,4 +1,4 @@
-import { BusinessModelInterfaceDef } from "@logic/business";
+import { BusinessModelInterfaceDef } from "@business/logic";
 import { CountryModelInterfaceDef } from "./country.def.model.interface";
 import { CurrencyModelInterfaceDef } from "@logic/currency";
 

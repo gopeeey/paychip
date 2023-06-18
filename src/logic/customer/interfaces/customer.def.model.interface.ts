@@ -1,5 +1,5 @@
 import { BaseModelInterface } from "@bases/logic";
-import { BusinessModelInterfaceDef } from "@logic/business";
+import { BusinessModelInterfaceDef } from "@business/logic";
 
 export interface CustomerModelInterfaceDef extends BaseModelInterface {
     id: string;

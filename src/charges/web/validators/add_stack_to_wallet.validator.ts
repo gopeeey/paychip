@@ -1,4 +1,4 @@
-import { AddChargeStackToWalletDto, allowedChargeTypes } from "@logic/charges";
+import { AddChargeStackToWalletDto, allowedChargeTypes } from "@charges/logic";
 import Joi from "joi";
 
 export const AddStackToWalletValidator = Joi.object<AddChargeStackToWalletDto>({

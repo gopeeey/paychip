@@ -1,6 +1,6 @@
 import { BusinessRepo } from "@business/data";
 import { runQuery } from "@data/db";
-import { BusinessModelInterface, CreateBusinessDto } from "@logic/business";
+import { BusinessModelInterface, CreateBusinessDto } from "@business/logic";
 import SQL from "sql-template-strings";
 import { businessSeeder, getABusiness, getACountry, getAnAccount } from "src/__tests__/samples";
 import { DBSetup } from "src/__tests__/test_utils";

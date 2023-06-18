@@ -1,5 +1,5 @@
 import { AccountServiceInterface, AccountNotFoundError } from "@accounts/logic";
-import { BusinessServiceInterface, BusinessNotFoundError } from "@logic/business";
+import { BusinessServiceInterface, BusinessNotFoundError } from "@business/logic";
 import { DependencyContainerInterface } from "src/container";
 import { AuthMiddleware } from "@web/middleware";
 import supertest from "supertest";

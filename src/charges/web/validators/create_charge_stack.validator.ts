@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { allowedPaidBy, ChargeDto, CreateChargeStackDto } from "@logic/charges";
+import { allowedPaidBy, ChargeDto, CreateChargeStackDto } from "@charges/logic";
 
 const charge = Joi.object<ChargeDto>({
     flatCharge: Joi.number(),

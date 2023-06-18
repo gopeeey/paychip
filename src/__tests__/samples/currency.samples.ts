@@ -1,6 +1,6 @@
 import { CreateCurrencyDto, CurrencyModelInterface, StandardCurrencyDto } from "@logic/currency";
 import { DbCurrency, createCurrencyQuery } from "@data/currency";
-import { ChargeDto } from "@logic/charges";
+import { ChargeDto } from "@charges/logic";
 import { Pool } from "pg";
 import { runQuery } from "@data/db";
 import SQL from "sql-template-strings";

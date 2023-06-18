@@ -2,7 +2,7 @@ import { Router } from "express";
 import { BusinessController } from "./controller.business";
 import { validateBody } from "@bases/web";
 import { CreateBusinessValidator } from "./validators";
-import { BusinessServiceInterface } from "@logic/business";
+import { BusinessServiceInterface } from "@business/logic";
 import { AuthMiddlewareInterface } from "@bases/web";
 
 export interface BusinessRouteDependencies {

@@ -1,15 +1,15 @@
-import { ChargesRepo } from "@data/charges";
+import { ChargesRepo } from "@charges/data";
 import {
     CalculateTransactionChargesDto,
     ChargeDto,
     ChargeStackDto,
     ChargesCalculationResultDto,
-} from "@logic/charges";
+} from "@charges/logic";
 import {
     ChargesService,
     ChargesServiceDependencies,
     AddChargeStackToWalletDto,
-} from "@logic/charges";
+} from "@charges/logic";
 import { Pool } from "pg";
 import { createSpies, sessionMock } from "src/__tests__/mocks";
 import { chargeStackData, chargeStackJson, walletJson } from "src/__tests__/samples";

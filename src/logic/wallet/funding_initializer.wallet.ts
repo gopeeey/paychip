@@ -7,13 +7,13 @@ import {
     WalletServiceInterface,
 } from "./interfaces";
 import { CustomerModelInterface, GetSingleBusinessCustomerDto } from "@logic/customer";
-import { BusinessWalletModelInterface } from "@logic/business_wallet";
+import { BusinessWalletModelInterface } from "@business_wallet/logic";
 import { CurrencyModelInterface } from "@logic/currency";
 import {
     ChargeStackModelInterface,
     ChargesCalculationResultDto,
     ChargesServiceInterface,
-} from "@logic/charges";
+} from "@charges/logic";
 import {
     CreateTransactionDto,
     TransactionModelInterface,

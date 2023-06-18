@@ -1,7 +1,7 @@
 import { AccountRepo } from "@accounts/data";
 import { BusinessRepo } from "@business/data";
-import { BusinessWalletRepo } from "@data/business_wallet";
-import { ChargesRepo } from "@data/charges";
+import { BusinessWalletRepo } from "@business_wallet/data";
+import { ChargesRepo } from "@charges/data";
 import { CountryRepo } from "@data/country";
 import { CurrencyRepo } from "@data/currency";
 import { WalletRepo } from "@data/wallet";
@@ -10,9 +10,9 @@ import { PaystackRepo } from "@data/payment_providers";
 import { CustomerRepo } from "@data/customer";
 
 import { AccountService } from "@accounts/logic";
-import { BusinessService } from "@logic/business";
-import { BusinessWalletService } from "@logic/business_wallet";
-import { ChargesService } from "@logic/charges";
+import { BusinessService } from "@business/logic";
+import { BusinessWalletService } from "@business_wallet/logic";
+import { ChargesService } from "@charges/logic";
 import { CountryService } from "@logic/country";
 import { CurrencyService } from "@logic/currency";
 import { WalletService } from "@logic/wallet";
@@ -22,7 +22,7 @@ import { CustomerService } from "@logic/customer";
 
 import { Pool } from "pg";
 import { DependencyContainerInterface } from "./dependencies.container";
-import { AuthMiddleware } from "@web/middleware";
+import { AuthMiddleware } from "@bases/web";
 
 export const buildContainer = async (pool: Pool) => {
     // accounts

@@ -3,7 +3,7 @@ import {
     BusinessWalletModelInterface,
     BusinessWalletModelInterfaceDef,
     BusinessWalletRepoInterface as BusinessWalletRepoInterface,
-} from "@logic/business_wallet";
+} from "@business_wallet/logic";
 import { generateId } from "src/utils";
 import { Pool } from "pg";
 import { PgBaseRepo } from "@data/pg_base_repo";

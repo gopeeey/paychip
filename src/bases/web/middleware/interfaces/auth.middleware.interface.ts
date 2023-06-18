@@ -1,5 +1,5 @@
 import { AccountServiceInterface, AccountModelInterface } from "@accounts/logic";
-import { BusinessServiceInterface, BusinessModelInterface } from "@logic/business";
+import { BusinessServiceInterface, BusinessModelInterface } from "@business/logic";
 import { NextFunction, Request, Response } from "express";
 
 export type AuthType = "account" | "business" | "apiKey";

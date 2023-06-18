@@ -1,5 +1,5 @@
 import { WalletRepo } from "@data/wallet";
-import { ChargesCalculationResultDto } from "@logic/charges";
+import { ChargesCalculationResultDto } from "@charges/logic";
 import { GetSingleBusinessCustomerDto } from "@logic/customer";
 import {
     InitializeFundingDto,

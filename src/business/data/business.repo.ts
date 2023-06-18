@@ -1,4 +1,4 @@
-import { BusinessModelInterface, BusinessRepoInterface } from "@logic/business";
+import { BusinessModelInterface, BusinessRepoInterface } from "@business/logic";
 import { runQuery } from "@data/db";
 import { Pool } from "pg";
 import * as queries from "./queries";

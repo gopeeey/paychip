@@ -1,5 +1,5 @@
-import { ChargeStackDto, ChargeStackModelInterface } from "@logic/charges";
-import { ChargesRepoInterface } from "@logic/charges/interfaces/charges_repo.interface";
+import { ChargeStackDto, ChargeStackModelInterface } from "@charges/logic";
+import { ChargesRepoInterface } from "@charges/logic/interfaces/charges_repo.interface";
 import { generateId } from "src/utils";
 import { PgBaseRepo } from "@data/pg_base_repo";
 import { Pool } from "pg";

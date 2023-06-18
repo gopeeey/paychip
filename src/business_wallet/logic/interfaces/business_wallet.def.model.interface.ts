@@ -1,5 +1,5 @@
-import { BusinessModelInterfaceDef } from "@logic/business";
-import { PaidByType, ChargeInterface } from "@logic/charges";
+import { BusinessModelInterfaceDef } from "@business/logic";
+import { PaidByType, ChargeInterface } from "@charges/logic";
 import { CurrencyModelInterfaceDef } from "@logic/currency";
 import { BaseModelInterface } from "@bases/logic";
 

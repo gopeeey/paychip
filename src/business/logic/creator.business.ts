@@ -9,7 +9,7 @@ import { AccountModelInterface } from "@accounts/logic";
 import { CountryModelInterface } from "@logic/country";
 import { CurrencyModelInterface } from "@logic/currency";
 import { SessionInterface } from "@bases/logic";
-import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@logic/business_wallet";
+import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@business_wallet/logic";
 
 export class BusinessCreator implements BusinessCreatorInterface {
     private declare createBusinessDto: CreateBusinessDto;

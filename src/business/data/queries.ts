@@ -1,4 +1,4 @@
-import { BusinessModelInterface, CreateBusinessDto } from "@logic/business";
+import { BusinessModelInterface, CreateBusinessDto } from "@business/logic";
 import SQL from "sql-template-strings";
 
 export const createBusinessQuery = (business: CreateBusinessDto) => {

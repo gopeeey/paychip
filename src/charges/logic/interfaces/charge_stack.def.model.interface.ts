@@ -1,4 +1,4 @@
-import { BusinessModelInterfaceDef } from "@logic/business";
+import { BusinessModelInterfaceDef } from "@business/logic";
 import { BaseModelInterface } from "@bases/logic";
 import { ChargeInterface } from "./charge.interface";
 

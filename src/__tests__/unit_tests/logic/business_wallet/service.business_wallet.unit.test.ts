@@ -1,9 +1,9 @@
-import { BusinessWalletRepo } from "@data/business_wallet";
+import { BusinessWalletRepo } from "@business_wallet/data";
 import {
     BusinessWalletNotFoundError,
     BusinessWalletService,
     CreateBusinessWalletDto,
-} from "@logic/business_wallet";
+} from "@business_wallet/logic";
 import { Pool } from "pg";
 import { createSpies, sessionMock } from "src/__tests__/mocks";
 import { businessJson, bwData, bwJson } from "src/__tests__/samples";

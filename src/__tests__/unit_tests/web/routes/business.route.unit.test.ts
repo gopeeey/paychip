@@ -10,7 +10,7 @@ import {
     standardAccount,
     standardBusinessArr,
 } from "src/__tests__/samples";
-import { UnauthorizedBusinessAccessError } from "@logic/business";
+import { UnauthorizedBusinessAccessError } from "@business/logic";
 
 const businessService = {
     createBusiness: jest.fn(),

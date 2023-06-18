@@ -3,7 +3,7 @@ import {
     StandardChargeStackDto,
     ChargesServiceInterface,
     AddChargeStackToWalletDto,
-} from "@logic/charges";
+} from "@charges/logic";
 import { AuthRequiredController, BaseController, ProtectedRouteAccessError } from "@bases/web";
 import { sendResponse, validateBusinessObjectId } from "src/utils";
 

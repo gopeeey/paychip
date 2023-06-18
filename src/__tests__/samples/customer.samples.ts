@@ -1,7 +1,7 @@
 import { CreateCustomerDto, CustomerModelInterface, StandardCustomerDto } from "@logic/customer";
 import { businessSeeder, getABusiness } from "./business.samples";
 import { generateId } from "src/utils";
-import { BusinessModelInterface } from "@logic/business";
+import { BusinessModelInterface } from "@business/logic";
 import { Pool } from "pg";
 import { runQuery } from "@data/db";
 import { createCustomerQuery, createWalletCustomerQuery } from "@data/customer";

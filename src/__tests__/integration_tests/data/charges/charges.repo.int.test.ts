@@ -1,4 +1,4 @@
-import { ChargesRepo, DbChargeStack, geWalletChargeStackObjectQuery } from "@data/charges";
+import { ChargesRepo, DbChargeStack, geWalletChargeStackObjectQuery } from "@charges/data";
 import {
     AddChargeStackToWalletDto,
     allowedChargeTypes,
@@ -7,7 +7,7 @@ import {
     CreateChargeStackDto,
     GetWalletChargeStackDto,
     WalletChargeStackModelInterface,
-} from "@logic/charges";
+} from "@charges/logic";
 import {
     chargesSeeder,
     getAChargeStackWithBusinessId,

@@ -4,7 +4,7 @@ import {
     BusinessServiceDependenciesInterface,
     BusinessNotFoundError,
     UnauthorizedBusinessAccessError,
-} from "@logic/business";
+} from "@business/logic";
 import {
     accountJson,
     businessData,

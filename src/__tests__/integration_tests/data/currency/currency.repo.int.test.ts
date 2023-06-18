@@ -1,6 +1,6 @@
 import { CurrencyRepo, DbCurrency } from "@data/currency";
 import { runQuery } from "@data/db";
-import { ChargeDto } from "@logic/charges";
+import { ChargeDto } from "@charges/logic";
 import { currencySeeder, getACurrency } from "src/__tests__/samples";
 import { DBSetup } from "src/__tests__/test_utils";
 

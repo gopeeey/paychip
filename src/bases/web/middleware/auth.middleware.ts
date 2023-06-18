@@ -8,7 +8,7 @@ import {
 } from "./interfaces";
 import { UnauthorizedError } from "@bases/logic";
 import { AccountNotFoundError } from "@accounts/logic";
-import { BusinessNotFoundError } from "@logic/business";
+import { BusinessNotFoundError } from "@business/logic";
 import { sendResponse, verifyJwt } from "src/utils";
 
 type JwtPayloadType = { accountId?: string; businessId?: string; aid?: string; authType: AuthType };

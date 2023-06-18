@@ -1,4 +1,4 @@
-import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@logic/business_wallet";
+import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@business_wallet/logic";
 import SQL from "sql-template-strings";
 
 interface CreateQueryInputInterface extends CreateBusinessWalletDto {

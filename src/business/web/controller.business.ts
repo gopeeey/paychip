@@ -1,5 +1,5 @@
 import { BaseController, AuthRequiredController } from "@bases/web";
-import { BusinessServiceInterface, CreateBusinessDto, StandardBusinessDto } from "@logic/business";
+import { BusinessServiceInterface, CreateBusinessDto, StandardBusinessDto } from "@business/logic";
 import { sendResponse } from "src/utils";
 import { ProtectedRouteAccessError } from "@bases/web";
 

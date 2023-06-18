@@ -4,12 +4,12 @@ import {
     ChargeStackModelInterface,
     CreateChargeStackDto,
     StandardChargeStackDto,
-} from "@logic/charges";
+} from "@charges/logic";
 import { generateId } from "src/utils";
 import { SeedingError } from "../test_utils";
 import { getAWallet, walletJson, walletSeeder } from "./wallet.samples";
 import { Pool } from "pg";
-import { DbChargeStack, addStackToWalletQuery, createChargeStackQuery } from "@data/charges";
+import { DbChargeStack, addStackToWalletQuery, createChargeStackQuery } from "@charges/data";
 import { runQuery } from "@data/db";
 import SQL from "sql-template-strings";
 

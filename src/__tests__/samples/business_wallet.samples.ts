@@ -1,5 +1,5 @@
-import { createBusinessWalletQuery } from "@data/business_wallet";
-import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@logic/business_wallet";
+import { createBusinessWalletQuery } from "@business_wallet/data";
+import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@business_wallet/logic";
 import { generateId } from "src/utils";
 import { businessJson, businessSeeder, getABusiness } from "./business.samples";
 import { currencyJson, getACurrency } from "./currency.samples";

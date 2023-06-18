@@ -1,8 +1,13 @@
-import { ChargeStackRouteDependencies } from "./interfaces";
 import { Router } from "express";
-import { ChargeStackController } from "../controllers";
-import { validateBody } from "../middleware/validation";
-import * as validators from "../validators";
+import { ChargeStackController } from "./controller.charges";
+import { AuthMiddlewareInterface, validateBody } from "@bases/web";
+import * as validators from "./validators";
+import { ChargesServiceInterface } from "@charges/logic";
+
+export interface ChargeStackRouteDependencies {
+    chargesService: ChargesServiceInterface;
+    authMiddleware: AuthMiddlewareInterface;
+}
 
 export class ChargesRoute {
     constructor(private readonly _deps: ChargeStackRouteDependencies) {}

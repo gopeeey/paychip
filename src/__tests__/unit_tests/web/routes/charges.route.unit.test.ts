@@ -10,7 +10,7 @@ import {
     standardChargeStack,
     walletJson,
 } from "src/__tests__/samples";
-import { AddChargeStackToWalletDto } from "@logic/charges";
+import { AddChargeStackToWalletDto } from "@charges/logic";
 import { validateBusinessObjectIdMock } from "src/__tests__/mocks";
 
 const chargesService = {

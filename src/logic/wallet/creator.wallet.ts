@@ -7,7 +7,7 @@ import {
 } from "./interfaces";
 import { DuplicateWalletError } from "./errors";
 import { SessionInterface } from "../../base_interfaces/session_interface";
-import { BusinessWalletModelInterface } from "@logic/business_wallet";
+import { BusinessWalletModelInterface } from "@business_wallet/logic";
 
 export class WalletCreator implements WalletCreatorInterface {
     private declare createWalletDto: CreateWalletDto;

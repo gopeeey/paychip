@@ -4,7 +4,7 @@ import {
     ChargeStackModelInterfaceDef,
     GetWalletChargeStackDto,
     WalletChargeStackModelInterface,
-} from "@logic/charges";
+} from "@charges/logic";
 import SQL from "sql-template-strings";
 
 export const createChargeStackQuery = (chargeStack: ChargeStackModelInterface) => {

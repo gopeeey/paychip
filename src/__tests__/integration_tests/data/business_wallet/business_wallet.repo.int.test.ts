@@ -1,7 +1,7 @@
-import { BusinessWalletRepo, DbBusinessWallet } from "@data/business_wallet";
+import { BusinessWalletRepo, DbBusinessWallet } from "@business_wallet/data";
 import { runQuery } from "@data/db";
-import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@logic/business_wallet";
-import { ChargeDto } from "@logic/charges";
+import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@business_wallet/logic";
+import { ChargeDto } from "@charges/logic";
 import SQL from "sql-template-strings";
 import { getABusiness, getACountry, getACurrency } from "src/__tests__/samples";
 import { bwSeeder, getABusinessWallet } from "src/__tests__/samples/business_wallet.samples";

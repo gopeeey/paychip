@@ -1,6 +1,6 @@
 import Joi from "joi";
 import { CreateWalletDto } from "@logic/wallet";
-import { allowedPaidBy } from "@logic/charges";
+import { allowedPaidBy } from "@charges/logic";
 
 export const CreateWalletValidator = Joi.object<CreateWalletDto>({
     currency: Joi.string().required(),

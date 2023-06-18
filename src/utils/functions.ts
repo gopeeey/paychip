@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 import { Response } from "express";
 import { AccountModelInterface } from "@accounts/logic";
-import { BusinessModelInterface } from "@logic/business";
+import { BusinessModelInterface } from "@business/logic";
 import { PermissionDeniedError } from "@bases/logic";
 
 export const hashString = async (string: string) => {

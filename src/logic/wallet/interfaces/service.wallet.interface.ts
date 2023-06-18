@@ -2,13 +2,13 @@ import { SessionInterface } from "@bases/logic";
 import { CreateWalletDto, InitializeFundingDto, GetUniqueWalletDto } from "../dtos";
 import { WalletModelInterface } from "./wallet.model.interface";
 import { WalletRepoInterface } from "./wallet.repo.interface";
-import { BusinessWalletModelInterface as BwModelInterface } from "@logic/business_wallet";
+import { BusinessWalletModelInterface as BwModelInterface } from "@business_wallet/logic";
 import { CurrencyModelInterface } from "@logic/currency";
 import {
     ChargeStackModelInterface,
     ChargesServiceInterface,
     WalletChargeStackModelInterface,
-} from "@logic/charges";
+} from "@charges/logic";
 import { TransactionServiceInterface } from "@logic/transaction";
 import { PaymentProviderService } from "@logic/payment_providers";
 import { CustomerServiceInterface } from "@logic/customer";

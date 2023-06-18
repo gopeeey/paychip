@@ -4,7 +4,7 @@ import { BusinessModelInterface } from "./business.model.interface";
 import { AccountModelInterface } from "@accounts/logic";
 import { CountryServiceInterface } from "@logic/country";
 import { SessionInterface } from "@bases/logic";
-import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@logic/business_wallet";
+import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@business_wallet/logic";
 
 export interface BusinessServiceInterface {
     createBusiness: (

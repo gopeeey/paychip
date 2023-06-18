@@ -1,4 +1,4 @@
-import { BusinessModelInterface } from "@logic/business";
+import { BusinessModelInterface } from "@business/logic";
 import { SessionInterface } from "@bases/logic";
 import { CurrencyModelInterface } from "./currency.model.interface";
 import { CurrencyRepoInterface } from "./currency.repo.interface";
