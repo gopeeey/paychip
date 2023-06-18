@@ -1,5 +1,5 @@
 import { BusinessModelInterface } from "../interfaces";
-import { StandardDtoType } from "@logic/types";
+import { StandardDtoType } from "@bases/logic";
 import { StandardCurrencyDto } from "@logic/currency";
 
 export class StandardBusinessDto implements StandardDtoType<BusinessModelInterface> {

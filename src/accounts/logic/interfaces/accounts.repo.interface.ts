@@ -1,19 +1,21 @@
-import { SessionInterface } from "@logic/session_interface";
+import { SessionInterface } from "@bases/logic";
 import { CreateAccountDto } from "../dtos";
 import { AccountModelInterface } from "./accounts.model.interface";
-import { Pool, PoolClient } from "pg";
-import { BaseRepoInterface } from "@logic/base_repo_interface";
+import { BaseRepoInterface } from "@base_interfaces/logic/base_repo_interface";
 
 export interface AccountRepoInterface extends BaseRepoInterface {
     create: (
         createAccountDto: CreateAccountDto,
-        client?: PoolClient
+        session?: SessionInterface
     ) => Promise<AccountModelInterface>;
 
-    findByEmail: (email: string, client?: PoolClient) => Promise<AccountModelInterface | null>;
+    findByEmail: (
+        email: string,
+        session?: SessionInterface
+    ) => Promise<AccountModelInterface | null>;
 
     findById: (
         id: AccountModelInterface["id"],
-        client?: PoolClient
+        session?: SessionInterface
     ) => Promise<AccountModelInterface | null>;
 }

@@ -1,9 +1,9 @@
 import { CreateBusinessDto } from "../dtos";
 import { BusinessRepoInterface } from "./business.repo.interface";
 import { BusinessModelInterface } from "./business.model.interface";
-import { AccountModelInterface } from "@logic/accounts";
+import { AccountModelInterface } from "@accounts/logic";
 import { CountryServiceInterface } from "@logic/country";
-import { SessionInterface } from "@logic/session_interface";
+import { SessionInterface } from "@bases/logic";
 import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@logic/business_wallet";
 
 export interface BusinessServiceInterface {

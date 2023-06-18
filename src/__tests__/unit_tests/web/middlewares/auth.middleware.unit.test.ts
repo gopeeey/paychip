@@ -1,4 +1,4 @@
-import { AccountServiceInterface, AccountNotFoundError } from "@logic/accounts";
+import { AccountServiceInterface, AccountNotFoundError } from "@accounts/logic";
 import { BusinessServiceInterface, BusinessNotFoundError } from "@logic/business";
 import { DependencyContainerInterface } from "src/container";
 import { AuthMiddleware } from "@web/middleware";

@@ -1,6 +1,6 @@
-import { AccountRepo } from "@data/accounts";
+import { AccountRepo } from "@accounts/data";
 import { runQuery } from "@data/db";
-import { AccountModelInterface, CreateAccountDto } from "@logic/accounts";
+import { AccountModelInterface, CreateAccountDto } from "@accounts/logic";
 import SQL from "sql-template-strings";
 import { accountSeeder, getAnAccount } from "src/__tests__/samples";
 import { DBSetup } from "src/__tests__/test_utils";

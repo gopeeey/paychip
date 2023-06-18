@@ -1,4 +1,4 @@
-import { NotFoundError } from "@logic/base_errors";
+import { NotFoundError } from "@bases/logic";
 import { WalletModelInterface } from "../interfaces";
 import { GetUniqueWalletDto } from "../dtos";
 

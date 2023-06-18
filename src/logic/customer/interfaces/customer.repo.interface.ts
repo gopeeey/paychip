@@ -1,4 +1,4 @@
-import { SessionInterface } from "@logic/session_interface";
+import { SessionInterface } from "@bases/logic";
 import { CreateCustomerDto, GetSingleBusinessCustomerDto } from "../dtos";
 import { CustomerModelInterface } from "./customer.model.interface";
 

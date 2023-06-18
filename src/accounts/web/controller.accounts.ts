@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { BaseController } from "./base.controller";
+import { BaseController } from "../../web/controllers/base.controller";
 import {
     CreateAccountDto,
     LoginDto,
     StandardAccountDto,
     AccountServiceInterface,
-} from "@logic/accounts";
+} from "@accounts/logic";
 import { sendResponse } from "src/utils";
 
 export class AccountController extends BaseController {

@@ -1,4 +1,4 @@
-import { AccountRepo } from "@data/accounts";
+import { AccountRepo } from "@accounts/data";
 import { BusinessRepo } from "@data/business";
 import { BusinessWalletRepo } from "@data/business_wallet";
 import { ChargesRepo } from "@data/charges";
@@ -9,7 +9,7 @@ import { TransactionRepo } from "@data/transaction";
 import { PaystackRepo } from "@data/payment_providers";
 import { CustomerRepo } from "@data/customer";
 
-import { AccountService } from "@logic/accounts";
+import { AccountService } from "@accounts/logic";
 import { BusinessService } from "@logic/business";
 import { BusinessWalletService } from "@logic/business_wallet";
 import { ChargesService } from "@logic/charges";

@@ -1,4 +1,4 @@
-import { SessionInterface } from "@logic/session_interface";
+import { SessionInterface } from "@bases/logic";
 
 export const sessionMock: SessionInterface = {
     commit: jest.fn(async () => {}),

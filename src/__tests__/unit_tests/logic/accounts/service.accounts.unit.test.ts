@@ -4,7 +4,7 @@ import {
     AccountServiceDependenciesInterface,
     AccountNotFoundError,
     InvalidLoginDetailsError,
-} from "@logic/accounts";
+} from "@accounts/logic";
 import { accountJson, accountData, loginDetails } from "../../../samples/accounts.samples";
 import * as utilFuncs from "../../../../utils/functions";
 import bcrypt from "bcrypt";

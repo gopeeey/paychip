@@ -1,5 +1,5 @@
-import { BaseModelInterface } from "@logic/types";
-import { AccountModelInterfaceDef } from "@logic/accounts";
+import { BaseModelInterface } from "@bases/logic";
+import { AccountModelInterfaceDef } from "@accounts/logic";
 import { CountryModelInterfaceDef } from "@logic/country";
 
 export interface BusinessModelInterfaceDef extends BaseModelInterface {

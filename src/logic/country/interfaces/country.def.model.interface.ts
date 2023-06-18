@@ -1,4 +1,4 @@
-import { BaseModelInterface } from "@logic/types";
+import { BaseModelInterface } from "@bases/logic";
 import { CurrencyModelInterfaceDef } from "@logic/currency";
 
 export interface CountryModelInterfaceDef extends BaseModelInterface {

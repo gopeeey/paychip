@@ -1,4 +1,4 @@
-import { AccountServiceInterface } from "@logic/accounts";
+import { AccountServiceInterface } from "@accounts/logic";
 import { BusinessServiceInterface } from "@logic/business";
 import { ChargesServiceInterface } from "@logic/charges";
 import { CountryServiceInterface } from "@logic/country";

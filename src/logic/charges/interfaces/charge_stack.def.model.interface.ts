@@ -1,5 +1,5 @@
 import { BusinessModelInterfaceDef } from "@logic/business";
-import { BaseModelInterface } from "@logic/types";
+import { BaseModelInterface } from "@bases/logic";
 import { ChargeInterface } from "./charge.interface";
 
 export const allowedPaidBy = ["wallet", "customer"] as const;

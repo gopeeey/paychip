@@ -1,4 +1,4 @@
-import { ValidationError } from "@logic/base_errors";
+import { ValidationError } from "@bases/logic";
 import { WalletModelInterface } from "../interfaces";
 
 type DuplicateWalletType = Pick<WalletModelInterface, "businessId" | "email" | "currency">;

@@ -1,7 +1,7 @@
 import * as utilFuncs from "src/utils";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { PermissionDeniedError } from "@logic/base_errors";
+import { PermissionDeniedError } from "@bases/logic";
 
 type ObjType = { [key: string]: any } | string;
 

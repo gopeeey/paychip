@@ -1,4 +1,4 @@
-import { PickWithOptional } from "@logic/types";
+import { PickWithOptional } from "@bases/logic";
 import { ChargeStackModelInterface } from "../interfaces";
 
 type RequiredProps = PickWithOptional<

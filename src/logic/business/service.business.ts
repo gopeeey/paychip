@@ -4,7 +4,7 @@ import {
     BusinessServiceInterface,
     BusinessServiceDependenciesInterface,
 } from "./interfaces";
-import { AccountModelInterface } from "@logic/accounts";
+import { AccountModelInterface } from "@accounts/logic";
 import { BusinessNotFoundError, UnauthorizedBusinessAccessError } from "./errors";
 import { BusinessCreator } from "./creator.business";
 import { generateAuthToken } from "src/utils";

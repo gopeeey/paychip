@@ -6,8 +6,8 @@ import {
     AuthMiddlewareDependencies,
     AuthenticatedRequestType,
 } from "./interfaces";
-import { UnauthorizedError } from "@logic/base_errors";
-import { AccountNotFoundError } from "@logic/accounts";
+import { UnauthorizedError } from "@bases/logic";
+import { AccountNotFoundError } from "@accounts/logic";
 import { BusinessNotFoundError } from "@logic/business";
 import { sendResponse, verifyJwt } from "src/utils";
 

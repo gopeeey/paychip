@@ -1,4 +1,4 @@
-import { InternalError } from "@logic/base_errors";
+import { InternalError } from "@bases/logic";
 import { InitializeFundingDto, GetUniqueWalletDto } from "./dtos";
 import { InvalidFundingData } from "./errors";
 import {
@@ -21,7 +21,7 @@ import {
 } from "@logic/transaction";
 import config from "src/config";
 import { PaymentProviderServiceInterface } from "@logic/payment_providers/interfaces/service.payment_provider.interface";
-import { SessionInterface } from "@logic/session_interface";
+import { SessionInterface } from "@bases/logic";
 import * as utils from "src/utils";
 
 export interface FundingInitializerDependencies {

@@ -1,4 +1,4 @@
-import { SessionInterface } from "@logic/session_interface";
+import { SessionInterface } from "@bases/logic";
 import { AddChargeStackToWalletDto, CreateChargeStackDto } from "../dtos";
 import { ChargeStackModelInterface } from "./charge_stack.model.interface";
 import { WalletChargeStackModelInterface } from "./wallet_charge_stack.model.interface";

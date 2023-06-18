@@ -1,4 +1,4 @@
-import { ValidationError } from "@logic/base_errors";
+import { ValidationError } from "@bases/logic";
 
 export class EmailAlreadyRegisteredError extends ValidationError<null, string> {
     constructor(email?: string) {

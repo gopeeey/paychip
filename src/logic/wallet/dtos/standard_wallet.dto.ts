@@ -1,5 +1,5 @@
 import { WalletModelInterface } from "../interfaces";
-import { StandardDtoType } from "@logic/types";
+import { StandardDtoType } from "@bases/logic";
 
 export class StandardWalletDto implements StandardDtoType<WalletModelInterface> {
     readonly id: string;

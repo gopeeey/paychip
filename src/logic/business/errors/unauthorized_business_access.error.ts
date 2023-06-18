@@ -1,4 +1,4 @@
-import { UnauthorizedError } from "@logic/base_errors";
+import { UnauthorizedError } from "@bases/logic";
 
 export class UnauthorizedBusinessAccessError extends UnauthorizedError {
     constructor() {

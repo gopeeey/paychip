@@ -1,4 +1,4 @@
-import { NotFoundError } from "@logic/base_errors";
+import { NotFoundError } from "@bases/logic";
 
 export class BusinessNotFoundError<T> extends NotFoundError<undefined, T> {
     constructor(searchParams?: T) {

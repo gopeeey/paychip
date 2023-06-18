@@ -1,5 +1,5 @@
 import { CustomerModelInterface } from "../interfaces";
-import { StandardDtoType } from "@logic/types";
+import { StandardDtoType } from "@bases/logic";
 
 export class StandardCustomerDto implements StandardDtoType<CustomerModelInterface> {
     id: CustomerModelInterface["id"];

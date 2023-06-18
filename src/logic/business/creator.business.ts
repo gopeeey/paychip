@@ -5,10 +5,10 @@ import {
     BusinessModelInterface,
     BusinessRepoInterface,
 } from "./interfaces";
-import { AccountModelInterface } from "@logic/accounts";
+import { AccountModelInterface } from "@accounts/logic";
 import { CountryModelInterface } from "@logic/country";
 import { CurrencyModelInterface } from "@logic/currency";
-import { SessionInterface } from "@logic/session_interface";
+import { SessionInterface } from "@bases/logic";
 import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@logic/business_wallet";
 
 export class BusinessCreator implements BusinessCreatorInterface {

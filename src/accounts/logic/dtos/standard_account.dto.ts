@@ -1,5 +1,5 @@
 import { AccountModelInterface } from "../interfaces";
-import { StandardDtoType } from "@logic/types";
+import { StandardDtoType } from "@bases/logic";
 
 export class StandardAccountDto implements StandardDtoType<AccountModelInterface, "password"> {
     readonly name: AccountModelInterface["name"];

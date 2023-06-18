@@ -1,4 +1,4 @@
-import { SessionInterface } from "@logic/session_interface";
+import { SessionInterface } from "@bases/logic";
 import { PoolClient } from "pg";
 
 export class PgSession implements SessionInterface {

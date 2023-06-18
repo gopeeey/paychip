@@ -1,5 +1,5 @@
 import { CurrencyModelInterface } from "../interfaces";
-import { StandardDtoType } from "@logic/types";
+import { StandardDtoType } from "@bases/logic";
 
 export class StandardCurrencyDto implements StandardDtoType<CurrencyModelInterface> {
     name: CurrencyModelInterface["name"];

@@ -1,5 +1,5 @@
 import { CurrencyModelInterface } from "../interfaces";
-import { ValidationError } from "@logic/base_errors";
+import { ValidationError } from "@bases/logic";
 
 export class BusinessCurrencyNotSupportedError extends ValidationError<undefined, undefined> {
     constructor(currencyCode: CurrencyModelInterface["isoCode"]) {

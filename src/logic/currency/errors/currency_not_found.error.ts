@@ -1,4 +1,4 @@
-import { NotFoundError } from "@logic/base_errors";
+import { NotFoundError } from "@bases/logic";
 
 export class CurrencyNotFoundError extends NotFoundError<undefined, undefined> {
     constructor() {

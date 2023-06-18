@@ -4,8 +4,8 @@ import { BusinessRepoInterface } from "./business.repo.interface";
 import { CountryModelInterface } from "@logic/country";
 import { CurrencyServiceInterface } from "@logic/currency";
 import { CreateWalletDto, WalletModelInterface, WalletServiceInterface } from "@logic/wallet";
-import { AccountModelInterface } from "@logic/accounts";
-import { SessionInterface } from "@logic/session_interface";
+import { AccountModelInterface } from "@accounts/logic";
+import { SessionInterface } from "@bases/logic";
 import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@logic/business_wallet";
 
 export interface BusinessCreatorInterface {

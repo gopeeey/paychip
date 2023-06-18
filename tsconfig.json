@@ -35,6 +35,16 @@
             ] /* Specify a set of entries that re-map imports to additional lookup locations. */,
             "@data/*": ["./src/data/*"],
             "@web/*": ["./src/web/*"],
+            "@accounts/*": ["./src/accounts/*"],
+            "@business/*": ["./src/business/*"],
+            "@business_wallet/*": ["./src/business_wallet/*"],
+            "@charges/*": ["./src/charges/*"],
+            "@country/*": ["./src/country/*"],
+            "@currency/*": ["./src/currency/*"],
+            "@customer/*": ["./src/customer/*"],
+            "@transaction/*": ["./src/transaction/*"],
+            "@wallet/*": ["./src/wallet/*"],
+            "@bases/*": ["./src/bases/*"],
             "src/*": ["./src/*"]
         },
         "plugins": [

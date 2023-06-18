@@ -1,4 +1,4 @@
-import { BaseModelInterface } from "@logic/types";
+import { BaseModelInterface } from "@bases/logic";
 
 export interface AccountModelInterfaceDef extends BaseModelInterface {
     id: string;

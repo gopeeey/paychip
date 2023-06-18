@@ -1,8 +1,8 @@
-import { AccountModelInterface } from "@logic/accounts";
-import { SessionInterface } from "@logic/session_interface";
+import { AccountModelInterface } from "@accounts/logic";
+import { SessionInterface } from "@bases/logic";
 import { CreateBusinessDto } from "../dtos";
 import { BusinessModelInterface } from "./business.model.interface";
-import { BaseRepoInterface } from "@logic/base_repo_interface";
+import { BaseRepoInterface } from "@base_interfaces/logic/base_repo_interface";
 
 export interface BusinessRepoInterface extends BaseRepoInterface {
     create: (

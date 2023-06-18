@@ -1,4 +1,4 @@
-import { StandardDtoType } from "@logic/types";
+import { StandardDtoType } from "@bases/logic";
 import { ChargeStackModelInterface } from "../interfaces";
 
 export class StandardChargeStackDto implements StandardDtoType<ChargeStackModelInterface> {

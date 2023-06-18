@@ -1,4 +1,4 @@
-import { AccountModelInterface, AccountRepoInterface } from "@logic/accounts";
+import { AccountModelInterface, AccountRepoInterface } from "@accounts/logic";
 import { runQuery } from "@data/db";
 import * as queries from "./queries";
 import { generateId } from "src/utils";

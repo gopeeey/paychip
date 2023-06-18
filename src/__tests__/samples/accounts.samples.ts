@@ -3,8 +3,8 @@ import {
     LoginDto,
     CreateAccountDto,
     AccountModelInterface,
-} from "@logic/accounts";
-import { createAccountQuery } from "@data/accounts";
+} from "@accounts/logic";
+import { createAccountQuery } from "@accounts/data";
 import { generateId } from "src/utils";
 import { runQuery } from "@data/db";
 import { Pool } from "pg";

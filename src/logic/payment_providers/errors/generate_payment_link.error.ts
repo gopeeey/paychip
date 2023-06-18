@@ -1,4 +1,4 @@
-import { InternalError } from "@logic/base_errors";
+import { InternalError } from "@bases/logic";
 
 type ArgsType = {
     message?: string;

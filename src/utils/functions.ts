@@ -3,9 +3,9 @@ import config from "../config";
 import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 import { Response } from "express";
-import { AccountModelInterface } from "@logic/accounts";
+import { AccountModelInterface } from "@accounts/logic";
 import { BusinessModelInterface } from "@logic/business";
-import { PermissionDeniedError } from "@logic/base_errors";
+import { PermissionDeniedError } from "@bases/logic";
 
 export const hashString = async (string: string) => {
     const salt = await bcrypt.genSalt(10);

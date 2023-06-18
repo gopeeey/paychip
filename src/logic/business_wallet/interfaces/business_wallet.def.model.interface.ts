@@ -1,7 +1,7 @@
 import { BusinessModelInterfaceDef } from "@logic/business";
 import { PaidByType, ChargeInterface } from "@logic/charges";
 import { CurrencyModelInterfaceDef } from "@logic/currency";
-import { BaseModelInterface } from "@logic/types";
+import { BaseModelInterface } from "@bases/logic";
 
 export interface BusinessWalletModelInterfaceDef extends BaseModelInterface {
     id: string;

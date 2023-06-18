@@ -1,4 +1,4 @@
-import { PickWithOptional } from "@logic/types";
+import { PickWithOptional } from "@bases/logic";
 import { WalletModelInterface } from "../interfaces";
 
 type RequiredProps = PickWithOptional<

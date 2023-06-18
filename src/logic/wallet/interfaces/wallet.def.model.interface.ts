@@ -1,4 +1,4 @@
-import { BaseModelInterface } from "@logic/types";
+import { BaseModelInterface } from "@bases/logic";
 import { BusinessModelInterfaceDef } from "@logic/business";
 import { ChargeStackModelInterfaceDef } from "@logic/charges";
 import { CurrencyModelInterfaceDef } from "@logic/currency";

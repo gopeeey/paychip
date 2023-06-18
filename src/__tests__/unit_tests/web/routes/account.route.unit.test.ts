@@ -4,8 +4,8 @@ import { AuthMiddlewareDependencies, AuthMiddleware } from "@web/middleware";
 import { DependencyContainerInterface } from "src/container";
 import { testRoute } from "./helpers";
 import { loginDetails, standardAccount, accountData, accountJson } from "src/__tests__/samples";
-import { ValidationError } from "@logic/base_errors";
-import { InvalidLoginDetailsError } from "@logic/accounts";
+import { ValidationError } from "@bases/logic";
+import { InvalidLoginDetailsError } from "@accounts/logic";
 
 const accountService = {
     signup: jest.fn(),

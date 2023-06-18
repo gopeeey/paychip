@@ -1,4 +1,4 @@
-import { SessionInterface } from "@logic/session_interface";
+import { SessionInterface } from "@bases/logic";
 import { CreateWalletDto, GetUniqueWalletDto, IncrementBalanceDto } from "../dtos";
 import { WalletModelInterface } from "./wallet.model.interface";
 

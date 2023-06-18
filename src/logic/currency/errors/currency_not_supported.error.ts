@@ -1,4 +1,4 @@
-import { ValidationError } from "@logic/base_errors";
+import { ValidationError } from "@bases/logic";
 import { CurrencyModelInterface } from "../interfaces";
 
 export class CurrencyNotSupportedError extends ValidationError<

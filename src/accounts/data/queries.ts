@@ -1,4 +1,4 @@
-import { AccountModelInterface, CreateAccountDto } from "@logic/accounts";
+import { AccountModelInterface, CreateAccountDto } from "@accounts/logic";
 import { SQL } from "sql-template-strings";
 
 export const createAccountQuery = (account: AccountModelInterface) => {

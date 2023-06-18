@@ -6,7 +6,7 @@ import {
     UnauthorizedError,
     BaseError,
     PermissionDeniedError,
-} from "@logic/base_errors";
+} from "@bases/logic";
 
 export const errorHandler = async (
     error: unknown,

@@ -1,4 +1,4 @@
-import { SessionInterface } from "@logic/session_interface";
+import { SessionInterface } from "@bases/logic";
 import { CreateBusinessWalletDto } from "../dtos";
 import { BusinessWalletModelInterface as BwModelInterface } from "./business_wallet.model.interface";
 

@@ -1,5 +1,5 @@
 import { CountryModelInterface } from "../interfaces";
-import { StandardDtoType } from "@logic/types";
+import { StandardDtoType } from "@bases/logic";
 
 export class StandardCountryDto implements StandardDtoType<CountryModelInterface> {
     readonly isoCode: string;
