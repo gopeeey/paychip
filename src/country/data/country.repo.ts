@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 import { CountryModelInterface, CountryRepoInterface, CreateCountryDto } from "@country/logic";
-import { runQuery } from "@data/db";
+import { runQuery } from "@db/postgres";
 import * as queries from "./queries";
 
 export class CountryRepo implements CountryRepoInterface {

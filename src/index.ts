@@ -1,4 +1,4 @@
-import { connectToDb } from "@data/db";
+import { connectToDb } from "@db/postgres";
 import App from "./app";
 import { buildContainer } from "./container";
 import startServer from "./server";

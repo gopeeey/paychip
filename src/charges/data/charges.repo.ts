@@ -1,11 +1,11 @@
 import { ChargeStackDto, ChargeStackModelInterface } from "@charges/logic";
 import { ChargesRepoInterface } from "@charges/logic/interfaces/charges_repo.interface";
 import { generateId } from "src/utils";
-import { PgBaseRepo } from "@data/pg_base_repo";
+import { PgBaseRepo } from "@db/postgres";
 import { Pool } from "pg";
-import { runQuery } from "@data/db";
+import { runQuery } from "@db/postgres";
 import * as queries from "./queries";
-import { PgSession } from "@data/pg_session";
+import { PgSession } from "@db/postgres";
 
 export interface DbChargeStack extends Omit<ChargeStackModelInterface, "charges"> {
     charges: string;

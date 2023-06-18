@@ -3,7 +3,7 @@ import { BusinessServiceInterface } from "@business/logic";
 import { ChargesServiceInterface } from "@charges/logic";
 import { CountryServiceInterface } from "@country/logic";
 import { WalletServiceInterface } from "@wallet/logic";
-import { AuthMiddlewareInterface } from "@web/middleware";
+import { AuthMiddlewareInterface } from "@bases/web";
 
 export interface DependencyContainerInterface {
     accountService: AccountServiceInterface;

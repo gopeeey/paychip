@@ -1,9 +1,9 @@
 import { AccountModelInterface, AccountRepoInterface } from "@accounts/logic";
-import { runQuery } from "@data/db";
+import { runQuery } from "@db/postgres";
 import * as queries from "./queries";
 import { generateId } from "src/utils";
 import { Pool } from "pg";
-import { PgBaseRepo } from "@data/pg_base_repo";
+import { PgBaseRepo } from "@db/postgres";
 
 export class AccountRepo extends PgBaseRepo implements AccountRepoInterface {
     constructor(private readonly _pool: Pool) {

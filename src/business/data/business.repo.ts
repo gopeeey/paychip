@@ -1,9 +1,9 @@
 import { BusinessModelInterface, BusinessRepoInterface } from "@business/logic";
-import { runQuery } from "@data/db";
+import { runQuery } from "@db/postgres";
 import { Pool } from "pg";
 import * as queries from "./queries";
-import { PgSession } from "@data/pg_session";
-import { PgBaseRepo } from "@data/pg_base_repo";
+import { PgSession } from "@db/postgres";
+import { PgBaseRepo } from "@db/postgres";
 
 export class BusinessRepo extends PgBaseRepo implements BusinessRepoInterface {
     constructor(private readonly _pool: Pool) {

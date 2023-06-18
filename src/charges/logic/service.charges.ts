@@ -1,4 +1,4 @@
-import { chargeStackJson } from "src/__tests__/samples";
+import { chargeStackJson } from "src/__tests__/helpers/samples";
 import {
     ChargesServiceDependencies,
     ChargesServiceInterface,

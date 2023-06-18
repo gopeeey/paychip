@@ -6,7 +6,7 @@ import {
     WalletServiceDependencies,
     WalletServiceInterface,
 } from "./interfaces";
-import { CustomerModelInterface, GetSingleBusinessCustomerDto } from "@logic/customer";
+import { CustomerModelInterface, GetSingleBusinessCustomerDto } from "@customer/logic";
 import { BusinessWalletModelInterface } from "@business_wallet/logic";
 import { CurrencyModelInterface } from "@currency/logic";
 import {
@@ -18,9 +18,9 @@ import {
     CreateTransactionDto,
     TransactionModelInterface,
     TransactionServiceInterface,
-} from "@logic/transaction";
+} from "@transaction/logic";
 import config from "src/config";
-import { PaymentProviderServiceInterface } from "@logic/payment_providers/interfaces/service.payment_provider.interface";
+import { PaymentProviderServiceInterface } from "@third_party/payment_providers/logic/interfaces/service.payment_provider.interface";
 import { SessionInterface } from "@bases/logic";
 import * as utils from "src/utils";
 

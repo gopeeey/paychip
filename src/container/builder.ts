@@ -5,9 +5,9 @@ import { ChargesRepo } from "@charges/data";
 import { CountryRepo } from "@country/data";
 import { CurrencyRepo } from "@currency/data";
 import { WalletRepo } from "@wallet/data";
-import { TransactionRepo } from "@data/transaction";
-import { PaystackRepo } from "@data/payment_providers";
-import { CustomerRepo } from "@data/customer";
+import { TransactionRepo } from "@transaction/data";
+import { PaystackRepo } from "@third_party/payment_providers/data";
+import { CustomerRepo } from "@customer/data";
 
 import { AccountService } from "@accounts/logic";
 import { BusinessService } from "@business/logic";
@@ -16,9 +16,9 @@ import { ChargesService } from "@charges/logic";
 import { CountryService } from "@country/logic";
 import { CurrencyService } from "@currency/logic";
 import { WalletService } from "@wallet/logic";
-import { TransactionService } from "@logic/transaction";
-import { PaymentProviderService } from "@logic/payment_providers";
-import { CustomerService } from "@logic/customer";
+import { TransactionService } from "@transaction/logic";
+import { PaymentProviderService } from "@third_party/payment_providers/logic";
+import { CustomerService } from "@customer/logic";
 
 import { Pool } from "pg";
 import { DependencyContainerInterface } from "./dependencies.container";

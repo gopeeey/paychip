@@ -5,7 +5,7 @@ import {
     CurrencyRepoInterface,
 } from "@currency/logic";
 import { Pool } from "pg";
-import { runQuery } from "@data/db";
+import { runQuery } from "@db/postgres";
 import * as queries from "./queries";
 
 export interface DbCurrency

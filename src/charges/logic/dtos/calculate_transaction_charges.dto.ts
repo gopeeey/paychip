@@ -1,5 +1,5 @@
 import { ChargeDto, PaidByType } from "@charges/logic";
-import { TransactionType } from "@logic/transaction";
+import { TransactionType } from "@transaction/logic";
 
 type ArgsType = {
     amount: number;

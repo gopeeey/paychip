@@ -1,4 +1,4 @@
-import { PaymentProviderServiceInterface } from "@logic/payment_providers";
+import { PaymentProviderServiceInterface } from "@third_party/payment_providers/logic";
 import { BaseController } from "@bases/web";
 
 export type WebhooksControllerDependencies = {

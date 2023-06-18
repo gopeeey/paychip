@@ -1,10 +1,10 @@
 import { WalletModelInterface, WalletRepoInterface } from "@wallet/logic";
 import { generateId } from "src/utils";
 import { Pool } from "pg";
-import { PgBaseRepo } from "@data/pg_base_repo";
+import { PgBaseRepo } from "@db/postgres";
 import * as queries from "./queries";
-import { runQuery } from "@data/db";
-import { PgSession } from "@data/pg_session";
+import { runQuery } from "@db/postgres";
+import { PgSession } from "@db/postgres";
 
 export class WalletRepo extends PgBaseRepo implements WalletRepoInterface {
     constructor(private readonly _pool: Pool) {

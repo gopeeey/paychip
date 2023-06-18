@@ -6,10 +6,10 @@ import {
 } from "@business_wallet/logic";
 import { generateId } from "src/utils";
 import { Pool } from "pg";
-import { PgBaseRepo } from "@data/pg_base_repo";
-import { runQuery } from "@data/db";
+import { PgBaseRepo } from "@db/postgres";
+import { runQuery } from "@db/postgres";
 import * as queries from "./queries";
-import { PgSession } from "@data/pg_session";
+import { PgSession } from "@db/postgres";
 
 export interface DbBusinessWallet
     extends Omit<

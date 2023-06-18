@@ -45,6 +45,8 @@
             "@transaction/*": ["./src/transaction/*"],
             "@wallet/*": ["./src/wallet/*"],
             "@bases/*": ["./src/bases/*"],
+            "@third_party/*": ["./src/third_party/*"],
+            "@db/*": ["./src/db/*"],
             "src/*": ["./src/*"]
         },
         "plugins": [
