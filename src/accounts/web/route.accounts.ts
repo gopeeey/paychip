@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { AccountServiceInterface } from "@accounts/logic";
 import { AccountController, CreateAccountValidator, LoginValidator } from "@accounts/web";
-import { validateBody } from "../../web/middleware/validation";
+import { validateBody } from "@bases/web";
 
 export class AccountRoute {
     constructor(private readonly _service: AccountServiceInterface) {}

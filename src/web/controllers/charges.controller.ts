@@ -4,10 +4,8 @@ import {
     ChargesServiceInterface,
     AddChargeStackToWalletDto,
 } from "@logic/charges";
-import { AuthRequiredController } from "../middleware";
-import { ProtectedRouteAccessError } from "../errors";
+import { AuthRequiredController, BaseController, ProtectedRouteAccessError } from "@bases/web";
 import { sendResponse, validateBusinessObjectId } from "src/utils";
-import { BaseController } from "./base.controller";
 
 export class ChargeStackController extends BaseController {
     constructor(private readonly _service: ChargesServiceInterface) {

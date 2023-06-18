@@ -1,8 +1,7 @@
-import { BaseController } from "./base.controller";
-import { AuthRequiredController } from "../middleware";
+import { BaseController, AuthRequiredController } from "@bases/web";
 import { BusinessServiceInterface, CreateBusinessDto, StandardBusinessDto } from "@logic/business";
 import { sendResponse } from "src/utils";
-import { ProtectedRouteAccessError } from "../errors";
+import { ProtectedRouteAccessError } from "@bases/web";
 
 export class BusinessController extends BaseController {
     constructor(private readonly _service: BusinessServiceInterface) {

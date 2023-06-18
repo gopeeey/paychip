@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { BaseController } from "../../web/controllers/base.controller";
+import { BaseController } from "@bases/web";
 import {
     CreateAccountDto,
     LoginDto,

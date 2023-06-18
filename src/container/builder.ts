@@ -1,5 +1,5 @@
 import { AccountRepo } from "@accounts/data";
-import { BusinessRepo } from "@data/business";
+import { BusinessRepo } from "@business/data";
 import { BusinessWalletRepo } from "@data/business_wallet";
 import { ChargesRepo } from "@data/charges";
 import { CountryRepo } from "@data/country";

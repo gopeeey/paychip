@@ -1,4 +1,4 @@
-import { BusinessCreator, BusinessCreatorDependencies } from "@logic/business";
+import { BusinessCreator, BusinessCreatorDependencies } from "@business/logic";
 import { AccountNotFoundError } from "@accounts/logic";
 import { CountryNotSuportedError } from "@logic/country";
 import {

@@ -4,10 +4,8 @@ import {
     StandardWalletDto,
     WalletServiceInterface,
 } from "@logic/wallet";
-import { AuthRequiredController } from "../middleware";
-import { ProtectedRouteAccessError } from "../errors";
+import { AuthRequiredController, ProtectedRouteAccessError, BaseController } from "@bases/web";
 import { sendResponse } from "src/utils";
-import { BaseController } from "./base.controller";
 
 export class WalletController extends BaseController {
     constructor(private readonly _service: WalletServiceInterface) {

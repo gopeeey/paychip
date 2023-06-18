@@ -1,5 +1,5 @@
-import { createBusinessQuery } from "@data/business";
-import { BusinessModelInterface, CreateBusinessDto, StandardBusinessDto } from "@logic/business";
+import { createBusinessQuery } from "@business/data";
+import { BusinessModelInterface, CreateBusinessDto, StandardBusinessDto } from "@business/logic";
 import { SeedingError } from "../test_utils";
 import { accountJson, accountSeeder, getAnAccount } from "./accounts.samples";
 import { countryJson, countrySeeder, getACountry } from "./country.samples";

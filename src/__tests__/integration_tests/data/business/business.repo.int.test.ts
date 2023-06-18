@@ -1,4 +1,4 @@
-import { BusinessRepo } from "@data/business";
+import { BusinessRepo } from "@business/data";
 import { runQuery } from "@data/db";
 import { BusinessModelInterface, CreateBusinessDto } from "@logic/business";
 import SQL from "sql-template-strings";

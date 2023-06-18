@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { AuthMiddlewareInterface } from "../middleware";
+import { AuthMiddlewareInterface } from "@bases/web";
 
 export default class EmptyRoute {
     constructor(private readonly _authMiddleware: AuthMiddlewareInterface) {}

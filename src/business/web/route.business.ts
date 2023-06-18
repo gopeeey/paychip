@@ -1,8 +1,14 @@
 import { Router } from "express";
-import { BusinessRouteDependencies } from "./interfaces";
-import { BusinessController } from "../controllers";
-import { validateBody } from "../middleware/validation";
-import { CreateBusinessValidator } from "../validators";
+import { BusinessController } from "./controller.business";
+import { validateBody } from "@bases/web";
+import { CreateBusinessValidator } from "./validators";
+import { BusinessServiceInterface } from "@logic/business";
+import { AuthMiddlewareInterface } from "@bases/web";
+
+export interface BusinessRouteDependencies {
+    businessService: BusinessServiceInterface;
+    authMiddleware: AuthMiddlewareInterface;
+}
 
 export class BusinessRoute {
     constructor(private readonly _dependencies: BusinessRouteDependencies) {}
