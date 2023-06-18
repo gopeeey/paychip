@@ -10,6 +10,7 @@ type ArgsType = {
     accountName: TransactionModelInterface["accountName"];
     cardNumber: TransactionModelInterface["cardNumber"];
     cardType: TransactionModelInterface["cardType"];
+    reference: TransactionModelInterface["id"];
 };
 
 export class VerifyTransactionResponseDto implements ArgsType {
@@ -22,6 +23,7 @@ export class VerifyTransactionResponseDto implements ArgsType {
     accountName: ArgsType["accountName"];
     cardNumber: ArgsType["cardNumber"];
     cardType: ArgsType["cardType"];
+    reference: ArgsType["reference"];
 
     constructor(body: ArgsType) {
         this.status = body.status;
@@ -33,5 +35,6 @@ export class VerifyTransactionResponseDto implements ArgsType {
         this.accountName = body.accountName;
         this.cardNumber = body.cardNumber;
         this.cardType = body.cardType;
+        this.reference = body.reference;
     }
 }

@@ -146,6 +146,7 @@ CREATE TABLE "transactions" (
     "platformChargePaidBy" PAIDBY NOT NULL,
     "senderWalletId" VARCHAR(60),
     "receiverWalletId" VARCHAR(60),
+    "reference" VARCHAR,
     "provider" VARCHAR(20),
     "providerRef" VARCHAR,
     "bankName" VARCHAR,

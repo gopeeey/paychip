@@ -1,7 +1,7 @@
-import { FundWalletDto } from "@logic/wallet";
+import { InitializeFundingDto } from "@logic/wallet";
 import Joi from "joi";
 
-export const GetFundingLinkValidator = Joi.object<FundWalletDto>({
+export const GetFundingLinkValidator = Joi.object<InitializeFundingDto>({
     amount: Joi.number().min(1).required(),
     callbackUrl: Joi.string().optional(),
     currency: Joi.string().when("walletId", {

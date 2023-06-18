@@ -3,4 +3,4 @@ export * from "./service.wallet";
 export * from "./interfaces";
 export * from "./dtos";
 export * from "./errors";
-export * from "./funder.wallet";
+export * from "./funding_initializer.wallet";

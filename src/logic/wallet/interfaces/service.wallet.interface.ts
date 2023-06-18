@@ -1,5 +1,5 @@
 import { SessionInterface } from "@logic/session_interface";
-import { CreateWalletDto, FundWalletDto, GetUniqueWalletDto } from "../dtos";
+import { CreateWalletDto, InitializeFundingDto, GetUniqueWalletDto } from "../dtos";
 import { WalletModelInterface } from "./wallet.model.interface";
 import { WalletRepoInterface } from "./wallet.repo.interface";
 import { BusinessWalletModelInterface as BwModelInterface } from "@logic/business_wallet";
@@ -21,7 +21,7 @@ export interface WalletServiceInterface {
 
     getWalletById: (id: WalletModelInterface["id"]) => Promise<WalletModelInterface>;
     getUniqueWallet: (uniqueData: GetUniqueWalletDto) => Promise<WalletModelInterface>;
-    generateFundingLink: (fundingDto: FundWalletDto) => Promise<string>;
+    initializeFunding: (fundingDto: InitializeFundingDto) => Promise<string>;
 }
 
 export interface WalletServiceDependencies {

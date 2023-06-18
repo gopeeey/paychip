@@ -1,5 +1,5 @@
 import { InternalError } from "@logic/base_errors";
-import { FundWalletDto, GetUniqueWalletDto } from "./dtos";
+import { InitializeFundingDto, GetUniqueWalletDto } from "./dtos";
 import { InvalidFundingData } from "./errors";
 import {
     WalletModelInterface,
@@ -22,8 +22,9 @@ import {
 import config from "src/config";
 import { PaymentProviderServiceInterface } from "@logic/payment_providers/interfaces/service.payment_provider.interface";
 import { SessionInterface } from "@logic/session_interface";
+import * as utils from "src/utils";
 
-export interface WalletFunderDependencies {
+export interface FundingInitializerDependencies {
     getWalletById: WalletServiceInterface["getWalletById"];
     getUniqueWallet: WalletServiceInterface["getUniqueWallet"];
     getOrCreateCustomer: (data: GetSingleBusinessCustomerDto) => Promise<CustomerModelInterface>;
@@ -36,7 +37,7 @@ export interface WalletFunderDependencies {
     startSession: () => Promise<SessionInterface>;
 }
 
-export class WalletFunder {
+export class FundingInitializer {
     private declare wallet: WalletModelInterface;
     private declare customer: CustomerModelInterface;
     private declare businessWallet: BusinessWalletModelInterface;
@@ -49,8 +50,8 @@ export class WalletFunder {
     private declare session: SessionInterface;
 
     constructor(
-        private readonly _dto: FundWalletDto,
-        private readonly _deps: WalletFunderDependencies
+        private readonly _dto: InitializeFundingDto,
+        private readonly _deps: FundingInitializerDependencies
     ) {}
 
     async exec() {
@@ -119,11 +120,13 @@ export class WalletFunder {
         const { amount } = this._dto;
         this.chargesResult = this._deps.calculateCharges({
             amount,
-            businessChargesPaidBy:
-                this.chargeStack?.paidBy || this.businessWallet.w_fundingChargesPaidBy,
+            // businessChargesPaidBy:
+            //     this.chargeStack?.paidBy || this.businessWallet.w_fundingChargesPaidBy,
+            businessChargesPaidBy: "wallet",
             businessChargeStack: this.businessWallet.w_fundingCs || [],
             customWalletChargeStack: this.chargeStack?.charges || null,
-            platformChargesPaidBy: this.businessWallet.fundingChargesPaidBy,
+            // platformChargesPaidBy: this.businessWallet.fundingChargesPaidBy,
+            platformChargesPaidBy: "wallet",
             platformChargeStack:
                 this.businessWallet.customFundingCs || this.currency?.fundingCs || [],
             transactionType: "credit",
@@ -145,7 +148,7 @@ export class WalletFunder {
             platformChargesPaidBy,
         } = this.chargesResult;
         const { amount, businessId, callbackUrl } = this._dto;
-
+        const reference = utils.generateId();
         const transactionData = new CreateTransactionDto({
             amount,
             businessCharge,
@@ -165,6 +168,7 @@ export class WalletFunder {
             transactionType: "credit",
             customerId: this.customer.id,
             callbackUrl,
+            reference,
             provider: this.provider,
             senderWalletId: this.wallet.id,
             receiverWalletId: this.wallet.id,

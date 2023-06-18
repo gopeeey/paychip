@@ -8,7 +8,7 @@ import { CreateWalletDto, WalletService, WalletServiceDependencies } from "@logi
 
 const walletService = createClassSpies(
     new WalletService({} as unknown as WalletServiceDependencies),
-    ["createWallet", "generateFundingLink"]
+    ["createWallet", "initializeFunding"]
 );
 
 const mm = getMiddlewareMocks();
@@ -115,7 +115,7 @@ describe("TESTING WALLET ROUTES", () => {
             describe("Given valid data", () => {
                 it("should respond with a 200 and a fundingLink", async () => {
                     const fundingLink = "https://google.com";
-                    walletService.generateFundingLink.mockResolvedValue(fundingLink);
+                    walletService.initializeFunding.mockResolvedValue(fundingLink);
                     const form = {
                         currency: walletData.currency,
                         email: walletData.email,
@@ -130,7 +130,7 @@ describe("TESTING WALLET ROUTES", () => {
                     expect(statusCode).toBe(200);
                     expect(body).toHaveProperty("message");
                     expect(body).toHaveProperty("data.fundingLink", fundingLink);
-                    expect(walletService.generateFundingLink).toHaveBeenCalledTimes(1);
+                    expect(walletService.initializeFunding).toHaveBeenCalledTimes(1);
                 });
             });
         },

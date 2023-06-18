@@ -1,5 +1,5 @@
 import {
-    FundWalletDto,
+    InitializeFundingDto,
     GetUniqueWalletDto,
     WalletCreatorDependencies,
     WalletNotFoundError,
@@ -7,7 +7,7 @@ import {
     WalletServiceDependencies,
 } from "@logic/wallet";
 import * as WalletCreatorModule from "@logic/wallet/creator.wallet";
-import * as WalletFunderModule from "@logic/wallet/funder.wallet";
+import * as FundingInitializerModule from "@logic/wallet/funding_initializer.wallet";
 import { walletData, walletJson } from "src/__tests__/samples";
 import { createSpies, sessionMock } from "src/__tests__/mocks";
 import { WalletRepo } from "@data/wallet";
@@ -19,15 +19,15 @@ jest.mock("../../../../logic/wallet/creator.wallet", () => ({
 }));
 
 const execFunder = jest.fn();
-jest.mock("../../../../logic/wallet/funder.wallet", () => ({
-    WalletFunder: jest.fn(() => ({ exec: execFunder })),
+jest.mock("../../../../logic/wallet/funding_initializer.wallet", () => ({
+    FundingInitializer: jest.fn(() => ({ exec: execFunder })),
 }));
 
 const WalletCreator =
     WalletCreatorModule.WalletCreator as unknown as jest.Mock<WalletCreatorModule.WalletCreator>;
 
-const WalletFunder =
-    WalletFunderModule.WalletFunder as unknown as jest.Mock<WalletFunderModule.WalletFunder>;
+const FundingInitializer =
+    FundingInitializerModule.FundingInitializer as unknown as jest.Mock<FundingInitializerModule.FundingInitializer>;
 
 const walletRepoMock = createSpies(new WalletRepo({} as Pool));
 
@@ -120,11 +120,11 @@ describe("TESTING WALLET SERVICE", () => {
         });
     });
 
-    describe(">>> generateFundingLink", () => {
+    describe(">>> initializeFunding", () => {
         it("should return a link", async () => {
             const expectedLink = "https://example.com";
             execFunder.mockResolvedValue(expectedLink);
-            const fundingDto: FundWalletDto = {
+            const fundingDto: InitializeFundingDto = {
                 amount: 300,
                 businessId: 2,
                 callbackUrl: "https://eg.com",
@@ -132,10 +132,10 @@ describe("TESTING WALLET SERVICE", () => {
                 email: "example@test.com",
                 walletId: "walletId",
             };
-            const link = await walletService.generateFundingLink(fundingDto);
+            const link = await walletService.initializeFunding(fundingDto);
 
             expect(link).toBe(expectedLink);
-            expect(WalletFunder).toHaveBeenCalledTimes(1);
+            expect(FundingInitializer).toHaveBeenCalledTimes(1);
             expect(execFunder).toHaveBeenCalledTimes(1);
         });
     });

@@ -4,6 +4,7 @@ import {
     PaymentProviderServiceDependenciesInterface,
     PaymentProviderServiceInterface,
 } from "./interfaces";
+import { VerifyTransactionResponseDto } from "./dtos";
 
 export class PaymentProviderService implements PaymentProviderServiceInterface {
     private readonly currentTransferProviderKey: string = config.payment.currentTransferProvider;
@@ -19,5 +20,13 @@ export class PaymentProviderService implements PaymentProviderServiceInterface {
     generatePaymentLink: PaymentProviderServiceInterface["generatePaymentLink"] = async (data) => {
         const link = await this.currentPaymentProvider.generatePaymentLink(data);
         return link;
+    };
+
+    verifyTransaction: PaymentProviderServiceInterface["verifyTransaction"] = async (
+        reference,
+        provider
+    ) => {
+        const transactionDetails = await this._providers[provider].verifyTransaction(reference);
+        return transactionDetails;
     };
 }

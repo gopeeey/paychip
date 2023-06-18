@@ -1,6 +1,6 @@
 import {
     CreateWalletDto,
-    FundWalletDto,
+    InitializeFundingDto,
     StandardWalletDto,
     WalletServiceInterface,
 } from "@logic/wallet";
@@ -28,8 +28,11 @@ export class WalletController extends BaseController {
     getFundingLink: AuthRequiredController = async (req, res, next) => {
         await this.handleReq(next, async () => {
             if (!req.business) throw new ProtectedRouteAccessError(req.path);
-            const fundWalletDto = new FundWalletDto({ ...req.body, businessId: req.business.id });
-            const link = await this._service.generateFundingLink(fundWalletDto);
+            const initializeFundingDto = new InitializeFundingDto({
+                ...req.body,
+                businessId: req.business.id,
+            });
+            const link = await this._service.initializeFunding(initializeFundingDto);
             sendResponse(res, { code: 200, data: { fundingLink: link } });
         });
     };

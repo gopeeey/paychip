@@ -31,6 +31,7 @@ export const transactionData = new CreateTransactionDto({
     bankCode: "021",
     bankName: "Example bank",
     provider: "paystack",
+    reference: "someref",
 });
 
 export const transactionJson: TransactionModelInterface = {

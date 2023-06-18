@@ -4,7 +4,7 @@ import {
     WalletServiceInterface,
 } from "./interfaces";
 import { WalletCreator } from "./creator.wallet";
-import { WalletFunder } from "./funder.wallet";
+import { FundingInitializer } from "./funding_initializer.wallet";
 import { WalletNotFoundError } from "./errors";
 
 export class WalletService implements WalletServiceInterface {
@@ -36,8 +36,8 @@ export class WalletService implements WalletServiceInterface {
         return wallet;
     };
 
-    generateFundingLink: WalletServiceInterface["generateFundingLink"] = async (fundingDto) => {
-        const link = await new WalletFunder(fundingDto, {
+    initializeFunding: WalletServiceInterface["initializeFunding"] = async (fundingDto) => {
+        const link = await new FundingInitializer(fundingDto, {
             calculateCharges: this._dep.calculateCharges,
             createTransaction: this._dep.createTransaction,
             generatePaymentLink: this._dep.generatePaymentLink,

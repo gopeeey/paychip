@@ -9,7 +9,7 @@ interface RequiredProps {
     callbackUrl: string;
 }
 
-export class FundWalletDto {
+export class InitializeFundingDto {
     businessId: WalletModelInterface["businessId"];
     walletId?: WalletModelInterface["id"];
     email?: WalletModelInterface["email"];

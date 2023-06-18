@@ -2,14 +2,14 @@ import { WalletRepo } from "@data/wallet";
 import { ChargesCalculationResultDto } from "@logic/charges";
 import { GetSingleBusinessCustomerDto } from "@logic/customer";
 import {
-    FundWalletDto,
+    InitializeFundingDto,
     GetUniqueWalletDto,
     InvalidFundingData,
-    WalletFunder,
-    WalletFunderDependencies,
+    FundingInitializer,
+    FundingInitializerDependencies,
 } from "@logic/wallet";
 import { Pool } from "pg";
-import { createSpies } from "src/__tests__/mocks";
+import { createSpies, sessionMock } from "src/__tests__/mocks";
 import {
     bwJson,
     chargeStackJson,
@@ -32,14 +32,16 @@ const depMocks = {
     generatePaymentLink: jest.fn(),
 };
 
-const dependencies: WalletFunderDependencies = {
+const dependencies: FundingInitializerDependencies = {
     getUniqueWallet:
-        walletRepoMock.getUnique as unknown as WalletFunderDependencies["getUniqueWallet"],
-    getWalletById: walletRepoMock.getById as unknown as WalletFunderDependencies["getWalletById"],
+        walletRepoMock.getUnique as unknown as FundingInitializerDependencies["getUniqueWallet"],
+    getWalletById:
+        walletRepoMock.getById as unknown as FundingInitializerDependencies["getWalletById"],
     ...depMocks,
+    startSession: async () => sessionMock,
 };
 
-const dto = new FundWalletDto({
+const dto = new InitializeFundingDto({
     businessId: walletData.businessId,
     amount: 2000,
     callbackUrl: "https://google.com",
@@ -47,11 +49,11 @@ const dto = new FundWalletDto({
     email: walletData.email,
 });
 
-const walletFunder = new WalletFunder(dto, dependencies);
+const fundingInitializer = new FundingInitializer(dto, dependencies);
 
 const chargeCalculationResult = new ChargesCalculationResultDto({
     businessCharge: 200,
-    businessChargesPaidBy: "customer",
+    businessChargesPaidBy: "wallet",
     businessGot: 2000,
     businessPaid: 100,
     platformCharge: 1000,
@@ -72,17 +74,17 @@ const mockAllDeps = () => {
     depMocks.generatePaymentLink.mockResolvedValue("https://dontmatter.com/payme");
 };
 
-describe("Testing WalletFunder", () => {
+describe("Testing FundingInitializer", () => {
     describe("given walletId is not present and currency or email is missing", () => {
         it("should throw an invalid funding data error", async () => {
-            const badData: FundWalletDto[] = [
+            const badData: InitializeFundingDto[] = [
                 { ...dto, email: undefined },
                 { ...dto, currency: undefined },
                 { ...dto, email: undefined, currency: undefined },
             ];
 
             for (const data of badData) {
-                const setToFail = new WalletFunder(data, dependencies);
+                const setToFail = new FundingInitializer(data, dependencies);
                 await expect(setToFail.exec()).rejects.toThrow(new InvalidFundingData());
             }
         });
@@ -94,13 +96,13 @@ describe("Testing WalletFunder", () => {
             walletRepoMock.getUnique.mockResolvedValue(walletJson);
             mockAllDeps();
 
-            const goodData: FundWalletDto[] = [
+            const goodData: InitializeFundingDto[] = [
                 dto,
                 { ...dto, email: undefined, currency: undefined, walletId: "isdefined" },
             ];
 
             for (const data of goodData) {
-                const shouldSucceed = new WalletFunder(data, dependencies);
+                const shouldSucceed = new FundingInitializer(data, dependencies);
                 await shouldSucceed.exec();
                 if (data.walletId) {
                     expect(walletRepoMock.getById).toHaveBeenCalledTimes(1);
@@ -123,7 +125,7 @@ describe("Testing WalletFunder", () => {
 
         it("should fetch the customer", async () => {
             mockAllDeps();
-            await walletFunder.exec();
+            await fundingInitializer.exec();
             expect(depMocks.getOrCreateCustomer).toHaveBeenCalledTimes(1);
 
             const customerData = new GetSingleBusinessCustomerDto({
@@ -135,7 +137,7 @@ describe("Testing WalletFunder", () => {
 
         it("should fetch the businessWallet", async () => {
             mockAllDeps();
-            await walletFunder.exec();
+            await fundingInitializer.exec();
             expect(depMocks.getBusinessWallet).toHaveBeenCalledTimes(1);
 
             expect(depMocks.getBusinessWallet).toHaveBeenCalledWith(
@@ -151,7 +153,7 @@ describe("Testing WalletFunder", () => {
                     ...bwJson,
                     customFundingCs: null,
                 });
-                await walletFunder.exec();
+                await fundingInitializer.exec();
                 expect(depMocks.getCurrency).toHaveBeenCalledTimes(1);
 
                 expect(depMocks.getCurrency).toHaveBeenCalledWith(bwJson.currencyCode);
@@ -160,7 +162,7 @@ describe("Testing WalletFunder", () => {
 
         it("should fetch the wallet's charge stack", async () => {
             mockAllDeps();
-            await walletFunder.exec();
+            await fundingInitializer.exec();
             expect(depMocks.getWalletChargeStack).toHaveBeenCalledTimes(1);
 
             expect(depMocks.getWalletChargeStack).toHaveBeenCalledWith(walletJson.id, "funding");
@@ -168,19 +170,19 @@ describe("Testing WalletFunder", () => {
 
         it("should calculate charges and amounts", async () => {
             mockAllDeps();
-            await walletFunder.exec();
+            await fundingInitializer.exec();
             expect(depMocks.calculateCharges).toHaveBeenCalledTimes(1);
         });
 
         it("should create a transaction", async () => {
             mockAllDeps();
-            await walletFunder.exec();
+            await fundingInitializer.exec();
             expect(depMocks.createTransaction).toHaveBeenCalledTimes(1);
         });
 
         it("should generate a payment link", async () => {
             mockAllDeps();
-            await walletFunder.exec();
+            await fundingInitializer.exec();
             expect(depMocks.generatePaymentLink).toHaveBeenCalledTimes(1);
         });
     });
