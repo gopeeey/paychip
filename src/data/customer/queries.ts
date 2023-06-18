@@ -1,4 +1,8 @@
-import { CustomerModelInterface, WalletCustomerModelInterface } from "@logic/customer";
+import {
+    CustomerModelInterface,
+    GetSingleBusinessCustomerDto,
+    WalletCustomerModelInterface,
+} from "@logic/customer";
 import SQL from "sql-template-strings";
 
 export const createCustomerQuery = (customer: CustomerModelInterface) => {
@@ -25,5 +29,13 @@ export const createWalletCustomerQuery = (wCustomer: WalletCustomerModelInterfac
         ("walletId", "customerId") 
         VALUES (${wCustomer.walletId}, ${wCustomer.customerId})
         RETURNING *;
+    `;
+};
+
+export const getSingleBusinessCustomerQuery = (data: GetSingleBusinessCustomerDto) => {
+    return SQL`
+    SELECT * FROM "customers"
+     WHERE "businessId" = ${data.businessId} 
+     AND "email" = ${data.email};
     `;
 };

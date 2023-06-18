@@ -1,4 +1,4 @@
-import { CreateCustomerDto } from "../dtos";
+import { CreateCustomerDto, GetSingleBusinessCustomerDto } from "../dtos";
 import { CustomerModelInterface } from "./customer.model.interface";
 import { CustomerRepoInterface } from "./customer.repo.interface";
 
@@ -7,6 +7,8 @@ export interface CustomerServiceInterface {
     getBusinessCustomers: (
         businessId: CustomerModelInterface["businessId"]
     ) => Promise<CustomerModelInterface[]>;
+
+    getOrCreateCustomer: (dto: GetSingleBusinessCustomerDto) => Promise<CustomerModelInterface>;
 }
 
 export interface CustomerServiceDependencies {

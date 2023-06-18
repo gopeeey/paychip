@@ -1,6 +1,10 @@
 import { CustomerRepo } from "@data/customer";
 import { runQuery } from "@data/db";
-import { CreateCustomerDto, CustomerModelInterface } from "@logic/customer";
+import {
+    CreateCustomerDto,
+    CustomerModelInterface,
+    GetSingleBusinessCustomerDto,
+} from "@logic/customer";
 import SQL from "sql-template-strings";
 import { customerSeeder, getABusiness, getACustomer } from "src/__tests__/samples";
 import { DBSetup } from "src/__tests__/test_utils";
@@ -51,6 +55,33 @@ describe("TESTING CUSTOMER REPO", () => {
             it("should return an empty array", async () => {
                 const customers = await customerRepo.getByBusinessId(8888);
                 expect(customers).toEqual([]);
+            });
+        });
+    });
+
+    describe("testing getSingleBusinessCustomer", () => {
+        describe("given the customer exists", () => {
+            it("should return a customer object", async () => {
+                const cust = await getACustomer(pool);
+                const data = new GetSingleBusinessCustomerDto({
+                    businessId: cust.businessId,
+                    email: cust.email,
+                });
+
+                const customer = await customerRepo.getSingleBusinessCustomer(data);
+                expect(customer).toMatchObject(cust);
+            });
+        });
+
+        describe("given the customer does not exist", () => {
+            it("should return null", async () => {
+                const data = new GetSingleBusinessCustomerDto({
+                    businessId: 12345,
+                    email: "not@found.com",
+                });
+
+                const customer = await customerRepo.getSingleBusinessCustomer(data);
+                expect(customer).toBeNull();
             });
         });
     });

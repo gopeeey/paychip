@@ -12,8 +12,8 @@ export interface DbChargeStack extends Omit<ChargeStackModelInterface, "charges"
 }
 
 export class ChargesRepo extends PgBaseRepo implements ChargesRepoInterface {
-    constructor(private readonly __pool: Pool) {
-        super(__pool);
+    constructor(private readonly _pool: Pool) {
+        super(_pool);
     }
 
     parseChargeStack = (rawData: DbChargeStack) => {
@@ -30,7 +30,7 @@ export class ChargesRepo extends PgBaseRepo implements ChargesRepoInterface {
                 ...createChargeStackDto,
                 id: generateId(createChargeStackDto.businessId),
             }),
-            this.__pool,
+            this._pool,
             (session as PgSession)?.client
         );
 
@@ -38,12 +38,22 @@ export class ChargesRepo extends PgBaseRepo implements ChargesRepoInterface {
     };
 
     addStackToWallet: ChargesRepoInterface["addStackToWallet"] = async (addStackDto) => {
-        await runQuery(queries.addStackToWalletQuery(addStackDto), this.__pool);
+        await runQuery(queries.addStackToWalletQuery(addStackDto), this._pool);
     };
 
     getStackById: ChargesRepoInterface["getStackById"] = async (stackId) => {
-        const res = await runQuery<DbChargeStack>(queries.getStackByIdQuery(stackId), this.__pool);
+        const res = await runQuery<DbChargeStack>(queries.getStackByIdQuery(stackId), this._pool);
         const row = res.rows[0];
         return row ? this.parseChargeStack(row) : null;
+    };
+
+    getWalletChargeStack: ChargesRepoInterface["getWalletChargeStack"] = async (
+        walletId,
+        chargeType
+    ) => {
+        const query = queries.getWalletChargeStackQuery(walletId, chargeType);
+        const res = await runQuery<DbChargeStack>(query, this._pool);
+        const chargeStack = res.rows[0];
+        return chargeStack ? this.parseChargeStack(chargeStack) : null;
     };
 }

@@ -1,5 +1,9 @@
-import { CurrencyNotSupportedError } from "./errors";
-import { CurrencyServiceDependencies, CurrencyServiceInterface } from "./interfaces";
+import { CurrencyNotFoundError, CurrencyNotSupportedError } from "./errors";
+import {
+    CurrencyModelInterface,
+    CurrencyServiceDependencies,
+    CurrencyServiceInterface,
+} from "./interfaces";
 
 export class CurrencyService implements CurrencyServiceInterface {
     private readonly _repo: CurrencyServiceDependencies["repo"];
@@ -19,5 +23,11 @@ export class CurrencyService implements CurrencyServiceInterface {
             activeCurrencies.find((currency) => currency.isoCode === currencyCode)
         );
         if (!supported) throw new CurrencyNotSupportedError(currencyCode);
+    };
+
+    getCurrencyByIsoCode: CurrencyServiceInterface["getCurrencyByIsoCode"] = async (isoCode) => {
+        const currency = await this._repo.getByIsoCode(isoCode);
+        if (!currency) throw new CurrencyNotFoundError();
+        return currency;
     };
 }

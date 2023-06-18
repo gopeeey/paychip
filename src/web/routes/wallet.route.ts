@@ -2,7 +2,7 @@ import { Router } from "express";
 import { WalletRouteDependencies } from "./interfaces";
 import { WalletController } from "../controllers/wallet.controller";
 import { validateBody } from "../middleware/validation";
-import { CreateWalletValidator } from "../validators";
+import * as validators from "../validators/wallet";
 
 export class WalletRoute {
     constructor(private readonly _deps: WalletRouteDependencies) {}
@@ -15,8 +15,15 @@ export class WalletRoute {
         router.post(
             "",
             restrictTo(["business", "apiKey"]),
-            validateBody(CreateWalletValidator),
+            validateBody(validators.CreateWalletValidator),
             controller.createWallet
+        );
+
+        router.post(
+            "/fund/link",
+            restrictTo(["apiKey", "business"]),
+            validateBody(validators.GetFundingLinkValidator),
+            controller.getFundingLink
         );
 
         return router;

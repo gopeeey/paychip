@@ -7,14 +7,14 @@ import * as queries from "./queries";
 import { PgSession } from "@data/pg_session";
 
 export class CustomerRepo extends PgBaseRepo implements CustomerRepoInterface {
-    constructor(private readonly __pool: Pool) {
-        super(__pool);
+    constructor(private readonly _pool: Pool) {
+        super(_pool);
     }
 
     create: CustomerRepoInterface["create"] = async (dto, session) => {
         const res = await runQuery<CustomerModelInterface>(
             queries.createCustomerQuery({ ...dto, id: generateId(dto.businessId) }),
-            this.__pool,
+            this._pool,
             (session as PgSession)?.client
         );
 
@@ -24,9 +24,16 @@ export class CustomerRepo extends PgBaseRepo implements CustomerRepoInterface {
     getByBusinessId: CustomerRepoInterface["getByBusinessId"] = async (businessId) => {
         const res = await runQuery<CustomerModelInterface>(
             queries.getByBusinessIdQuery(businessId),
-            this.__pool
+            this._pool
         );
 
         return res.rows;
+    };
+
+    getSingleBusinessCustomer: CustomerRepoInterface["getSingleBusinessCustomer"] = async (dto) => {
+        const query = queries.getSingleBusinessCustomerQuery(dto);
+        const res = await runQuery<CustomerModelInterface>(query, this._pool);
+        const customer = res.rows[0];
+        return customer || null;
     };
 }

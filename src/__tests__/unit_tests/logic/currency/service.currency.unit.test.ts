@@ -1,5 +1,6 @@
 import {
     CurrencyModelInterface,
+    CurrencyNotFoundError,
     CurrencyNotSupportedError,
     CurrencyService,
 } from "@logic/currency";
@@ -15,7 +16,7 @@ const repoSpies = createSpies(repo);
 const currencyService = new CurrencyService({ repo });
 
 describe("TESTING CURRENCY SERVICE", () => {
-    describe("Testing getActive", () => {
+    describe(">>> getActive", () => {
         it("should return an array of active currency objects", async () => {
             repoSpies.getActive.mockResolvedValue([currencyJson]);
             const currencies = await currencyService.getActive();
@@ -26,7 +27,7 @@ describe("TESTING CURRENCY SERVICE", () => {
         });
     });
 
-    describe("Testing validateIsSupported", () => {
+    describe(">>> validateIsSupported", () => {
         describe("given the currency is an active currency", () => {
             it("should run without throwing an error", async () => {
                 const dataSet: CurrencyModelInterface[] = [
@@ -62,6 +63,28 @@ describe("TESTING CURRENCY SERVICE", () => {
                     ).rejects.toThrow(new CurrencyNotSupportedError(code));
                 }
                 expect(repoSpies.getActive).toHaveBeenCalledTimes(dataSet.length);
+            });
+        });
+    });
+
+    describe(">>> getCurrencyByIsoCode", () => {
+        describe("given the currency exists", () => {
+            it("should return a currency object", async () => {
+                repoSpies.getByIsoCode.mockResolvedValue(currencyJson);
+                const code = currencyJson.isoCode;
+                const currency = await currencyService.getCurrencyByIsoCode(code);
+                expect(currency).toEqual(currencyJson);
+                expect(repoSpies.getByIsoCode).toHaveBeenCalledTimes(1);
+                expect(repoSpies.getByIsoCode).toHaveBeenCalledWith(code);
+            });
+        });
+
+        describe("given the currency does not exist", () => {
+            it("should throw a CurrencyNotFoundError", async () => {
+                repoSpies.getByIsoCode.mockResolvedValue(null);
+                await expect(() =>
+                    currencyService.getCurrencyByIsoCode("sokmething")
+                ).rejects.toThrow(CurrencyNotFoundError);
             });
         });
     });

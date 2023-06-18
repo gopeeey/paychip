@@ -9,7 +9,7 @@ import { generateId } from "src/utils";
 import { SeedingError } from "../test_utils";
 import { getAWallet, walletJson, walletSeeder } from "./wallet.samples";
 import { Pool } from "pg";
-import { DbChargeStack, createChargeStackQuery } from "@data/charges";
+import { DbChargeStack, addStackToWalletQuery, createChargeStackQuery } from "@data/charges";
 import { runQuery } from "@data/db";
 import SQL from "sql-template-strings";
 
@@ -33,6 +33,26 @@ export const chargeStackJson = {
 export const standardChargeStack = {
     wallet: new StandardChargeStackDto(chargeStackJson.wallet),
     customer: new StandardChargeStackDto(chargeStackJson.customer),
+};
+
+export const getAChargeStack = async (pool: Pool, id?: ChargeStackModelInterface["id"]) => {
+    let query = SQL`SELECT * FROM "chargeStacks" LIMIT 1;`;
+    if (id) query = SQL`SELECT * FROM "chargeStacks" WHERE "id" = ${id} LIMIT 1;`;
+    const res = await runQuery<ChargeStackModelInterface>(query, pool);
+    const stack = res.rows[0];
+    if (!stack) throw new SeedingError("No charge stacks found");
+    return stack;
+};
+
+export const getAChargeStackWithBusinessId = async (
+    pool: Pool,
+    businessId: ChargeStackModelInterface["businessId"]
+) => {
+    let query = SQL`SELECT * FROM "chargeStacks" WHERE "businessId" = ${businessId} LIMIT 1;`;
+    const res = await runQuery<DbChargeStack>(query, pool);
+    const stack = res.rows[0];
+    if (!stack) throw new SeedingError("No charge stacks found");
+    return new ChargeStackDto({ ...stack, charges: JSON.parse(stack.charges) });
 };
 
 export const chargesSeeder = async (pool: Pool) => {
@@ -63,24 +83,14 @@ export const chargesSeeder = async (pool: Pool) => {
         createChargeStackQuery({ ...sampleData, id: generateId(wallet.businessId) }),
         pool
     );
-};
 
-export const getAChargeStack = async (pool: Pool, id?: ChargeStackModelInterface["id"]) => {
-    let query = SQL`SELECT * FROM "chargeStacks" LIMIT 1;`;
-    if (id) query = SQL`SELECT * FROM "chargeStacks" WHERE "id" = ${id} LIMIT 1;`;
-    const res = await runQuery<ChargeStackModelInterface>(query, pool);
-    const stack = res.rows[0];
-    if (!stack) throw new SeedingError("No charge stacks found");
-    return stack;
-};
-
-export const getAChargeStackWithBusinessId = async (
-    pool: Pool,
-    businessId: ChargeStackModelInterface["businessId"]
-) => {
-    let query = SQL`SELECT * FROM "chargeStacks" WHERE "businessId" = ${businessId} LIMIT 1;`;
-    const res = await runQuery<DbChargeStack>(query, pool);
-    const stack = res.rows[0];
-    if (!stack) throw new SeedingError("No charge stacks found");
-    return new ChargeStackDto({ ...stack, charges: JSON.parse(stack.charges) });
+    const stack = await getAChargeStack(pool);
+    await runQuery(
+        addStackToWalletQuery({
+            chargeStackId: stack.id,
+            chargeType: "funding",
+            walletId: wallet.id,
+        }),
+        pool
+    );
 };

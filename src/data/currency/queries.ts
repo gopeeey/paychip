@@ -10,10 +10,10 @@ export const createCurrencyQuery = (currency: CurrencyModelInterface) => {
             ${currency.isoCode}, 
             ${currency.name}, 
             ${currency.active}, 
-            ${currency.fundingCs}, 
-            ${currency.withdrawalCs}, 
-            ${currency.walletInCs}, 
-            ${currency.walletOutCs}
+            ${JSON.stringify(currency.fundingCs)}, 
+            ${JSON.stringify(currency.withdrawalCs)}, 
+            ${JSON.stringify(currency.walletInCs)}, 
+            ${JSON.stringify(currency.walletOutCs)}
         );
     `;
 };
@@ -27,5 +27,11 @@ export const getAllQuery = () => {
 export const getActiveQuery = () => {
     return SQL`
         SELECT * FROM currencies WHERE active = true;
+    `;
+};
+
+export const getByIsoCode = (isoCode: CurrencyModelInterface["isoCode"]) => {
+    return SQL`
+        SELECT * FROM currencies WHERE "isoCode" = ${isoCode} AND "active" = true;
     `;
 };

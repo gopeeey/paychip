@@ -1,6 +1,7 @@
-import { BusinessWalletRepo } from "@data/business_wallet";
+import { BusinessWalletRepo, DbBusinessWallet } from "@data/business_wallet";
 import { runQuery } from "@data/db";
 import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@logic/business_wallet";
+import { ChargeDto } from "@logic/charges";
 import SQL from "sql-template-strings";
 import { getABusiness, getACountry, getACurrency } from "src/__tests__/samples";
 import { bwSeeder, getABusinessWallet } from "src/__tests__/samples/business_wallet.samples";
@@ -19,6 +20,54 @@ const getBC = async () => {
 };
 
 describe("TESTING BUSINESS WALLET REPO", () => {
+    describe("Testing parseChargeStack", () => {
+        it("should return a parsed business wallet", () => {
+            const chargeStack = [
+                new ChargeDto({
+                    flatCharge: 200,
+                    percentageCharge: 20,
+                    minimumPrincipalAmount: 2000,
+                    percentageChargeCap: 20000,
+                }),
+            ];
+
+            const stringStack = JSON.stringify(chargeStack);
+
+            const data: DbBusinessWallet = {
+                id: "something",
+                businessId: 1,
+                currencyCode: "NGN",
+                balance: 0,
+                customFundingCs: stringStack,
+                customWithdrawalCs: stringStack,
+                customWalletInCs: stringStack,
+                customWalletOutCs: stringStack,
+                fundingChargesPaidBy: "wallet",
+                withdrawalChargesPaidBy: "wallet",
+                w_fundingCs: stringStack,
+                w_withdrawalCs: stringStack,
+                w_walletInCs: stringStack,
+                w_walletOutCs: stringStack,
+                w_fundingChargesPaidBy: "wallet",
+                w_withdrawalChargesPaidBy: "wallet",
+            };
+
+            const result = bwRepo.parseBusinessWallet(data);
+            const expected = {
+                ...data,
+                customFundingCs: chargeStack,
+                customWithdrawalCs: chargeStack,
+                customWalletInCs: chargeStack,
+                customWalletOutCs: chargeStack,
+                w_fundingCs: chargeStack,
+                w_withdrawalCs: chargeStack,
+                w_walletInCs: chargeStack,
+                w_walletOutCs: chargeStack,
+            };
+            expect(expected).toMatchObject(result);
+        });
+    });
+
     describe("Testing create", () => {
         it("should create a new business wallet row in the db and return the data", async () => {
             const { business, currency } = await getBC();
@@ -45,6 +94,7 @@ describe("TESTING BUSINESS WALLET REPO", () => {
         describe("Given the wallet exists", () => {
             it("should return a wallet object", async () => {
                 const existing = await getABusinessWallet(pool);
+                delete existing.createdAt;
                 const bw = await bwRepo.getByCurrency(existing.businessId, existing.currencyCode);
                 expect(bw).toMatchObject(existing);
             });

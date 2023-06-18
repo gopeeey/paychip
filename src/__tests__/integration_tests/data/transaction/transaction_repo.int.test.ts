@@ -1,4 +1,6 @@
 import { runQuery } from "@data/db";
+import * as dbModule from "@data/db";
+import { PgSession } from "@data/pg_session";
 import { TransactionRepo } from "@data/transaction";
 import { CreateTransactionDto, TransactionModelInterface } from "@logic/transaction";
 import SQL from "sql-template-strings";
@@ -12,6 +14,7 @@ import { DBSetup } from "src/__tests__/test_utils";
 
 const pool = DBSetup(transactionSeeder);
 
+const runQuerySpy = jest.spyOn(dbModule, "runQuery");
 const transactionRepo = new TransactionRepo(pool);
 
 describe("TESTING TRANSACTION REPO", () => {
@@ -21,7 +24,6 @@ describe("TESTING TRANSACTION REPO", () => {
             const customer = await getACustomer(pool, wallet.businessId);
             const businessWallet = await getABusinessWallet(pool);
             const session = await transactionRepo.startSession();
-            console.log("\n\nPASSES INITIAL");
 
             const data = new CreateTransactionDto({
                 amount: 2000,
@@ -40,20 +42,31 @@ describe("TESTING TRANSACTION REPO", () => {
                 senderPaid: 2000,
                 settledAmount: 1900,
                 transactionType: "credit",
+                reference: "thisIsAReference",
                 accountName: "The one with no name",
                 accountNumber: "1234355678990",
                 bankCode: "035",
                 bankName: "Second bank",
                 senderWalletId: wallet.id,
                 receiverPaid: 0,
+                callbackUrl: null,
             });
+
+            runQuerySpy.mockClear();
             const transaction = await transactionRepo.create(data, session);
             await session.commit();
+
+            expect(runQuerySpy).toHaveBeenCalledTimes(1);
+            expect(runQuerySpy).toHaveBeenCalledWith(
+                expect.anything(),
+                pool,
+                (session as PgSession).client
+            );
+
             const res = await runQuery<TransactionModelInterface>(
                 SQL`SELECT * FROM "transactions" WHERE "id" = ${transaction.id}`,
                 pool
             );
-            console.log("\n\nRUNS QUERY");
 
             const persistedTransaction = res.rows[0];
             if (!persistedTransaction) throw new Error("Failed to persist transaction");

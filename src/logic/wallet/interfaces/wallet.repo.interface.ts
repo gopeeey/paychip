@@ -12,4 +12,5 @@ export interface WalletRepoInterface {
     getUnique: (getUniqueDto: GetUniqueWalletDto) => Promise<WalletModelInterface | null>;
 
     incrementBalance: (incrementBalanceDto: IncrementBalanceDto) => Promise<void>;
+    startSession: () => Promise<SessionInterface>;
 }

@@ -1,4 +1,9 @@
-import { CreateWalletDto, StandardWalletDto, WalletServiceInterface } from "@logic/wallet";
+import {
+    CreateWalletDto,
+    InitializeFundingDto,
+    StandardWalletDto,
+    WalletServiceInterface,
+} from "@logic/wallet";
 import { AuthRequiredController } from "../middleware";
 import { ProtectedRouteAccessError } from "../errors";
 import { sendResponse } from "src/utils";
@@ -17,6 +22,18 @@ export class WalletController extends BaseController {
             const wallet = await this._service.createWallet(createWalletDto);
             const standardWallet = new StandardWalletDto(wallet);
             sendResponse(res, { code: 201, data: { wallet: standardWallet } });
+        });
+    };
+
+    getFundingLink: AuthRequiredController = async (req, res, next) => {
+        await this.handleReq(next, async () => {
+            if (!req.business) throw new ProtectedRouteAccessError(req.path);
+            const initializeFundingDto = new InitializeFundingDto({
+                ...req.body,
+                businessId: req.business.id,
+            });
+            const link = await this._service.initializeFunding(initializeFundingDto);
+            sendResponse(res, { code: 200, data: { fundingLink: link } });
         });
     };
 }

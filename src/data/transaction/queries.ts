@@ -1,7 +1,11 @@
 import { TransactionModelInterface } from "@logic/transaction";
 import SQL from "sql-template-strings";
 
-export const createTransactionQuery = (transaction: TransactionModelInterface) => {
+interface CreateTransactionArgType extends Omit<TransactionModelInterface, "channel"> {
+    channel: TransactionModelInterface["channel"] | null;
+}
+
+export const createTransactionQuery = (transaction: CreateTransactionArgType) => {
     return SQL`
         INSERT INTO "transactions" (
             "id",
@@ -25,6 +29,7 @@ export const createTransactionQuery = (transaction: TransactionModelInterface) =
             "platformChargePaidBy",
             "senderWalletId",
             "receiverWalletId",
+            "reference",
             "provider",
             "providerRef",
             "bankName",
@@ -32,7 +37,8 @@ export const createTransactionQuery = (transaction: TransactionModelInterface) =
             "bankCode",
             "accountName",
             "cardNumber",
-            "cardType"
+            "cardType",
+            "callbackUrl"
         ) VALUES (
             ${transaction.id},
             ${transaction.businessId},
@@ -55,6 +61,7 @@ export const createTransactionQuery = (transaction: TransactionModelInterface) =
             ${transaction.platformChargePaidBy},
             ${transaction.senderWalletId},
             ${transaction.receiverWalletId},
+            ${transaction.reference},
             ${transaction.provider},
             ${transaction.providerRef},
             ${transaction.bankName},
@@ -62,7 +69,8 @@ export const createTransactionQuery = (transaction: TransactionModelInterface) =
             ${transaction.bankCode},
             ${transaction.accountName},
             ${transaction.cardNumber},
-            ${transaction.cardType}
+            ${transaction.cardType},
+            ${transaction.callbackUrl}
         ) RETURNING *;
     `;
 };

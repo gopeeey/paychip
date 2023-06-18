@@ -4,6 +4,8 @@ import {
     WalletServiceInterface,
 } from "./interfaces";
 import { WalletCreator } from "./creator.wallet";
+import { FundingInitializer } from "./funding_initializer.wallet";
+import { WalletNotFoundError } from "./errors";
 
 export class WalletService implements WalletServiceInterface {
     private _repo: WalletRepoInterface;
@@ -20,5 +22,38 @@ export class WalletService implements WalletServiceInterface {
             session,
         }).create();
         return wallet;
+    };
+
+    getWalletById: WalletServiceInterface["getWalletById"] = async (id) => {
+        const wallet = await this._repo.getById(id);
+        if (!wallet) throw new WalletNotFoundError(id);
+        return wallet;
+    };
+
+    getUniqueWallet: WalletServiceInterface["getUniqueWallet"] = async (uniqueData) => {
+        const wallet = await this._repo.getUnique(uniqueData);
+        if (!wallet) throw new WalletNotFoundError(uniqueData);
+        return wallet;
+    };
+
+    initializeFunding: WalletServiceInterface["initializeFunding"] = async (fundingDto) => {
+        const link = await new FundingInitializer(fundingDto, {
+            calculateCharges: this._dep.calculateCharges,
+            createTransaction: this._dep.createTransaction,
+            generatePaymentLink: this._dep.generatePaymentLink,
+            getBusinessWallet: this._dep.getBusinessWallet,
+            getCurrency: this._dep.getCurrency,
+            getOrCreateCustomer: this._dep.getOrCreateCustomer,
+            getUniqueWallet: this.getUniqueWallet,
+            getWalletById: this.getWalletById,
+            getWalletChargeStack: this._dep.getWalletChargeStack,
+            startSession: this._dep.repo.startSession,
+        }).exec();
+
+        // TO DO: pass a startSession function to wallet funder so
+        // you can use the session for persisting transactions only if the
+        // link was successfully generated
+
+        return link;
     };
 }

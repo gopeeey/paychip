@@ -1,6 +1,10 @@
 import { TransactionModelInterface } from "../interfaces";
 
-type RequiredProps = Omit<TransactionModelInterface, "id" | "status">;
+interface RequiredProps
+    extends Omit<TransactionModelInterface, "id" | "status" | "customer" | "channel"> {
+    channel: TransactionModelInterface["channel"] | null;
+    status?: TransactionModelInterface["status"];
+}
 
 export class CreateTransactionDto implements RequiredProps {
     businessId: TransactionModelInterface["businessId"];
@@ -8,7 +12,7 @@ export class CreateTransactionDto implements RequiredProps {
     transactionType: TransactionModelInterface["transactionType"];
     currency: TransactionModelInterface["currency"];
     bwId: TransactionModelInterface["bwId"];
-    channel: TransactionModelInterface["channel"];
+    channel: TransactionModelInterface["channel"] | null;
     status: TransactionModelInterface["status"];
     amount: TransactionModelInterface["amount"];
     settledAmount: TransactionModelInterface["settledAmount"];
@@ -21,8 +25,7 @@ export class CreateTransactionDto implements RequiredProps {
     platformGot: TransactionModelInterface["platformGot"];
     businessChargePaidBy: TransactionModelInterface["businessChargePaidBy"];
     platformChargePaidBy: TransactionModelInterface["platformChargePaidBy"];
-    senderWalletId: TransactionModelInterface["senderWalletId"];
-    receiverWalletId: TransactionModelInterface["receiverWalletId"];
+    reference: TransactionModelInterface["reference"];
     provider: TransactionModelInterface["provider"];
     providerRef: TransactionModelInterface["providerRef"];
     bankName: TransactionModelInterface["bankName"];
@@ -31,8 +34,11 @@ export class CreateTransactionDto implements RequiredProps {
     accountName: TransactionModelInterface["accountName"];
     cardNumber: TransactionModelInterface["cardNumber"];
     cardType: TransactionModelInterface["cardType"];
+    callbackUrl: TransactionModelInterface["callbackUrl"];
+    senderWalletId: TransactionModelInterface["senderWalletId"];
+    receiverWalletId: TransactionModelInterface["receiverWalletId"];
 
-    constructor(body: RequiredProps) {
+    constructor({ status = "pending", ...body }: RequiredProps) {
         this.businessId = body.businessId;
         this.customerId = body.customerId;
         this.transactionType = body.transactionType;
@@ -50,8 +56,7 @@ export class CreateTransactionDto implements RequiredProps {
         this.platformGot = body.platformGot;
         this.businessChargePaidBy = body.businessChargePaidBy;
         this.platformChargePaidBy = body.platformChargePaidBy;
-        this.senderWalletId = body.senderWalletId || null;
-        this.receiverWalletId = body.receiverWalletId || null;
+        this.reference = body.reference;
         this.provider = body.provider || null;
         this.providerRef = body.providerRef || null;
         this.bankName = body.bankName || null;
@@ -60,6 +65,9 @@ export class CreateTransactionDto implements RequiredProps {
         this.accountName = body.accountName || null;
         this.cardNumber = body.cardNumber || null;
         this.cardType = body.cardType || null;
-        this.status = "pending";
+        this.status = status;
+        this.callbackUrl = body.callbackUrl || null;
+        this.senderWalletId = body.senderWalletId || null;
+        this.receiverWalletId = body.receiverWalletId || null;
     }
 }
