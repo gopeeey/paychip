@@ -2,3 +2,7 @@
 /build
 /.vscode
 .env
+.env.development
+.env.test
+.env.local
+.env.production
