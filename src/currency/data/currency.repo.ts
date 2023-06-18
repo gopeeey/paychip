@@ -3,7 +3,7 @@ import {
     CurrencyModelInterface,
     CurrencyModelInterfaceDef,
     CurrencyRepoInterface,
-} from "@logic/currency";
+} from "@currency/logic";
 import { Pool } from "pg";
 import { runQuery } from "@data/db";
 import * as queries from "./queries";

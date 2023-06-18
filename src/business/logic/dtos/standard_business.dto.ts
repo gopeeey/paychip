@@ -1,6 +1,6 @@
 import { BusinessModelInterface } from "../interfaces";
 import { StandardDtoType } from "@bases/logic";
-import { StandardCurrencyDto } from "@logic/currency";
+import { StandardCurrencyDto } from "@currency/logic";
 
 export class StandardBusinessDto implements StandardDtoType<BusinessModelInterface> {
     readonly id: BusinessModelInterface["id"];

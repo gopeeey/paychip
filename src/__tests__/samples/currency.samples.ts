@@ -1,5 +1,5 @@
-import { CreateCurrencyDto, CurrencyModelInterface, StandardCurrencyDto } from "@logic/currency";
-import { DbCurrency, createCurrencyQuery } from "@data/currency";
+import { CreateCurrencyDto, CurrencyModelInterface, StandardCurrencyDto } from "@currency/logic";
+import { DbCurrency, createCurrencyQuery } from "@currency/data";
 import { ChargeDto } from "@charges/logic";
 import { Pool } from "pg";
 import { runQuery } from "@data/db";

@@ -1,5 +1,5 @@
 import { BaseModelInterface } from "@bases/logic";
-import { CurrencyModelInterfaceDef } from "@logic/currency";
+import { CurrencyModelInterfaceDef } from "@currency/logic";
 
 export interface CountryModelInterfaceDef extends BaseModelInterface {
     isoCode: string;

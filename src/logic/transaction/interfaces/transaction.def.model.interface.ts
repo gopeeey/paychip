@@ -3,7 +3,7 @@ import { WalletModelInterfaceDef } from "@wallet/logic";
 import { BaseModelInterface } from "@bases/logic";
 import { ChargeStackModelInterfaceDef, PaidByType } from "@charges/logic";
 import { BusinessModelInterfaceDef } from "@business/logic";
-import { CurrencyModelInterfaceDef } from "@logic/currency";
+import { CurrencyModelInterfaceDef } from "@currency/logic";
 import { BusinessWalletModelInterfaceDef } from "@business_wallet/logic";
 
 export const allowedTransactionTypes = ["credit", "debit"] as const;

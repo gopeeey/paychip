@@ -7,7 +7,7 @@ import {
 } from "./interfaces";
 import { AccountModelInterface } from "@accounts/logic";
 import { CountryModelInterface } from "@country/logic";
-import { CurrencyModelInterface } from "@logic/currency";
+import { CurrencyModelInterface } from "@currency/logic";
 import { SessionInterface } from "@bases/logic";
 import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@business_wallet/logic";
 

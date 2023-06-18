@@ -1,4 +1,4 @@
-import { CurrencyRepo, DbCurrency } from "@data/currency";
+import { CurrencyRepo, DbCurrency } from "@currency/data";
 import { runQuery } from "@data/db";
 import { ChargeDto } from "@charges/logic";
 import { currencySeeder, getACurrency } from "src/__tests__/samples";

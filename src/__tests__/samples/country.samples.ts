@@ -4,7 +4,7 @@ import { currencySeeder } from "./currency.samples";
 import { Pool } from "pg";
 import { runQuery } from "@data/db";
 import SQL from "sql-template-strings";
-import { CurrencyModelInterface } from "@logic/currency";
+import { CurrencyModelInterface } from "@currency/logic";
 import { SeedingError } from "../test_utils";
 
 export const countryData = new CreateCountryDto({

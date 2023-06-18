@@ -1,7 +1,7 @@
 import { BaseModelInterface } from "@bases/logic";
 import { BusinessModelInterfaceDef } from "@business/logic";
 import { ChargeStackModelInterfaceDef } from "@charges/logic";
-import { CurrencyModelInterfaceDef } from "@logic/currency";
+import { CurrencyModelInterfaceDef } from "@currency/logic";
 import { BusinessWalletModelInterfaceDef } from "@business_wallet/logic";
 
 export const allowedWalletTypes = ["personal", "commercial"] as const;

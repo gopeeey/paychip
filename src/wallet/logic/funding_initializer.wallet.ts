@@ -8,7 +8,7 @@ import {
 } from "./interfaces";
 import { CustomerModelInterface, GetSingleBusinessCustomerDto } from "@logic/customer";
 import { BusinessWalletModelInterface } from "@business_wallet/logic";
-import { CurrencyModelInterface } from "@logic/currency";
+import { CurrencyModelInterface } from "@currency/logic";
 import {
     ChargeStackModelInterface,
     ChargesCalculationResultDto,

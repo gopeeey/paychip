@@ -3,8 +3,8 @@ import {
     CurrencyNotFoundError,
     CurrencyNotSupportedError,
     CurrencyService,
-} from "@logic/currency";
-import { CurrencyRepo } from "@data/currency";
+} from "@currency/logic";
+import { CurrencyRepo } from "@currency/data";
 import { createSpies } from "src/__tests__/mocks";
 import { currencyJson } from "src/__tests__/samples";
 import { Pool } from "pg";

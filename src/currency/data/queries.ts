@@ -1,4 +1,4 @@
-import { CurrencyModelInterface } from "@logic/currency";
+import { CurrencyModelInterface } from "@currency/logic";
 import SQL from "sql-template-strings";
 
 export const createCurrencyQuery = (currency: CurrencyModelInterface) => {

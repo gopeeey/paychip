@@ -3,7 +3,7 @@ import { CreateWalletDto, InitializeFundingDto, GetUniqueWalletDto } from "../dt
 import { WalletModelInterface } from "./wallet.model.interface";
 import { WalletRepoInterface } from "./wallet.repo.interface";
 import { BusinessWalletModelInterface as BwModelInterface } from "@business_wallet/logic";
-import { CurrencyModelInterface } from "@logic/currency";
+import { CurrencyModelInterface } from "@currency/logic";
 import {
     ChargeStackModelInterface,
     ChargesServiceInterface,
