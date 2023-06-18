@@ -1,7 +1,7 @@
 import { SessionInterface } from "@bases/logic";
 import { CreateAccountDto } from "../dtos";
 import { AccountModelInterface } from "./accounts.model.interface";
-import { BaseRepoInterface } from "@base_interfaces/logic/base_repo_interface";
+import { BaseRepoInterface } from "@bases/logic";
 
 export interface AccountRepoInterface extends BaseRepoInterface {
     create: (

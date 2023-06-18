@@ -37,7 +37,7 @@ export const runMigrations = async (direction: "up" | "down", pool: Pool, count 
         dbClient: client,
         direction,
         count,
-        dir: path.join(__dirname, "../../migrations"),
+        dir: path.join(__dirname, "../../../migrations"),
         migrationsTable: "pgmigrations",
     });
     client.release();

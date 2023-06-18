@@ -14,12 +14,12 @@ import { WalletRepo } from "@wallet/data";
 import { Pool } from "pg";
 
 const createFn = jest.fn();
-jest.mock("../../../../logic/wallet/creator.wallet", () => ({
+jest.mock("../../../wallet/logic/creator.wallet", () => ({
     WalletCreator: jest.fn(() => ({ create: createFn })),
 }));
 
 const execFunder = jest.fn();
-jest.mock("../../../../logic/wallet/funding_initializer.wallet", () => ({
+jest.mock("../../../wallet/logic/funding_initializer.wallet", () => ({
     FundingInitializer: jest.fn(() => ({ exec: execFunder })),
 }));
 

@@ -6,7 +6,7 @@ import {
     WalletRepoInterface,
 } from "./interfaces";
 import { DuplicateWalletError } from "./errors";
-import { SessionInterface } from "../../base_interfaces/session_interface";
+import { SessionInterface } from "@bases/logic";
 import { BusinessWalletModelInterface } from "@business_wallet/logic";
 
 export class WalletCreator implements WalletCreatorInterface {

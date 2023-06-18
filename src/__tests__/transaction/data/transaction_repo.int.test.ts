@@ -1,5 +1,5 @@
 import { runQuery } from "@db/postgres";
-import * as dbModule from "@db/postgres";
+import * as dbModule from "../../../db/postgres/service";
 import { PgSession } from "@db/postgres";
 import { TransactionRepo } from "@transaction/data";
 import { CreateTransactionDto, TransactionModelInterface } from "@transaction/logic";
