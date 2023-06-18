@@ -3,7 +3,7 @@ import {
     InitializeFundingDto,
     StandardWalletDto,
     WalletServiceInterface,
-} from "@logic/wallet";
+} from "@wallet/logic";
 import { AuthRequiredController, ProtectedRouteAccessError, BaseController } from "@bases/web";
 import { sendResponse } from "src/utils";
 

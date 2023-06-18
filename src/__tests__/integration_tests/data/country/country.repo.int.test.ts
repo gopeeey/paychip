@@ -1,6 +1,6 @@
-import { CountryRepo } from "@data/country";
+import { CountryRepo } from "@country/data";
 import { runQuery } from "@data/db";
-import { CountryModelInterface, CreateCountryDto } from "@logic/country";
+import { CountryModelInterface, CreateCountryDto } from "@country/logic";
 import SQL from "sql-template-strings";
 import { countrySeeder, getACountry, getACurrency } from "src/__tests__/samples";
 import { DBSetup } from "src/__tests__/test_utils";

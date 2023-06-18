@@ -1,5 +1,5 @@
-import { CreateWalletDto, StandardWalletDto, WalletModelInterface } from "@logic/wallet";
-import { createWalletQuery } from "@data/wallet";
+import { CreateWalletDto, StandardWalletDto, WalletModelInterface } from "@wallet/logic";
+import { createWalletQuery } from "@wallet/data";
 import { SeedingError } from "../test_utils";
 import { generateId } from "src/utils";
 import { bwJson, bwSeeder, getABusinessWalletByBusinessId } from "./business_wallet.samples";

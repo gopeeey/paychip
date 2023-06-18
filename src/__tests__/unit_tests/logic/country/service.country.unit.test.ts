@@ -3,7 +3,7 @@ import {
     CountryRepoInterface,
     CountryServiceDependenciesInterface,
     CountryNotFoundError,
-} from "@logic/country";
+} from "@country/logic";
 import { countryData, countryJson, countryJsonArray } from "src/__tests__/samples";
 
 const repo = {

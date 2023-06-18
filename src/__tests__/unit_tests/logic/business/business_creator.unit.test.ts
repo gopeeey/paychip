@@ -1,6 +1,6 @@
 import { BusinessCreator, BusinessCreatorDependencies } from "@business/logic";
 import { AccountNotFoundError } from "@accounts/logic";
-import { CountryNotSuportedError } from "@logic/country";
+import { CountryNotSuportedError } from "@country/logic";
 import {
     accountJson,
     businessData,

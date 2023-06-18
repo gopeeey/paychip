@@ -7,7 +7,7 @@ import { runQuery } from "@data/db";
 import { createCustomerQuery, createWalletCustomerQuery } from "@data/customer";
 import SQL from "sql-template-strings";
 import { SeedingError } from "../test_utils";
-import { WalletModelInterface } from "@logic/wallet";
+import { WalletModelInterface } from "@wallet/logic";
 
 export const customerData = {
     complete: new CreateCustomerDto({

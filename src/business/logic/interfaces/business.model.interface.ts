@@ -1,6 +1,6 @@
 import { AccountModelInterfaceDef } from "@accounts/logic";
 import { BusinessModelInterfaceDef } from "./business.def.model.interface";
-import { CountryModelInterfaceDef } from "@logic/country";
+import { CountryModelInterfaceDef } from "@country/logic";
 import { CustomerModelInterfaceDef } from "@logic/customer";
 import { CurrencyModelInterfaceDef } from "@logic/currency";
 

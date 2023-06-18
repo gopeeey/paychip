@@ -1,5 +1,5 @@
-import { WalletRepo } from "@data/wallet";
-import { WalletCreator, WalletCreatorDependencies, DuplicateWalletError } from "@logic/wallet";
+import { WalletRepo } from "@wallet/data";
+import { WalletCreator, WalletCreatorDependencies, DuplicateWalletError } from "@wallet/logic";
 import { Pool } from "pg";
 import { createSpies, sessionMock } from "src/__tests__/mocks";
 import { bwJson, walletData, walletJson } from "src/__tests__/samples";

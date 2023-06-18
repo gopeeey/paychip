@@ -5,12 +5,12 @@ import {
     WalletNotFoundError,
     WalletService,
     WalletServiceDependencies,
-} from "@logic/wallet";
-import * as WalletCreatorModule from "@logic/wallet/creator.wallet";
-import * as FundingInitializerModule from "@logic/wallet/funding_initializer.wallet";
+} from "@wallet/logic";
+import * as WalletCreatorModule from "@wallet/logic/creator.wallet";
+import * as FundingInitializerModule from "@wallet/logic/funding_initializer.wallet";
 import { walletData, walletJson } from "src/__tests__/samples";
 import { createSpies, sessionMock } from "src/__tests__/mocks";
-import { WalletRepo } from "@data/wallet";
+import { WalletRepo } from "@wallet/data";
 import { Pool } from "pg";
 
 const createFn = jest.fn();

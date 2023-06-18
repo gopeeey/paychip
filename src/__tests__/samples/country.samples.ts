@@ -1,5 +1,5 @@
-import { CountryModelInterface, CreateCountryDto, StandardCountryDto } from "@logic/country";
-import { createQuery } from "@data/country";
+import { CountryModelInterface, CreateCountryDto, StandardCountryDto } from "@country/logic";
+import { createQuery } from "@country/data";
 import { currencySeeder } from "./currency.samples";
 import { Pool } from "pg";
 import { runQuery } from "@data/db";

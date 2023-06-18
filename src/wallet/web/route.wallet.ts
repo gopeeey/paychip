@@ -1,8 +1,13 @@
 import { Router } from "express";
-import { WalletRouteDependencies } from "./interfaces";
-import { WalletController } from "../controllers/wallet.controller";
-import { validateBody } from "../middleware/validation";
-import * as validators from "../validators/wallet";
+import { WalletController } from "./controller.wallet";
+import { AuthMiddlewareInterface, validateBody } from "@bases/web";
+import * as validators from "./validators";
+import { WalletServiceInterface } from "@wallet/logic";
+
+export interface WalletRouteDependencies {
+    walletService: WalletServiceInterface;
+    authMiddleware: AuthMiddlewareInterface;
+}
 
 export class WalletRoute {
     constructor(private readonly _deps: WalletRouteDependencies) {}

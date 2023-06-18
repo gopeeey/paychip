@@ -1,4 +1,4 @@
-import { WalletModelInterface, WalletRepoInterface } from "@logic/wallet";
+import { WalletModelInterface, WalletRepoInterface } from "@wallet/logic";
 import { generateId } from "src/utils";
 import { Pool } from "pg";
 import { PgBaseRepo } from "@data/pg_base_repo";

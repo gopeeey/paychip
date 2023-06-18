@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import { CountryModelInterface, CountryRepoInterface, CreateCountryDto } from "@logic/country";
+import { CountryModelInterface, CountryRepoInterface, CreateCountryDto } from "@country/logic";
 import { runQuery } from "@data/db";
 import * as queries from "./queries";
 

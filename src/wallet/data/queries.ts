@@ -3,7 +3,7 @@ import {
     GetUniqueWalletDto,
     IncrementBalanceDto,
     WalletModelInterface,
-} from "@logic/wallet";
+} from "@wallet/logic";
 import SQL from "sql-template-strings";
 
 interface CreateWalletQueryInterface extends CreateWalletDto {

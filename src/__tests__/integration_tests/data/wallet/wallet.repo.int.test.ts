@@ -1,4 +1,4 @@
-import { WalletRepo } from "@data/wallet";
+import { WalletRepo } from "@wallet/data";
 import {
     getABusiness,
     getABusinessWalletByBusinessId,
@@ -12,7 +12,7 @@ import {
     GetUniqueWalletDto,
     IncrementBalanceDto,
     WalletModelInterface,
-} from "@logic/wallet";
+} from "@wallet/logic";
 import { runQuery } from "@data/db";
 import SQL from "sql-template-strings";
 

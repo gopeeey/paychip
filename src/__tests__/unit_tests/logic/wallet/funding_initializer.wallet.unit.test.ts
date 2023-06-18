@@ -1,4 +1,4 @@
-import { WalletRepo } from "@data/wallet";
+import { WalletRepo } from "@wallet/data";
 import { ChargesCalculationResultDto } from "@charges/logic";
 import { GetSingleBusinessCustomerDto } from "@logic/customer";
 import {
@@ -7,7 +7,7 @@ import {
     InvalidFundingData,
     FundingInitializer,
     FundingInitializerDependencies,
-} from "@logic/wallet";
+} from "@wallet/logic";
 import { Pool } from "pg";
 import { createSpies, sessionMock } from "src/__tests__/mocks";
 import {

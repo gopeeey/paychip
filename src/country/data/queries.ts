@@ -1,4 +1,4 @@
-import { CountryModelInterface } from "@logic/country";
+import { CountryModelInterface } from "@country/logic";
 import SQL from "sql-template-strings";
 
 export const createQuery = (country: CountryModelInterface) => {

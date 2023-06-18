@@ -1,4 +1,4 @@
-import { InitializeFundingDto } from "@logic/wallet";
+import { InitializeFundingDto } from "@wallet/logic";
 import Joi from "joi";
 
 export const GetFundingLinkValidator = Joi.object<InitializeFundingDto>({

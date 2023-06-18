@@ -2,7 +2,7 @@ import { DependencyContainerInterface } from "src/container";
 import { Router } from "express";
 import { AccountRoute } from "@accounts/web";
 import { BusinessRoute } from "@business/web";
-import { WalletRoute } from "../../web/routes/wallet.route";
+import { WalletRoute } from "@wallet/web";
 import { ChargesRoute } from "@charges/web";
 import EmptyRoute from "./empty.route";
 

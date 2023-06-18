@@ -4,7 +4,7 @@ import { DependencyContainerInterface } from "src/container";
 import { getMiddlewareMocks, testRoute } from "./helpers";
 import { businessLevelToken, standardWallet, walletJson, walletData } from "src/__tests__/samples";
 import { createClassSpies } from "src/__tests__/mocks";
-import { CreateWalletDto, WalletService, WalletServiceDependencies } from "@logic/wallet";
+import { CreateWalletDto, WalletService, WalletServiceDependencies } from "@wallet/logic";
 
 const walletService = createClassSpies(
     new WalletService({} as unknown as WalletServiceDependencies),

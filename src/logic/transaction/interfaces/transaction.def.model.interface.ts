@@ -1,5 +1,5 @@
 import { CustomerModelInterfaceDef } from "@logic/customer";
-import { WalletModelInterfaceDef } from "@logic/wallet";
+import { WalletModelInterfaceDef } from "@wallet/logic";
 import { BaseModelInterface } from "@bases/logic";
 import { ChargeStackModelInterfaceDef, PaidByType } from "@charges/logic";
 import { BusinessModelInterfaceDef } from "@business/logic";

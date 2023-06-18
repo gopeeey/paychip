@@ -1,5 +1,5 @@
 import { BaseModelInterface } from "@bases/logic";
-import { WalletModelInterfaceDef } from "@logic/wallet";
+import { WalletModelInterfaceDef } from "@wallet/logic";
 import { ChargeStackModelInterfaceDef } from "./charge_stack.def.model.interface";
 
 export const allowedChargeTypes = ["funding", "withdrawal", "walletIn", "walletOut"] as const;
