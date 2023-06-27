@@ -2,6 +2,7 @@ import { TransactionModelInterface } from "@transaction/logic";
 
 type ArgsType = {
     status: "successful" | "failed";
+    amount: TransactionModelInterface["amount"];
     channel: TransactionModelInterface["channel"] | null;
     provider: TransactionModelInterface["provider"];
     providerRef: TransactionModelInterface["providerRef"];
@@ -11,10 +12,12 @@ type ArgsType = {
     cardNumber: TransactionModelInterface["cardNumber"];
     cardType: TransactionModelInterface["cardType"];
     reference: TransactionModelInterface["id"];
+    walletId: Exclude<TransactionModelInterface["senderWalletId"], null | undefined>;
 };
 
 export class VerifyTransactionResponseDto implements ArgsType {
     status: ArgsType["status"];
+    amount: ArgsType["amount"];
     channel: ArgsType["channel"];
     provider: ArgsType["provider"];
     providerRef: ArgsType["providerRef"];
@@ -24,9 +27,11 @@ export class VerifyTransactionResponseDto implements ArgsType {
     cardNumber: ArgsType["cardNumber"];
     cardType: ArgsType["cardType"];
     reference: ArgsType["reference"];
+    walletId: ArgsType["walletId"];
 
     constructor(body: ArgsType) {
         this.status = body.status;
+        this.amount = body.amount;
         this.channel = body.channel;
         this.provider = body.provider;
         this.providerRef = body.providerRef;
@@ -36,5 +41,6 @@ export class VerifyTransactionResponseDto implements ArgsType {
         this.cardNumber = body.cardNumber;
         this.cardType = body.cardType;
         this.reference = body.reference;
+        this.walletId = body.walletId;
     }
 }

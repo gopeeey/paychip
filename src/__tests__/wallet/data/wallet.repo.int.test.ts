@@ -42,6 +42,7 @@ describe("TESTING WALLET REPO", () => {
             const session = await walletRepo.startSession();
             const wallet = await walletRepo.create(data, session);
             await session.commit();
+            await session.end();
 
             if (!wallet) throw new Error("Did not return wallet");
             const res = await runQuery<WalletModelInterface>(
@@ -108,6 +109,7 @@ describe("TESTING WALLET REPO", () => {
                 });
                 await walletRepo.incrementBalance(incrementDto);
                 await session.commit();
+                await session.end();
 
                 const newWallet = await getAWallet(pool, wallet.id);
                 expect(newWallet.balance - wallet.balance).toBe(Math.round(amount));

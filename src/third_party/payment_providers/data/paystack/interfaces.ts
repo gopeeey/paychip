@@ -16,7 +16,7 @@ export interface VerifyTransactionResponseInterface extends BaseResponseInterfac
         id: number;
         status: "success" | "failed";
         reference: string;
-        amaount: number;
+        amount: number;
         channel: string;
         authorization?: {
             authorization_code: string;
@@ -38,6 +38,7 @@ export interface VerifyTransactionResponseInterface extends BaseResponseInterfac
             first_name: string | null;
             last_name: string | null;
             phone: string | null;
+            email: string;
         };
     };
 }

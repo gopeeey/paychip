@@ -36,10 +36,16 @@ export class BusinessService implements BusinessServiceInterface {
                 repo: this._dep.repo,
             }).create();
 
-            if (selfStartedSession) await session.commit();
+            if (selfStartedSession) {
+                await session.commit();
+                await session.end();
+            }
             return business;
         } catch (err) {
-            if (selfStartedSession) await session.rollback();
+            if (selfStartedSession) {
+                await session.rollback();
+                await session.end();
+            }
             throw err;
         }
     };

@@ -7,6 +7,7 @@ import {
 import { HttpClientInstanceMock, logErrorMock } from "src/__tests__/helpers/mocks";
 import { HttpError, PostRequestArgsInterface } from "src/utils";
 import config from "src/config";
+import { walletJson } from "src/__tests__/helpers/samples";
 
 jest.mock("../../../../../utils/http_client/client", () => ({
     HttpClient: jest.fn(() => HttpClientInstanceMock),
@@ -90,7 +91,7 @@ const sampleTrxRes = {
             id: 1809887,
             first_name: null,
             last_name: null,
-            email: "customer@email.com",
+            email: walletJson.id + config.misc.emailSuffix,
             customer_code: "CUS_0c35ys9w8ma5tbr",
             phone: null,
             metadata: null,
@@ -106,6 +107,40 @@ const sampleTrxRes = {
 };
 
 describe("Testing PaystackRepo", () => {
+    describe(">>> makeCustomerEmail", () => {
+        it("should return the string passed with the email suffix attached", () => {
+            const identifier = "something";
+            const result = paystackRepo.makeCustomerEmail("something");
+            expect(result).toBe(identifier + config.misc.emailSuffix);
+        });
+    });
+
+    describe(">>> extractIdentifierFromEmail", () => {
+        it("should extract the wallet id from the customer email", () => {
+            const identifier = "something";
+            const result = paystackRepo.extractIdentifierFromEmail(
+                identifier + config.misc.emailSuffix
+            );
+            expect(result).toBe(identifier);
+        });
+    });
+
+    describe(">>> convertAmountToPaystack", () => {
+        it("should multiply amount by 100", () => {
+            const amount = 100;
+            const result = paystackRepo.convertAmountToPaystack(amount);
+            expect(result).toBe(amount * 100);
+        });
+    });
+
+    describe(">>> convertAmountToPlatform", () => {
+        it("should divide amount by 100", () => {
+            const amount = 100;
+            const result = paystackRepo.convertAmountToPlatform(amount);
+            expect(result).toBe(amount / 100);
+        });
+    });
+
     describe(">>> generatePaymentLink", () => {
         describe("given the request to the provider succeeds", () => {
             it("should return a string gotten from a request to the provider", async () => {
@@ -169,6 +204,8 @@ describe("Testing PaystackRepo", () => {
                         provider: "paystack",
                         providerRef: sampleTrxRes.data.id.toString(),
                         reference: sampleTrxRes.data.reference,
+                        walletId: walletJson.id,
+                        amount: sampleTrxRes.data.amount / 100,
                     };
 
                     const result = await paystackRepo.verifyTransaction(

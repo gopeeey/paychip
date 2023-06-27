@@ -5,13 +5,16 @@ import {
     WalletNotFoundError,
     WalletService,
     WalletServiceDependencies,
+    PaymentResolutionError,
+    IncrementBalanceDto,
 } from "@wallet/logic";
 import * as WalletCreatorModule from "@wallet/logic/creator.wallet";
 import * as FundingInitializerModule from "@wallet/logic/funding_initializer.wallet";
-import { walletData, walletJson } from "src/__tests__/helpers/samples";
-import { createSpies, sessionMock } from "src/__tests__/helpers/mocks";
+import { transactionJson, walletData, walletJson } from "src/__tests__/helpers/samples";
+import { SpiesObj, createSpies, sessionMock } from "src/__tests__/helpers/mocks";
 import { WalletRepo } from "@wallet/data";
 import { Pool } from "pg";
+import { VerifyTransactionResponseDto } from "@third_party/payment_providers/logic";
 
 const createFn = jest.fn();
 jest.mock("../../../wallet/logic/creator.wallet", () => ({
@@ -31,8 +34,7 @@ const FundingInitializer =
 
 const walletRepoMock = createSpies(new WalletRepo({} as Pool));
 
-const deps: WalletServiceDependencies = {
-    repo: walletRepoMock as unknown as WalletRepo,
+const deps: { [key in keyof Omit<WalletServiceDependencies, "repo">]: jest.Mock } = {
     getBusinessWallet: jest.fn(),
     getCurrency: jest.fn(),
     getWalletChargeStack: jest.fn(),
@@ -40,9 +42,15 @@ const deps: WalletServiceDependencies = {
     createTransaction: jest.fn(),
     generatePaymentLink: jest.fn(),
     getOrCreateCustomer: jest.fn(),
+    verifyTransactionFromProvider: jest.fn(),
+    findTransactionByReference: jest.fn(),
+    updateTransactionStatus: jest.fn(),
 };
 
-const walletService = new WalletService(deps);
+const walletService = new WalletService({
+    ...deps,
+    repo: walletRepoMock,
+} as unknown as WalletServiceDependencies);
 
 describe("TESTING WALLET SERVICE", () => {
     describe(">>> createWallet", () => {
@@ -53,8 +61,9 @@ describe("TESTING WALLET SERVICE", () => {
 
             const calledWith: WalletCreatorDependencies = {
                 dto: walletData,
-                repo: deps.repo,
-                getBusinessWallet: deps.getBusinessWallet,
+                repo: walletRepoMock as unknown as WalletCreatorDependencies["repo"],
+                getBusinessWallet:
+                    deps.getBusinessWallet as WalletCreatorDependencies["getBusinessWallet"],
                 session: sessionMock,
             };
             expect(WalletCreator).toHaveBeenCalledWith(calledWith);
@@ -139,4 +148,20 @@ describe("TESTING WALLET SERVICE", () => {
             expect(execFunder).toHaveBeenCalledTimes(1);
         });
     });
+
+    describe(">>> incrementBalance", () => {
+        it("should call repo function to increment balance", async () => {
+            walletRepoMock.incrementBalance.mockImplementation(async () => {});
+            const data = new IncrementBalanceDto({
+                walletId: "sokme",
+                amount: 400,
+                session: sessionMock,
+            });
+            await walletService.incrementBalance(data);
+            expect(walletRepoMock.incrementBalance).toHaveBeenCalledWith(data);
+        });
+    });
+
+    // describe(">>> resolvePayment", () => {
+    // });
 });

@@ -31,15 +31,33 @@ export class PaystackRepo implements PaymentProviderRepoInterface {
         failed: "failed",
     };
     errorMessage = generalConfig.payment.providerErrorMessage;
+    conversionRate = 100;
 
     constructor() {
         this.client = new HttpClient({ baseUrl: this.baseUrl, headers: this.baseHeader });
     }
 
+    convertAmountToPaystack = (amount: number) => {
+        return amount * this.conversionRate;
+    };
+
+    convertAmountToPlatform = (amount: number) => {
+        return amount / this.conversionRate;
+    };
+
+    makeCustomerEmail = (identifier: string) => {
+        const email = identifier + generalConfig.misc.emailSuffix;
+        return email;
+    };
+
+    extractIdentifierFromEmail = (email: string) => {
+        return email.split("@")[0];
+    };
+
     generatePaymentLink: PaymentProviderRepoInterface["generatePaymentLink"] = async (data) => {
         const body = {
             amount: data.amount,
-            email: data.walletId + generalConfig.misc.emailSuffix,
+            email: this.makeCustomerEmail(data.walletId),
             currency: data.currency,
             reference: data.transactionId,
             channels: data.allowedChannels.map((channel) => this.channelMap[channel]),
@@ -92,6 +110,8 @@ export class PaystackRepo implements PaymentProviderRepoInterface {
                 providerRef: data.id.toString(),
                 status: this.transactionStatusMap[data.status],
                 reference,
+                walletId: this.extractIdentifierFromEmail(data.customer.email),
+                amount: this.convertAmountToPlatform(data.amount),
             });
 
             return dto;

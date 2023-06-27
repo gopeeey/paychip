@@ -24,4 +24,24 @@ export class TransactionRepo extends PgBaseRepo implements TransactionRepoInterf
         );
         return res.rows[0];
     };
+
+    getByReference: TransactionRepoInterface["getByReference"] = async (reference, session) => {
+        const query = queries.getByReferenceQuery(reference);
+        const res = await runQuery<TransactionModelInterface>(
+            query,
+            this._pool,
+            (session as PgSession)?.client
+        );
+        const transaction = res.rows[0];
+        return transaction ? transaction : null;
+    };
+
+    updateStatus: TransactionRepoInterface["updateStatus"] = async (
+        transactionId,
+        status,
+        session
+    ) => {
+        const query = queries.updateStatusQuery(transactionId, status);
+        await runQuery(query, this._pool, (session as PgSession)?.client);
+    };
 }

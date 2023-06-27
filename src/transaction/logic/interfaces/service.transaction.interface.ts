@@ -8,6 +8,14 @@ export interface TransactionServiceInterface {
         createTransactionDto: CreateTransactionDto,
         session?: SessionInterface
     ) => Promise<TransactionModelInterface>;
+
+    findTransactionByReference: (reference: string) => Promise<TransactionModelInterface | null>;
+
+    updateTransactionStatus: (
+        id: TransactionModelInterface["id"],
+        status: TransactionModelInterface["status"],
+        session?: SessionInterface
+    ) => Promise<void>;
 }
 
 export interface TransactionServiceDependencies {

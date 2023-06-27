@@ -16,12 +16,13 @@ export class PgSession implements SessionInterface {
 
     commit: SessionInterface["commit"] = async () => {
         await this.client.query("COMMIT");
-        this.client.release();
-        this.ended = true;
     };
 
     rollback: SessionInterface["rollback"] = async () => {
         await this.client.query("ROLLBACK");
+    };
+
+    end: SessionInterface["end"] = async () => {
         this.client.release();
         this.ended = true;
     };

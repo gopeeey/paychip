@@ -3,3 +3,4 @@ export * from "./standard_wallet.dto";
 export * from "./get_unique.dto";
 export * from "./increment_balance.dto";
 export * from "./initialize_funding.dto";
+export * from "./resolve_payment.dto";

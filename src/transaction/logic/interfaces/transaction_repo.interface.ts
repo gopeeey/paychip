@@ -7,4 +7,17 @@ export interface TransactionRepoInterface {
         createTransactionDto: CreateTransactionDto,
         session?: SessionInterface
     ) => Promise<TransactionModelInterface>;
+
+    getByReference: (
+        reference: string,
+        session?: SessionInterface
+    ) => Promise<TransactionModelInterface | null>;
+
+    updateStatus: (
+        transactionId: TransactionModelInterface["id"],
+        status: TransactionModelInterface["status"],
+        session?: SessionInterface
+    ) => Promise<void>;
+
+    startSession: () => Promise<SessionInterface>;
 }

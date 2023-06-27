@@ -28,6 +28,7 @@ describe("TESTING CUSTOMER REPO", () => {
 
             const customer = await customerRepo.create(data, session);
             await session.commit();
+            await session.end();
             const res = await runQuery<CustomerModelInterface>(
                 SQL`SELECT * FROM "customers" WHERE "id" = ${customer.id};`,
                 pool

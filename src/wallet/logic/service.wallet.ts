@@ -5,7 +5,8 @@ import {
 } from "./interfaces";
 import { WalletCreator } from "./creator.wallet";
 import { FundingInitializer } from "./funding_initializer.wallet";
-import { WalletNotFoundError } from "./errors";
+import { PaymentResolutionError, WalletNotFoundError } from "./errors";
+import { IncrementBalanceDto, ResolvePaymentDto } from "./dtos";
 
 export class WalletService implements WalletServiceInterface {
     private _repo: WalletRepoInterface;
@@ -50,10 +51,12 @@ export class WalletService implements WalletServiceInterface {
             startSession: this._dep.repo.startSession,
         }).exec();
 
-        // TO DO: pass a startSession function to wallet funder so
-        // you can use the session for persisting transactions only if the
-        // link was successfully generated
-
         return link;
     };
+
+    incrementBalance: WalletServiceInterface["incrementBalance"] = async (data) => {
+        await this._repo.incrementBalance(data);
+    };
+
+    resolvePayment: WalletServiceInterface["resolvePayment"] = async (data) => {};
 }

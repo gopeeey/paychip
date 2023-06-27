@@ -1,3 +1,4 @@
+import { TransactionModelInterface } from "./interfaces";
 import {
     TransactionServiceDependencies,
     TransactionServiceInterface,
@@ -16,5 +17,20 @@ export class TransactionService implements TransactionServiceInterface {
     ) => {
         const transaction = await this._repo.create(createTransactionDto, session);
         return transaction;
+    };
+
+    findTransactionByReference: TransactionServiceInterface["findTransactionByReference"] = async (
+        reference
+    ) => {
+        const transaction = await this._repo.getByReference(reference);
+        return transaction;
+    };
+
+    updateTransactionStatus: TransactionServiceInterface["updateTransactionStatus"] = async (
+        id,
+        status,
+        session
+    ) => {
+        await this._repo.updateStatus(id, status, session);
     };
 }

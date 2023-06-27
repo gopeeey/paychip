@@ -1,5 +1,11 @@
 import { SessionInterface } from "@bases/logic";
-import { CreateWalletDto, InitializeFundingDto, GetUniqueWalletDto } from "../dtos";
+import {
+    CreateWalletDto,
+    InitializeFundingDto,
+    GetUniqueWalletDto,
+    ResolvePaymentDto,
+    IncrementBalanceDto,
+} from "../dtos";
 import { WalletModelInterface } from "./wallet.model.interface";
 import { WalletRepoInterface } from "./wallet.repo.interface";
 import { BusinessWalletModelInterface as BwModelInterface } from "@business_wallet/logic";
@@ -10,7 +16,10 @@ import {
     WalletChargeStackModelInterface,
 } from "@charges/logic";
 import { TransactionServiceInterface } from "@transaction/logic";
-import { PaymentProviderService } from "@third_party/payment_providers/logic";
+import {
+    PaymentProviderService,
+    PaymentProviderServiceInterface,
+} from "@third_party/payment_providers/logic";
 import { CustomerServiceInterface } from "@customer/logic";
 
 export interface WalletServiceInterface {
@@ -22,6 +31,8 @@ export interface WalletServiceInterface {
     getWalletById: (id: WalletModelInterface["id"]) => Promise<WalletModelInterface>;
     getUniqueWallet: (uniqueData: GetUniqueWalletDto) => Promise<WalletModelInterface>;
     initializeFunding: (fundingDto: InitializeFundingDto) => Promise<string>;
+    resolvePayment: (resolvePaymentDto: ResolvePaymentDto) => Promise<void>;
+    incrementBalance: (data: IncrementBalanceDto) => Promise<void>;
 }
 
 export interface WalletServiceDependencies {
@@ -39,6 +50,9 @@ export interface WalletServiceDependencies {
     ) => Promise<ChargeStackModelInterface | null>;
     calculateCharges: ChargesServiceInterface["calculateTransactionCharges"];
     createTransaction: TransactionServiceInterface["createTransaction"];
+    findTransactionByReference: TransactionServiceInterface["findTransactionByReference"];
     generatePaymentLink: PaymentProviderService["generatePaymentLink"];
     getOrCreateCustomer: CustomerServiceInterface["getOrCreateCustomer"];
+    verifyTransactionFromProvider: PaymentProviderServiceInterface["verifyTransaction"];
+    updateTransactionStatus: TransactionServiceInterface["updateTransactionStatus"];
 }

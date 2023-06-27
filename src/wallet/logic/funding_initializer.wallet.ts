@@ -66,9 +66,13 @@ export class FundingInitializer {
             await this.createTransaction();
             await this.generatePaymentLink();
             await this.session.commit();
+            await this.session.end();
             return this.paymentLink;
         } catch (err) {
-            if (!this.session.ended) await this.session.rollback();
+            if (!this.session.ended) {
+                await this.session.rollback();
+                await this.session.end();
+            }
             throw err;
         }
     }

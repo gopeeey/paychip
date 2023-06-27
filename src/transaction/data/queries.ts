@@ -74,3 +74,18 @@ export const createTransactionQuery = (transaction: CreateTransactionArgType) =>
         ) RETURNING *;
     `;
 };
+
+export const getByReferenceQuery = (reference: string) => {
+    return SQL`
+        SELECT * FROM "transactions" WHERE "reference" = ${reference};
+    `;
+};
+
+export const updateStatusQuery = (
+    transactionId: TransactionModelInterface["id"],
+    status: TransactionModelInterface["status"]
+) => {
+    return SQL`
+        UPDATE "transactions" SET "status" = ${status} WHERE "id" = ${transactionId};
+    `;
+};

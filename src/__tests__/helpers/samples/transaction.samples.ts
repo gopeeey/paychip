@@ -6,6 +6,8 @@ import { getAWallet, walletJson, walletSeeder } from "./wallet.samples";
 import { bwJson } from "./business_wallet.samples";
 import { Pool } from "pg";
 import { runQuery } from "@db/postgres";
+import SQL from "sql-template-strings";
+import { SeedingError } from "../test_utils";
 
 export const transactionData = new CreateTransactionDto({
     customerId: customerJson.complete.id,
@@ -64,16 +66,13 @@ export const transactionSeeder = async (pool: Pool) => {
     });
     console.log("\n\n\nTHIS IS THE QUERY", query);
     await runQuery(query, pool);
+};
 
-    // await Transaction.bulkCreate([
-    //     {
-    //         ...data,
-    //         id: generateId(wallet.businessId),
-    //     },
-    //     {
-    //         ...data,
-    //         customerId: customer.id,
-    //         id: generateId(wallet.businessId),
-    //     },
-    // ]);
+export const getATransaction = async (pool: Pool, id?: TransactionModelInterface["id"]) => {
+    let query = SQL`SELECT * FROM "transactions" LIMIT 1;`;
+    if (id) query = SQL`SELECT * FROM "transactions" WHERE "id" = ${id} LIMIT 1;`;
+    const res = await runQuery<TransactionModelInterface>(query, pool);
+    const wallet = res.rows[0];
+    if (!wallet) throw new SeedingError("No wallets found");
+    return wallet;
 };

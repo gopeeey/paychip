@@ -81,6 +81,7 @@ describe("TESTING BUSINESS WALLET REPO", () => {
             const session = await bwRepo.startSession();
             const bw = await bwRepo.create(dto, session);
             await session.commit();
+            await session.end();
             if (!bw) throw new Error("Failed to persist business wallet");
             const res = await runQuery<BusinessWalletModelInterface>(
                 SQL`SELECT * FROM "businessWallets" WHERE id = ${bw.id}`,
