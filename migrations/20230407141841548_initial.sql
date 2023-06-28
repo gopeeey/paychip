@@ -68,22 +68,31 @@ CREATE TABLE "businessWallets" (
 CREATE TABLE "wallets" (
     "id" VARCHAR(60) PRIMARY KEY NOT NULL,
     "businessId" INTEGER NOT NULL,
-    "businessWalletId" VARCHAR(60) NOT NULL,
+    "businessWalletId" VARCHAR(60),
     "currency" VARCHAR(60) NOT NULL,
+    "isBusinessWallet" BOOLEAN NOT NULL DEFAULT FALSE,
     "active" BOOLEAN NOT NULL DEFAULT TRUE,
     "balance" NUMERIC(15, 2) NOT NULL DEFAULT 0,
     "email" VARCHAR(100) NOT NULL,
+    "customFundingCs" VARCHAR,
+    "customWithdrawalCs" VARCHAR,
+    "customWalletInCs" VARCHAR,
+    "customWalletOutCs" VARCHAR,
     "waiveFundingCharges" BOOLEAN NOT NULL DEFAULT FALSE,
     "waiveWithdrawalCharges" BOOLEAN NOT NULL DEFAULT FALSE,
     "waiveWalletInCharges" BOOLEAN NOT NULL DEFAULT FALSE,
     "waiveWalletOutCharges" BOOLEAN NOT NULL DEFAULT FALSE,
-    "fundingChargesPaidBy" PAIDBY DEFAULT NULL,
-    "withdrawalChargesPaidBy" PAIDBY DEFAULT NULL,
+    "w_fundingCs" VARCHAR,
+    "w_withdrawalCs" VARCHAR,
+    "w_walletInCs" VARCHAR,
+    "w_walletOutCs" VARCHAR,
+    "w_fundingChargesPaidBy" PAIDBY,
+    "w_withdrawalChargesPaidBy" PAIDBY,
     "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY("businessId") REFERENCES "businesses"("id") ON DELETE CASCADE,
-    FOREIGN KEY("businessWalletId") REFERENCES "businessWallets"("id") ON DELETE CASCADE,
+    FOREIGN KEY("businessWalletId") REFERENCES "wallets"("id") ON DELETE CASCADE,
     FOREIGN KEY("currency") REFERENCES "currencies"("isoCode") ON DELETE RESTRICT,
-    UNIQUE("businessId", "currency", "email")
+    UNIQUE("businessId", "currency", "email", "isBusinessWallet")
 );
 
 CREATE TABLE "chargeStacks" (

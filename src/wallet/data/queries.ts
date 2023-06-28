@@ -17,12 +17,11 @@ export const createWalletQuery = (wallet: CreateWalletQueryInterface) => {
             "businessWalletId",
             "currency",
             "email",
+            "isBusinessWallet",
             "waiveFundingCharges",
             "waiveWithdrawalCharges",
             "waiveWalletInCharges",
-            "waiveWalletOutCharges",
-            "fundingChargesPaidBy",
-            "withdrawalChargesPaidBy"
+            "waiveWalletOutCharges"
         ) 
         VALUES (
             ${wallet.id},
@@ -30,12 +29,11 @@ export const createWalletQuery = (wallet: CreateWalletQueryInterface) => {
             ${wallet.businessWalletId},
             ${wallet.currency},
             ${wallet.email},
+            ${wallet.isBusinessWallet},
             ${wallet.waiveFundingCharges},
             ${wallet.waiveWithdrawalCharges},
             ${wallet.waiveWalletInCharges},
-            ${wallet.waiveWalletOutCharges},
-            ${wallet.fundingChargesPaidBy},
-            ${wallet.withdrawalChargesPaidBy}
+            ${wallet.waiveWalletOutCharges}
         ) RETURNING *;
     `;
 };
@@ -51,7 +49,19 @@ export const getUniqueQuery = (unique: GetUniqueWalletDto) => {
         SELECT * FROM "wallets" 
         WHERE "businessId" = ${unique.businessId} 
         AND "email" = ${unique.email} 
-        AND "currency" = ${unique.currency};
+        AND "currency" = ${unique.currency}
+        AND "isBusinessWallet" = ${unique.isBusinessWallet};
+    `;
+};
+
+export const getBusinessWalletByCurrencyQuery = (
+    businessId: WalletModelInterface["businessId"],
+    currency: WalletModelInterface["currency"]
+) => {
+    return SQL`
+        SELECT * FROM "wallets" 
+        WHERE "businessId" = ${businessId} AND 
+        "currency" = ${currency} AND "isBusinessWallet" = true;
     `;
 };
 

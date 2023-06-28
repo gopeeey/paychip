@@ -1,5 +1,5 @@
 import { CustomerModelInterfaceDef } from "@customer/logic";
-import { WalletModelInterfaceDef } from "@wallet/logic";
+import { WalletModelInterface, WalletModelInterfaceDef } from "@wallet/logic";
 import { BaseModelInterface } from "@bases/logic";
 import { ChargeStackModelInterfaceDef, PaidByType } from "@charges/logic";
 import { BusinessModelInterfaceDef } from "@business/logic";
@@ -21,7 +21,7 @@ export interface TransactionModelInterfaceDef extends BaseModelInterface {
     customerId: CustomerModelInterfaceDef["id"];
     transactionType: TransactionType;
     currency: CurrencyModelInterfaceDef["isoCode"];
-    bwId: BusinessWalletModelInterfaceDef["id"];
+    bwId: WalletModelInterface["businessWalletId"];
     status: TransactionStatusType;
     channel: TransactionChannelType;
     amount: number;

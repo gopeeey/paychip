@@ -1,13 +1,14 @@
 import { CreateWalletDto, StandardWalletDto, WalletModelInterface } from "@wallet/logic";
-import { createWalletQuery } from "@wallet/data";
+import { DbWallet, createWalletQuery } from "@wallet/data";
 import { SeedingError } from "../test_utils";
 import { generateId } from "src/utils";
-import { bwJson, bwSeeder, getABusinessWalletByBusinessId } from "./business_wallet.samples";
+import { bwJson, bwSeeder } from "./business_wallet.samples";
 import { Pool } from "pg";
 import { getABusiness } from "./business.samples";
 import { getACountry } from "./country.samples";
 import { runQuery } from "@db/postgres";
 import SQL from "sql-template-strings";
+import { BusinessModelInterface } from "@business/logic";
 
 export const walletData = new CreateWalletDto({
     businessId: 1234,
@@ -23,19 +24,75 @@ export const walletData = new CreateWalletDto({
 export const walletJson: WalletModelInterface = {
     ...walletData,
     id: "parentwallet",
+    isBusinessWallet: false,
+    waiveFundingCharges: false,
+    waiveWalletInCharges: false,
+    waiveWithdrawalCharges: false,
+    waiveWalletOutCharges: false,
     active: true,
     balance: 0,
+    customFundingCs: null,
+    customWalletInCs: null,
+    customWalletOutCs: null,
+    customWithdrawalCs: null,
+    w_fundingChargesPaidBy: null,
+    w_withdrawalChargesPaidBy: null,
+    w_fundingCs: null,
+    w_walletInCs: null,
+    w_walletOutCs: null,
+    w_withdrawalCs: null,
 };
 
 export const standardWallet = new StandardWalletDto(walletJson);
 
+export const getAWallet = async (pool: Pool, id?: WalletModelInterface["id"]) => {
+    let query = SQL`SELECT * FROM "wallets" LIMIT 1;`;
+    if (id) query = SQL`SELECT * FROM "wallets" WHERE "id" = ${id} LIMIT 1;`;
+    const res = await runQuery<DbWallet>(query, pool);
+    const wallet = res.rows[0];
+    if (!wallet) throw new SeedingError("No wallets found");
+    return wallet;
+};
+
+export const getABusinessWallet = async (pool: Pool, id?: WalletModelInterface["id"]) => {
+    let query = SQL`SELECT * FROM "wallets" WHERE "isBusinessWallet" = true LIMIT 1;`;
+    if (id)
+        query = SQL`SELECT * FROM "wallets" WHERE "id" = ${id} AND "isBusinessWallet" = true LIMIT 1;`;
+    const res = await runQuery<DbWallet>(query, pool);
+    const wallet = res.rows[0];
+    if (!wallet) throw new SeedingError("No business wallets found");
+    return wallet;
+};
+
+export const getABusinessWalletByBusinessId = async (
+    pool: Pool,
+    businessId: BusinessModelInterface["id"]
+) => {
+    const query = SQL`SELECT * FROM "wallets" WHERE "businessId" = ${businessId} AND "isBusinessWallet" = true LIMIT 1;`;
+    const res = await runQuery<DbWallet>(query, pool);
+    const wallet = res.rows[0];
+    if (!wallet) throw new SeedingError("No business wallets found");
+    return wallet;
+};
+
 export const walletSeeder = async (pool: Pool) => {
     await bwSeeder(pool);
     const business = await getABusiness(pool);
-    const businessWallet = await getABusinessWalletByBusinessId(pool, business.id);
     const country = await getACountry(pool, business.countryCode);
 
-    const data = new CreateWalletDto({
+    const businessWalletData = new CreateWalletDto({
+        businessId: business.id,
+        currency: country.currencyCode,
+        businessWalletId: null,
+        isBusinessWallet: true,
+        email: "sammygopeh@gmail.com",
+    });
+
+    await runQuery(createWalletQuery({ ...businessWalletData, id: generateId(business.id) }), pool);
+
+    const businessWallet = await getABusinessWalletByBusinessId(pool, business.id);
+
+    const walletData = new CreateWalletDto({
         businessId: business.id,
         currency: country.currencyCode,
         businessWalletId: businessWallet.id,
@@ -46,14 +103,5 @@ export const walletSeeder = async (pool: Pool) => {
         waiveWalletOutCharges: false,
     });
 
-    await runQuery(createWalletQuery({ ...data, id: generateId(business.id) }), pool);
-};
-
-export const getAWallet = async (pool: Pool, id?: WalletModelInterface["id"]) => {
-    let query = SQL`SELECT * FROM "wallets" LIMIT 1;`;
-    if (id) query = SQL`SELECT * FROM "wallets" WHERE "id" = ${id} LIMIT 1;`;
-    const res = await runQuery<WalletModelInterface>(query, pool);
-    const wallet = res.rows[0];
-    if (!wallet) throw new SeedingError("No wallets found");
-    return wallet;
+    await runQuery(createWalletQuery({ ...walletData, id: generateId(business.id) }), pool);
 };

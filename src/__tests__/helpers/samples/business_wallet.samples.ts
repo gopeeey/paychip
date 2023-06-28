@@ -46,7 +46,7 @@ export const bwSeeder = async (pool: Pool) => {
     await runQuery(createBusinessWalletQuery(data), pool);
 };
 
-export const getABusinessWallet = async (pool: Pool) => {
+const getABusinessWallet = async (pool: Pool) => {
     const res = await runQuery<BusinessWalletModelInterface>(
         SQL`SELECT * FROM "businessWallets" LIMIT 1;`,
         pool
@@ -56,7 +56,7 @@ export const getABusinessWallet = async (pool: Pool) => {
     return bw;
 };
 
-export const getABusinessWalletByBusinessId = async (
+const getABusinessWalletByBusinessId = async (
     pool: Pool,
     businessId?: BusinessWalletModelInterface["businessId"]
 ) => {
