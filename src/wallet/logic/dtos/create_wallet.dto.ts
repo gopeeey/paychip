@@ -29,10 +29,11 @@ export class CreateWalletDto implements RequiredProps {
         waiveWalletInCharges = false,
         waiveWalletOutCharges = false,
         isBusinessWallet = false,
+        businessWalletId = null,
         ...body
     }: RequiredProps) {
         this.businessId = body.businessId;
-        this.businessWalletId = body.businessWalletId;
+        this.businessWalletId = businessWalletId;
         this.currency = body.currency;
         this.email = body.email;
         this.isBusinessWallet = isBusinessWallet;

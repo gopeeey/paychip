@@ -2,8 +2,7 @@ import { createTransactionQuery } from "@transaction/data";
 import { CreateTransactionDto, TransactionModelInterface } from "@transaction/logic";
 import { generateId } from "src/utils";
 import { customerJson, customerSeeder, getACustomer } from "./customer.samples";
-import { getAWallet, walletJson, walletSeeder } from "./wallet.samples";
-import { bwJson } from "./business_wallet.samples";
+import { businessWalletJson, getAWallet, walletJson, walletSeeder } from "./wallet.samples";
 import { Pool } from "pg";
 import { runQuery } from "@db/postgres";
 import SQL from "sql-template-strings";
@@ -14,7 +13,7 @@ export const transactionData = new CreateTransactionDto({
     businessId: walletJson.businessId,
     transactionType: "credit",
     currency: "NGN",
-    bwId: bwJson.id,
+    bwId: businessWalletJson.id,
     channel: "bank",
     amount: 2000,
     settledAmount: 1800,

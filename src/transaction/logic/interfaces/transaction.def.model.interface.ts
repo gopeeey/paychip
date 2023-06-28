@@ -1,10 +1,9 @@
 import { CustomerModelInterfaceDef } from "@customer/logic";
 import { WalletModelInterface, WalletModelInterfaceDef } from "@wallet/logic";
 import { BaseModelInterface } from "@bases/logic";
-import { ChargeStackModelInterfaceDef, PaidByType } from "@charges/logic";
+import { PaidByType } from "@charges/logic";
 import { BusinessModelInterfaceDef } from "@business/logic";
 import { CurrencyModelInterfaceDef } from "@currency/logic";
-import { BusinessWalletModelInterfaceDef } from "@business_wallet/logic";
 
 export const allowedTransactionTypes = ["credit", "debit"] as const;
 export type TransactionType = (typeof allowedTransactionTypes)[number];

@@ -17,7 +17,7 @@ export interface PaymentResolverDependencies {
     getOrCreateCustomer: (data: GetSingleBusinessCustomerDto) => Promise<CustomerModelInterface>;
     findTransactionByReference: TransactionServiceInterface["findTransactionByReference"];
     getWalletById: WalletServiceInterface["getWalletById"];
-    getBusinessWallet: WalletServiceDependencies["getBusinessWallet"];
+    getBusinessWallet: WalletServiceInterface["getBusinessWalletByCurrency"];
     getCurrency: WalletServiceDependencies["getCurrency"];
     getWalletChargeStack: WalletServiceDependencies["getWalletChargeStack"];
     calculateCharges: ChargesServiceInterface["calculateTransactionCharges"];

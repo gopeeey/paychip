@@ -139,7 +139,7 @@ CREATE TABLE "transactions" (
     "customerId" VARCHAR(60),
     "transactionType" TRANSACTIONTYPE NOT NULL,
     "currency" VARCHAR(3) NOT NULL,
-    "bwId" VARCHAR(60) NOT NULL,
+    "bwId" VARCHAR(60),
     "status" TRANSACTIONSTATUS NOT NULL DEFAULT 'pending',
     "channel" TRANSACTIONCHANNEL,
     "amount" NUMERIC(15, 2) NOT NULL,
@@ -169,7 +169,7 @@ CREATE TABLE "transactions" (
     FOREIGN KEY("businessId") REFERENCES "businesses"("id") ON DELETE CASCADE,
     FOREIGN KEY("customerId") REFERENCES "customers"("id") ON DELETE SET NULL,
     FOREIGN KEY("currency") REFERENCES "currencies"("isoCode") ON DELETE CASCADE,
-    FOREIGN KEY("bwId") REFERENCES "businessWallets"("id") ON DELETE CASCADE,
+    FOREIGN KEY("bwId") REFERENCES "wallets"("id") ON DELETE CASCADE,
     FOREIGN KEY("senderWalletId") REFERENCES "wallets"("id") ON DELETE CASCADE,
     FOREIGN KEY("receiverWalletId") REFERENCES "wallets"("id") ON DELETE CASCADE
 );

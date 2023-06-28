@@ -1,6 +1,5 @@
 import { AccountRepo } from "@accounts/data";
 import { BusinessRepo } from "@business/data";
-import { BusinessWalletRepo } from "@business_wallet/data";
 import { ChargesRepo } from "@charges/data";
 import { CountryRepo } from "@country/data";
 import { CurrencyRepo } from "@currency/data";
@@ -11,7 +10,6 @@ import { CustomerRepo } from "@customer/data";
 
 import { AccountService } from "@accounts/logic";
 import { BusinessService } from "@business/logic";
-import { BusinessWalletService } from "@business_wallet/logic";
 import { ChargesService } from "@charges/logic";
 import { CountryService } from "@country/logic";
 import { CurrencyService } from "@currency/logic";
@@ -35,21 +33,6 @@ export const buildContainer = async (pool: Pool) => {
     const currencyRepo = new CurrencyRepo(pool);
     const currencyService = new CurrencyService({ repo: currencyRepo });
 
-    const businessWalletRepo = new BusinessWalletRepo(pool);
-    const businessWalletService = new BusinessWalletService({
-        repo: businessWalletRepo,
-        validateCurrencySupported: currencyService.validateIsSupported,
-    });
-
-    const businessRepo = new BusinessRepo(pool);
-    const businessService = new BusinessService({
-        repo: businessRepo,
-        getAccount: accountService.getById,
-        getCountry: countryService.getByCode,
-        startSession: businessRepo.startSession,
-        createBusinessWallet: businessWalletService.createBusinessWallet,
-    });
-
     const customerRepo = new CustomerRepo(pool);
     const customerService = new CustomerService({ repo: customerRepo });
 
@@ -67,13 +50,24 @@ export const buildContainer = async (pool: Pool) => {
     const walletRepo = new WalletRepo(pool);
     const walletService = new WalletService({
         repo: walletRepo,
-        getBusinessWallet: businessWalletService.getBusinessWalletByCurrency,
         getCurrency: currencyService.getCurrencyByIsoCode,
         getWalletChargeStack: chargesService.getWalletChargeStack,
         calculateCharges: chargesService.calculateTransactionCharges,
         createTransaction: transactionService.createTransaction,
         generatePaymentLink: paymentProviderService.generatePaymentLink,
         getOrCreateCustomer: customerService.getOrCreateCustomer,
+        findTransactionByReference: transactionService.findTransactionByReference,
+        updateTransactionStatus: transactionService.updateTransactionStatus,
+        verifyTransactionFromProvider: paymentProviderService.verifyTransaction,
+    });
+
+    const businessRepo = new BusinessRepo(pool);
+    const businessService = new BusinessService({
+        repo: businessRepo,
+        getAccount: accountService.getById,
+        getCountry: countryService.getByCode,
+        startSession: businessRepo.startSession,
+        createBusinessWallet: walletService.createWallet,
     });
 
     const authMiddleware = new AuthMiddleware({ accountService, businessService });

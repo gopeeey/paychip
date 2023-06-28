@@ -10,7 +10,12 @@ import {
 } from "@wallet/logic";
 import * as WalletCreatorModule from "@wallet/logic/creator.wallet";
 import * as FundingInitializerModule from "@wallet/logic/funding_initializer.wallet";
-import { transactionJson, walletData, walletJson } from "src/__tests__/helpers/samples";
+import {
+    businessWalletJson,
+    transactionJson,
+    walletData,
+    walletJson,
+} from "src/__tests__/helpers/samples";
 import { SpiesObj, createSpies, sessionMock } from "src/__tests__/helpers/mocks";
 import { WalletRepo } from "@wallet/data";
 import { Pool } from "pg";
@@ -35,7 +40,6 @@ const FundingInitializer =
 const walletRepoMock = createSpies(new WalletRepo({} as Pool));
 
 const deps: { [key in keyof Omit<WalletServiceDependencies, "repo">]: jest.Mock } = {
-    getBusinessWallet: jest.fn(),
     getCurrency: jest.fn(),
     getWalletChargeStack: jest.fn(),
     calculateCharges: jest.fn(),
@@ -63,7 +67,7 @@ describe("TESTING WALLET SERVICE", () => {
                 dto: walletData,
                 repo: walletRepoMock as unknown as WalletCreatorDependencies["repo"],
                 getBusinessWallet:
-                    deps.getBusinessWallet as WalletCreatorDependencies["getBusinessWallet"],
+                    walletService.getBusinessWalletByCurrency as WalletCreatorDependencies["getBusinessWallet"],
                 session: sessionMock,
             };
             expect(WalletCreator).toHaveBeenCalledWith(calledWith);
@@ -164,4 +168,28 @@ describe("TESTING WALLET SERVICE", () => {
 
     // describe(">>> resolvePayment", () => {
     // });
+
+    describe(">>> getBusinessWalletByCurrency", () => {
+        describe("given the repo returns a wallet object", () => {
+            it("should return the wallet object", async () => {
+                walletRepoMock.getBusinessWalletByCurrency.mockResolvedValue(businessWalletJson);
+                const data = [1234, "NGN"] as const;
+                const bw = await walletService.getBusinessWalletByCurrency(...data);
+                expect(bw).toEqual(businessWalletJson);
+                expect(walletRepoMock.getBusinessWalletByCurrency).toHaveBeenCalledTimes(1);
+                expect(walletRepoMock.getBusinessWalletByCurrency).toHaveBeenCalledWith(...data);
+            });
+        });
+
+        describe("given the repo returns null", () => {
+            it("should throw a BusinessWalletNotFoundError", async () => {
+                walletRepoMock.getBusinessWalletByCurrency.mockResolvedValue(null);
+                const data = [1234, "NGN"] as const;
+                await expect(walletService.getBusinessWalletByCurrency(...data)).rejects.toThrow(
+                    new WalletNotFoundError(data[1])
+                );
+                expect(walletRepoMock.getBusinessWalletByCurrency).toHaveBeenCalledWith(...data);
+            });
+        });
+    });
 });

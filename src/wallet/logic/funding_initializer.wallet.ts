@@ -7,7 +7,6 @@ import {
     WalletServiceInterface,
 } from "./interfaces";
 import { CustomerModelInterface, GetSingleBusinessCustomerDto } from "@customer/logic";
-import { BusinessWalletModelInterface } from "@business_wallet/logic";
 import { CurrencyModelInterface } from "@currency/logic";
 import {
     ChargeStackModelInterface,
@@ -28,7 +27,7 @@ export interface FundingInitializerDependencies {
     getWalletById: WalletServiceInterface["getWalletById"];
     getUniqueWallet: WalletServiceInterface["getUniqueWallet"];
     getOrCreateCustomer: (data: GetSingleBusinessCustomerDto) => Promise<CustomerModelInterface>;
-    getBusinessWallet: WalletServiceDependencies["getBusinessWallet"];
+    getBusinessWallet: WalletServiceInterface["getBusinessWalletByCurrency"];
     getCurrency: WalletServiceDependencies["getCurrency"];
     getWalletChargeStack: WalletServiceDependencies["getWalletChargeStack"];
     calculateCharges: ChargesServiceInterface["calculateTransactionCharges"];
@@ -40,7 +39,7 @@ export interface FundingInitializerDependencies {
 export class FundingInitializer {
     private declare wallet: WalletModelInterface;
     private declare customer: CustomerModelInterface;
-    private declare businessWallet: BusinessWalletModelInterface;
+    private declare businessWallet: WalletModelInterface;
     private currency?: CurrencyModelInterface;
     private chargeStack?: ChargeStackModelInterface | null;
     private declare chargesResult: ChargesCalculationResultDto;
@@ -113,7 +112,7 @@ export class FundingInitializer {
 
     private async fetchCurrencyIfNeeded() {
         if (this.businessWallet.customFundingCs) return;
-        this.currency = await this._deps.getCurrency(this.businessWallet.currencyCode);
+        this.currency = await this._deps.getCurrency(this.businessWallet.currency);
     }
 
     private async fetchChargeStackIfNeeded() {

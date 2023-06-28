@@ -8,7 +8,6 @@ import {
 } from "../dtos";
 import { WalletModelInterface } from "./wallet.model.interface";
 import { WalletRepoInterface } from "./wallet.repo.interface";
-import { BusinessWalletModelInterface as BwModelInterface } from "@business_wallet/logic";
 import { CurrencyModelInterface } from "@currency/logic";
 import {
     ChargeStackModelInterface,
@@ -33,14 +32,14 @@ export interface WalletServiceInterface {
     initializeFunding: (fundingDto: InitializeFundingDto) => Promise<string>;
     resolvePayment: (resolvePaymentDto: ResolvePaymentDto) => Promise<void>;
     incrementBalance: (data: IncrementBalanceDto) => Promise<void>;
+    getBusinessWalletByCurrency: (
+        businessId: WalletModelInterface["businessId"],
+        currency: WalletModelInterface["currency"]
+    ) => Promise<WalletModelInterface>;
 }
 
 export interface WalletServiceDependencies {
     repo: WalletRepoInterface;
-    getBusinessWallet: (
-        businessId: BwModelInterface["businessId"],
-        currencyCode: BwModelInterface["currencyCode"]
-    ) => Promise<BwModelInterface>;
     getCurrency: (
         currencyCode: WalletModelInterface["currency"]
     ) => Promise<CurrencyModelInterface>;

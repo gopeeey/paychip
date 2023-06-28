@@ -10,11 +10,46 @@ import { runQuery } from "@db/postgres";
 import SQL from "sql-template-strings";
 import { BusinessModelInterface } from "@business/logic";
 
+export const businessWalletData = new CreateWalletDto({
+    businessId: 1234,
+    currency: "NGN",
+    email: "sammygopeh@gmail.com",
+    waiveFundingCharges: false,
+    waiveWithdrawalCharges: false,
+    waiveWalletInCharges: false,
+    waiveWalletOutCharges: false,
+    businessWalletId: null,
+    isBusinessWallet: true,
+});
+
+export const businessWalletJson: WalletModelInterface = {
+    ...businessWalletData,
+    id: "businessWallet",
+    businessWalletId: null,
+    isBusinessWallet: true,
+    waiveFundingCharges: false,
+    waiveWalletInCharges: false,
+    waiveWithdrawalCharges: false,
+    waiveWalletOutCharges: false,
+    active: true,
+    balance: 0,
+    customFundingCs: null,
+    customWalletInCs: null,
+    customWalletOutCs: null,
+    customWithdrawalCs: null,
+    w_fundingChargesPaidBy: null,
+    w_withdrawalChargesPaidBy: null,
+    w_fundingCs: null,
+    w_walletInCs: null,
+    w_walletOutCs: null,
+    w_withdrawalCs: null,
+};
+
 export const walletData = new CreateWalletDto({
     businessId: 1234,
     currency: "NGN",
     email: "sammygopeh@gmail.com",
-    businessWalletId: bwJson.id,
+    businessWalletId: businessWalletJson.id,
     waiveFundingCharges: false,
     waiveWithdrawalCharges: false,
     waiveWalletInCharges: false,
@@ -23,7 +58,8 @@ export const walletData = new CreateWalletDto({
 
 export const walletJson: WalletModelInterface = {
     ...walletData,
-    id: "parentwallet",
+    id: "wallet",
+    businessWalletId: businessWalletJson.id,
     isBusinessWallet: false,
     waiveFundingCharges: false,
     waiveWalletInCharges: false,
@@ -44,6 +80,7 @@ export const walletJson: WalletModelInterface = {
 };
 
 export const standardWallet = new StandardWalletDto(walletJson);
+export const standardBusinessWallet = new StandardWalletDto(businessWalletJson);
 
 export const getAWallet = async (pool: Pool, id?: WalletModelInterface["id"]) => {
     let query = SQL`SELECT * FROM "wallets" LIMIT 1;`;

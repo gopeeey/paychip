@@ -11,7 +11,7 @@ import {
 import { Pool } from "pg";
 import { createSpies, sessionMock } from "src/__tests__/helpers/mocks";
 import {
-    bwJson,
+    businessWalletJson,
     chargeStackJson,
     currencyJson,
     customerJson,
@@ -66,7 +66,7 @@ const chargeCalculationResult = new ChargesCalculationResultDto({
 
 const mockAllDeps = () => {
     depMocks.getOrCreateCustomer.mockResolvedValue(customerJson.complete);
-    depMocks.getBusinessWallet.mockResolvedValue(bwJson);
+    depMocks.getBusinessWallet.mockResolvedValue(businessWalletJson);
     depMocks.getCurrency.mockResolvedValue(currencyJson);
     depMocks.getWalletChargeStack.mockResolvedValue(chargeStackJson.wallet);
     depMocks.calculateCharges.mockReturnValue(chargeCalculationResult);
@@ -110,11 +110,11 @@ describe("Testing FundingInitializer", () => {
                 } else {
                     if (data.email && data.currency) {
                         expect(walletRepoMock.getUnique).toHaveBeenCalledTimes(1);
-                        const expectedArg: GetUniqueWalletDto = {
+                        const expectedArg = new GetUniqueWalletDto({
                             businessId: data.businessId,
                             email: data.email,
                             currency: data.currency,
-                        };
+                        });
                         expect(walletRepoMock.getUnique).toHaveBeenCalledWith(expectedArg);
                     } else {
                         throw new Error("You not set the test data up properly then");
@@ -141,8 +141,8 @@ describe("Testing FundingInitializer", () => {
             expect(depMocks.getBusinessWallet).toHaveBeenCalledTimes(1);
 
             expect(depMocks.getBusinessWallet).toHaveBeenCalledWith(
-                bwJson.businessId,
-                bwJson.currencyCode
+                businessWalletJson.businessId,
+                businessWalletJson.currency
             );
         });
 
@@ -150,13 +150,13 @@ describe("Testing FundingInitializer", () => {
             it("should fetch the currency", async () => {
                 mockAllDeps();
                 depMocks.getBusinessWallet.mockResolvedValue({
-                    ...bwJson,
+                    ...businessWalletJson,
                     customFundingCs: null,
                 });
                 await fundingInitializer.exec();
                 expect(depMocks.getCurrency).toHaveBeenCalledTimes(1);
 
-                expect(depMocks.getCurrency).toHaveBeenCalledWith(bwJson.currencyCode);
+                expect(depMocks.getCurrency).toHaveBeenCalledWith(businessWalletJson.currency);
             });
         });
 

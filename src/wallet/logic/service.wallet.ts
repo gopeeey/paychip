@@ -19,7 +19,7 @@ export class WalletService implements WalletServiceInterface {
         const wallet = await new WalletCreator({
             dto: createWalletDto,
             repo: this._repo,
-            getBusinessWallet: this._dep.getBusinessWallet,
+            getBusinessWallet: this.getBusinessWalletByCurrency,
             session,
         }).create();
         return wallet;
@@ -37,12 +37,21 @@ export class WalletService implements WalletServiceInterface {
         return wallet;
     };
 
+    getBusinessWalletByCurrency: WalletServiceInterface["getBusinessWalletByCurrency"] = async (
+        businessId,
+        currency
+    ) => {
+        const businessWallet = await this._repo.getBusinessWalletByCurrency(businessId, currency);
+        if (!businessWallet) throw new WalletNotFoundError({ businessId, currency });
+        return businessWallet;
+    };
+
     initializeFunding: WalletServiceInterface["initializeFunding"] = async (fundingDto) => {
         const link = await new FundingInitializer(fundingDto, {
             calculateCharges: this._dep.calculateCharges,
             createTransaction: this._dep.createTransaction,
             generatePaymentLink: this._dep.generatePaymentLink,
-            getBusinessWallet: this._dep.getBusinessWallet,
+            getBusinessWallet: this.getBusinessWalletByCurrency,
             getCurrency: this._dep.getCurrency,
             getOrCreateCustomer: this._dep.getOrCreateCustomer,
             getUniqueWallet: this.getUniqueWallet,

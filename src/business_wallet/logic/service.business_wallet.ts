@@ -1,4 +1,3 @@
-import { bwJson } from "src/__tests__/helpers/samples";
 import { BusinessWalletNotFoundError } from "./errors";
 import {
     BusinessWalletServiceDeps,

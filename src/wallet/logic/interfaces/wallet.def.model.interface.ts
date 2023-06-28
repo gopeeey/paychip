@@ -1,15 +1,14 @@
 import { BaseModelInterface } from "@bases/logic";
 import { BusinessModelInterfaceDef } from "@business/logic";
-import { ChargeInterface, ChargeStackModelInterfaceDef, PaidByType } from "@charges/logic";
+import { ChargeInterface, PaidByType } from "@charges/logic";
 import { CurrencyModelInterfaceDef } from "@currency/logic";
-import { BusinessWalletModelInterfaceDef } from "@business_wallet/logic";
 
 export const allowedWalletTypes = ["personal", "commercial"] as const;
 
 export interface WalletModelInterfaceDef extends BaseModelInterface {
     id: string;
     businessId: BusinessModelInterfaceDef["id"];
-    businessWalletId?: BusinessWalletModelInterfaceDef["id"] | null;
+    businessWalletId?: string | null;
     currency: CurrencyModelInterfaceDef["isoCode"];
     isBusinessWallet: boolean;
     active: boolean;

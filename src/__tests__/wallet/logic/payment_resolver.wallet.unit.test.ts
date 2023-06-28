@@ -9,7 +9,7 @@ import {
 } from "@wallet/logic";
 import { sessionMock } from "src/__tests__/helpers/mocks";
 import {
-    bwJson,
+    businessWalletJson,
     chargeStackJson,
     currencyJson,
     customerJson,
@@ -62,7 +62,7 @@ const mockAll = () => {
     deps.verifyTransactionFromProvider.mockResolvedValue(providerTransaction);
     deps.findTransactionByReference.mockResolvedValue(transactionJson);
     deps.getWalletById.mockResolvedValue(walletJson);
-    deps.getBusinessWallet.mockResolvedValue(bwJson);
+    deps.getBusinessWallet.mockResolvedValue(businessWalletJson);
     deps.getCurrency.mockResolvedValue(currencyJson);
     deps.createTransaction.mockResolvedValue(transactionJson);
     deps.getOrCreateCustomer.mockResolvedValue(customerJson.complete);
