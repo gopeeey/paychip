@@ -22,7 +22,7 @@ export interface TransactionModelInterfaceDef extends BaseModelInterface {
     currency: CurrencyModelInterfaceDef["isoCode"];
     bwId: WalletModelInterface["businessWalletId"];
     status: TransactionStatusType;
-    channel: TransactionChannelType;
+    channel: TransactionChannelType | null;
     amount: number;
     settledAmount: number;
     senderPaid: number;

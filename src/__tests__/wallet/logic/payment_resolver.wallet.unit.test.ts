@@ -1,6 +1,6 @@
 import { ChargesCalculationResultDto } from "@charges/logic";
 import { VerifyTransactionResponseDto } from "@third_party/payment_providers/logic";
-import { TransactionModelInterface } from "@transaction/logic";
+import { TransactionModelInterface, UpdateTransactionInfoDto } from "@transaction/logic";
 import {
     IncrementBalanceDto,
     PaymentResolutionError,
@@ -30,7 +30,7 @@ const deps: {
     getWalletChargeStack: jest.fn(),
     getOrCreateCustomer: jest.fn(),
     startSession: jest.fn(async () => sessionMock),
-    updateTransactionStatus: jest.fn(),
+    updateTransactionInfo: jest.fn(),
     incrementWalletBalance: jest.fn(),
 };
 
@@ -68,7 +68,7 @@ const mockAll = () => {
     deps.getOrCreateCustomer.mockResolvedValue(customerJson.complete);
     deps.getWalletChargeStack.mockResolvedValue(chargeStackJson.wallet);
     deps.calculateCharges.mockResolvedValue(chargeResult);
-    deps.updateTransactionStatus.mockImplementation(async () => {});
+    deps.updateTransactionInfo.mockImplementation(async () => {});
     deps.incrementWalletBalance.mockImplementation(async () => {});
 };
 
@@ -119,11 +119,11 @@ describe("TESTING PAYMENT RESOLVER", () => {
                 });
             });
 
-            it("should update the transaction status", async () => {
+            it("should update the transaction info", async () => {
                 await resolver.exec();
-                expect(deps.updateTransactionStatus).toHaveBeenCalledWith(
+                expect(deps.updateTransactionInfo).toHaveBeenCalledWith(
                     expect.anything(),
-                    "successful",
+                    new UpdateTransactionInfoDto(providerTransaction),
                     sessionMock
                 );
             });
@@ -141,7 +141,13 @@ describe("TESTING PAYMENT RESOLVER", () => {
 
             it("should increment the business wallet balance with how much the busniness got", async () => {
                 await resolver.exec();
-                // continue from here
+                expect(deps.incrementWalletBalance).toHaveBeenCalledWith(
+                    new IncrementBalanceDto({
+                        walletId: businessWalletJson.id,
+                        amount: transactionJson.businessGot,
+                        session: sessionMock,
+                    })
+                );
             });
         });
     });

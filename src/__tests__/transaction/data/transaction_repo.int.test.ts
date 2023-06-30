@@ -2,7 +2,11 @@ import { runQuery } from "@db/postgres";
 import * as dbModule from "../../../db/postgres/service";
 import { PgSession } from "@db/postgres";
 import { TransactionRepo } from "@transaction/data";
-import { CreateTransactionDto, TransactionModelInterface } from "@transaction/logic";
+import {
+    CreateTransactionDto,
+    TransactionModelInterface,
+    UpdateTransactionInfoDto,
+} from "@transaction/logic";
 import SQL from "sql-template-strings";
 import {
     getABusinessWallet,
@@ -127,6 +131,80 @@ describe("TESTING TRANSACTION REPO", () => {
                     (session as PgSession).client
                 );
             }
+        });
+    });
+
+    describe(">>> updateTransactionInfo", () => {
+        it("should update the specified transaction with the info provided", async () => {
+            const wallet = await getAWallet(pool);
+            const customer = await getACustomer(pool, wallet.businessId);
+            const businessWallet = await getABusinessWallet(pool);
+            const session = await transactionRepo.startSession();
+
+            const data = new CreateTransactionDto({
+                amount: 2000,
+                businessCharge: 20,
+                businessChargePaidBy: "wallet",
+                businessGot: 1900,
+                businessId: wallet.businessId,
+                businessPaid: 80,
+                bwId: businessWallet.id,
+                channel: "bank",
+                currency: "NGN",
+                customerId: customer.id,
+                platformCharge: 20,
+                platformChargePaidBy: "wallet",
+                platformGot: 2000,
+                senderPaid: 2000,
+                settledAmount: 1900,
+                transactionType: "credit",
+                reference: "thisIsAReference",
+                accountName: "The one with no name",
+                accountNumber: "1234355678990",
+                bankName: "Second bank",
+                senderWalletId: wallet.id,
+                receiverPaid: 0,
+                callbackUrl: null,
+                provider: "aProvider",
+                providerRef: "theref",
+            });
+
+            const creationData = new CreateTransactionDto({
+                ...data,
+                accountName: undefined,
+                accountNumber: undefined,
+                bankName: undefined,
+                channel: null,
+                providerRef: undefined,
+            });
+
+            const test = await transactionRepo.create(creationData, session);
+            runQuerySpy.mockClear();
+            await transactionRepo.updateTransactionInfo(
+                test.id,
+                new UpdateTransactionInfoDto({
+                    ...data,
+                    status: "successful",
+                }),
+                session
+            );
+            await session.commit();
+            await session.end();
+
+            expect(runQuerySpy).toHaveBeenCalledTimes(1);
+            expect(runQuerySpy).toHaveBeenCalledWith(
+                expect.anything(),
+                pool,
+                (session as PgSession).client
+            );
+
+            const res = await runQuery<TransactionModelInterface>(
+                SQL`SELECT * FROM TRANSACTIONS WHERE "id" = ${test.id};`,
+                pool
+            );
+            const transaction = res.rows[0];
+            if (!transaction) throw new Error("Transaction not found");
+            expect(transaction).toMatchObject({ ...data, status: "successful" });
         });
     });
 });

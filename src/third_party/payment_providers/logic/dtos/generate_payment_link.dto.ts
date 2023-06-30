@@ -3,7 +3,7 @@ import { TransactionChannelType } from "@transaction/logic";
 type ArgsType = {
     amount: number;
     walletId: string;
-    transactionId: string;
+    reference: string;
     currency: string;
     allowedChannels: Exclude<TransactionChannelType, "wallet">[];
 };
@@ -11,14 +11,14 @@ type ArgsType = {
 export class GeneratePaymentLinkDto {
     amount: ArgsType["amount"];
     walletId: ArgsType["walletId"];
-    transactionId: ArgsType["transactionId"];
+    reference: ArgsType["reference"];
     currency: ArgsType["currency"];
     allowedChannels: ArgsType["allowedChannels"];
 
     constructor(body: ArgsType) {
         this.amount = body.amount;
         this.walletId = body.walletId;
-        this.transactionId = body.transactionId;
+        this.reference = body.reference;
         this.currency = body.currency;
         this.allowedChannels = body.allowedChannels;
     }

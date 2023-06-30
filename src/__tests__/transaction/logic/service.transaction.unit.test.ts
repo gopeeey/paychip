@@ -2,6 +2,7 @@ import {
     TransactionRepoInterface,
     TransactionService,
     TransactionServiceDependencies,
+    UpdateTransactionInfoDto,
 } from "@transaction/logic";
 import { sessionMock } from "src/__tests__/helpers/mocks";
 import { transactionData, transactionJson } from "src/__tests__/helpers/samples";
@@ -11,6 +12,7 @@ const repo: { [key in keyof TransactionRepoInterface]: jest.Mock } = {
     getByReference: jest.fn(),
     startSession: jest.fn(async () => sessionMock),
     updateStatus: jest.fn(),
+    updateTransactionInfo: jest.fn(),
 };
 
 const service = new TransactionService({ repo } as unknown as TransactionServiceDependencies);
@@ -50,6 +52,20 @@ describe("TESTING TRANSACTION SERIVCE", () => {
             await service.updateTransactionStatus("some", "pending", sessionMock);
             expect(repo.updateStatus).toHaveBeenCalledTimes(1);
             expect(repo.updateStatus).toHaveBeenCalledWith("some", "pending", sessionMock);
+        });
+    });
+
+    describe(">>> updateTransactionInfo", () => {
+        it("should call the updateTransactionInfo method on the repo", async () => {
+            repo.updateTransactionInfo.mockImplementationOnce(async () => {});
+            const info = new UpdateTransactionInfoDto({
+                status: "successful",
+                channel: "card",
+                providerRef: "sdlkjfs",
+            });
+            await service.updateTransactionInfo("some", info, sessionMock);
+            expect(repo.updateTransactionInfo).toHaveBeenCalledTimes(1);
+            expect(repo.updateTransactionInfo).toHaveBeenCalledWith("some", info, sessionMock);
         });
     });
 });

@@ -18,7 +18,7 @@ const jwtTestData: ObjType[] = [
 const jwts: string[] = [];
 
 describe("Testing utility functions", () => {
-    describe("Testing fn hashString", () => {
+    describe(">>> hashString", () => {
         it("should return a hased string", async () => {
             const pets = [
                 "dog",
@@ -37,7 +37,7 @@ describe("Testing utility functions", () => {
         });
     });
 
-    describe("Testing fn generateJwt", () => {
+    describe(">>> generateJwt", () => {
         it("should return a valid jwt", () => {
             for (const obj of jwtTestData) {
                 const theJwt = utilFuncs.generateJwt(obj, jwtTestSecret);
@@ -54,7 +54,7 @@ describe("Testing utility functions", () => {
         });
     });
 
-    describe("Testing fn verifyJwt", () => {
+    describe(">>> verifyJwt", () => {
         it("should return the expected object", () => {
             for (let i = 0; i < jwts.length; i++) {
                 const token = jwts[i];
@@ -72,7 +72,7 @@ describe("Testing utility functions", () => {
         });
     });
 
-    describe("Testing fn generateAuthToken", () => {
+    describe(">>> generateAuthToken", () => {
         describe("Given invalid data", () => {
             it("should throw an error", () => {
                 const invalidData: {
@@ -147,7 +147,7 @@ describe("Testing utility functions", () => {
         });
     });
 
-    describe("Testing generateId", () => {
+    describe(">>> generateId", () => {
         it("should return a string that's different on each call", () => {
             let count = 10;
             let prevString: string = "";
@@ -170,7 +170,7 @@ describe("Testing utility functions", () => {
         });
     });
 
-    describe("Testing validateBusinessObjectId", () => {
+    describe(">>> validateBusinessObjectId", () => {
         describe("Given the objectIds are not valid", () => {
             it("should throw a permission denied error", () => {
                 const businessId = 11111;
@@ -201,6 +201,33 @@ describe("Testing utility functions", () => {
                     expect(val).toBeUndefined();
                 });
             });
+        });
+    });
+
+    const encoderTestData = [
+        ["A simple Text", "412073696D706C652054657874"],
+        [
+            "with Numbers like 123 l0dg3d",
+            "77697468204E756D62657273206C696B6520313233206C3064673364",
+        ],
+        ["1212343234", "31323132333433323334"],
+        ["one_With_s1gNs_4nd_stuff", "6F6E655F576974685F7331674E735F346E645F7374756666"],
+        ["q49WsAp9AjLwz0Cax_dYp1", "7134395773417039416A4C777A304361785F64597031"],
+    ];
+
+    describe(">>> encodeHex", () => {
+        it("should return a hex string", () => {
+            for (const data of encoderTestData) {
+                expect(utilFuncs.encodeHex(data[0])).toBe(data[1].toLowerCase());
+            }
+        });
+    });
+
+    describe(">>> decodeHex", () => {
+        it("should return a ascii string", () => {
+            for (const data of encoderTestData) {
+                expect(utilFuncs.decodeHex(data[1])).toBe(data[0]);
+            }
         });
     });
 });

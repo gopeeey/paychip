@@ -5,7 +5,8 @@ import {
     VerifyTransactionResponseDto,
 } from "@third_party/payment_providers/logic";
 import { HttpClientInstanceMock, logErrorMock } from "src/__tests__/helpers/mocks";
-import { HttpError, PostRequestArgsInterface } from "src/utils";
+import { HttpError, PostRequestArgsInterface, encodeHex } from "src/utils";
+import * as utilFuncs from "src/utils/functions";
 import config from "src/config";
 import { walletJson } from "src/__tests__/helpers/samples";
 
@@ -19,8 +20,8 @@ const paymentData = new GeneratePaymentLinkDto({
     allowedChannels: ["card"],
     amount: 4000,
     currency: "NGN",
-    transactionId: "sdlkfjs",
-    walletId: "sldkjfsldk",
+    reference: "sdlkfjs",
+    walletId: walletJson.id,
 });
 
 const sampleTrxRes = {
@@ -91,7 +92,7 @@ const sampleTrxRes = {
             id: 1809887,
             first_name: null,
             last_name: null,
-            email: walletJson.id + config.misc.emailSuffix,
+            email: encodeHex(walletJson.id) + config.misc.emailSuffix,
             customer_code: "CUS_0c35ys9w8ma5tbr",
             phone: null,
             metadata: null,
@@ -106,22 +107,33 @@ const sampleTrxRes = {
     },
 };
 
+const encodeHexSpy = jest.spyOn(utilFuncs, "encodeHex");
+const decodeHexSpy = jest.spyOn(utilFuncs, "decodeHex");
+
 describe("Testing PaystackRepo", () => {
     describe(">>> makeCustomerEmail", () => {
-        it("should return the string passed with the email suffix attached", () => {
+        it("should return an encoded version of the string passed with the email suffix attached", () => {
+            const fakeHex = "fish";
             const identifier = "something";
-            const result = paystackRepo.makeCustomerEmail("something");
-            expect(result).toBe(identifier + config.misc.emailSuffix);
+            encodeHexSpy.mockReturnValueOnce(fakeHex);
+            const result = paystackRepo.makeCustomerEmail(identifier);
+            expect(result).toBe(fakeHex + config.misc.emailSuffix);
+            expect(encodeHexSpy).toHaveBeenCalledTimes(1);
+            expect(encodeHexSpy).toHaveBeenCalledWith(identifier);
         });
     });
 
     describe(">>> extractIdentifierFromEmail", () => {
-        it("should extract the wallet id from the customer email", () => {
+        it("should extract the wallet id from the customer email and decode it", () => {
+            const fakeHex = "fish";
             const identifier = "something";
+            decodeHexSpy.mockReturnValueOnce(identifier);
             const result = paystackRepo.extractIdentifierFromEmail(
-                identifier + config.misc.emailSuffix
+                fakeHex + config.misc.emailSuffix
             );
             expect(result).toBe(identifier);
+            expect(decodeHexSpy).toHaveBeenCalledTimes(1);
+            expect(decodeHexSpy).toHaveBeenCalledWith(fakeHex);
         });
     });
 
@@ -155,10 +167,10 @@ describe("Testing PaystackRepo", () => {
                 const postRequestData: PostRequestArgsInterface = {
                     url: "/transaction/initialize",
                     body: {
-                        amount: paymentData.amount,
-                        email: paymentData.walletId + config.misc.emailSuffix,
+                        amount: paymentData.amount * 100,
+                        email: encodeHex(paymentData.walletId) + config.misc.emailSuffix,
                         currency: paymentData.currency,
-                        reference: paymentData.transactionId,
+                        reference: paymentData.reference,
                         channels: ["card"],
                     },
                 };

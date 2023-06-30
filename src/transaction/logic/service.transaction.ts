@@ -1,4 +1,3 @@
-import { TransactionModelInterface } from "./interfaces";
 import {
     TransactionServiceDependencies,
     TransactionServiceInterface,
@@ -32,5 +31,13 @@ export class TransactionService implements TransactionServiceInterface {
         session
     ) => {
         await this._repo.updateStatus(id, status, session);
+    };
+
+    updateTransactionInfo: TransactionServiceInterface["updateTransactionInfo"] = async (
+        transactionId,
+        info,
+        session
+    ) => {
+        await this._repo.updateTransactionInfo(transactionId, info, session);
     };
 }

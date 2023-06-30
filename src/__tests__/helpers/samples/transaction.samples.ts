@@ -48,7 +48,6 @@ export const transactionSeeder = async (pool: Pool) => {
 
     await customerSeeder(pool, wallet.businessId, wallet.id);
     const customer = await getACustomer(pool);
-    console.log("\n\n\nTHIS IS THE CUSTOMER", customer);
 
     const data = new CreateTransactionDto({
         ...transactionData,
@@ -63,7 +62,6 @@ export const transactionSeeder = async (pool: Pool) => {
         channel: "bank",
         id: generateId(wallet.businessId),
     });
-    console.log("\n\n\nTHIS IS THE QUERY", query);
     await runQuery(query, pool);
 };
 

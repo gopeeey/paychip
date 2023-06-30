@@ -25,7 +25,7 @@ describe("Testing PaymentProviderService", () => {
                 allowedChannels: ["bank"],
                 amount: 200,
                 currency: "NGN",
-                transactionId: "don'tmatter",
+                reference: "don'tmatter",
                 walletId: "itreally",
             });
             expect(link).toBe(mockLink);
@@ -47,6 +47,8 @@ describe("Testing PaymentProviderService", () => {
                     providerRef: "sldkjfsld",
                     status: "successful",
                     reference,
+                    amount: 5000,
+                    walletId: "sdlkfjs",
                 });
 
                 repoMock.verifyTransaction.mockResolvedValue(vtDto);

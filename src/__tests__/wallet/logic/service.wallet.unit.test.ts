@@ -7,8 +7,10 @@ import {
     WalletServiceDependencies,
     PaymentResolutionError,
     IncrementBalanceDto,
+    PaymentResolverDependencies,
 } from "@wallet/logic";
 import * as WalletCreatorModule from "@wallet/logic/creator.wallet";
+import * as PaymentResolverModule from "@wallet/logic/payment_resolver.wallet";
 import * as FundingInitializerModule from "@wallet/logic/funding_initializer.wallet";
 import {
     businessWalletJson,
@@ -20,6 +22,7 @@ import { SpiesObj, createSpies, sessionMock } from "src/__tests__/helpers/mocks"
 import { WalletRepo } from "@wallet/data";
 import { Pool } from "pg";
 import { VerifyTransactionResponseDto } from "@third_party/payment_providers/logic";
+import { SessionInterface } from "@bases/logic";
 
 const createFn = jest.fn();
 jest.mock("../../../wallet/logic/creator.wallet", () => ({
@@ -31,11 +34,19 @@ jest.mock("../../../wallet/logic/funding_initializer.wallet", () => ({
     FundingInitializer: jest.fn(() => ({ exec: execFunder })),
 }));
 
+const execPaymentResolver = jest.fn();
+jest.mock("../../../wallet/logic/payment_resolver.wallet", () => ({
+    PaymentResolver: jest.fn(() => ({ exec: execPaymentResolver })),
+}));
+
 const WalletCreator =
     WalletCreatorModule.WalletCreator as unknown as jest.Mock<WalletCreatorModule.WalletCreator>;
 
 const FundingInitializer =
     FundingInitializerModule.FundingInitializer as unknown as jest.Mock<FundingInitializerModule.FundingInitializer>;
+
+const PaymentResolver =
+    PaymentResolverModule.PaymentResolver as unknown as jest.Mock<PaymentResolverModule.PaymentResolver>;
 
 const walletRepoMock = createSpies(new WalletRepo({} as Pool));
 
@@ -48,7 +59,7 @@ const deps: { [key in keyof Omit<WalletServiceDependencies, "repo">]: jest.Mock 
     getOrCreateCustomer: jest.fn(),
     verifyTransactionFromProvider: jest.fn(),
     findTransactionByReference: jest.fn(),
-    updateTransactionStatus: jest.fn(),
+    updateTransactionInfo: jest.fn(),
 };
 
 const walletService = new WalletService({
@@ -166,8 +177,35 @@ describe("TESTING WALLET SERVICE", () => {
         });
     });
 
-    // describe(">>> resolvePayment", () => {
-    // });
+    describe(">>> resolvePayment", () => {
+        it("should instantiate the payment resolver and execute it with the correct data", async () => {
+            execPaymentResolver.mockResolvedValue(null);
+            const provider = "aProvider";
+            const reference = "ref";
+            const expectedArgs: PaymentResolverDependencies = {
+                calculateCharges: deps.calculateCharges,
+                createTransaction: deps.createTransaction,
+                findTransactionByReference: deps.findTransactionByReference,
+                getBusinessWallet: walletService.getBusinessWalletByCurrency,
+                getCurrency: deps.getCurrency,
+                getOrCreateCustomer: deps.getOrCreateCustomer,
+                getWalletById: walletService.getWalletById,
+                getWalletChargeStack: deps.getWalletChargeStack,
+                incrementWalletBalance: walletService.incrementBalance,
+                provider,
+                reference,
+                startSession:
+                    walletRepoMock.startSession as unknown as () => Promise<SessionInterface>,
+                updateTransactionInfo: deps.updateTransactionInfo,
+                verifyTransactionFromProvider: deps.verifyTransactionFromProvider,
+            };
+            await walletService.resolvePayment({ provider, reference });
+
+            expect(PaymentResolver).toHaveBeenCalledTimes(1);
+            expect(PaymentResolver).toHaveBeenCalledWith(expectedArgs);
+            expect(execPaymentResolver).toHaveBeenCalledTimes(1);
+        });
+    });
 
     describe(">>> getBusinessWalletByCurrency", () => {
         describe("given the repo returns a wallet object", () => {

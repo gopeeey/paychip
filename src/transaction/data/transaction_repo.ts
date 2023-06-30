@@ -44,4 +44,13 @@ export class TransactionRepo extends PgBaseRepo implements TransactionRepoInterf
         const query = queries.updateStatusQuery(transactionId, status);
         await runQuery(query, this._pool, (session as PgSession)?.client);
     };
+
+    updateTransactionInfo: TransactionRepoInterface["updateTransactionInfo"] = async (
+        transactionId,
+        data,
+        session
+    ) => {
+        const query = queries.updateTransactionInfo(transactionId, data);
+        await runQuery(query, this._pool, (session as PgSession)?.client);
+    };
 }

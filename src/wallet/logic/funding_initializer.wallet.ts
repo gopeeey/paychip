@@ -181,12 +181,12 @@ export class FundingInitializer {
     }
 
     private async generatePaymentLink() {
-        const { amount, currency, id } = this.transaction;
+        const { amount, currency, reference } = this.transaction;
         this.paymentLink = await this._deps.generatePaymentLink({
             amount,
             allowedChannels: ["bank", "card"],
             currency,
-            transactionId: id,
+            reference,
             walletId: this.wallet.id,
         });
     }

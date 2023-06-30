@@ -5,7 +5,11 @@ import {
     WalletModelInterface,
 } from "./interfaces";
 import { PaymentResolutionError } from "./errors";
-import { CreateTransactionDto, TransactionModelInterface } from "@transaction/logic";
+import {
+    CreateTransactionDto,
+    TransactionModelInterface,
+    UpdateTransactionInfoDto,
+} from "@transaction/logic";
 import { CustomerModelInterface, GetSingleBusinessCustomerDto } from "@customer/logic";
 import { SessionInterface } from "@bases/logic";
 import { IncrementBalanceDto } from "./dtos";
@@ -32,11 +36,14 @@ export class PaymentResolver implements PaymentResolverInterface {
             await this.getWallet();
             await this.getOrCreateTransaction();
             await this.createChargesTransaction();
-            await this.updateTransactionStatus();
+            await this.updateTransactionInfo();
             await this.incrementBalance();
+            await this.incrementBusinessWalletBalance();
 
             await this.commitSessionChanges();
             await this.endSession();
+
+            //@TODO send credit notifications (email) to the wallet and business wallet email
         } catch (err) {
             await this.endSession();
             throw err;
@@ -187,14 +194,28 @@ export class PaymentResolver implements PaymentResolverInterface {
         await this._deps.createTransaction(transactionData, this.session);
     };
 
-    updateTransactionStatus = async () => {
-        await this._deps.updateTransactionStatus(this.transaction.id, "successful", this.session);
+    updateTransactionInfo = async () => {
+        await this._deps.updateTransactionInfo(
+            this.transaction.id,
+            new UpdateTransactionInfoDto({ ...this.transactionData }),
+            this.session
+        );
     };
 
     incrementBalance = async () => {
         const data = new IncrementBalanceDto({
             walletId: this.wallet.id,
             amount: this.transaction.settledAmount,
+            session: this.session,
+        });
+        await this._deps.incrementWalletBalance(data);
+    };
+
+    incrementBusinessWalletBalance = async () => {
+        if (!this.wallet.businessWalletId || !this.transaction.businessGot) return;
+        const data = new IncrementBalanceDto({
+            walletId: this.wallet.businessWalletId,
+            amount: this.transaction.businessGot,
             session: this.session,
         });
         await this._deps.incrementWalletBalance(data);

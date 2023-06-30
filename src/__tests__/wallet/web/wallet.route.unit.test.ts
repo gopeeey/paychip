@@ -76,7 +76,6 @@ describe("TESTING WALLET ROUTES", () => {
                         .send(form)
                         .set({ Authorization: businessLevelToken });
 
-                    console.log("\n\n\nBODY:", body);
                     expect(statusCode).toBe(201);
                     expect(body).toHaveProperty("message");
                     expect(body).toHaveProperty("data.wallet", standardWallet);
@@ -134,7 +133,6 @@ describe("TESTING WALLET ROUTES", () => {
                         .send(form)
                         .set({ Authorization: businessLevelToken });
 
-                    console.log("\n\n\nBODY:", body);
                     expect(statusCode).toBe(200);
                     expect(body).toHaveProperty("message");
                     expect(body).toHaveProperty("data.fundingLink", fundingLink);

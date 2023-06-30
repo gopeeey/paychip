@@ -22,6 +22,6 @@ export interface PaymentResolverDependencies {
     getWalletChargeStack: WalletServiceDependencies["getWalletChargeStack"];
     calculateCharges: ChargesServiceInterface["calculateTransactionCharges"];
     startSession: () => Promise<SessionInterface>;
-    updateTransactionStatus: TransactionServiceInterface["updateTransactionStatus"];
+    updateTransactionInfo: TransactionServiceInterface["updateTransactionInfo"];
     incrementWalletBalance: WalletServiceInterface["incrementBalance"];
 }

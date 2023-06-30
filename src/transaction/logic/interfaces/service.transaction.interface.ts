@@ -1,5 +1,5 @@
 import { SessionInterface } from "@bases/logic";
-import { CreateTransactionDto } from "../dtos";
+import { CreateTransactionDto, UpdateTransactionInfoDto } from "../dtos";
 import { TransactionModelInterface } from "./transaction.model.interface";
 import { TransactionRepoInterface } from "./transaction_repo.interface";
 
@@ -14,6 +14,12 @@ export interface TransactionServiceInterface {
     updateTransactionStatus: (
         id: TransactionModelInterface["id"],
         status: TransactionModelInterface["status"],
+        session?: SessionInterface
+    ) => Promise<void>;
+
+    updateTransactionInfo: (
+        id: TransactionModelInterface["id"],
+        info: UpdateTransactionInfoDto,
         session?: SessionInterface
     ) => Promise<void>;
 }

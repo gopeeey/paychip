@@ -5,7 +5,7 @@ import {
 } from "@third_party/payment_providers/logic";
 import { TransactionChannelType } from "@transaction/logic";
 import generalConfig from "src/config";
-import { HttpClient, HttpError, logError } from "src/utils";
+import { HttpClient, HttpError, logError, encodeHex, decodeHex } from "src/utils";
 import {
     InitializeTransactionResponseInterface,
     VerifyTransactionResponseInterface,
@@ -13,6 +13,9 @@ import {
 
 type PaystackChannelMapType = {
     [key: string]: Exclude<TransactionChannelType, "wallet">;
+};
+type PlatformToPaystackChannelMapType = {
+    [key in Exclude<TransactionChannelType, "wallet">]: string;
 };
 type PaystackTransactionStatusMap = {
     [key: string]: "successful" | "failed";
@@ -26,6 +29,10 @@ export class PaystackRepo implements PaymentProviderRepoInterface {
     baseUrl = "https://api.paystack.co";
     client: HttpClient;
     channelMap: PaystackChannelMapType = { card: "card", bank_transfer: "bank" };
+    platformToPaystackChannelMap: PlatformToPaystackChannelMapType = {
+        card: "card",
+        bank: "bank_transfer",
+    };
     transactionStatusMap: PaystackTransactionStatusMap = {
         success: "successful",
         failed: "failed",
@@ -46,21 +53,24 @@ export class PaystackRepo implements PaymentProviderRepoInterface {
     };
 
     makeCustomerEmail = (identifier: string) => {
-        const email = identifier + generalConfig.misc.emailSuffix;
+        const email = encodeHex(identifier) + generalConfig.misc.emailSuffix;
         return email;
     };
 
     extractIdentifierFromEmail = (email: string) => {
-        return email.split("@")[0];
+        const hex = email.split("@")[0];
+        return decodeHex(hex);
     };
 
     generatePaymentLink: PaymentProviderRepoInterface["generatePaymentLink"] = async (data) => {
         const body = {
-            amount: data.amount,
+            amount: this.convertAmountToPaystack(data.amount),
             email: this.makeCustomerEmail(data.walletId),
             currency: data.currency,
-            reference: data.transactionId,
-            channels: data.allowedChannels.map((channel) => this.channelMap[channel]),
+            reference: data.reference,
+            channels: data.allowedChannels.map(
+                (channel) => this.platformToPaystackChannelMap[channel]
+            ),
         };
 
         try {

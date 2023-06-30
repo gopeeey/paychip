@@ -53,5 +53,5 @@ export interface WalletServiceDependencies {
     generatePaymentLink: PaymentProviderService["generatePaymentLink"];
     getOrCreateCustomer: CustomerServiceInterface["getOrCreateCustomer"];
     verifyTransactionFromProvider: PaymentProviderServiceInterface["verifyTransaction"];
-    updateTransactionStatus: TransactionServiceInterface["updateTransactionStatus"];
+    updateTransactionInfo: TransactionServiceInterface["updateTransactionInfo"];
 }

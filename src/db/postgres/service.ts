@@ -30,7 +30,7 @@ const envConfig = {
 };
 
 export const runMigrations = async (direction: "up" | "down", pool: Pool, count = 10000) => {
-    // console.log("Running migrations", direction);
+    console.log("Running migrations", direction);
 
     const client = await pool.connect();
     await runnerFunc({

@@ -6,13 +6,13 @@ export class StandardChargeStackDto implements StandardDtoType<ChargeStackModelI
     charges: ChargeStackModelInterface["charges"];
     name: ChargeStackModelInterface["name"];
     description: ChargeStackModelInterface["description"];
-    paidBy: ChargeStackModelInterface["paidBy"];
+    // paidBy: ChargeStackModelInterface["paidBy"];
 
     constructor(body: ChargeStackModelInterface) {
         this.id = body.id;
         this.charges = body.charges;
         this.name = body.name;
         this.description = body.description;
-        this.paidBy = body.paidBy;
+        // this.paidBy = body.paidBy;
     }
 }

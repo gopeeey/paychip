@@ -4,6 +4,7 @@ import { ChargesServiceInterface } from "@charges/logic";
 import { CountryServiceInterface } from "@country/logic";
 import { WalletServiceInterface } from "@wallet/logic";
 import { AuthMiddlewareInterface } from "@bases/web";
+import { PaymentProviderServiceInterface } from "@third_party/payment_providers/logic";
 
 export interface DependencyContainerInterface {
     accountService: AccountServiceInterface;
@@ -12,4 +13,5 @@ export interface DependencyContainerInterface {
     countryService: CountryServiceInterface;
     walletService: WalletServiceInterface;
     authMiddleware: AuthMiddlewareInterface;
+    paymentProviderService: PaymentProviderServiceInterface;
 }
