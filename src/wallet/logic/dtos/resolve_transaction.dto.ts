@@ -3,7 +3,7 @@ type ArgsType = {
     provider: string;
 };
 
-export class ResolvePaymentDto {
+export class ResolveTransactionDto {
     reference: ArgsType["reference"];
     provider: ArgsType["provider"];
 

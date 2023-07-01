@@ -5,9 +5,9 @@ import {
 } from "./interfaces";
 import { WalletCreator } from "./creator.wallet";
 import { FundingInitializer } from "./funding_initializer.wallet";
-import { PaymentResolutionError, WalletNotFoundError } from "./errors";
-import { IncrementBalanceDto, ResolvePaymentDto } from "./dtos";
-import { PaymentResolver } from "./payment_resolver.wallet";
+import { TransactionResolutionError, WalletNotFoundError } from "./errors";
+import { IncrementBalanceDto, ResolveTransactionDto } from "./dtos";
+import { TransactionResolver } from "./transaction_resolver.wallet";
 
 export class WalletService implements WalletServiceInterface {
     private _repo: WalletRepoInterface;
@@ -68,8 +68,8 @@ export class WalletService implements WalletServiceInterface {
         await this._repo.incrementBalance(data);
     };
 
-    resolvePayment: WalletServiceInterface["resolvePayment"] = async (data) => {
-        const resolver = new PaymentResolver({
+    resolveTransaction: WalletServiceInterface["resolveTransaction"] = async (data) => {
+        const resolver = new TransactionResolver({
             calculateCharges: this._dep.calculateCharges,
             createTransaction: this._dep.createTransaction,
             findTransactionByReference: this._dep.findTransactionByReference,

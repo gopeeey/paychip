@@ -3,9 +3,9 @@ import { VerifyTransactionResponseDto } from "@third_party/payment_providers/log
 import { TransactionModelInterface, UpdateTransactionInfoDto } from "@transaction/logic";
 import {
     IncrementBalanceDto,
-    PaymentResolutionError,
-    PaymentResolver,
-    PaymentResolverDependencies,
+    TransactionResolutionError,
+    TransactionResolver,
+    TransactionResolverDependencies,
 } from "@wallet/logic";
 import { sessionMock } from "src/__tests__/helpers/mocks";
 import {
@@ -18,7 +18,7 @@ import {
 } from "src/__tests__/helpers/samples";
 
 const deps: {
-    [key in keyof Omit<PaymentResolverDependencies, "reference" | "provider">]: jest.Mock;
+    [key in keyof Omit<TransactionResolverDependencies, "reference" | "provider">]: jest.Mock;
 } = {
     createTransaction: jest.fn(),
     findTransactionByReference: jest.fn(),
@@ -37,7 +37,7 @@ const deps: {
 const reference = transactionJson.reference;
 const provider = transactionJson.provider as string;
 
-const resolver = new PaymentResolver({ reference, provider, ...deps });
+const resolver = new TransactionResolver({ reference, provider, ...deps });
 
 const providerTransaction = new VerifyTransactionResponseDto({
     ...(transactionJson as Required<TransactionModelInterface>),
@@ -153,9 +153,9 @@ describe("TESTING PAYMENT RESOLVER", () => {
     });
 
     describe("given provider does not return transaction details", () => {
-        it("should throw a PaymentResolutionError", async () => {
+        it("should throw a TransactionResolutionError", async () => {
             deps.verifyTransactionFromProvider.mockResolvedValue(null);
-            await expect(() => resolver.exec()).rejects.toThrow(PaymentResolutionError);
+            await expect(() => resolver.exec()).rejects.toThrow(TransactionResolutionError);
         });
     });
 });

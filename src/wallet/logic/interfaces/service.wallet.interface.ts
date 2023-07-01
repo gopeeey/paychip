@@ -3,7 +3,7 @@ import {
     CreateWalletDto,
     InitializeFundingDto,
     GetUniqueWalletDto,
-    ResolvePaymentDto,
+    ResolveTransactionDto,
     IncrementBalanceDto,
 } from "../dtos";
 import { WalletModelInterface } from "./wallet.model.interface";
@@ -30,7 +30,7 @@ export interface WalletServiceInterface {
     getWalletById: (id: WalletModelInterface["id"]) => Promise<WalletModelInterface>;
     getUniqueWallet: (uniqueData: GetUniqueWalletDto) => Promise<WalletModelInterface>;
     initializeFunding: (fundingDto: InitializeFundingDto) => Promise<string>;
-    resolvePayment: (resolvePaymentDto: ResolvePaymentDto) => Promise<void>;
+    resolveTransaction: (resolveTransactionDto: ResolveTransactionDto) => Promise<void>;
     incrementBalance: (data: IncrementBalanceDto) => Promise<void>;
     getBusinessWalletByCurrency: (
         businessId: WalletModelInterface["businessId"],

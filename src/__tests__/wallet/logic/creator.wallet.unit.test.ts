@@ -28,6 +28,7 @@ describe("TESTING WALLET CREATOR", () => {
             businessId: walletData.businessId,
             currency: walletData.currency,
             email: walletData.email,
+            isBusinessWallet: walletData.isBusinessWallet,
         });
     });
 

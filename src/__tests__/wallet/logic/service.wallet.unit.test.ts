@@ -5,12 +5,12 @@ import {
     WalletNotFoundError,
     WalletService,
     WalletServiceDependencies,
-    PaymentResolutionError,
+    TransactionResolutionError,
     IncrementBalanceDto,
-    PaymentResolverDependencies,
+    TransactionResolverDependencies,
 } from "@wallet/logic";
 import * as WalletCreatorModule from "@wallet/logic/creator.wallet";
-import * as PaymentResolverModule from "@wallet/logic/payment_resolver.wallet";
+import * as TransactionResolverModule from "@wallet/logic/transaction_resolver.wallet";
 import * as FundingInitializerModule from "@wallet/logic/funding_initializer.wallet";
 import {
     businessWalletJson,
@@ -34,9 +34,9 @@ jest.mock("../../../wallet/logic/funding_initializer.wallet", () => ({
     FundingInitializer: jest.fn(() => ({ exec: execFunder })),
 }));
 
-const execPaymentResolver = jest.fn();
-jest.mock("../../../wallet/logic/payment_resolver.wallet", () => ({
-    PaymentResolver: jest.fn(() => ({ exec: execPaymentResolver })),
+const execTransactionResolver = jest.fn();
+jest.mock("../../../wallet/logic/transaction_resolver.wallet", () => ({
+    TransactionResolver: jest.fn(() => ({ exec: execTransactionResolver })),
 }));
 
 const WalletCreator =
@@ -45,8 +45,8 @@ const WalletCreator =
 const FundingInitializer =
     FundingInitializerModule.FundingInitializer as unknown as jest.Mock<FundingInitializerModule.FundingInitializer>;
 
-const PaymentResolver =
-    PaymentResolverModule.PaymentResolver as unknown as jest.Mock<PaymentResolverModule.PaymentResolver>;
+const TransactionResolver =
+    TransactionResolverModule.TransactionResolver as unknown as jest.Mock<TransactionResolverModule.TransactionResolver>;
 
 const walletRepoMock = createSpies(new WalletRepo({} as Pool));
 
@@ -177,12 +177,12 @@ describe("TESTING WALLET SERVICE", () => {
         });
     });
 
-    describe(">>> resolvePayment", () => {
+    describe(">>> resolveTransaction", () => {
         it("should instantiate the payment resolver and execute it with the correct data", async () => {
-            execPaymentResolver.mockResolvedValue(null);
+            execTransactionResolver.mockResolvedValue(null);
             const provider = "aProvider";
             const reference = "ref";
-            const expectedArgs: PaymentResolverDependencies = {
+            const expectedArgs: TransactionResolverDependencies = {
                 calculateCharges: deps.calculateCharges,
                 createTransaction: deps.createTransaction,
                 findTransactionByReference: deps.findTransactionByReference,
@@ -199,11 +199,11 @@ describe("TESTING WALLET SERVICE", () => {
                 updateTransactionInfo: deps.updateTransactionInfo,
                 verifyTransactionFromProvider: deps.verifyTransactionFromProvider,
             };
-            await walletService.resolvePayment({ provider, reference });
+            await walletService.resolveTransaction({ provider, reference });
 
-            expect(PaymentResolver).toHaveBeenCalledTimes(1);
-            expect(PaymentResolver).toHaveBeenCalledWith(expectedArgs);
-            expect(execPaymentResolver).toHaveBeenCalledTimes(1);
+            expect(TransactionResolver).toHaveBeenCalledTimes(1);
+            expect(TransactionResolver).toHaveBeenCalledWith(expectedArgs);
+            expect(execTransactionResolver).toHaveBeenCalledTimes(1);
         });
     });
 

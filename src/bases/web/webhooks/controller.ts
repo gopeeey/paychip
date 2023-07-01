@@ -33,7 +33,7 @@ export class WebhooksController extends BaseController {
                 switch (body.event) {
                     case "charge.success":
                         const chargeData = body.data as VerifyTransactionResponseInterface["data"];
-                        await this._deps.walletService.resolvePayment({
+                        await this._deps.walletService.resolveTransaction({
                             provider,
                             reference: chargeData.reference,
                         });

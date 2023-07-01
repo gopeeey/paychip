@@ -70,7 +70,7 @@ describe("TESTING WALLET ROUTES", () => {
             describe("Given valid data", () => {
                 it("should return a standard wallet dto", async () => {
                     walletService.createWallet.mockResolvedValue(walletJson);
-                    const { businessId, businessWalletId, ...form } = walletData;
+                    const { businessId, businessWalletId, isBusinessWallet, ...form } = walletData;
                     const { statusCode, body } = await testApp
                         .post(route)
                         .send(form)
@@ -83,7 +83,7 @@ describe("TESTING WALLET ROUTES", () => {
                 });
             });
 
-            // Return 400 when the country is not supported
+            // @TODO: Return 400 when the country is not supported
         },
         { middlewareDeps }
     );

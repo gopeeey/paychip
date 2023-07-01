@@ -5,11 +5,11 @@ import { ChargesServiceInterface } from "@charges/logic";
 import { SessionInterface } from "@bases/logic";
 import { CustomerModelInterface, GetSingleBusinessCustomerDto } from "@customer/logic";
 
-export interface PaymentResolverInterface {
+export interface TransactionResolverInterface {
     exec: () => Promise<void>;
 }
 
-export interface PaymentResolverDependencies {
+export interface TransactionResolverDependencies {
     reference: string;
     provider: string;
     verifyTransactionFromProvider: PaymentProviderServiceInterface["verifyTransaction"];

@@ -1,10 +1,10 @@
 import { VerifyTransactionResponseDto } from "@third_party/payment_providers/logic";
 import {
-    PaymentResolverDependencies,
-    PaymentResolverInterface,
+    TransactionResolverDependencies,
+    TransactionResolverInterface,
     WalletModelInterface,
 } from "./interfaces";
-import { PaymentResolutionError } from "./errors";
+import { TransactionResolutionError } from "./errors";
 import {
     CreateTransactionDto,
     TransactionModelInterface,
@@ -14,7 +14,7 @@ import { CustomerModelInterface, GetSingleBusinessCustomerDto } from "@customer/
 import { SessionInterface } from "@bases/logic";
 import { IncrementBalanceDto } from "./dtos";
 
-export class PaymentResolver implements PaymentResolverInterface {
+export class TransactionResolver implements TransactionResolverInterface {
     reference: string;
     provider: string;
     declare transactionData: VerifyTransactionResponseDto;
@@ -23,7 +23,7 @@ export class PaymentResolver implements PaymentResolverInterface {
     declare wallet: WalletModelInterface;
     session: SessionInterface | undefined;
 
-    constructor(private readonly _deps: PaymentResolverDependencies) {
+    constructor(private readonly _deps: TransactionResolverDependencies) {
         this.reference = _deps.reference;
         this.provider = _deps.provider;
     }
@@ -68,7 +68,7 @@ export class PaymentResolver implements PaymentResolverInterface {
             this.provider
         );
         if (!trxData) {
-            throw new PaymentResolutionError(`Transaction not found from provider`, {
+            throw new TransactionResolutionError(`Transaction not found from provider`, {
                 reference: this.reference,
                 provider: this.provider,
             });
@@ -84,7 +84,7 @@ export class PaymentResolver implements PaymentResolverInterface {
         let transaction = await this._deps.findTransactionByReference(this.reference);
         if (!transaction) transaction = await this.createTransaction();
         if (!transaction)
-            throw new PaymentResolutionError(
+            throw new TransactionResolutionError(
                 "Unable to get or create transaction",
                 this.transactionData
             );
