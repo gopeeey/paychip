@@ -43,6 +43,7 @@
             "@bases/*": ["./src/bases/*"],
             "@third_party/*": ["./src/third_party/*"],
             "@db/*": ["./src/db/*"],
+            "@queues/*": ["./src/queues/*"],
             "src/*": ["./src/*"]
         },
         "plugins": [
