@@ -31,8 +31,7 @@ export class RootRoutes {
         }).init();
 
         const webhookRoutes = new WebhookRoute({
-            paymentProviderService: this._container.paymentProviderService,
-            walletService: this._container.walletService,
+            publishTransactionTask: this._container.publishTransactionTask,
         }).init();
 
         router.use("/account", accountRoutes);

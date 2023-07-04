@@ -22,7 +22,13 @@ import { Pool } from "pg";
 import { DependencyContainerInterface } from "./dependencies.container";
 import { AuthMiddleware } from "@bases/web";
 
+// queues
+import { RabbitTransactionQueue, TransactionMessageDto } from "@queues/transactions";
+
 export const buildContainer = async (pool: Pool) => {
+    // queues
+    const transactionQueue = new RabbitTransactionQueue();
+
     // accounts
     const accountRepo = new AccountRepo(pool);
     const accountService = new AccountService({ repo: accountRepo });
@@ -80,7 +86,16 @@ export const buildContainer = async (pool: Pool) => {
         countryService,
         walletService,
         paymentProviderService,
+        publishTransactionTask: transactionQueue.publish,
     };
+
+    // consume queues
+    transactionQueue.consume(
+        async (msg) =>
+            await walletService.resolveTransaction(
+                new TransactionMessageDto(msg as TransactionMessageDto)
+            )
+    );
 
     return container;
 };

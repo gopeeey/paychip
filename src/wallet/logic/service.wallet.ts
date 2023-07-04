@@ -5,8 +5,7 @@ import {
 } from "./interfaces";
 import { WalletCreator } from "./creator.wallet";
 import { FundingInitializer } from "./funding_initializer.wallet";
-import { TransactionResolutionError, WalletNotFoundError } from "./errors";
-import { IncrementBalanceDto, ResolveTransactionDto } from "./dtos";
+import { WalletNotFoundError } from "./errors";
 import { TransactionResolver } from "./transaction_resolver.wallet";
 
 export class WalletService implements WalletServiceInterface {

@@ -1,7 +1,7 @@
-type ConsumerHandlerType<M> = (message: M) => Promise<void>;
+type ConsumerHandlerType = (message: unknown) => Promise<void>;
 
 export interface BaseQueueInterface<M> {
     name: string;
     publish: (message: M) => Promise<void>;
-    consume: (callback: ConsumerHandlerType<M>) => void;
+    consume: (callback: ConsumerHandlerType) => void;
 }

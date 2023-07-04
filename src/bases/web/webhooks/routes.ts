@@ -1,11 +1,9 @@
 import { Router } from "express";
 import { WebhooksController } from "./controller";
-import { PaymentProviderServiceInterface } from "@third_party/payment_providers/logic";
-import { WalletServiceInterface } from "@wallet/logic";
+import { TransactionQueueInterface } from "@queues/transactions";
 
 export interface WebhookRouteDependencies {
-    paymentProviderService: PaymentProviderServiceInterface;
-    walletService: WalletServiceInterface;
+    publishTransactionTask: TransactionQueueInterface["publish"];
 }
 
 export class WebhookRoute {
@@ -13,8 +11,7 @@ export class WebhookRoute {
     init = () => {
         const router = Router();
         const controller = new WebhooksController({
-            paymentProviderService: this._deps.paymentProviderService,
-            walletService: this._deps.walletService,
+            publishTransactionTask: this._deps.publishTransactionTask,
         });
 
         router.post("/paystack", controller.paystack);

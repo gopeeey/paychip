@@ -1,10 +1,9 @@
-import { PaymentProviderServiceInterface } from "@third_party/payment_providers/logic";
 import { BaseController, StandardControllerType } from "@bases/web";
 import { createHmac } from "crypto";
 import config from "src/config";
 import { sendResponse } from "src/utils";
-import { WalletServiceInterface } from "@wallet/logic";
 import { VerifyTransactionResponseInterface } from "@third_party/payment_providers/data";
+import { TransactionMessageDto, TransactionQueueInterface } from "@queues/transactions";
 
 type PaystackBodyType = {
     event: "charge.success" | "transfer.success" | "transfer.failed" | "transfer.reversed";
@@ -12,8 +11,7 @@ type PaystackBodyType = {
 };
 
 export type WebhooksControllerDependencies = {
-    paymentProviderService: PaymentProviderServiceInterface;
-    walletService: WalletServiceInterface;
+    publishTransactionTask: TransactionQueueInterface["publish"];
 };
 
 export class WebhooksController extends BaseController {
@@ -33,10 +31,10 @@ export class WebhooksController extends BaseController {
                 switch (body.event) {
                     case "charge.success":
                         const chargeData = body.data as VerifyTransactionResponseInterface["data"];
-                        await this._deps.walletService.resolveTransaction({
-                            provider,
-                            reference: chargeData.reference,
-                        });
+
+                        await this._deps.publishTransactionTask(
+                            new TransactionMessageDto({ provider, reference: chargeData.reference })
+                        );
                         break;
                     case "transfer.failed":
                         break;
