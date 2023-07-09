@@ -62,7 +62,7 @@ export const buildContainer = async (pool: Pool) => {
         createTransaction: transactionService.createTransaction,
         generatePaymentLink: paymentProviderService.generatePaymentLink,
         getOrCreateCustomer: customerService.getOrCreateCustomer,
-        findTransactionByReference: transactionService.findTransactionByReference,
+        findTransactionByRefAndStatus: transactionService.findTransactionByRefAndStatus,
         updateTransactionInfo: transactionService.updateTransactionInfo,
         verifyTransactionFromProvider: paymentProviderService.verifyTransaction,
     });

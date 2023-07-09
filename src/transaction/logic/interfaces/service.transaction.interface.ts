@@ -2,6 +2,7 @@ import { SessionInterface } from "@bases/logic";
 import { CreateTransactionDto, UpdateTransactionInfoDto } from "../dtos";
 import { TransactionModelInterface } from "./transaction.model.interface";
 import { TransactionRepoInterface } from "./transaction_repo.interface";
+import { TransactionStatusType } from "./transaction.def.model.interface";
 
 export interface TransactionServiceInterface {
     createTransaction: (
@@ -10,6 +11,11 @@ export interface TransactionServiceInterface {
     ) => Promise<TransactionModelInterface>;
 
     findTransactionByReference: (reference: string) => Promise<TransactionModelInterface | null>;
+
+    findTransactionByRefAndStatus: (
+        reference: string,
+        status: TransactionStatusType
+    ) => Promise<TransactionModelInterface | null>;
 
     updateTransactionStatus: (
         id: TransactionModelInterface["id"],

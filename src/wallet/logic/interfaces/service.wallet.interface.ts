@@ -49,7 +49,7 @@ export interface WalletServiceDependencies {
     ) => Promise<ChargeStackModelInterface | null>;
     calculateCharges: ChargesServiceInterface["calculateTransactionCharges"];
     createTransaction: TransactionServiceInterface["createTransaction"];
-    findTransactionByReference: TransactionServiceInterface["findTransactionByReference"];
+    findTransactionByRefAndStatus: TransactionServiceInterface["findTransactionByRefAndStatus"];
     generatePaymentLink: PaymentProviderService["generatePaymentLink"];
     getOrCreateCustomer: CustomerServiceInterface["getOrCreateCustomer"];
     verifyTransactionFromProvider: PaymentProviderServiceInterface["verifyTransaction"];

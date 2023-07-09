@@ -5,6 +5,7 @@ import { TransactionRepo } from "@transaction/data";
 import {
     CreateTransactionDto,
     TransactionModelInterface,
+    TransactionStatusType,
     UpdateTransactionInfoDto,
 } from "@transaction/logic";
 import SQL from "sql-template-strings";
@@ -13,7 +14,6 @@ import {
     getACustomer,
     getATransaction,
     getAWallet,
-    transactionData,
     transactionSeeder,
 } from "src/__tests__/helpers/samples";
 import { DBSetup } from "src/__tests__/helpers/test_utils";
@@ -22,8 +22,6 @@ const pool = DBSetup(transactionSeeder);
 
 const runQuerySpy = jest.spyOn(dbModule, "runQuery");
 const transactionRepo = new TransactionRepo(pool);
-
-const reference = "someref";
 
 describe("TESTING TRANSACTION REPO", () => {
     describe(">>> create", () => {
@@ -86,13 +84,12 @@ describe("TESTING TRANSACTION REPO", () => {
     describe(">>> getByReference", () => {
         describe("given the transaction exists", () => {
             it("should return the transaction object", async () => {
+                const exTrx = await getATransaction(pool);
                 const session = await transactionRepo.startSession();
                 runQuerySpy.mockClear();
-                const transaction = await transactionRepo.getByReference(reference, session);
+                const transaction = await transactionRepo.getByReference(exTrx.reference, session);
                 await session.end();
-                const { bwId, businessId, customerId, senderWalletId, ...validationData } =
-                    transactionData;
-                expect(transaction).toMatchObject(validationData);
+                expect(transaction).toEqual(exTrx);
                 expect(runQuerySpy).toHaveBeenCalledTimes(1);
                 expect(runQuerySpy).toHaveBeenCalledWith(
                     expect.anything(),
@@ -105,6 +102,43 @@ describe("TESTING TRANSACTION REPO", () => {
         describe("given the transaction does not exist", () => {
             it("should return null", async () => {
                 const transaction = await transactionRepo.getByReference("nonsense");
+                expect(transaction).toBeNull();
+            });
+        });
+    });
+
+    describe(">>> getByRefAndStatus", () => {
+        describe("given the transaction exists", () => {
+            it("should return the transaction object", async () => {
+                const exTrx = await getATransaction(pool);
+                const session = await transactionRepo.startSession();
+                runQuerySpy.mockClear();
+                const transaction = await transactionRepo.getByRefAndStatus(
+                    exTrx.reference,
+                    exTrx.status,
+                    session
+                );
+                await session.end();
+                expect(transaction).toEqual(exTrx);
+                expect(runQuerySpy).toHaveBeenCalledTimes(1);
+                expect(runQuerySpy).toHaveBeenCalledWith(
+                    expect.anything(),
+                    pool,
+                    (session as PgSession).client
+                );
+            });
+        });
+
+        describe("given the transaction does not exist", () => {
+            it("should return null", async () => {
+                const exTrx = await getATransaction(pool);
+                let statuses: TransactionStatusType[] = ["failed", "pending", "successful"];
+                statuses = statuses.filter((st) => st !== exTrx.reference);
+
+                const transaction = await transactionRepo.getByRefAndStatus(
+                    exTrx.reference,
+                    statuses[0]
+                );
                 expect(transaction).toBeNull();
             });
         });

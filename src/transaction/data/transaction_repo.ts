@@ -5,6 +5,7 @@ import { Pool } from "pg";
 import * as queries from "./queries";
 import { runQuery } from "@db/postgres";
 import { PgSession } from "@db/postgres";
+import { SessionInterface } from "@bases/logic";
 
 export class TransactionRepo extends PgBaseRepo implements TransactionRepoInterface {
     constructor(private readonly _pool: Pool) {
@@ -34,6 +35,21 @@ export class TransactionRepo extends PgBaseRepo implements TransactionRepoInterf
         );
         const transaction = res.rows[0];
         return transaction ? transaction : null;
+    };
+
+    getByRefAndStatus: TransactionRepoInterface["getByRefAndStatus"] = async (
+        reference,
+        status,
+        session
+    ) => {
+        const query = queries.getByRefAndStatusQuery(reference, status);
+        const res = await runQuery<TransactionModelInterface>(
+            query,
+            this._pool,
+            (session as PgSession)?.client
+        );
+        const transaction = res.rows[0];
+        return transaction || null;
     };
 
     updateStatus: TransactionRepoInterface["updateStatus"] = async (

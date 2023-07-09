@@ -81,7 +81,7 @@ export class TransactionResolver implements TransactionResolverInterface {
     };
 
     getOrCreateTransaction = async () => {
-        let transaction = await this._deps.findTransactionByReference(this.reference);
+        let transaction = await this._deps.findTransactionByRefAndStatus(this.reference, "pending");
         if (!transaction) transaction = await this.createTransaction();
         if (!transaction)
             throw new TransactionResolutionError(

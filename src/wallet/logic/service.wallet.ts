@@ -71,7 +71,7 @@ export class WalletService implements WalletServiceInterface {
         const resolver = new TransactionResolver({
             calculateCharges: this._dep.calculateCharges,
             createTransaction: this._dep.createTransaction,
-            findTransactionByReference: this._dep.findTransactionByReference,
+            findTransactionByRefAndStatus: this._dep.findTransactionByRefAndStatus,
             getBusinessWallet: this.getBusinessWalletByCurrency,
             getCurrency: this._dep.getCurrency,
             getOrCreateCustomer: this._dep.getOrCreateCustomer,

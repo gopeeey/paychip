@@ -13,6 +13,7 @@ const repo: { [key in keyof TransactionRepoInterface]: jest.Mock } = {
     startSession: jest.fn(async () => sessionMock),
     updateStatus: jest.fn(),
     updateTransactionInfo: jest.fn(),
+    getByRefAndStatus: jest.fn(),
 };
 
 const service = new TransactionService({ repo } as unknown as TransactionServiceDependencies);
@@ -41,6 +42,30 @@ describe("TESTING TRANSACTION SERIVCE", () => {
             it("should return null", async () => {
                 repo.getByReference.mockResolvedValue(null);
                 const transaction = await service.findTransactionByReference("something");
+                expect(transaction).toBeNull();
+            });
+        });
+    });
+
+    describe(">>> findTransactionByRefAndStatus", () => {
+        describe("given the transaction exists", () => {
+            it("should return the transaction object", async () => {
+                repo.getByRefAndStatus.mockResolvedValue(transactionJson);
+                const transaction = await service.findTransactionByRefAndStatus(
+                    transactionJson.reference,
+                    transactionJson.status
+                );
+                expect(transaction).toEqual(transactionJson);
+            });
+        });
+
+        describe("given the transaction does not exist", () => {
+            it("should return null", async () => {
+                repo.getByRefAndStatus.mockResolvedValue(null);
+                const transaction = await service.findTransactionByRefAndStatus(
+                    transactionJson.reference,
+                    "successful"
+                );
                 expect(transaction).toBeNull();
             });
         });

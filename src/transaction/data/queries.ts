@@ -1,4 +1,8 @@
-import { TransactionModelInterface, UpdateTransactionInfoDto } from "@transaction/logic";
+import {
+    TransactionModelInterface,
+    TransactionStatusType,
+    UpdateTransactionInfoDto,
+} from "@transaction/logic";
 import SQL from "sql-template-strings";
 
 interface CreateTransactionArgType extends Omit<TransactionModelInterface, "channel"> {
@@ -104,5 +108,13 @@ export const updateTransactionInfo = (
         "accountName" = ${info.accountName},
         "cardNumber" = ${info.cardNumber},
         "cardType" = ${info.cardType} WHERE "id" = ${transactionId};
+    `;
+};
+
+export const getByRefAndStatusQuery = (reference: string, status: TransactionStatusType) => {
+    return SQL`
+        SELECT * FROM "transactions" 
+        WHERE "reference" = ${reference}
+        AND "status" = ${status};
     `;
 };

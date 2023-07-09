@@ -15,7 +15,7 @@ export interface TransactionResolverDependencies {
     verifyTransactionFromProvider: PaymentProviderServiceInterface["verifyTransaction"];
     createTransaction: TransactionServiceInterface["createTransaction"];
     getOrCreateCustomer: (data: GetSingleBusinessCustomerDto) => Promise<CustomerModelInterface>;
-    findTransactionByReference: TransactionServiceInterface["findTransactionByReference"];
+    findTransactionByRefAndStatus: TransactionServiceInterface["findTransactionByRefAndStatus"];
     getWalletById: WalletServiceInterface["getWalletById"];
     getBusinessWallet: WalletServiceInterface["getBusinessWalletByCurrency"];
     getCurrency: WalletServiceDependencies["getCurrency"];
