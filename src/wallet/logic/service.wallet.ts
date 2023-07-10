@@ -5,8 +5,10 @@ import {
 } from "./interfaces";
 import { WalletCreator } from "./creator.wallet";
 import { FundingInitializer } from "./funding_initializer.wallet";
-import { WalletNotFoundError } from "./errors";
+import { TransactionResolutionError, WalletNotFoundError } from "./errors";
 import { TransactionResolver } from "./transaction_resolver.wallet";
+import { TransactionMessageDto } from "@queues/transactions";
+import { ResolveTransactionDto } from "./dtos";
 
 export class WalletService implements WalletServiceInterface {
     private _repo: WalletRepoInterface;
@@ -69,9 +71,10 @@ export class WalletService implements WalletServiceInterface {
 
     resolveTransaction: WalletServiceInterface["resolveTransaction"] = async (data) => {
         const resolver = new TransactionResolver({
+            imdsService: this._dep.imdsService,
             calculateCharges: this._dep.calculateCharges,
             createTransaction: this._dep.createTransaction,
-            findTransactionByRefAndStatus: this._dep.findTransactionByRefAndStatus,
+            findTransactionByReference: this._dep.findTransactionByReference,
             getBusinessWallet: this.getBusinessWalletByCurrency,
             getCurrency: this._dep.getCurrency,
             getOrCreateCustomer: this._dep.getOrCreateCustomer,
@@ -85,5 +88,19 @@ export class WalletService implements WalletServiceInterface {
             verifyTransactionFromProvider: this._dep.verifyTransactionFromProvider,
         });
         await resolver.exec();
+    };
+
+    dequeueTransaction: WalletServiceInterface["dequeueTransaction"] = async (msg) => {
+        const data = new TransactionMessageDto(msg as TransactionMessageDto);
+        try {
+            await this.resolveTransaction(new ResolveTransactionDto(data));
+        } catch (err) {
+            if (err instanceof TransactionResolutionError) {
+                if (err.critical) throw err;
+                return;
+            }
+
+            throw err;
+        }
     };
 }

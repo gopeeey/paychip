@@ -34,6 +34,11 @@ const PAYSTACK_PUBLIC_KEY = process.env.PAYSTACK_PUBLIC_KEY as string;
 // rabbitmq
 const RABBITMQ_CONNECTION_URL = process.env.RABBITMQ_CONNECTION_URL as string;
 
+// redis
+const REDIS_URL = process.env.REDIS_URL as string;
+const REDIS_PASSWORD = process.env.REDIS_PASSWORD as string;
+const REDIS_PORT = process.env.REDIS_PORT as string;
+
 // misc
 const JWT_SECRET = process.env.JWT_SECRET as string;
 const DOMAIN_NAME = process.env.DOMAIN_NAME as string;
@@ -73,6 +78,7 @@ const thirdParty = {
         publicKey: PAYSTACK_PUBLIC_KEY,
     },
     rabbitMq: { connectionUrl: RABBITMQ_CONNECTION_URL },
+    redis: { url: REDIS_URL, port: REDIS_PORT, password: REDIS_PASSWORD },
 };
 
 const misc = {

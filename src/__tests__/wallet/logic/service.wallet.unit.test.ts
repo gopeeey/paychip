@@ -5,24 +5,21 @@ import {
     WalletNotFoundError,
     WalletService,
     WalletServiceDependencies,
-    TransactionResolutionError,
     IncrementBalanceDto,
     TransactionResolverDependencies,
+    ResolveTransactionDto,
+    TransactionResolutionError,
 } from "@wallet/logic";
 import * as WalletCreatorModule from "@wallet/logic/creator.wallet";
 import * as TransactionResolverModule from "@wallet/logic/transaction_resolver.wallet";
 import * as FundingInitializerModule from "@wallet/logic/funding_initializer.wallet";
-import {
-    businessWalletJson,
-    transactionJson,
-    walletData,
-    walletJson,
-} from "src/__tests__/helpers/samples";
+import { businessWalletJson, walletData, walletJson } from "src/__tests__/helpers/samples";
 import { SpiesObj, createSpies, sessionMock } from "src/__tests__/helpers/mocks";
 import { WalletRepo } from "@wallet/data";
 import { Pool } from "pg";
 import { VerifyTransactionResponseDto } from "@third_party/payment_providers/logic";
-import { SessionInterface } from "@bases/logic";
+import { ImdsInterface, SessionInterface } from "@bases/logic";
+import { TransactionMessageDto } from "@queues/transactions";
 
 const createFn = jest.fn();
 jest.mock("../../../wallet/logic/creator.wallet", () => ({
@@ -49,23 +46,31 @@ const TransactionResolver =
     TransactionResolverModule.TransactionResolver as unknown as jest.Mock<TransactionResolverModule.TransactionResolver>;
 
 const walletRepoMock = createSpies(new WalletRepo({} as Pool));
-
-const deps: { [key in keyof Omit<WalletServiceDependencies, "repo">]: jest.Mock } = {
-    getCurrency: jest.fn(),
-    getWalletChargeStack: jest.fn(),
-    calculateCharges: jest.fn(),
-    createTransaction: jest.fn(),
-    generatePaymentLink: jest.fn(),
-    getOrCreateCustomer: jest.fn(),
-    verifyTransactionFromProvider: jest.fn(),
-    findTransactionByReference: jest.fn(),
-    updateTransactionInfo: jest.fn(),
+const imdsServiceMock: { [key in keyof ImdsInterface]: jest.Mock } = {
+    lock: jest.fn(),
+    release: jest.fn(),
 };
+
+const deps: { [key in keyof Omit<WalletServiceDependencies, "repo" | "imdsService">]: jest.Mock } =
+    {
+        getCurrency: jest.fn(),
+        getWalletChargeStack: jest.fn(),
+        calculateCharges: jest.fn(),
+        createTransaction: jest.fn(),
+        generatePaymentLink: jest.fn(),
+        getOrCreateCustomer: jest.fn(),
+        verifyTransactionFromProvider: jest.fn(),
+        findTransactionByReference: jest.fn(),
+        updateTransactionInfo: jest.fn(),
+    };
 
 const walletService = new WalletService({
     ...deps,
     repo: walletRepoMock,
+    imdsService: imdsServiceMock,
 } as unknown as WalletServiceDependencies);
+
+const resolveTransactionSpy = jest.spyOn(walletService, "resolveTransaction");
 
 describe("TESTING WALLET SERVICE", () => {
     describe(">>> createWallet", () => {
@@ -198,12 +203,56 @@ describe("TESTING WALLET SERVICE", () => {
                     walletRepoMock.startSession as unknown as () => Promise<SessionInterface>,
                 updateTransactionInfo: deps.updateTransactionInfo,
                 verifyTransactionFromProvider: deps.verifyTransactionFromProvider,
+                imdsService: imdsServiceMock,
             };
             await walletService.resolveTransaction({ provider, reference });
 
             expect(TransactionResolver).toHaveBeenCalledTimes(1);
             expect(TransactionResolver).toHaveBeenCalledWith(expectedArgs);
             expect(execTransactionResolver).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe(">>> dequeueTransaction", () => {
+        const data = new TransactionMessageDto({
+            provider: "provider",
+            reference: "reference",
+        });
+
+        it("should call the resolveTransaction function on the wallet service", async () => {
+            await walletService.dequeueTransaction({ ...data });
+            expect(resolveTransactionSpy).toHaveBeenCalledTimes(1);
+            expect(resolveTransactionSpy).toHaveBeenCalledWith(new ResolveTransactionDto(data));
+        });
+
+        describe("given resolveTransaction throws a critical TransactionResolutionError", () => {
+            it("should throw the err", async () => {
+                resolveTransactionSpy.mockRejectedValueOnce(
+                    new TransactionResolutionError("some", { some: "nights" }, true)
+                );
+                await expect(() => walletService.dequeueTransaction({ ...data })).rejects.toThrow(
+                    TransactionResolutionError
+                );
+            });
+        });
+
+        describe("given resolveTransaction throws a non-critical TransactionResolutionError", () => {
+            it("should return", async () => {
+                resolveTransactionSpy.mockRejectedValueOnce(
+                    new TransactionResolutionError("some", { some: "nights" }, false)
+                );
+                const val = await walletService.dequeueTransaction({ ...data });
+                expect(val).toBeUndefined();
+            });
+        });
+
+        describe("given resolveTransaction throws a non TransactionResolutionError", () => {
+            it("should throw the err", async () => {
+                resolveTransactionSpy.mockRejectedValueOnce(new Error("some"));
+                await expect(() => walletService.dequeueTransaction({ ...data })).rejects.toThrow(
+                    Error
+                );
+            });
         });
     });
 

@@ -11,18 +11,30 @@ const queueOptions: AmqpOptions.AssertQueue = { durable: true };
 const messageOptions: AmqpOptions.Publish = { persistent: true };
 const consumeOptions: AmqpOptions.Consume = { noAck: false };
 
+const message = new TransactionMessageDto({ provider: "aProvider", reference: "somereference" });
+const queueMsgMock = { content: Buffer.from(JSON.stringify(message)) };
+
 const channelMock: {
     [key in keyof Pick<
         Channel,
-        "assertExchange" | "assertQueue" | "sendToQueue" | "prefetch" | "consume" | "ack"
+        "assertExchange" | "assertQueue" | "sendToQueue" | "prefetch" | "consume" | "ack" | "nack"
     >]: jest.Mock;
 } = {
     assertExchange: jest.fn(),
     assertQueue: jest.fn(),
     sendToQueue: jest.fn(),
     prefetch: jest.fn(),
-    consume: jest.fn(),
+    consume: jest.fn(
+        (
+            name: string,
+            callback: (msg: typeof queueMsgMock) => Promise<void>,
+            options: AmqpOptions.Consume
+        ) => {
+            callback(queueMsgMock);
+        }
+    ),
     ack: jest.fn(),
+    nack: jest.fn(),
 };
 
 const connectionMock = {
@@ -42,15 +54,11 @@ const amqpConnectSpy = jest
     .spyOn(amqp, "connect")
     .mockImplementation(connectImpl as unknown as (...args: unknown[]) => any);
 
-const message = new TransactionMessageDto({ provider: "aProvider", reference: "somereference" });
-const queueMsgMock = { content: Buffer.from(JSON.stringify(message)) };
-
 const concurrency = 1;
 const queue = new RabbitTaskQueue({ name: queueName, concurrency });
 
 const consumeCallbackMock = jest.fn(async (message: unknown) => {
     console.log(message);
-    channelMock.ack(queueMsgMock);
 });
 
 describe("TESTING TRANSACTIONS QUEUE RABBITMQ WRAPPER", () => {
@@ -135,15 +143,6 @@ describe("TESTING TRANSACTIONS QUEUE RABBITMQ WRAPPER", () => {
         });
 
         it("should call the consume callback with the message and acknowledge it", () => {
-            channelMock.consume.mockImplementation(
-                (
-                    name: string,
-                    callback: (msg: typeof queueMsgMock) => Promise<void>,
-                    options: AmqpOptions.Consume
-                ) => {
-                    callback(queueMsgMock);
-                }
-            );
             queue.consume(consumeCallbackMock);
             expect(consumeCallbackMock).toHaveBeenCalledTimes(1);
             expect(consumeCallbackMock).toHaveBeenCalledWith(
@@ -151,6 +150,15 @@ describe("TESTING TRANSACTIONS QUEUE RABBITMQ WRAPPER", () => {
             );
             expect(channelMock.ack).toHaveBeenCalledTimes(1);
             expect(channelMock.ack).toHaveBeenCalledWith(queueMsgMock);
+        });
+
+        describe("given the callback throws an error", () => {
+            it("should negatively acknowledge the message", async () => {
+                consumeCallbackMock.mockRejectedValue(new Error("Hi"));
+                queue.consume(consumeCallbackMock);
+                expect(channelMock.nack).toHaveBeenCalledTimes(1);
+                expect(channelMock.nack).toHaveBeenCalledWith(queueMsgMock);
+            });
         });
     });
 });

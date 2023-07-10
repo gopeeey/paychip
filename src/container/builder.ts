@@ -18,6 +18,8 @@ import { TransactionService } from "@transaction/logic";
 import { PaymentProviderService } from "@third_party/payment_providers/logic";
 import { CustomerService } from "@customer/logic";
 
+import { RedisService } from "@db/redis";
+
 import { Pool } from "pg";
 import { DependencyContainerInterface } from "./dependencies.container";
 import { AuthMiddleware } from "@bases/web";
@@ -26,6 +28,9 @@ import { AuthMiddleware } from "@bases/web";
 import { RabbitTransactionQueue, TransactionMessageDto } from "@queues/transactions";
 
 export const buildContainer = async (pool: Pool) => {
+    // imds
+    const imdsService = new RedisService();
+
     // queues
     const transactionQueue = new RabbitTransactionQueue();
 
@@ -56,13 +61,14 @@ export const buildContainer = async (pool: Pool) => {
     const walletRepo = new WalletRepo(pool);
     const walletService = new WalletService({
         repo: walletRepo,
+        imdsService,
         getCurrency: currencyService.getCurrencyByIsoCode,
         getWalletChargeStack: chargesService.getWalletChargeStack,
         calculateCharges: chargesService.calculateTransactionCharges,
         createTransaction: transactionService.createTransaction,
         generatePaymentLink: paymentProviderService.generatePaymentLink,
         getOrCreateCustomer: customerService.getOrCreateCustomer,
-        findTransactionByRefAndStatus: transactionService.findTransactionByRefAndStatus,
+        findTransactionByReference: transactionService.findTransactionByReference,
         updateTransactionInfo: transactionService.updateTransactionInfo,
         verifyTransactionFromProvider: paymentProviderService.verifyTransaction,
     });
@@ -90,12 +96,7 @@ export const buildContainer = async (pool: Pool) => {
     };
 
     // consume queues
-    transactionQueue.consume(
-        async (msg) =>
-            await walletService.resolveTransaction(
-                new TransactionMessageDto(msg as TransactionMessageDto)
-            )
-    );
+    transactionQueue.consume(walletService.dequeueTransaction);
 
     return container;
 };

@@ -1,4 +1,4 @@
-import { SessionInterface } from "@bases/logic";
+import { ImdsInterface, SessionInterface } from "@bases/logic";
 import {
     CreateWalletDto,
     InitializeFundingDto,
@@ -36,10 +36,12 @@ export interface WalletServiceInterface {
         businessId: WalletModelInterface["businessId"],
         currency: WalletModelInterface["currency"]
     ) => Promise<WalletModelInterface>;
+    dequeueTransaction: (msg: unknown) => Promise<void>;
 }
 
 export interface WalletServiceDependencies {
     repo: WalletRepoInterface;
+    imdsService: ImdsInterface;
     getCurrency: (
         currencyCode: WalletModelInterface["currency"]
     ) => Promise<CurrencyModelInterface>;
@@ -49,7 +51,7 @@ export interface WalletServiceDependencies {
     ) => Promise<ChargeStackModelInterface | null>;
     calculateCharges: ChargesServiceInterface["calculateTransactionCharges"];
     createTransaction: TransactionServiceInterface["createTransaction"];
-    findTransactionByRefAndStatus: TransactionServiceInterface["findTransactionByRefAndStatus"];
+    findTransactionByReference: TransactionServiceInterface["findTransactionByReference"];
     generatePaymentLink: PaymentProviderService["generatePaymentLink"];
     getOrCreateCustomer: CustomerServiceInterface["getOrCreateCustomer"];
     verifyTransactionFromProvider: PaymentProviderServiceInterface["verifyTransaction"];

@@ -22,6 +22,7 @@ export class TransactionResolver implements TransactionResolverInterface {
     declare customer?: CustomerModelInterface;
     declare wallet: WalletModelInterface;
     session: SessionInterface | undefined;
+    lock?: string | null;
 
     constructor(private readonly _deps: TransactionResolverDependencies) {
         this.reference = _deps.reference;
@@ -30,6 +31,7 @@ export class TransactionResolver implements TransactionResolverInterface {
 
     exec = async () => {
         try {
+            await this.acquireLock();
             await this.startSession();
 
             await this.verifyTransaction();
@@ -42,12 +44,29 @@ export class TransactionResolver implements TransactionResolverInterface {
 
             await this.commitSessionChanges();
             await this.endSession();
+            await this.releaseLock();
 
             //@TODO send credit notifications (email) to the wallet and business wallet email
         } catch (err) {
             await this.endSession();
+            await this.releaseLock();
             throw err;
         }
+    };
+
+    acquireLock = async () => {
+        this.lock = await this._deps.imdsService.lock(this.reference, 20);
+        if (!this.lock)
+            throw new TransactionResolutionError(
+                "Failed to lock transaction",
+                this.transactionData
+            );
+    };
+
+    releaseLock = async () => {
+        if (!this.lock) return;
+        await this._deps.imdsService.release(this.reference, this.lock);
+        this.lock = null;
     };
 
     startSession = async () => {
@@ -68,10 +87,14 @@ export class TransactionResolver implements TransactionResolverInterface {
             this.provider
         );
         if (!trxData) {
-            throw new TransactionResolutionError(`Transaction not found from provider`, {
-                reference: this.reference,
-                provider: this.provider,
-            });
+            throw new TransactionResolutionError(
+                `Transaction not found from provider`,
+                {
+                    reference: this.reference,
+                    provider: this.provider,
+                },
+                true
+            );
         }
         this.transactionData = trxData;
     };
@@ -81,11 +104,17 @@ export class TransactionResolver implements TransactionResolverInterface {
     };
 
     getOrCreateTransaction = async () => {
-        let transaction = await this._deps.findTransactionByRefAndStatus(this.reference, "pending");
+        let transaction = await this._deps.findTransactionByReference(this.reference);
         if (!transaction) transaction = await this.createTransaction();
         if (!transaction)
             throw new TransactionResolutionError(
                 "Unable to get or create transaction",
+                this.transactionData,
+                true
+            );
+        if (transaction.status !== "pending")
+            throw new TransactionResolutionError(
+                "Transaction does not have a status of pending",
                 this.transactionData
             );
         this.transaction = transaction;

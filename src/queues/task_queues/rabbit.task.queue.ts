@@ -59,7 +59,11 @@ export class RabbitTaskQueue<M> implements TaskQueueInterface<M> {
                         async (msg: Message | null) => {
                             if (!msg) return;
 
-                            await callback(JSON.parse(msg.content.toString()));
+                            try {
+                                await callback(JSON.parse(msg.content.toString()));
+                            } catch (err) {
+                                return channel.nack(msg);
+                            }
 
                             channel.ack(msg);
                         },
