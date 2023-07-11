@@ -4,9 +4,10 @@ import {
     CustomerService,
     CustomerServiceDependencies,
     GetSingleBusinessCustomerDto,
+    UpdateCustomerDto,
 } from "@customer/logic";
 import { Pool } from "pg";
-import { createSpies } from "src/__tests__/helpers/mocks";
+import { createSpies, sessionMock } from "src/__tests__/helpers/mocks";
 import { customerData, customerJson, customerJsonArray } from "src/__tests__/helpers/samples";
 
 const repoMock = createSpies(new CustomerRepo({} as Pool));
@@ -18,7 +19,7 @@ const dependencies: CustomerServiceDependencies = {
 const customerService = new CustomerService(dependencies);
 
 describe("TESTING CUSTOMER SERVICE", () => {
-    describe("testing createCustomer", () => {
+    describe(">>> createCustomer", () => {
         it("should return a customer object", async () => {
             repoMock.create.mockResolvedValue(customerJson.complete);
             const customer = await customerService.createCustomer(customerData.complete);
@@ -28,7 +29,7 @@ describe("TESTING CUSTOMER SERVICE", () => {
         });
     });
 
-    describe("testing getBusinessCustomers", () => {
+    describe(">>> getBusinessCustomers", () => {
         describe("given customers with passed businessId exist", () => {
             it("should return an array of standard customer objects", async () => {
                 repoMock.getByBusinessId.mockResolvedValue(customerJsonArray.complete);
@@ -54,7 +55,7 @@ describe("TESTING CUSTOMER SERVICE", () => {
         });
     });
 
-    describe("testing getOrCreateCustomer", () => {
+    describe(">>> getOrCreateCustomer", () => {
         const data = new GetSingleBusinessCustomerDto(customerJson.complete);
 
         it("should try to fetch the customer", async () => {
@@ -83,6 +84,24 @@ describe("TESTING CUSTOMER SERVICE", () => {
                 const createDto = new CreateCustomerDto(data);
                 expect(repoMock.create).toHaveBeenCalledWith(createDto);
             });
+        });
+    });
+
+    describe(">>> updateCustomer", () => {
+        it("should call the updateCustomer function on the repo", async () => {
+            repoMock.updateCustomer.mockImplementationOnce(async () => {});
+            const sample = customerJson.complete;
+            const data = new UpdateCustomerDto({
+                id: sample.id,
+                name: sample.name,
+                firstName: sample.firstName,
+                lastName: sample.lastName,
+                phone: sample.phone,
+            });
+
+            await customerService.updateCustomer(data, sessionMock);
+            expect(repoMock.updateCustomer).toHaveBeenCalledTimes(1);
+            expect(repoMock.updateCustomer).toHaveBeenCalledWith(data, sessionMock);
         });
     });
 });

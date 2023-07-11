@@ -1,4 +1,5 @@
 import { ChargesCalculationResultDto } from "@charges/logic";
+import { GetSingleBusinessCustomerDto, UpdateCustomerDto } from "@customer/logic";
 import { VerifyTransactionResponseDto } from "@third_party/payment_providers/logic";
 import { TransactionModelInterface, UpdateTransactionInfoDto } from "@transaction/logic";
 import {
@@ -35,6 +36,7 @@ const deps: {
     startSession: jest.fn(async () => sessionMock),
     updateTransactionInfo: jest.fn(),
     incrementWalletBalance: jest.fn(),
+    updateCustomer: jest.fn(),
 };
 
 const reference = transactionJson.reference;
@@ -51,6 +53,10 @@ const providerTransaction = new VerifyTransactionResponseDto({
     ...(transactionJson as Required<TransactionModelInterface>),
     status: "successful",
     walletId: walletJson.id,
+    customerName: customerJson.complete.name,
+    customerFirstName: customerJson.complete.firstName,
+    customerLastName: customerJson.complete.lastName,
+    customerPhone: customerJson.complete.phone,
 });
 
 const chargeResult = new ChargesCalculationResultDto({
@@ -108,11 +114,30 @@ describe("TESTING PAYMENT RESOLVER", () => {
             expect(deps.verifyTransactionFromProvider).toHaveBeenCalledWith(reference, provider);
         });
 
+        describe("given provider does not return transaction details", () => {
+            it("should throw a TransactionResolutionError", async () => {
+                deps.verifyTransactionFromProvider.mockResolvedValue(null);
+                await expect(() => resolver.exec()).rejects.toThrow(TransactionResolutionError);
+            });
+        });
+
         describe("given the provider returns the transaction details", () => {
             it("should fetch the associated wallet", async () => {
+                mockAll();
                 await resolver.exec();
                 expect(deps.getWalletById).toHaveBeenCalledTimes(1);
                 expect(deps.getWalletById).toHaveBeenCalledWith(walletJson.id);
+            });
+
+            it("should fetch the customer", async () => {
+                await resolver.exec();
+                expect(deps.getOrCreateCustomer).toHaveBeenCalledTimes(1);
+                expect(deps.getOrCreateCustomer).toHaveBeenCalledWith(
+                    new GetSingleBusinessCustomerDto({
+                        businessId: walletJson.businessId,
+                        email: walletJson.email,
+                    })
+                );
             });
 
             it("should attempt to get the corresponding transaction from the database by reference", async () => {
@@ -120,7 +145,7 @@ describe("TESTING PAYMENT RESOLVER", () => {
                 expect(deps.findTransactionByReference).toHaveBeenCalledTimes(1);
                 expect(deps.findTransactionByReference).toHaveBeenCalledWith(reference);
             });
-            // If no corresponding transactions were found, it should create a new one
+
             describe("given the corresponding transaction was not found", () => {
                 it("should create a new transaction from the transaction details", async () => {
                     deps.findTransactionByReference.mockResolvedValue(null);
@@ -132,7 +157,6 @@ describe("TESTING PAYMENT RESOLVER", () => {
                     expect(deps.getBusinessWallet).toHaveBeenCalledTimes(1);
                     expect(deps.getCurrency).toHaveBeenCalledTimes(1);
                     expect(deps.getWalletChargeStack).toHaveBeenCalledTimes(1);
-                    expect(deps.getOrCreateCustomer).toHaveBeenCalledTimes(1);
                 });
             });
 
@@ -197,12 +221,20 @@ describe("TESTING PAYMENT RESOLVER", () => {
                     );
                 });
             });
-        });
 
-        describe("given provider does not return transaction details", () => {
-            it("should throw a TransactionResolutionError", async () => {
-                deps.verifyTransactionFromProvider.mockResolvedValue(null);
-                await expect(() => resolver.exec()).rejects.toThrow(TransactionResolutionError);
+            it("should update the customer", async () => {
+                await resolver.exec();
+                expect(deps.updateCustomer).toHaveBeenCalledTimes(1);
+                expect(deps.updateCustomer).toHaveBeenCalledWith(
+                    new UpdateCustomerDto({
+                        id: customerJson.complete.id,
+                        name: providerTransaction.customerName,
+                        firstName: providerTransaction.customerFirstName,
+                        lastName: providerTransaction.customerLastName,
+                        phone: providerTransaction.customerPhone,
+                    }),
+                    sessionMock
+                );
             });
         });
 

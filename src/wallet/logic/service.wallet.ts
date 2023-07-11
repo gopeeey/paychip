@@ -86,6 +86,7 @@ export class WalletService implements WalletServiceInterface {
             startSession: this._repo.startSession,
             updateTransactionInfo: this._dep.updateTransactionInfo,
             verifyTransactionFromProvider: this._dep.verifyTransactionFromProvider,
+            updateCustomer: this._dep.updateCustomer,
         });
         await resolver.exec();
     };

@@ -39,6 +39,9 @@ export interface VerifyTransactionResponseInterface extends BaseResponseInterfac
             last_name: string | null;
             phone: string | null;
             email: string;
+            metadata?: {
+                calling_code?: string | null;
+            };
         };
     };
 }

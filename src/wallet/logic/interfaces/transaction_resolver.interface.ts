@@ -3,7 +3,11 @@ import { TransactionServiceInterface } from "@transaction/logic";
 import { WalletServiceDependencies, WalletServiceInterface } from "./service.wallet.interface";
 import { ChargesServiceInterface } from "@charges/logic";
 import { ImdsInterface, SessionInterface } from "@bases/logic";
-import { CustomerModelInterface, GetSingleBusinessCustomerDto } from "@customer/logic";
+import {
+    CustomerModelInterface,
+    CustomerServiceInterface,
+    GetSingleBusinessCustomerDto,
+} from "@customer/logic";
 
 export interface TransactionResolverInterface {
     exec: () => Promise<void>;
@@ -25,4 +29,5 @@ export interface TransactionResolverDependencies {
     startSession: () => Promise<SessionInterface>;
     updateTransactionInfo: TransactionServiceInterface["updateTransactionInfo"];
     incrementWalletBalance: WalletServiceInterface["incrementBalance"];
+    updateCustomer: CustomerServiceInterface["updateCustomer"];
 }

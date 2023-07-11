@@ -71,6 +71,7 @@ export const buildContainer = async (pool: Pool) => {
         findTransactionByReference: transactionService.findTransactionByReference,
         updateTransactionInfo: transactionService.updateTransactionInfo,
         verifyTransactionFromProvider: paymentProviderService.verifyTransaction,
+        updateCustomer: customerService.updateCustomer,
     });
 
     const businessRepo = new BusinessRepo(pool);

@@ -62,6 +62,7 @@ const deps: { [key in keyof Omit<WalletServiceDependencies, "repo" | "imdsServic
         verifyTransactionFromProvider: jest.fn(),
         findTransactionByReference: jest.fn(),
         updateTransactionInfo: jest.fn(),
+        updateCustomer: jest.fn(),
     };
 
 const walletService = new WalletService({
@@ -204,6 +205,7 @@ describe("TESTING WALLET SERVICE", () => {
                 updateTransactionInfo: deps.updateTransactionInfo,
                 verifyTransactionFromProvider: deps.verifyTransactionFromProvider,
                 imdsService: imdsServiceMock,
+                updateCustomer: deps.updateCustomer,
             };
             await walletService.resolveTransaction({ provider, reference });
 

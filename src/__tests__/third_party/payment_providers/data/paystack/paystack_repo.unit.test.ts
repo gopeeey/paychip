@@ -94,8 +94,10 @@ const sampleTrxRes = {
             last_name: null,
             email: encodeHex(walletJson.id) + config.misc.emailSuffix,
             customer_code: "CUS_0c35ys9w8ma5tbr",
-            phone: null,
-            metadata: null,
+            phone: "9012341234",
+            metadata: {
+                calling_code: "+234",
+            },
             risk_action: "deny",
         },
         plan: {},
@@ -218,6 +220,19 @@ describe("Testing PaystackRepo", () => {
                         reference: sampleTrxRes.data.reference,
                         walletId: walletJson.id,
                         amount: sampleTrxRes.data.amount / 100,
+                        customerName:
+                            sampleTrxRes.data.customer.first_name +
+                            " " +
+                            sampleTrxRes.data.customer.last_name,
+                        customerFirstName: sampleTrxRes.data.customer.first_name,
+                        customerLastName: sampleTrxRes.data.customer.last_name,
+                        customerPhone: sampleTrxRes.data.customer.phone
+                            ? `${
+                                  sampleTrxRes.data.customer.metadata?.calling_code
+                                      ? sampleTrxRes.data.customer.metadata.calling_code
+                                      : ""
+                              }${sampleTrxRes.data.customer.phone}`
+                            : null,
                     };
 
                     const result = await paystackRepo.verifyTransaction(

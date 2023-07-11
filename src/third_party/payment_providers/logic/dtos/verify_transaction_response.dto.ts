@@ -1,3 +1,4 @@
+import { CustomerModelInterface } from "@customer/logic";
 import { TransactionModelInterface } from "@transaction/logic";
 
 type ArgsType = {
@@ -13,6 +14,10 @@ type ArgsType = {
     cardType: TransactionModelInterface["cardType"];
     reference: TransactionModelInterface["id"];
     walletId: Exclude<TransactionModelInterface["senderWalletId"], null | undefined>;
+    customerName: CustomerModelInterface["name"];
+    customerFirstName: CustomerModelInterface["firstName"];
+    customerLastName: CustomerModelInterface["lastName"];
+    customerPhone: CustomerModelInterface["phone"];
 };
 
 export class VerifyTransactionResponseDto implements ArgsType {
@@ -28,6 +33,10 @@ export class VerifyTransactionResponseDto implements ArgsType {
     cardType: ArgsType["cardType"];
     reference: ArgsType["reference"];
     walletId: ArgsType["walletId"];
+    customerName: ArgsType["customerName"];
+    customerFirstName: ArgsType["customerFirstName"];
+    customerLastName: ArgsType["customerLastName"];
+    customerPhone: ArgsType["customerPhone"];
 
     constructor(body: ArgsType) {
         this.status = body.status;
@@ -42,5 +51,9 @@ export class VerifyTransactionResponseDto implements ArgsType {
         this.cardType = body.cardType;
         this.reference = body.reference;
         this.walletId = body.walletId;
+        this.customerFirstName = body.customerFirstName;
+        this.customerLastName = body.customerLastName;
+        this.customerPhone = body.customerPhone;
+        this.customerName = body.customerName;
     }
 }

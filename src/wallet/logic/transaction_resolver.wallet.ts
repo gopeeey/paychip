@@ -10,7 +10,11 @@ import {
     TransactionModelInterface,
     UpdateTransactionInfoDto,
 } from "@transaction/logic";
-import { CustomerModelInterface, GetSingleBusinessCustomerDto } from "@customer/logic";
+import {
+    CustomerModelInterface,
+    GetSingleBusinessCustomerDto,
+    UpdateCustomerDto,
+} from "@customer/logic";
 import { SessionInterface } from "@bases/logic";
 import { IncrementBalanceDto } from "./dtos";
 
@@ -19,7 +23,7 @@ export class TransactionResolver implements TransactionResolverInterface {
     provider: string;
     declare transactionData: VerifyTransactionResponseDto;
     declare transaction: TransactionModelInterface;
-    declare customer?: CustomerModelInterface;
+    declare customer: CustomerModelInterface;
     declare wallet: WalletModelInterface;
     session: SessionInterface | undefined;
     lock?: string | null;
@@ -36,11 +40,13 @@ export class TransactionResolver implements TransactionResolverInterface {
 
             await this.verifyTransaction();
             await this.getWallet();
+            await this.getOrCreateCustomer();
             await this.getOrCreateTransaction();
             await this.createChargesTransaction();
             await this.updateTransactionInfo();
             await this.incrementBalance();
             await this.incrementBusinessWalletBalance();
+            await this.updateCustomer();
 
             await this.commitSessionChanges();
             await this.endSession();
@@ -103,6 +109,15 @@ export class TransactionResolver implements TransactionResolverInterface {
         this.wallet = await this._deps.getWalletById(this.transactionData.walletId);
     };
 
+    getOrCreateCustomer = async () => {
+        this.customer = await this._deps.getOrCreateCustomer(
+            new GetSingleBusinessCustomerDto({
+                businessId: this.wallet.businessId,
+                email: this.wallet.email,
+            })
+        );
+    };
+
     getOrCreateTransaction = async () => {
         let transaction = await this._deps.findTransactionByReference(this.reference);
         if (!transaction) transaction = await this.createTransaction();
@@ -130,14 +145,7 @@ export class TransactionResolver implements TransactionResolverInterface {
         const currency = await this._deps.getCurrency(this.wallet.currency);
         // Fetch wallet charge stack
         const chargeStack = await this._deps.getWalletChargeStack(this.wallet.id, "funding");
-        // Fetch customer
-        const customer = await this._deps.getOrCreateCustomer(
-            new GetSingleBusinessCustomerDto({
-                businessId: this.wallet.businessId,
-                email: this.wallet.email,
-            })
-        );
-        this.customer = customer;
+
         //@TODO Optimize the above by making fetching businessWallet,
         // currency, chargeStack, maybe customer and wallet from just one trip
         // to the database (for wallet funding, or essentials for wallet funding)
@@ -184,7 +192,7 @@ export class TransactionResolver implements TransactionResolverInterface {
             senderPaid,
             settledAmount,
             transactionType: "credit",
-            customerId: customer.id,
+            customerId: this.customer.id,
             reference: this.transactionData.reference,
             provider: this.provider,
             senderWalletId: this.wallet.id,
@@ -248,5 +256,17 @@ export class TransactionResolver implements TransactionResolverInterface {
             session: this.session,
         });
         await this._deps.incrementWalletBalance(data);
+    };
+
+    updateCustomer = async () => {
+        const data = new UpdateCustomerDto({
+            id: this.customer.id,
+            name: this.transactionData.customerName,
+            firstName: this.transactionData.customerFirstName,
+            lastName: this.transactionData.customerLastName,
+            phone: this.transactionData.customerPhone,
+        });
+
+        await this._deps.updateCustomer(data, this.session);
     };
 }

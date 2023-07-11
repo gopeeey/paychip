@@ -122,6 +122,16 @@ export class PaystackRepo implements PaymentProviderRepoInterface {
                 reference,
                 walletId: this.extractIdentifierFromEmail(data.customer.email),
                 amount: this.convertAmountToPlatform(data.amount),
+                customerName: data.customer.first_name + " " + data.customer.last_name,
+                customerFirstName: data.customer.first_name,
+                customerLastName: data.customer.last_name,
+                customerPhone: data.customer.phone
+                    ? `${
+                          data.customer.metadata?.calling_code
+                              ? data.customer.metadata.calling_code
+                              : ""
+                      }${data.customer.phone}`
+                    : null,
             });
 
             return dto;

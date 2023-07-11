@@ -120,6 +120,8 @@ CREATE TABLE "customers" (
     "id" VARCHAR(60) PRIMARY KEY NOT NULL,
     "businessId" INTEGER NOT NULL,
     "name" VARCHAR(100),
+    "firstName" VARCHAR(50),
+    "lastName" VARCHAR(50),
     "email" VARCHAR(100) NOT NULL,
     "phone" VARCHAR(20),
     "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
