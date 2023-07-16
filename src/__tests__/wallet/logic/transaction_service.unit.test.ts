@@ -3,7 +3,7 @@ import {
     TransactionService,
     TransactionServiceDependencies,
     UpdateTransactionInfoDto,
-} from "@transaction/logic";
+} from "@wallet/logic";
 import { sessionMock } from "src/__tests__/helpers/mocks";
 import { transactionData, transactionJson } from "src/__tests__/helpers/samples";
 

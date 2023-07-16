@@ -1,4 +1,3 @@
-import { TransactionModelInterface } from "./interfaces";
 import {
     TransactionServiceDependencies,
     TransactionServiceInterface,

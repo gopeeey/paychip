@@ -1,5 +1,5 @@
-import { createTransactionQuery } from "@transaction/data";
-import { CreateTransactionDto, TransactionModelInterface } from "@transaction/logic";
+import { createTransactionQuery } from "@wallet/data";
+import { CreateTransactionDto, TransactionModelInterface } from "@wallet/logic";
 import { generateId } from "src/utils";
 import { customerJson, customerSeeder, getACustomer } from "./customer.samples";
 import { businessWalletJson, getAWallet, walletJson, walletSeeder } from "./wallet.samples";

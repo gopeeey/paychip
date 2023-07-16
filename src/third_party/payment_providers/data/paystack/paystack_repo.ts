@@ -3,7 +3,7 @@ import {
     PaymentProviderRepoInterface,
     VerifyTransactionResponseDto,
 } from "@third_party/payment_providers/logic";
-import { TransactionChannelType } from "@transaction/logic";
+import { TransactionChannelType } from "@wallet/logic";
 import generalConfig from "src/config";
 import { HttpClient, HttpError, logError, encodeHex, decodeHex } from "src/utils";
 import {

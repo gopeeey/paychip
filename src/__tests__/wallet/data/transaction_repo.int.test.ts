@@ -1,13 +1,13 @@
 import { runQuery } from "@db/postgres";
 import * as dbModule from "../../../db/postgres/service";
 import { PgSession } from "@db/postgres";
-import { TransactionRepo } from "@transaction/data";
+import { TransactionRepo } from "@wallet/data";
 import {
     CreateTransactionDto,
     TransactionModelInterface,
     TransactionStatusType,
     UpdateTransactionInfoDto,
-} from "@transaction/logic";
+} from "@wallet/logic";
 import SQL from "sql-template-strings";
 import {
     getABusinessWallet,

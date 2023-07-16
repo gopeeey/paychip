@@ -3,20 +3,16 @@ import {
     TransactionResolverDependencies,
     TransactionResolverInterface,
     WalletModelInterface,
+    TransactionModelInterface,
 } from "./interfaces";
 import { TransactionResolutionError } from "./errors";
-import {
-    CreateTransactionDto,
-    TransactionModelInterface,
-    UpdateTransactionInfoDto,
-} from "@transaction/logic";
 import {
     CustomerModelInterface,
     GetSingleBusinessCustomerDto,
     UpdateCustomerDto,
 } from "@customer/logic";
 import { SessionInterface } from "@bases/logic";
-import { IncrementBalanceDto } from "./dtos";
+import { IncrementBalanceDto, CreateTransactionDto, UpdateTransactionInfoDto } from "./dtos";
 
 export class TransactionResolver implements TransactionResolverInterface {
     reference: string;

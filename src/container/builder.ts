@@ -3,8 +3,7 @@ import { BusinessRepo } from "@business/data";
 import { ChargesRepo } from "@charges/data";
 import { CountryRepo } from "@country/data";
 import { CurrencyRepo } from "@currency/data";
-import { WalletRepo } from "@wallet/data";
-import { TransactionRepo } from "@transaction/data";
+import { WalletRepo, TransactionRepo } from "@wallet/data";
 import { PaystackRepo } from "@third_party/payment_providers/data";
 import { CustomerRepo } from "@customer/data";
 
@@ -13,8 +12,7 @@ import { BusinessService } from "@business/logic";
 import { ChargesService } from "@charges/logic";
 import { CountryService } from "@country/logic";
 import { CurrencyService } from "@currency/logic";
-import { WalletService } from "@wallet/logic";
-import { TransactionService } from "@transaction/logic";
+import { WalletService, TransactionService } from "@wallet/logic";
 import { PaymentProviderService } from "@third_party/payment_providers/logic";
 import { CustomerService } from "@customer/logic";
 

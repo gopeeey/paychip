@@ -38,7 +38,6 @@
             "@country/*": ["./src/country/*"],
             "@currency/*": ["./src/currency/*"],
             "@customer/*": ["./src/customer/*"],
-            "@transaction/*": ["./src/transaction/*"],
             "@wallet/*": ["./src/wallet/*"],
             "@bases/*": ["./src/bases/*"],
             "@third_party/*": ["./src/third_party/*"],

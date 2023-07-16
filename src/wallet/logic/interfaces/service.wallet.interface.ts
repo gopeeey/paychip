@@ -14,7 +14,7 @@ import {
     ChargesServiceInterface,
     WalletChargeStackModelInterface,
 } from "@charges/logic";
-import { TransactionServiceInterface } from "@transaction/logic";
+import { TransactionServiceInterface } from "@wallet/logic";
 import {
     PaymentProviderService,
     PaymentProviderServiceInterface,

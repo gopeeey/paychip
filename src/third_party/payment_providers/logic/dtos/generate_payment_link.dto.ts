@@ -1,4 +1,4 @@
-import { TransactionChannelType } from "@transaction/logic";
+import { TransactionChannelType } from "@wallet/logic";
 
 type ArgsType = {
     amount: number;

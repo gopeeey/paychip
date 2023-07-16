@@ -2,7 +2,7 @@ import {
     TransactionModelInterface,
     TransactionStatusType,
     UpdateTransactionInfoDto,
-} from "@transaction/logic";
+} from "@wallet/logic";
 import SQL from "sql-template-strings";
 
 interface CreateTransactionArgType extends Omit<TransactionModelInterface, "channel"> {

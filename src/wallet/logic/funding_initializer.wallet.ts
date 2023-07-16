@@ -1,10 +1,12 @@
 import { InternalError } from "@bases/logic";
-import { InitializeFundingDto, GetUniqueWalletDto } from "./dtos";
+import { InitializeFundingDto, GetUniqueWalletDto, CreateTransactionDto } from "./dtos";
 import { InvalidFundingData } from "./errors";
 import {
     WalletModelInterface,
     WalletServiceDependencies,
     WalletServiceInterface,
+    TransactionModelInterface,
+    TransactionServiceInterface,
 } from "./interfaces";
 import { CustomerModelInterface, GetSingleBusinessCustomerDto } from "@customer/logic";
 import { CurrencyModelInterface } from "@currency/logic";
@@ -13,11 +15,6 @@ import {
     ChargesCalculationResultDto,
     ChargesServiceInterface,
 } from "@charges/logic";
-import {
-    CreateTransactionDto,
-    TransactionModelInterface,
-    TransactionServiceInterface,
-} from "@transaction/logic";
 import config from "src/config";
 import { PaymentProviderServiceInterface } from "@third_party/payment_providers/logic/interfaces/service.payment_provider.interface";
 import { SessionInterface } from "@bases/logic";

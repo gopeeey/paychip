@@ -2,7 +2,7 @@ import { WalletModelInterface, WalletModelInterfaceDef, WalletRepoInterface } fr
 import { generateId } from "src/utils";
 import { Pool } from "pg";
 import { PgBaseRepo } from "@db/postgres";
-import * as queries from "./queries";
+import * as queries from "./wallet_queries";
 import { runQuery } from "@db/postgres";
 import { PgSession } from "@db/postgres";
 

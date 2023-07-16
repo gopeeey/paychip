@@ -1,8 +1,8 @@
-import { TransactionModelInterface, TransactionRepoInterface } from "@transaction/logic";
+import { TransactionModelInterface, TransactionRepoInterface } from "@wallet/logic";
 import { generateId } from "src/utils";
 import { PgBaseRepo } from "@db/postgres";
 import { Pool } from "pg";
-import * as queries from "./queries";
+import * as queries from "./transaction_queries";
 import { runQuery } from "@db/postgres";
 import { PgSession } from "@db/postgres";
 import { SessionInterface } from "@bases/logic";

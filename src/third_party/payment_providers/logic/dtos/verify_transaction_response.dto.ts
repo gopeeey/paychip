@@ -1,5 +1,5 @@
 import { CustomerModelInterface } from "@customer/logic";
-import { TransactionModelInterface } from "@transaction/logic";
+import { TransactionModelInterface } from "@wallet/logic";
 
 type ArgsType = {
     status: "successful" | "failed";
