@@ -6,7 +6,7 @@
   "scripts": {
     "prepare": "npx ts-patch install -s",
     "test": "jest --watch",
-    "test:int": "cross-env NODE_ENV=test jest --runInBand --config ./jest.int-config.js",
+    "test:int": "cross-env NODE_ENV=test jest --runInBand --config ./jest.int-config.ts",
     "test:clearCache": "jest --clearCache",
     "dev": "cross-env NODE_ENV=development nodemon",
     "build": "rm -rf build/ && tsc",

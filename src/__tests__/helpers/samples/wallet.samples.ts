@@ -3,7 +3,7 @@ import { DbWallet, createWalletQuery } from "@wallet/data";
 import { SeedingError } from "../test_utils";
 import { generateId } from "src/utils";
 import { Pool } from "pg";
-import { getABusiness } from "./business.samples";
+import { businessSeeder, getABusiness } from "./business.samples";
 import { getACountry } from "./country.samples";
 import { runQuery } from "@db/postgres";
 import SQL from "sql-template-strings";
@@ -112,6 +112,7 @@ export const getABusinessWalletByBusinessId = async (
 };
 
 export const walletSeeder = async (pool: Pool) => {
+    await businessSeeder(pool);
     const business = await getABusiness(pool);
     const country = await getACountry(pool, business.countryCode);
 
