@@ -44,6 +44,18 @@ export const getByIdQuery = (id: WalletModelInterface["id"]) => {
     `;
 };
 
+export const getByIdWithBusinessWalletQuery = (id: WalletModelInterface["id"]) => {
+    return SQL`
+        SELECT json_build_object(
+            'wallet', w,
+            'businessWallet', bw
+        ) AS "walletWithBusinessWallet"
+        FROM "wallets" AS w
+        LEFT OUTER JOIN "wallets" AS bw ON w."businessWalletId" = bw.id
+        WHERE w.id = ${id};
+    `;
+};
+
 export const getUniqueQuery = (unique: GetUniqueWalletDto) => {
     return SQL`
         SELECT * FROM "wallets" 

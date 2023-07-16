@@ -63,6 +63,7 @@ const deps: { [key in keyof Omit<WalletServiceDependencies, "repo" | "imdsServic
         findTransactionByReference: jest.fn(),
         updateTransactionInfo: jest.fn(),
         updateCustomer: jest.fn(),
+        sendEmail: jest.fn(),
     };
 
 const walletService = new WalletService({
@@ -118,6 +119,30 @@ describe("TESTING WALLET SERVICE", () => {
                 await expect(async () => walletService.getWalletById(id)).rejects.toThrow(
                     new WalletNotFoundError(id)
                 );
+            });
+        });
+    });
+
+    describe(">>> getWalletByIdWithBusinessWallet", () => {
+        describe("given the wallet exists", () => {
+            it("should return a wallet object", async () => {
+                walletRepoMock.getByIdWithBusinessWallet.mockResolvedValue(walletJson);
+                const id = walletJson.id;
+                const wallet = await walletService.getWalletByIdWithBusinessWallet(id);
+                expect(wallet).toBeDefined();
+                expect(wallet.id).toBe(id);
+                expect(walletRepoMock.getByIdWithBusinessWallet).toHaveBeenCalledTimes(1);
+                expect(walletRepoMock.getByIdWithBusinessWallet).toHaveBeenCalledWith(id);
+            });
+        });
+
+        describe("given the wallet does not exist", () => {
+            it("should throw a wallet not found error", async () => {
+                walletRepoMock.getByIdWithBusinessWallet.mockResolvedValue(null);
+                const id = "someId";
+                await expect(async () =>
+                    walletService.getWalletByIdWithBusinessWallet(id)
+                ).rejects.toThrow(new WalletNotFoundError(id));
             });
         });
     });
@@ -195,7 +220,7 @@ describe("TESTING WALLET SERVICE", () => {
                 getBusinessWallet: walletService.getBusinessWalletByCurrency,
                 getCurrency: deps.getCurrency,
                 getOrCreateCustomer: deps.getOrCreateCustomer,
-                getWalletById: walletService.getWalletById,
+                getWalletByIdWithBusinessWallet: walletService.getWalletByIdWithBusinessWallet,
                 getWalletChargeStack: deps.getWalletChargeStack,
                 incrementWalletBalance: walletService.incrementBalance,
                 provider,
@@ -206,6 +231,7 @@ describe("TESTING WALLET SERVICE", () => {
                 verifyTransactionFromProvider: deps.verifyTransactionFromProvider,
                 imdsService: imdsServiceMock,
                 updateCustomer: deps.updateCustomer,
+                sendEmail: deps.sendEmail,
             };
             await walletService.resolveTransaction({ provider, reference });
 

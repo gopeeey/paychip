@@ -17,6 +17,7 @@ import {
 import { TransactionServiceInterface } from "@wallet/logic";
 import { PaymentProviderService, PaymentProviderServiceInterface } from "@payment_providers/logic";
 import { CustomerServiceInterface } from "@customer/logic";
+import { NotificationServiceInterface } from "@notifications/logic";
 
 export interface WalletServiceInterface {
     createWallet: (
@@ -25,6 +26,9 @@ export interface WalletServiceInterface {
     ) => Promise<WalletModelInterface>;
 
     getWalletById: (id: WalletModelInterface["id"]) => Promise<WalletModelInterface>;
+    getWalletByIdWithBusinessWallet: (
+        id: WalletModelInterface["id"]
+    ) => Promise<WalletModelInterface>;
     getUniqueWallet: (uniqueData: GetUniqueWalletDto) => Promise<WalletModelInterface>;
     initializeFunding: (fundingDto: InitializeFundingDto) => Promise<string>;
     resolveTransaction: (resolveTransactionDto: ResolveTransactionDto) => Promise<void>;
@@ -54,4 +58,5 @@ export interface WalletServiceDependencies {
     verifyTransactionFromProvider: PaymentProviderServiceInterface["verifyTransaction"];
     updateTransactionInfo: TransactionServiceInterface["updateTransactionInfo"];
     updateCustomer: CustomerServiceInterface["updateCustomer"];
+    sendEmail: NotificationServiceInterface["sendEmail"];
 }

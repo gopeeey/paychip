@@ -13,6 +13,7 @@ import {
 } from "@customer/logic";
 import { SessionInterface } from "@bases/logic";
 import { IncrementBalanceDto, CreateTransactionDto, UpdateTransactionInfoDto } from "./dtos";
+import { SendEmailDto } from "@notifications/logic";
 
 export class TransactionResolver implements TransactionResolverInterface {
     reference: string;
@@ -21,6 +22,7 @@ export class TransactionResolver implements TransactionResolverInterface {
     declare transaction: TransactionModelInterface;
     declare customer: CustomerModelInterface;
     declare wallet: WalletModelInterface;
+    businessWallet?: WalletModelInterface | null;
     session: SessionInterface | undefined;
     lock?: string | null;
 
@@ -46,9 +48,8 @@ export class TransactionResolver implements TransactionResolverInterface {
 
             await this.commitSessionChanges();
             await this.endSession();
+            await this.sendNotifications();
             await this.releaseLock();
-
-            //@TODO send credit notifications (email) to the wallet and business wallet email
         } catch (err) {
             await this.endSession();
             await this.releaseLock();
@@ -102,7 +103,10 @@ export class TransactionResolver implements TransactionResolverInterface {
     };
 
     getWallet = async () => {
-        this.wallet = await this._deps.getWalletById(this.transactionData.walletId);
+        this.wallet = await this._deps.getWalletByIdWithBusinessWallet(
+            this.transactionData.walletId
+        );
+        this.businessWallet = this.wallet.parentWallet;
     };
 
     getOrCreateCustomer = async () => {
@@ -132,11 +136,6 @@ export class TransactionResolver implements TransactionResolverInterface {
     };
 
     createTransaction = async () => {
-        // Fetch business wallet
-        const businessWallet = await this._deps.getBusinessWallet(
-            this.wallet.businessId,
-            this.wallet.currency
-        );
         // Fetch the currency
         const currency = await this._deps.getCurrency(this.wallet.currency);
         // Fetch wallet charge stack
@@ -162,11 +161,11 @@ export class TransactionResolver implements TransactionResolverInterface {
             // businessChargesPaidBy:
             //     chargeStack?.paidBy || businessWallet.w_fundingChargesPaidBy,
             businessChargesPaidBy: "wallet",
-            businessChargeStack: businessWallet.w_fundingCs || [],
+            businessChargeStack: this.businessWallet?.w_fundingCs || [],
             customWalletChargeStack: chargeStack?.charges || null,
             // platformChargesPaidBy: businessWallet.fundingChargesPaidBy,
             platformChargesPaidBy: "wallet",
-            platformChargeStack: businessWallet.customFundingCs || currency?.fundingCs || [],
+            platformChargeStack: this.businessWallet?.customFundingCs || currency?.fundingCs || [],
             transactionType: "credit",
             waiveBusinessCharges: this.wallet.waiveFundingCharges,
         });
@@ -179,7 +178,7 @@ export class TransactionResolver implements TransactionResolverInterface {
             businessGot,
             businessId: this.wallet.businessId,
             businessPaid,
-            bwId: businessWallet.id,
+            bwId: this.businessWallet?.id,
             channel: this.transactionData.channel,
             currency: this.wallet.currency,
             platformCharge,
@@ -264,5 +263,24 @@ export class TransactionResolver implements TransactionResolverInterface {
         });
 
         await this._deps.updateCustomer(data, this.session);
+    };
+
+    sendNotifications = async () => {
+        await this._deps.sendEmail(
+            new SendEmailDto({
+                to: this.wallet.email,
+                template: "wallet_credit",
+                data: { amount: this.transaction.amount },
+            })
+        );
+
+        if (this.businessWallet)
+            await this._deps.sendEmail(
+                new SendEmailDto({
+                    to: this.businessWallet.email,
+                    template: "business_wallet_credit",
+                    data: { amount: this.transaction.businessGot },
+                })
+            );
     };
 }

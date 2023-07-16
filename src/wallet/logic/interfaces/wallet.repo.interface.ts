@@ -10,6 +10,10 @@ export interface WalletRepoInterface {
 
     getById: (id: WalletModelInterface["id"]) => Promise<WalletModelInterface | null>;
 
+    getByIdWithBusinessWallet: (
+        id: WalletModelInterface["id"]
+    ) => Promise<WalletModelInterface | null>;
+
     getUnique: (getUniqueDto: GetUniqueWalletDto) => Promise<WalletModelInterface | null>;
 
     getBusinessWalletByCurrency: (

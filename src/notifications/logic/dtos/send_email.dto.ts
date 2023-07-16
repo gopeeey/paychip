@@ -1,4 +1,9 @@
-import { WalletCreditEmailTemplateDto, WalletDebitEmailTemplateDto } from "./email_template_dtos";
+import {
+    BusinessWalletCreditEmailTemplateDto,
+    BusinessWalletDebitEmailTemplateDto,
+    WalletCreditEmailTemplateDto,
+    WalletDebitEmailTemplateDto,
+} from "./email_template_dtos";
 
 interface BaseProps {
     to: string;
@@ -14,7 +19,21 @@ interface WalletDebitProps extends BaseProps {
     data: WalletDebitEmailTemplateDto;
 }
 
-type Props = WalletCreditProps | WalletDebitProps;
+interface BusinessWalletCreditProps extends BaseProps {
+    template: "business_wallet_credit";
+    data: BusinessWalletCreditEmailTemplateDto;
+}
+
+interface BusinessWalletDebitProps extends BaseProps {
+    template: "business_wallet_debit";
+    data: BusinessWalletDebitEmailTemplateDto;
+}
+
+type Props =
+    | WalletCreditProps
+    | WalletDebitProps
+    | BusinessWalletCreditProps
+    | BusinessWalletDebitProps;
 
 export class SendEmailDto {
     to: Props["to"];

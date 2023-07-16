@@ -1,5 +1,6 @@
 import { ChargesCalculationResultDto } from "@charges/logic";
 import { GetSingleBusinessCustomerDto, UpdateCustomerDto } from "@customer/logic";
+import { SendEmailDto } from "@notifications/logic";
 import { VerifyTransactionResponseDto } from "@payment_providers/logic";
 import { TransactionModelInterface, UpdateTransactionInfoDto } from "@wallet/logic";
 import {
@@ -27,7 +28,7 @@ const deps: {
     createTransaction: jest.fn(),
     findTransactionByReference: jest.fn(),
     verifyTransactionFromProvider: jest.fn(),
-    getWalletById: jest.fn(),
+    getWalletByIdWithBusinessWallet: jest.fn(),
     calculateCharges: jest.fn(),
     getBusinessWallet: jest.fn(),
     getCurrency: jest.fn(),
@@ -37,6 +38,7 @@ const deps: {
     updateTransactionInfo: jest.fn(),
     incrementWalletBalance: jest.fn(),
     updateCustomer: jest.fn(),
+    sendEmail: jest.fn(),
 };
 
 const reference = transactionJson.reference;
@@ -77,7 +79,7 @@ const imdsLock = "something";
 const mockAll = () => {
     deps.verifyTransactionFromProvider.mockResolvedValue(providerTransaction);
     deps.findTransactionByReference.mockResolvedValue(transactionJson);
-    deps.getWalletById.mockResolvedValue(walletJson);
+    deps.getWalletByIdWithBusinessWallet.mockResolvedValue(walletJson);
     deps.getBusinessWallet.mockResolvedValue(businessWalletJson);
     deps.getCurrency.mockResolvedValue(currencyJson);
     deps.createTransaction.mockResolvedValue(transactionJson);
@@ -125,8 +127,8 @@ describe("TESTING PAYMENT RESOLVER", () => {
             it("should fetch the associated wallet", async () => {
                 mockAll();
                 await resolver.exec();
-                expect(deps.getWalletById).toHaveBeenCalledTimes(1);
-                expect(deps.getWalletById).toHaveBeenCalledWith(walletJson.id);
+                expect(deps.getWalletByIdWithBusinessWallet).toHaveBeenCalledTimes(1);
+                expect(deps.getWalletByIdWithBusinessWallet).toHaveBeenCalledWith(walletJson.id);
             });
 
             it("should fetch the customer", async () => {
@@ -154,7 +156,6 @@ describe("TESTING PAYMENT RESOLVER", () => {
                         expect.objectContaining({ amount: transactionJson.amount }),
                         sessionMock
                     );
-                    expect(deps.getBusinessWallet).toHaveBeenCalledTimes(1);
                     expect(deps.getCurrency).toHaveBeenCalledTimes(1);
                     expect(deps.getWalletChargeStack).toHaveBeenCalledTimes(1);
                 });
@@ -235,6 +236,53 @@ describe("TESTING PAYMENT RESOLVER", () => {
                     }),
                     sessionMock
                 );
+            });
+
+            describe("given the wallet does not have a parent", () => {
+                it("should send notifications to wallet email", async () => {
+                    mockAll();
+                    await resolver.exec();
+                    expect(deps.sendEmail).toHaveBeenCalledTimes(1);
+                    expect(deps.sendEmail).toHaveBeenCalledWith(
+                        new SendEmailDto({
+                            data: { amount: transactionJson.amount },
+                            to: walletJson.email,
+                            template: "wallet_credit",
+                        })
+                    );
+                });
+            });
+
+            describe("given the wallet has a parent wallet", () => {
+                it("should send notifications to wallet email and business wallet email", async () => {
+                    mockAll();
+                    const buffWallet = {
+                        ...walletJson,
+                        businessWalletId: walletJson.id,
+                        parentWallet: { ...walletJson, email: "theking@email.com" },
+                    };
+                    deps.getWalletByIdWithBusinessWallet.mockResolvedValue(buffWallet);
+                    await resolver.exec();
+                    const firstCall = deps.sendEmail.mock.calls[0];
+                    const secondCall = deps.sendEmail.mock.calls[1];
+                    expect(deps.sendEmail).toHaveBeenCalledTimes(2);
+
+                    expect(firstCall[0]).toEqual(
+                        new SendEmailDto({
+                            to: walletJson.email,
+                            template: "wallet_credit",
+                            data: { amount: transactionJson.amount },
+                        })
+                    );
+
+                    expect(secondCall[0]).toEqual(
+                        new SendEmailDto({
+                            to: buffWallet.parentWallet.email,
+                            template: "business_wallet_credit",
+                            data: { amount: transactionJson.businessGot },
+                        })
+                    );
+                });
             });
         });
 

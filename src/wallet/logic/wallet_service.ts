@@ -33,6 +33,13 @@ export class WalletService implements WalletServiceInterface {
         return wallet;
     };
 
+    getWalletByIdWithBusinessWallet: WalletServiceInterface["getWalletByIdWithBusinessWallet"] =
+        async (id) => {
+            const wallet = await this._repo.getByIdWithBusinessWallet(id);
+            if (!wallet) throw new WalletNotFoundError(id);
+            return wallet;
+        };
+
     getUniqueWallet: WalletServiceInterface["getUniqueWallet"] = async (uniqueData) => {
         const wallet = await this._repo.getUnique(uniqueData);
         if (!wallet) throw new WalletNotFoundError(uniqueData);
@@ -78,7 +85,7 @@ export class WalletService implements WalletServiceInterface {
             getBusinessWallet: this.getBusinessWalletByCurrency,
             getCurrency: this._dep.getCurrency,
             getOrCreateCustomer: this._dep.getOrCreateCustomer,
-            getWalletById: this.getWalletById,
+            getWalletByIdWithBusinessWallet: this.getWalletByIdWithBusinessWallet,
             getWalletChargeStack: this._dep.getWalletChargeStack,
             incrementWalletBalance: this.incrementBalance,
             provider: data.provider,
@@ -87,6 +94,7 @@ export class WalletService implements WalletServiceInterface {
             updateTransactionInfo: this._dep.updateTransactionInfo,
             verifyTransactionFromProvider: this._dep.verifyTransactionFromProvider,
             updateCustomer: this._dep.updateCustomer,
+            sendEmail: this._dep.sendEmail,
         });
         await resolver.exec();
     };

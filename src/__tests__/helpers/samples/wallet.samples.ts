@@ -82,15 +82,16 @@ export const standardWallet = new StandardWalletDto(walletJson);
 export const standardBusinessWallet = new StandardWalletDto(businessWalletJson);
 
 export const getAWallet = async (pool: Pool, id?: WalletModelInterface["id"]) => {
-    let query = SQL`SELECT * FROM "wallets" LIMIT 1;`;
-    if (id) query = SQL`SELECT * FROM "wallets" WHERE "id" = ${id} LIMIT 1;`;
+    let query = SQL`SELECT * FROM "wallets" WHERE "isBusinessWallet" = false LIMIT 1;`;
+    if (id)
+        query = SQL`SELECT * FROM "wallets" WHERE "id" = ${id} AND "isBusinessWallet" = false LIMIT 1;`;
     const res = await runQuery<DbWallet>(query, pool);
     const wallet = res.rows[0];
     if (!wallet) throw new SeedingError("No wallets found");
     return wallet;
 };
 
-export const getABusinessWallet = async (pool: Pool, id?: WalletModelInterface["id"]) => {
+export const getABusinessWallet = async (pool: Pool, id?: WalletModelInterface["id"] | null) => {
     let query = SQL`SELECT * FROM "wallets" WHERE "isBusinessWallet" = true LIMIT 1;`;
     if (id)
         query = SQL`SELECT * FROM "wallets" WHERE "id" = ${id} AND "isBusinessWallet" = true LIMIT 1;`;

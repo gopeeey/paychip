@@ -1,6 +1,6 @@
 type Props = { amount: number; name?: string };
 
-export class WalletCreditEmailTemplateDto {
+export class BusinessWalletDebitEmailTemplateDto {
     amount: Props["amount"];
     name?: Props["name"];
 

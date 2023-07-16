@@ -24,14 +24,6 @@ const pool = DBSetup(walletSeeder);
 
 const walletRepo = new WalletRepo(pool);
 
-const getBC = async () => {
-    const business = await getABusiness(pool);
-    const country = await getACountry(pool, business.countryCode);
-    const currency = await getACurrency(pool, country.currencyCode);
-
-    return { business, currency };
-};
-
 describe("TESTING WALLET REPO", () => {
     describe(">>> create", () => {
         it("should persist and return the wallet", async () => {
@@ -134,6 +126,40 @@ describe("TESTING WALLET REPO", () => {
         describe("Given the wallet does not exist", () => {
             it("should return null", async () => {
                 const wallet = await walletRepo.getById("lofi");
+                expect(wallet).toBeNull();
+            });
+        });
+    });
+
+    describe(">>> getByIdWithBusinessWallet", () => {
+        describe("Given the wallet exists", () => {
+            describe("Given the wallet has a busines wallet", () => {
+                it("should return a wallet json object with the parentWallet", async () => {
+                    const existing = await getAWallet(pool);
+                    const existingBw = await getABusinessWallet(pool, existing.businessWalletId);
+                    const { createdAt: some, ...parsed } = walletRepo.parseWallet(existing);
+                    const { createdAt: thing, ...parsedBw } = walletRepo.parseWallet(existingBw);
+                    const wallet = await walletRepo.getByIdWithBusinessWallet(existing.id);
+                    if (!wallet) throw new Error("wallet not found");
+                    expect(wallet).toMatchObject({ ...parsed, parentWallet: parsedBw });
+                });
+            });
+
+            describe("Given the wallet does not have a business wallet", () => {
+                it("should return a wallet json object with the parentWallet set as null", async () => {
+                    const existing = await getABusinessWallet(pool);
+                    const { createdAt, ...parsed } = walletRepo.parseWallet(existing);
+                    parsed.parentWallet = null;
+                    const wallet = await walletRepo.getByIdWithBusinessWallet(existing.id);
+                    if (!wallet) throw new Error("wallet not found");
+                    expect(wallet).toMatchObject(parsed);
+                });
+            });
+        });
+
+        describe("Given the wallet does not exist", () => {
+            it("should return null", async () => {
+                const wallet = await walletRepo.getByIdWithBusinessWallet("lofi");
                 expect(wallet).toBeNull();
             });
         });

@@ -8,6 +8,7 @@ import {
     CustomerServiceInterface,
     GetSingleBusinessCustomerDto,
 } from "@customer/logic";
+import { NotificationServiceInterface } from "@notifications/logic";
 
 export interface TransactionResolverInterface {
     exec: () => Promise<void>;
@@ -21,7 +22,7 @@ export interface TransactionResolverDependencies {
     createTransaction: TransactionServiceInterface["createTransaction"];
     getOrCreateCustomer: (data: GetSingleBusinessCustomerDto) => Promise<CustomerModelInterface>;
     findTransactionByReference: TransactionServiceInterface["findTransactionByReference"];
-    getWalletById: WalletServiceInterface["getWalletById"];
+    getWalletByIdWithBusinessWallet: WalletServiceInterface["getWalletByIdWithBusinessWallet"];
     getBusinessWallet: WalletServiceInterface["getBusinessWalletByCurrency"];
     getCurrency: WalletServiceDependencies["getCurrency"];
     getWalletChargeStack: WalletServiceDependencies["getWalletChargeStack"];
@@ -30,4 +31,5 @@ export interface TransactionResolverDependencies {
     updateTransactionInfo: TransactionServiceInterface["updateTransactionInfo"];
     incrementWalletBalance: WalletServiceInterface["incrementBalance"];
     updateCustomer: CustomerServiceInterface["updateCustomer"];
+    sendEmail: NotificationServiceInterface["sendEmail"];
 }
