@@ -1,6 +1,6 @@
 import { ChargesCalculationResultDto } from "@charges/logic";
 import { GetSingleBusinessCustomerDto, UpdateCustomerDto } from "@customer/logic";
-import { VerifyTransactionResponseDto } from "@third_party/payment_providers/logic";
+import { VerifyTransactionResponseDto } from "@payment_providers/logic";
 import { TransactionModelInterface, UpdateTransactionInfoDto } from "@wallet/logic";
 import {
     IncrementBalanceDto,

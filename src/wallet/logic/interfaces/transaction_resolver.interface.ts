@@ -1,4 +1,4 @@
-import { PaymentProviderServiceInterface } from "@third_party/payment_providers/logic";
+import { PaymentProviderServiceInterface } from "@payment_providers/logic";
 import { TransactionServiceInterface } from "@wallet/logic";
 import { WalletServiceDependencies, WalletServiceInterface } from "./service.wallet.interface";
 import { ChargesServiceInterface } from "@charges/logic";

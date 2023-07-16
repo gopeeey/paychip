@@ -16,7 +16,7 @@ import {
     ChargesServiceInterface,
 } from "@charges/logic";
 import config from "src/config";
-import { PaymentProviderServiceInterface } from "@third_party/payment_providers/logic/interfaces/service.payment_provider.interface";
+import { PaymentProviderServiceInterface } from "@payment_providers/logic/interfaces/service.payment_provider.interface";
 import { SessionInterface } from "@bases/logic";
 import * as utils from "src/utils";
 

@@ -17,7 +17,7 @@ import { businessWalletJson, walletData, walletJson } from "src/__tests__/helper
 import { SpiesObj, createSpies, sessionMock } from "src/__tests__/helpers/mocks";
 import { WalletRepo } from "@wallet/data";
 import { Pool } from "pg";
-import { VerifyTransactionResponseDto } from "@third_party/payment_providers/logic";
+import { VerifyTransactionResponseDto } from "@payment_providers/logic";
 import { ImdsInterface, SessionInterface } from "@bases/logic";
 import { TransactionMessageDto } from "@queues/transactions";
 

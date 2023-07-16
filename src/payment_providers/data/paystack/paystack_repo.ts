@@ -2,7 +2,7 @@ import {
     GeneratePaymentLinkError,
     PaymentProviderRepoInterface,
     VerifyTransactionResponseDto,
-} from "@third_party/payment_providers/logic";
+} from "@payment_providers/logic";
 import { TransactionChannelType } from "@wallet/logic";
 import generalConfig from "src/config";
 import { HttpClient, HttpError, logError, encodeHex, decodeHex } from "src/utils";

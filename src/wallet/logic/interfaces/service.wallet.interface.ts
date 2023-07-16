@@ -15,10 +15,7 @@ import {
     WalletChargeStackModelInterface,
 } from "@charges/logic";
 import { TransactionServiceInterface } from "@wallet/logic";
-import {
-    PaymentProviderService,
-    PaymentProviderServiceInterface,
-} from "@third_party/payment_providers/logic";
+import { PaymentProviderService, PaymentProviderServiceInterface } from "@payment_providers/logic";
 import { CustomerServiceInterface } from "@customer/logic";
 
 export interface WalletServiceInterface {

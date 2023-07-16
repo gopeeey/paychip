@@ -2,8 +2,8 @@ import {
     PaymentProviderService,
     PaymentProviderRepoInterface,
     VerifyTransactionResponseDto,
-} from "@third_party/payment_providers/logic";
-import { PaymentProviderServiceDependenciesInterface } from "@third_party/payment_providers/logic/interfaces/service.payment_provider.interface";
+} from "@payment_providers/logic";
+import { PaymentProviderServiceDependenciesInterface } from "@payment_providers/logic/interfaces/service.payment_provider.interface";
 
 const repoMock = {
     generatePaymentLink: jest.fn(),

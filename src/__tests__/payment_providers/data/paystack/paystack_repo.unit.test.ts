@@ -1,16 +1,16 @@
-import { PaystackRepo } from "@third_party/payment_providers/data";
+import { PaystackRepo } from "@payment_providers/data";
 import {
     GeneratePaymentLinkDto,
     GeneratePaymentLinkError,
     VerifyTransactionResponseDto,
-} from "@third_party/payment_providers/logic";
+} from "@payment_providers/logic";
 import { HttpClientInstanceMock, logErrorMock } from "src/__tests__/helpers/mocks";
 import { HttpError, PostRequestArgsInterface, encodeHex } from "src/utils";
 import * as utilFuncs from "src/utils/functions";
 import config from "src/config";
 import { walletJson } from "src/__tests__/helpers/samples";
 
-jest.mock("../../../../../utils/http_client/client", () => ({
+jest.mock("../../../../utils/http_client/client", () => ({
     HttpClient: jest.fn(() => HttpClientInstanceMock),
 }));
 

@@ -2,7 +2,7 @@ import { BaseController, StandardControllerType } from "@bases/web";
 import { createHmac } from "crypto";
 import config from "src/config";
 import { sendResponse } from "src/utils";
-import { VerifyTransactionResponseInterface } from "@third_party/payment_providers/data";
+import { VerifyTransactionResponseInterface } from "@payment_providers/data";
 import { TransactionMessageDto, TransactionQueueInterface } from "@queues/transactions";
 
 type PaystackBodyType = {

@@ -4,7 +4,7 @@ import { ChargesRepo } from "@charges/data";
 import { CountryRepo } from "@country/data";
 import { CurrencyRepo } from "@currency/data";
 import { WalletRepo, TransactionRepo } from "@wallet/data";
-import { PaystackRepo } from "@third_party/payment_providers/data";
+import { PaystackRepo } from "@payment_providers/data";
 import { CustomerRepo } from "@customer/data";
 
 import { AccountService } from "@accounts/logic";
@@ -13,7 +13,7 @@ import { ChargesService } from "@charges/logic";
 import { CountryService } from "@country/logic";
 import { CurrencyService } from "@currency/logic";
 import { WalletService, TransactionService } from "@wallet/logic";
-import { PaymentProviderService } from "@third_party/payment_providers/logic";
+import { PaymentProviderService } from "@payment_providers/logic";
 import { CustomerService } from "@customer/logic";
 
 import { RedisService } from "@db/redis";

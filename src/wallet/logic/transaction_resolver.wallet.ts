@@ -1,4 +1,4 @@
-import { VerifyTransactionResponseDto } from "@third_party/payment_providers/logic";
+import { VerifyTransactionResponseDto } from "@payment_providers/logic";
 import {
     TransactionResolverDependencies,
     TransactionResolverInterface,
