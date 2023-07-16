@@ -2,7 +2,6 @@ import { CreateWalletDto, StandardWalletDto, WalletModelInterface } from "@walle
 import { DbWallet, createWalletQuery } from "@wallet/data";
 import { SeedingError } from "../test_utils";
 import { generateId } from "src/utils";
-import { bwJson, bwSeeder } from "./business_wallet.samples";
 import { Pool } from "pg";
 import { getABusiness } from "./business.samples";
 import { getACountry } from "./country.samples";
@@ -113,7 +112,6 @@ export const getABusinessWalletByBusinessId = async (
 };
 
 export const walletSeeder = async (pool: Pool) => {
-    await bwSeeder(pool);
     const business = await getABusiness(pool);
     const country = await getACountry(pool, business.countryCode);
 
