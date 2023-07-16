@@ -44,6 +44,7 @@
             "@third_party/*": ["./src/third_party/*"],
             "@db/*": ["./src/db/*"],
             "@queues/*": ["./src/queues/*"],
+            "@notifications/*": ["./src/notifications/*"],
             "src/*": ["./src/*"]
         },
         "plugins": [

@@ -49,6 +49,10 @@ describe("Testing PaymentProviderService", () => {
                     reference,
                     amount: 5000,
                     walletId: "sdlkfjs",
+                    customerFirstName: "Sam",
+                    customerLastName: "Person",
+                    customerName: "Sam Person",
+                    customerPhone: "+1234567890",
                 });
 
                 repoMock.verifyTransaction.mockResolvedValue(vtDto);

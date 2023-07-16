@@ -1,9 +1,8 @@
 import { TransactionMessageDto } from "@queues/transactions";
 import { RabbitTaskQueue } from "@queues/task_queues";
 import { Channel, Connection, Message, Options as AmqpOptions } from "amqplib";
-import * as amqpImp from "amqplib/callback_api";
+import amqp from "amqplib";
 import config from "src/config";
-const amqp = require("amqplib/callback_api") as typeof amqpImp;
 
 const rabbitConfig = config.thirdParty.rabbitMq;
 const queueName = "transactions";
@@ -38,21 +37,13 @@ const channelMock: {
 };
 
 const connectionMock = {
-    createChannel: jest.fn((callback: (err: unknown, channel: typeof channelMock) => void) => {
-        callback(null, channelMock);
-    }),
-    close: jest.fn(),
+    createChannel: jest.fn(async () => channelMock),
+    close: jest.fn(async () => null),
 };
 
-const connectImpl = (
-    url: string | AmqpOptions.Connect,
-    callback: (err: unknown, conn: Connection) => Promise<void>
-) => {
-    callback(null, connectionMock as unknown as Connection);
-};
 const amqpConnectSpy = jest
     .spyOn(amqp, "connect")
-    .mockImplementation(connectImpl as unknown as (...args: unknown[]) => any);
+    .mockImplementation(async () => connectionMock as unknown as Connection);
 
 const concurrency = 1;
 const queue = new RabbitTaskQueue({ name: queueName, concurrency });
@@ -66,16 +57,12 @@ describe("TESTING TRANSACTIONS QUEUE RABBITMQ WRAPPER", () => {
         it("should connect to the rabbitmq server", async () => {
             await queue.publish(message);
             expect(amqpConnectSpy).toHaveBeenCalledTimes(1);
-            expect(amqpConnectSpy).toHaveBeenCalledWith(
-                rabbitConfig.connectionUrl,
-                expect.anything()
-            );
+            expect(amqpConnectSpy).toHaveBeenCalledWith(rabbitConfig.connectionUrl);
         });
 
         it("should create a channel", async () => {
             await queue.publish(message);
             expect(connectionMock.createChannel).toHaveBeenCalledTimes(1);
-            expect(connectionMock.createChannel).toHaveBeenCalledWith(expect.anything());
         });
 
         it("should assert the queue with the correct name", async () => {
@@ -105,35 +92,31 @@ describe("TESTING TRANSACTIONS QUEUE RABBITMQ WRAPPER", () => {
     });
 
     describe(">>> consume", () => {
-        it("should connect to the rabbitmq server", () => {
+        it("should connect to the rabbitmq server", async () => {
             queue.consume(consumeCallbackMock);
             expect(amqpConnectSpy).toHaveBeenCalledTimes(1);
-            expect(amqpConnectSpy).toHaveBeenCalledWith(
-                rabbitConfig.connectionUrl,
-                expect.anything()
-            );
+            expect(amqpConnectSpy).toHaveBeenCalledWith(rabbitConfig.connectionUrl);
         });
 
-        it("should create a channel", () => {
-            queue.consume(consumeCallbackMock);
+        it("should create a channel", async () => {
+            await queue.consume(consumeCallbackMock);
             expect(connectionMock.createChannel).toHaveBeenCalledTimes(1);
-            expect(connectionMock.createChannel).toHaveBeenCalledWith(expect.anything());
         });
 
-        it("should set the proper prefetch value", () => {
-            queue.consume(consumeCallbackMock);
+        it("should set the proper prefetch value", async () => {
+            await queue.consume(consumeCallbackMock);
             expect(channelMock.prefetch).toHaveBeenCalledTimes(1);
             expect(channelMock.prefetch).toHaveBeenCalledWith(concurrency);
         });
 
-        it("should assert the queue with the correct name", () => {
-            queue.consume(consumeCallbackMock);
+        it("should assert the queue with the correct name", async () => {
+            await queue.consume(consumeCallbackMock);
             expect(channelMock.assertQueue).toHaveBeenCalledTimes(1);
             expect(channelMock.assertQueue).toHaveBeenCalledWith(queueName, queueOptions);
         });
 
-        it("should call the consume method on the channel", () => {
-            queue.consume(consumeCallbackMock);
+        it("should call the consume method on the channel", async () => {
+            await queue.consume(consumeCallbackMock);
             expect(channelMock.consume).toHaveBeenCalledTimes(1);
             expect(channelMock.consume).toHaveBeenCalledWith(
                 queueName,
@@ -142,8 +125,8 @@ describe("TESTING TRANSACTIONS QUEUE RABBITMQ WRAPPER", () => {
             );
         });
 
-        it("should call the consume callback with the message and acknowledge it", () => {
-            queue.consume(consumeCallbackMock);
+        it("should call the consume callback with the message and acknowledge it", async () => {
+            await queue.consume(consumeCallbackMock);
             expect(consumeCallbackMock).toHaveBeenCalledTimes(1);
             expect(consumeCallbackMock).toHaveBeenCalledWith(
                 JSON.parse(queueMsgMock.content.toString())
@@ -155,7 +138,7 @@ describe("TESTING TRANSACTIONS QUEUE RABBITMQ WRAPPER", () => {
         describe("given the callback throws an error", () => {
             it("should negatively acknowledge the message", async () => {
                 consumeCallbackMock.mockRejectedValue(new Error("Hi"));
-                queue.consume(consumeCallbackMock);
+                await queue.consume(consumeCallbackMock);
                 expect(channelMock.nack).toHaveBeenCalledTimes(1);
                 expect(channelMock.nack).toHaveBeenCalledWith(queueMsgMock);
             });
