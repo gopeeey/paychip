@@ -23,7 +23,7 @@ import { DependencyContainerInterface } from "./dependencies.container";
 import { AuthMiddleware } from "@bases/web";
 
 // queues
-import { RabbitTransactionQueue, TransactionMessageDto } from "@queues/transactions";
+import { RabbitTransactionQueue } from "@queues/transactions";
 
 export const buildContainer = async (pool: Pool) => {
     // imds
