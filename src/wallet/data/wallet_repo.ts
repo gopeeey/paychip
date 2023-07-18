@@ -84,7 +84,6 @@ export class WalletRepo extends PgBaseRepo implements WalletRepoInterface {
         const res = await runQuery<{
             walletWithBusinessWallet: { wallet: DbWallet; businessWallet: DbWallet | null };
         }>(queries.getByIdWithBusinessWalletQuery(id), this._pool);
-        console.log("\n\n\n\nHERE", res.rows);
         if (!res.rows.length) return null;
         const row = res.rows[0].walletWithBusinessWallet;
         const wallet = this.parseWallet(row.wallet);

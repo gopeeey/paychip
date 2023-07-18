@@ -5,6 +5,7 @@ import { CountryRepo } from "@country/data";
 import { CurrencyRepo } from "@currency/data";
 import { WalletRepo, TransactionRepo } from "@wallet/data";
 import { PaystackRepo } from "@payment_providers/data";
+import { FakeEmailProvider } from "@notifications/data";
 import { CustomerRepo } from "@customer/data";
 
 import { AccountService } from "@accounts/logic";
@@ -15,7 +16,7 @@ import { CurrencyService } from "@currency/logic";
 import { WalletService, TransactionService } from "@wallet/logic";
 import { PaymentProviderService } from "@payment_providers/logic";
 import { CustomerService } from "@customer/logic";
-
+import { NotificationService } from "@notifications/logic";
 import { RedisService } from "@db/redis";
 
 import { Pool } from "pg";
@@ -32,7 +33,10 @@ export const buildContainer = async (pool: Pool) => {
     // queues
     const transactionQueue = new RabbitTransactionQueue();
 
-    // accounts
+    const fakeEmailProvider = new FakeEmailProvider();
+    const notificationService = new NotificationService({ emailProvider: fakeEmailProvider });
+
+    // ...
     const accountRepo = new AccountRepo(pool);
     const accountService = new AccountService({ repo: accountRepo });
 
@@ -70,6 +74,7 @@ export const buildContainer = async (pool: Pool) => {
         updateTransactionInfo: transactionService.updateTransactionInfo,
         verifyTransactionFromProvider: paymentProviderService.verifyTransaction,
         updateCustomer: customerService.updateCustomer,
+        sendEmail: notificationService.sendEmail,
     });
 
     const businessRepo = new BusinessRepo(pool);
