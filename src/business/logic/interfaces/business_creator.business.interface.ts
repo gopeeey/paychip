@@ -2,11 +2,9 @@ import { CreateBusinessDto } from "../dtos";
 import { BusinessModelInterface } from "./business.model.interface";
 import { BusinessRepoInterface } from "./business.repo.interface";
 import { CountryModelInterface } from "@country/logic";
-import { CurrencyServiceInterface } from "@currency/logic";
-import { CreateWalletDto, WalletModelInterface, WalletServiceInterface } from "@wallet/logic";
+import { CreateWalletDto, WalletModelInterface } from "@wallet/logic";
 import { AccountModelInterface } from "@accounts/logic";
 import { SessionInterface } from "@bases/logic";
-import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@business_wallet/logic";
 
 export interface BusinessCreatorInterface {
     create: () => Promise<BusinessModelInterface>;
@@ -21,7 +19,7 @@ export interface BusinessCreatorDependencies {
         countryCode: BusinessModelInterface["countryCode"]
     ) => Promise<CountryModelInterface>;
     createBusinessWallet: (
-        createBusinessWalletDto: CreateBusinessWalletDto,
+        createBusinessWalletDto: CreateWalletDto,
         session: SessionInterface
-    ) => Promise<BusinessWalletModelInterface>;
+    ) => Promise<WalletModelInterface>;
 }

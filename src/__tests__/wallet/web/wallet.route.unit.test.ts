@@ -70,13 +70,12 @@ describe("TESTING WALLET ROUTES", () => {
             describe("Given valid data", () => {
                 it("should return a standard wallet dto", async () => {
                     walletService.createWallet.mockResolvedValue(walletJson);
-                    const { businessId, businessWalletId, ...form } = walletData;
+                    const { businessId, businessWalletId, isBusinessWallet, ...form } = walletData;
                     const { statusCode, body } = await testApp
                         .post(route)
                         .send(form)
                         .set({ Authorization: businessLevelToken });
 
-                    console.log("\n\n\nBODY:", body);
                     expect(statusCode).toBe(201);
                     expect(body).toHaveProperty("message");
                     expect(body).toHaveProperty("data.wallet", standardWallet);
@@ -84,7 +83,7 @@ describe("TESTING WALLET ROUTES", () => {
                 });
             });
 
-            // Return 400 when the country is not supported
+            // @TODO: Return 400 when the country is not supported
         },
         { middlewareDeps }
     );
@@ -134,7 +133,6 @@ describe("TESTING WALLET ROUTES", () => {
                         .send(form)
                         .set({ Authorization: businessLevelToken });
 
-                    console.log("\n\n\nBODY:", body);
                     expect(statusCode).toBe(200);
                     expect(body).toHaveProperty("message");
                     expect(body).toHaveProperty("data.fundingLink", fundingLink);

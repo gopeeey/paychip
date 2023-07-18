@@ -71,3 +71,7 @@ export const validateBusinessObjectId = (strings: string[], businessId: number) 
     const valid = strings.every((str) => str.endsWith(businessId.toString()));
     if (!valid) throw new PermissionDeniedError();
 };
+
+export const encodeHex = (str: string) => Buffer.from(str).toString("hex");
+
+export const decodeHex = (hex: string) => Buffer.from(hex, "hex").toString();

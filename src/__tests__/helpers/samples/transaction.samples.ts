@@ -1,18 +1,19 @@
-import { createTransactionQuery } from "@transaction/data";
-import { CreateTransactionDto, TransactionModelInterface } from "@transaction/logic";
+import { createTransactionQuery } from "@wallet/data";
+import { CreateTransactionDto, TransactionModelInterface } from "@wallet/logic";
 import { generateId } from "src/utils";
 import { customerJson, customerSeeder, getACustomer } from "./customer.samples";
-import { getAWallet, walletJson, walletSeeder } from "./wallet.samples";
-import { bwJson } from "./business_wallet.samples";
+import { businessWalletJson, getAWallet, walletJson, walletSeeder } from "./wallet.samples";
 import { Pool } from "pg";
 import { runQuery } from "@db/postgres";
+import SQL from "sql-template-strings";
+import { SeedingError } from "../test_utils";
 
 export const transactionData = new CreateTransactionDto({
     customerId: customerJson.complete.id,
     businessId: walletJson.businessId,
     transactionType: "credit",
     currency: "NGN",
-    bwId: bwJson.id,
+    bwId: businessWalletJson.id,
     channel: "bank",
     amount: 2000,
     settledAmount: 1800,
@@ -47,7 +48,6 @@ export const transactionSeeder = async (pool: Pool) => {
 
     await customerSeeder(pool, wallet.businessId, wallet.id);
     const customer = await getACustomer(pool);
-    console.log("\n\n\nTHIS IS THE CUSTOMER", customer);
 
     const data = new CreateTransactionDto({
         ...transactionData,
@@ -62,18 +62,14 @@ export const transactionSeeder = async (pool: Pool) => {
         channel: "bank",
         id: generateId(wallet.businessId),
     });
-    console.log("\n\n\nTHIS IS THE QUERY", query);
     await runQuery(query, pool);
+};
 
-    // await Transaction.bulkCreate([
-    //     {
-    //         ...data,
-    //         id: generateId(wallet.businessId),
-    //     },
-    //     {
-    //         ...data,
-    //         customerId: customer.id,
-    //         id: generateId(wallet.businessId),
-    //     },
-    // ]);
+export const getATransaction = async (pool: Pool, id?: TransactionModelInterface["id"]) => {
+    let query = SQL`SELECT * FROM "transactions" LIMIT 1;`;
+    if (id) query = SQL`SELECT * FROM "transactions" WHERE "id" = ${id} LIMIT 1;`;
+    const res = await runQuery<TransactionModelInterface>(query, pool);
+    const wallet = res.rows[0];
+    if (!wallet) throw new SeedingError("No wallets found");
+    return wallet;
 };

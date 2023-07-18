@@ -7,14 +7,13 @@ import {
 } from "./interfaces";
 import { DuplicateWalletError } from "./errors";
 import { SessionInterface } from "@bases/logic";
-import { BusinessWalletModelInterface } from "@business_wallet/logic";
 
 export class WalletCreator implements WalletCreatorInterface {
     private declare createWalletDto: CreateWalletDto;
     private declare _repo: WalletRepoInterface;
     private declare session?: SessionInterface;
     private declare wallet: WalletModelInterface;
-    private declare businessWallet: BusinessWalletModelInterface;
+    private businessWallet?: WalletModelInterface;
 
     constructor(private readonly _dep: WalletCreatorDependencies) {
         this.createWalletDto = this._dep.dto;
@@ -30,19 +29,26 @@ export class WalletCreator implements WalletCreatorInterface {
     }
 
     private checkExists = async () => {
-        const { businessId, email, currency } = this.createWalletDto;
-        const existing = await this._repo.getUnique({ businessId, email, currency });
-        if (existing) throw new DuplicateWalletError({ businessId, email, currency });
+        const { businessId, email, currency, isBusinessWallet } = this.createWalletDto;
+        const existing = await this._repo.getUnique({
+            businessId,
+            email,
+            currency,
+            isBusinessWallet,
+        });
+        if (existing)
+            throw new DuplicateWalletError({ businessId, email, currency, isBusinessWallet });
     };
 
     private fetchBusinessWallet = async () => {
+        if (this.createWalletDto.isBusinessWallet) return;
         const { businessId, currency } = this.createWalletDto;
         this.businessWallet = await this._dep.getBusinessWallet(businessId, currency);
     };
 
     private persistWallet = async () => {
         this.wallet = await this._repo.create(
-            { ...this.createWalletDto, businessWalletId: this.businessWallet.id },
+            { ...this.createWalletDto, businessWalletId: this.businessWallet?.id },
             this.session
         );
     };

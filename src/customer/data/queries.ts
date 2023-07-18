@@ -1,6 +1,7 @@
 import {
     CustomerModelInterface,
     GetSingleBusinessCustomerDto,
+    UpdateCustomerDto,
     WalletCustomerModelInterface,
 } from "@customer/logic";
 import SQL from "sql-template-strings";
@@ -8,11 +9,13 @@ import SQL from "sql-template-strings";
 export const createCustomerQuery = (customer: CustomerModelInterface) => {
     return SQL`
         INSERT INTO "customers" 
-        ("id", "businessId", "name", "email", "phone") 
+        ("id", "businessId", "name", "firstName", "lastName", "email", "phone") 
         VALUES (
             ${customer.id}, 
             ${customer.businessId}, 
             ${customer.name}, 
+            ${customer.firstName},
+            ${customer.lastName},
             ${customer.email}, 
             ${customer.phone}
         ) RETURNING *;
@@ -37,5 +40,16 @@ export const getSingleBusinessCustomerQuery = (data: GetSingleBusinessCustomerDt
     SELECT * FROM "customers"
      WHERE "businessId" = ${data.businessId} 
      AND "email" = ${data.email};
+    `;
+};
+
+export const updateCustomerQuery = (data: UpdateCustomerDto) => {
+    return SQL`
+        UPDATE "customers" SET 
+        "name" = ${data.name}, 
+        "firstName" = ${data.firstName},
+        "lastName" = ${data.lastName},
+        "phone" = ${data.phone}
+        WHERE "id" = ${data.id};
     `;
 };

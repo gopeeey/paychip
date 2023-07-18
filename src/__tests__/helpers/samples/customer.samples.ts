@@ -12,6 +12,8 @@ import { WalletModelInterface } from "@wallet/logic";
 export const customerData = {
     complete: new CreateCustomerDto({
         name: "Samuel Customer",
+        firstName: "Samuel",
+        lastName: "Customer",
         email: "sammygopeh@gmail.com",
         phone: "+23412345678",
         businessId: 1234,

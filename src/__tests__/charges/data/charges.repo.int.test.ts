@@ -54,6 +54,7 @@ describe("TESTING CHARGES REPO", () => {
 
             const chargeStack = await chargesRepo.createChargeStack(data, session);
             await session.commit();
+            await session.end();
 
             if (!chargeStack) throw new Error("Did not return charge stack");
             const res = await runQuery<DbChargeStack>(

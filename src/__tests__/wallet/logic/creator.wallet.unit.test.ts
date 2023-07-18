@@ -2,7 +2,7 @@ import { WalletRepo } from "@wallet/data";
 import { WalletCreator, WalletCreatorDependencies, DuplicateWalletError } from "@wallet/logic";
 import { Pool } from "pg";
 import { createSpies, sessionMock } from "src/__tests__/helpers/mocks";
-import { bwJson, walletData, walletJson } from "src/__tests__/helpers/samples";
+import { businessWalletJson, walletData, walletJson } from "src/__tests__/helpers/samples";
 
 const dep = {
     dto: walletData,
@@ -16,7 +16,7 @@ const walletCreator = new WalletCreator(dep as unknown as WalletCreatorDependenc
 const mockAll = () => {
     dep.repo.create.mockResolvedValue(walletJson);
     dep.repo.getUnique.mockResolvedValue(null);
-    dep.getBusinessWallet.mockResolvedValue(bwJson);
+    dep.getBusinessWallet.mockResolvedValue(businessWalletJson);
 };
 
 describe("TESTING WALLET CREATOR", () => {
@@ -28,6 +28,7 @@ describe("TESTING WALLET CREATOR", () => {
             businessId: walletData.businessId,
             currency: walletData.currency,
             email: walletData.email,
+            isBusinessWallet: walletData.isBusinessWallet,
         });
     });
 

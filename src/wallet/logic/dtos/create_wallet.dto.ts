@@ -3,19 +3,18 @@ import { WalletModelInterface } from "../interfaces";
 
 type RequiredProps = PickWithOptional<
     WalletModelInterface,
-    | "businessId"
+    "businessId" | "currency" | "email",
     | "businessWalletId"
-    | "currency"
-    | "email"
+    | "isBusinessWallet"
     | "waiveFundingCharges"
     | "waiveWithdrawalCharges"
     | "waiveWalletInCharges"
-    | "waiveWalletOutCharges",
-    "fundingChargesPaidBy" | "withdrawalChargesPaidBy"
+    | "waiveWalletOutCharges"
 >;
 
 export class CreateWalletDto implements RequiredProps {
     businessId: RequiredProps["businessId"];
+    isBusinessWallet: RequiredProps["isBusinessWallet"];
     businessWalletId: RequiredProps["businessWalletId"];
     currency: RequiredProps["currency"];
     email: RequiredProps["email"];
@@ -23,27 +22,24 @@ export class CreateWalletDto implements RequiredProps {
     waiveWithdrawalCharges: RequiredProps["waiveWithdrawalCharges"];
     waiveWalletInCharges: RequiredProps["waiveWalletInCharges"];
     waiveWalletOutCharges: RequiredProps["waiveWalletOutCharges"];
-    fundingChargesPaidBy: RequiredProps["fundingChargesPaidBy"];
-    withdrawalChargesPaidBy: RequiredProps["withdrawalChargesPaidBy"];
 
     constructor({
-        fundingChargesPaidBy = null,
-        withdrawalChargesPaidBy = null,
         waiveFundingCharges = false,
         waiveWithdrawalCharges = false,
         waiveWalletInCharges = false,
         waiveWalletOutCharges = false,
+        isBusinessWallet = false,
+        businessWalletId = null,
         ...body
     }: RequiredProps) {
         this.businessId = body.businessId;
-        this.businessWalletId = body.businessWalletId;
+        this.businessWalletId = businessWalletId;
         this.currency = body.currency;
         this.email = body.email;
+        this.isBusinessWallet = isBusinessWallet;
         this.waiveFundingCharges = waiveFundingCharges;
         this.waiveWithdrawalCharges = waiveWithdrawalCharges;
         this.waiveWalletInCharges = waiveWalletInCharges;
         this.waiveWalletOutCharges = waiveWalletOutCharges;
-        this.fundingChargesPaidBy = fundingChargesPaidBy;
-        this.withdrawalChargesPaidBy = withdrawalChargesPaidBy;
     }
 }

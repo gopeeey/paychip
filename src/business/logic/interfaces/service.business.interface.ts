@@ -4,7 +4,7 @@ import { BusinessModelInterface } from "./business.model.interface";
 import { AccountModelInterface } from "@accounts/logic";
 import { CountryServiceInterface } from "@country/logic";
 import { SessionInterface } from "@bases/logic";
-import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@business_wallet/logic";
+import { CreateWalletDto, WalletModelInterface } from "@wallet/logic";
 
 export interface BusinessServiceInterface {
     createBusiness: (
@@ -26,8 +26,8 @@ export interface BusinessServiceDependenciesInterface {
     startSession: () => Promise<SessionInterface>;
     getCountry: CountryServiceInterface["getByCode"];
     createBusinessWallet: (
-        createBusinessWalletDto: CreateBusinessWalletDto,
+        createBusinessWalletDto: CreateWalletDto,
         session: SessionInterface
-    ) => Promise<BusinessWalletModelInterface>;
+    ) => Promise<WalletModelInterface>;
     getAccount: (accountId: AccountModelInterface["id"]) => Promise<AccountModelInterface>;
 }

@@ -1,31 +1,42 @@
 import { AccountRepo } from "@accounts/data";
 import { BusinessRepo } from "@business/data";
-import { BusinessWalletRepo } from "@business_wallet/data";
 import { ChargesRepo } from "@charges/data";
 import { CountryRepo } from "@country/data";
 import { CurrencyRepo } from "@currency/data";
-import { WalletRepo } from "@wallet/data";
-import { TransactionRepo } from "@transaction/data";
-import { PaystackRepo } from "@third_party/payment_providers/data";
+import { WalletRepo, TransactionRepo } from "@wallet/data";
+import { PaystackRepo } from "@payment_providers/data";
+import { FakeEmailProvider } from "@notifications/data";
 import { CustomerRepo } from "@customer/data";
 
 import { AccountService } from "@accounts/logic";
 import { BusinessService } from "@business/logic";
-import { BusinessWalletService } from "@business_wallet/logic";
 import { ChargesService } from "@charges/logic";
 import { CountryService } from "@country/logic";
 import { CurrencyService } from "@currency/logic";
-import { WalletService } from "@wallet/logic";
-import { TransactionService } from "@transaction/logic";
-import { PaymentProviderService } from "@third_party/payment_providers/logic";
+import { WalletService, TransactionService } from "@wallet/logic";
+import { PaymentProviderService } from "@payment_providers/logic";
 import { CustomerService } from "@customer/logic";
+import { NotificationService } from "@notifications/logic";
+import { RedisService } from "@db/redis";
 
 import { Pool } from "pg";
 import { DependencyContainerInterface } from "./dependencies.container";
 import { AuthMiddleware } from "@bases/web";
 
+// queues
+import { RabbitTransactionQueue } from "@queues/transactions";
+
 export const buildContainer = async (pool: Pool) => {
-    // accounts
+    // imds
+    const imdsService = new RedisService();
+
+    // queues
+    const transactionQueue = new RabbitTransactionQueue();
+
+    const fakeEmailProvider = new FakeEmailProvider();
+    const notificationService = new NotificationService({ emailProvider: fakeEmailProvider });
+
+    // ...
     const accountRepo = new AccountRepo(pool);
     const accountService = new AccountService({ repo: accountRepo });
 
@@ -34,21 +45,6 @@ export const buildContainer = async (pool: Pool) => {
 
     const currencyRepo = new CurrencyRepo(pool);
     const currencyService = new CurrencyService({ repo: currencyRepo });
-
-    const businessWalletRepo = new BusinessWalletRepo(pool);
-    const businessWalletService = new BusinessWalletService({
-        repo: businessWalletRepo,
-        validateCurrencySupported: currencyService.validateIsSupported,
-    });
-
-    const businessRepo = new BusinessRepo(pool);
-    const businessService = new BusinessService({
-        repo: businessRepo,
-        getAccount: accountService.getById,
-        getCountry: countryService.getByCode,
-        startSession: businessRepo.startSession,
-        createBusinessWallet: businessWalletService.createBusinessWallet,
-    });
 
     const customerRepo = new CustomerRepo(pool);
     const customerService = new CustomerService({ repo: customerRepo });
@@ -67,13 +63,27 @@ export const buildContainer = async (pool: Pool) => {
     const walletRepo = new WalletRepo(pool);
     const walletService = new WalletService({
         repo: walletRepo,
-        getBusinessWallet: businessWalletService.getBusinessWalletByCurrency,
+        imdsService,
         getCurrency: currencyService.getCurrencyByIsoCode,
         getWalletChargeStack: chargesService.getWalletChargeStack,
         calculateCharges: chargesService.calculateTransactionCharges,
         createTransaction: transactionService.createTransaction,
         generatePaymentLink: paymentProviderService.generatePaymentLink,
         getOrCreateCustomer: customerService.getOrCreateCustomer,
+        findTransactionByReference: transactionService.findTransactionByReference,
+        updateTransactionInfo: transactionService.updateTransactionInfo,
+        verifyTransactionFromProvider: paymentProviderService.verifyTransaction,
+        updateCustomer: customerService.updateCustomer,
+        sendEmail: notificationService.sendEmail,
+    });
+
+    const businessRepo = new BusinessRepo(pool);
+    const businessService = new BusinessService({
+        repo: businessRepo,
+        getAccount: accountService.getById,
+        getCountry: countryService.getByCode,
+        startSession: businessRepo.startSession,
+        createBusinessWallet: walletService.createWallet,
     });
 
     const authMiddleware = new AuthMiddleware({ accountService, businessService });
@@ -85,7 +95,12 @@ export const buildContainer = async (pool: Pool) => {
         chargesService,
         countryService,
         walletService,
+        paymentProviderService,
+        publishTransactionTask: transactionQueue.publish,
     };
+
+    // consume queues
+    transactionQueue.consume(walletService.dequeueTransaction);
 
     return container;
 };

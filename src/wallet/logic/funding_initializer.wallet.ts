@@ -1,26 +1,22 @@
 import { InternalError } from "@bases/logic";
-import { InitializeFundingDto, GetUniqueWalletDto } from "./dtos";
+import { InitializeFundingDto, GetUniqueWalletDto, CreateTransactionDto } from "./dtos";
 import { InvalidFundingData } from "./errors";
 import {
     WalletModelInterface,
     WalletServiceDependencies,
     WalletServiceInterface,
+    TransactionModelInterface,
+    TransactionServiceInterface,
 } from "./interfaces";
 import { CustomerModelInterface, GetSingleBusinessCustomerDto } from "@customer/logic";
-import { BusinessWalletModelInterface } from "@business_wallet/logic";
 import { CurrencyModelInterface } from "@currency/logic";
 import {
     ChargeStackModelInterface,
     ChargesCalculationResultDto,
     ChargesServiceInterface,
 } from "@charges/logic";
-import {
-    CreateTransactionDto,
-    TransactionModelInterface,
-    TransactionServiceInterface,
-} from "@transaction/logic";
 import config from "src/config";
-import { PaymentProviderServiceInterface } from "@third_party/payment_providers/logic/interfaces/service.payment_provider.interface";
+import { PaymentProviderServiceInterface } from "@payment_providers/logic/interfaces/service.payment_provider.interface";
 import { SessionInterface } from "@bases/logic";
 import * as utils from "src/utils";
 
@@ -28,7 +24,7 @@ export interface FundingInitializerDependencies {
     getWalletById: WalletServiceInterface["getWalletById"];
     getUniqueWallet: WalletServiceInterface["getUniqueWallet"];
     getOrCreateCustomer: (data: GetSingleBusinessCustomerDto) => Promise<CustomerModelInterface>;
-    getBusinessWallet: WalletServiceDependencies["getBusinessWallet"];
+    getBusinessWallet: WalletServiceInterface["getBusinessWalletByCurrency"];
     getCurrency: WalletServiceDependencies["getCurrency"];
     getWalletChargeStack: WalletServiceDependencies["getWalletChargeStack"];
     calculateCharges: ChargesServiceInterface["calculateTransactionCharges"];
@@ -40,7 +36,7 @@ export interface FundingInitializerDependencies {
 export class FundingInitializer {
     private declare wallet: WalletModelInterface;
     private declare customer: CustomerModelInterface;
-    private declare businessWallet: BusinessWalletModelInterface;
+    private declare businessWallet: WalletModelInterface;
     private currency?: CurrencyModelInterface;
     private chargeStack?: ChargeStackModelInterface | null;
     private declare chargesResult: ChargesCalculationResultDto;
@@ -66,9 +62,13 @@ export class FundingInitializer {
             await this.createTransaction();
             await this.generatePaymentLink();
             await this.session.commit();
+            await this.session.end();
             return this.paymentLink;
         } catch (err) {
-            if (!this.session.ended) await this.session.rollback();
+            if (!this.session.ended) {
+                await this.session.rollback();
+                await this.session.end();
+            }
             throw err;
         }
     }
@@ -109,7 +109,7 @@ export class FundingInitializer {
 
     private async fetchCurrencyIfNeeded() {
         if (this.businessWallet.customFundingCs) return;
-        this.currency = await this._deps.getCurrency(this.businessWallet.currencyCode);
+        this.currency = await this._deps.getCurrency(this.businessWallet.currency);
     }
 
     private async fetchChargeStackIfNeeded() {
@@ -178,12 +178,12 @@ export class FundingInitializer {
     }
 
     private async generatePaymentLink() {
-        const { amount, currency, id } = this.transaction;
+        const { amount, currency, reference } = this.transaction;
         this.paymentLink = await this._deps.generatePaymentLink({
             amount,
             allowedChannels: ["bank", "card"],
             currency,
-            transactionId: id,
+            reference,
             walletId: this.wallet.id,
         });
     }

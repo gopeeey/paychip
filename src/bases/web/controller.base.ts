@@ -1,4 +1,10 @@
-import { NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
+
+export type StandardControllerType = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => Promise<void>;
 
 export class BaseController {
     handleReq = async (next: NextFunction, callback: () => Promise<void>) => {

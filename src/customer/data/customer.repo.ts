@@ -1,4 +1,4 @@
-import { CustomerModelInterface, CustomerRepoInterface } from "@customer/logic";
+import { CustomerModelInterface, CustomerRepoInterface, UpdateCustomerDto } from "@customer/logic";
 import { generateId } from "src/utils";
 import { PgBaseRepo } from "@db/postgres";
 import { Pool } from "pg";
@@ -35,5 +35,10 @@ export class CustomerRepo extends PgBaseRepo implements CustomerRepoInterface {
         const res = await runQuery<CustomerModelInterface>(query, this._pool);
         const customer = res.rows[0];
         return customer || null;
+    };
+
+    updateCustomer: CustomerRepoInterface["updateCustomer"] = async (data, session) => {
+        const query = queries.updateCustomerQuery(data);
+        await runQuery(query, this._pool, (session as PgSession)?.client);
     };
 }

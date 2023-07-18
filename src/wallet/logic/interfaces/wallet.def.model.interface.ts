@@ -1,23 +1,31 @@
 import { BaseModelInterface } from "@bases/logic";
 import { BusinessModelInterfaceDef } from "@business/logic";
-import { ChargeStackModelInterfaceDef } from "@charges/logic";
+import { ChargeInterface, PaidByType } from "@charges/logic";
 import { CurrencyModelInterfaceDef } from "@currency/logic";
-import { BusinessWalletModelInterfaceDef } from "@business_wallet/logic";
 
 export const allowedWalletTypes = ["personal", "commercial"] as const;
 
 export interface WalletModelInterfaceDef extends BaseModelInterface {
     id: string;
     businessId: BusinessModelInterfaceDef["id"];
-    businessWalletId: BusinessWalletModelInterfaceDef["id"];
+    businessWalletId?: string | null;
     currency: CurrencyModelInterfaceDef["isoCode"];
+    isBusinessWallet: boolean;
     active: boolean;
     balance: number;
     email: string;
+    customFundingCs: ChargeInterface[] | null;
+    customWithdrawalCs: ChargeInterface[] | null;
+    customWalletInCs: ChargeInterface[] | null;
+    customWalletOutCs: ChargeInterface[] | null;
     waiveFundingCharges: boolean;
     waiveWithdrawalCharges: boolean;
     waiveWalletInCharges: boolean;
     waiveWalletOutCharges: boolean;
-    fundingChargesPaidBy: ChargeStackModelInterfaceDef["paidBy"] | null | undefined;
-    withdrawalChargesPaidBy: ChargeStackModelInterfaceDef["paidBy"] | null | undefined;
+    w_fundingCs: ChargeInterface[] | null;
+    w_withdrawalCs: ChargeInterface[] | null;
+    w_walletInCs: ChargeInterface[] | null;
+    w_walletOutCs: ChargeInterface[] | null;
+    w_fundingChargesPaidBy: PaidByType | null;
+    w_withdrawalChargesPaidBy: PaidByType | null;
 }

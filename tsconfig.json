@@ -30,7 +30,7 @@
         "moduleResolution": "node" /* Specify how TypeScript looks up a file from a given module specifier. */,
         "baseUrl": "." /* Specify the base directory to resolve non-relative module names. */,
         "paths": {
-             /* Specify a set of entries that re-map imports to additional lookup locations. */
+            /* Specify a set of entries that re-map imports to additional lookup locations. */
             "@accounts/*": ["./src/accounts/*"],
             "@business/*": ["./src/business/*"],
             "@business_wallet/*": ["./src/business_wallet/*"],
@@ -38,11 +38,13 @@
             "@country/*": ["./src/country/*"],
             "@currency/*": ["./src/currency/*"],
             "@customer/*": ["./src/customer/*"],
-            "@transaction/*": ["./src/transaction/*"],
             "@wallet/*": ["./src/wallet/*"],
             "@bases/*": ["./src/bases/*"],
-            "@third_party/*": ["./src/third_party/*"],
             "@db/*": ["./src/db/*"],
+            "@queues/*": ["./src/queues/*"],
+            "@notifications/*": ["./src/notifications/*"],
+            "@monitoring/*": ["./src/monitoring/*"],
+            "@payment_providers/*": ["./src/payment_providers/*"],
             "src/*": ["./src/*"]
         },
         "plugins": [

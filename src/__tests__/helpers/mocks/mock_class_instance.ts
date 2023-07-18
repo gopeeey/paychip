@@ -1,4 +1,4 @@
-type SpiesObj<T> = { [Key in keyof T]: jest.SpiedFunction<(...args: any) => any> };
+export type SpiesObj<T> = { [Key in keyof T]: jest.SpiedFunction<(...args: any) => any> };
 export const createSpies = <T extends {}>(theClass: T) => {
     let spies: SpiesObj<T> = {} as SpiesObj<T>;
 

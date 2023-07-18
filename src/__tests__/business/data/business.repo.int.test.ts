@@ -28,6 +28,7 @@ describe("TESTING BUSINESS REPO", () => {
             const session = await PgSession.start(client);
             const business = await businessRepo.create(data, session);
             await session.commit();
+            await session.end();
             if (!business) throw new Error("Failed to persist business");
             const res = await runQuery<BusinessModelInterface>(
                 SQL`SELECT * FROM businesses WHERE id = ${business.id}`,

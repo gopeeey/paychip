@@ -1,7 +1,11 @@
-import { ValidationError } from "@bases/logic";
+import { PickWithOptional, ValidationError } from "@bases/logic";
 import { WalletModelInterface } from "../interfaces";
 
-type DuplicateWalletType = Pick<WalletModelInterface, "businessId" | "email" | "currency">;
+type DuplicateWalletType = PickWithOptional<
+    WalletModelInterface,
+    "businessId" | "email" | "currency",
+    "isBusinessWallet"
+>;
 
 export class DuplicateWalletError extends ValidationError<undefined, DuplicateWalletType> {
     constructor(data: DuplicateWalletType) {

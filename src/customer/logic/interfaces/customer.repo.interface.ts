@@ -1,5 +1,5 @@
 import { SessionInterface } from "@bases/logic";
-import { CreateCustomerDto, GetSingleBusinessCustomerDto } from "../dtos";
+import { CreateCustomerDto, GetSingleBusinessCustomerDto, UpdateCustomerDto } from "../dtos";
 import { CustomerModelInterface } from "./customer.model.interface";
 
 export interface CustomerRepoInterface {
@@ -12,4 +12,6 @@ export interface CustomerRepoInterface {
     getSingleBusinessCustomer: (
         dto: GetSingleBusinessCustomerDto
     ) => Promise<CustomerModelInterface | null>;
+
+    updateCustomer: (data: UpdateCustomerDto, session?: SessionInterface) => Promise<void>;
 }

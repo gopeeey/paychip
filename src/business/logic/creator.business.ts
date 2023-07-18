@@ -9,7 +9,7 @@ import { AccountModelInterface } from "@accounts/logic";
 import { CountryModelInterface } from "@country/logic";
 import { CurrencyModelInterface } from "@currency/logic";
 import { SessionInterface } from "@bases/logic";
-import { BusinessWalletModelInterface, CreateBusinessWalletDto } from "@business_wallet/logic";
+import { CreateWalletDto, WalletModelInterface } from "@wallet/logic";
 
 export class BusinessCreator implements BusinessCreatorInterface {
     private declare createBusinessDto: CreateBusinessDto;
@@ -18,7 +18,7 @@ export class BusinessCreator implements BusinessCreatorInterface {
     private declare country: CountryModelInterface;
     private declare business: BusinessModelInterface;
     private declare owner: AccountModelInterface;
-    private declare wallet: BusinessWalletModelInterface;
+    private declare wallet: WalletModelInterface;
     private declare currencies: CurrencyModelInterface[];
 
     constructor(private readonly _dep: BusinessCreatorDependencies) {
@@ -50,9 +50,11 @@ export class BusinessCreator implements BusinessCreatorInterface {
     };
 
     private createBusinessWallet = async () => {
-        const createBusinessWalletDto = new CreateBusinessWalletDto({
+        const createBusinessWalletDto = new CreateWalletDto({
             businessId: this.business.id,
-            currencyCode: this.country.currencyCode,
+            currency: this.country.currencyCode,
+            email: this.owner.email,
+            isBusinessWallet: true,
         });
         this.wallet = await this._dep.createBusinessWallet(createBusinessWalletDto, this.session);
     };

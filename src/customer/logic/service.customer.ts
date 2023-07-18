@@ -1,4 +1,5 @@
-import { CreateCustomerDto, GetSingleBusinessCustomerDto } from "./dtos";
+import { SessionInterface } from "@bases/logic";
+import { CreateCustomerDto, GetSingleBusinessCustomerDto, UpdateCustomerDto } from "./dtos";
 import {
     CustomerServiceInterface,
     CustomerServiceDependencies,
@@ -33,5 +34,9 @@ export class CustomerService implements CustomerServiceInterface {
         const createDto = new CreateCustomerDto(data);
         const newCustomer = await this.createCustomer(createDto);
         return newCustomer;
+    };
+
+    updateCustomer: CustomerServiceInterface["updateCustomer"] = async (data, session) => {
+        await this._repo.updateCustomer(data, session);
     };
 }

@@ -5,6 +5,6 @@ import { ChargeStackModelInterfaceDef } from "@charges/logic";
 
 export interface WalletModelInterface extends WalletModelInterfaceDef {
     business?: BusinessModelInterfaceDef;
-    parentWallet?: WalletModelInterfaceDef;
+    parentWallet?: WalletModelInterfaceDef | null;
     customers?: CustomerModelInterfaceDef[];
 }

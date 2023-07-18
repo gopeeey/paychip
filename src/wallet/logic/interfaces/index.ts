@@ -3,3 +3,8 @@ export * from "./wallet.def.model.interface";
 export * from "./wallet.model.interface";
 export * from "./wallet.repo.interface";
 export * from "./wallet_creator.wallet.interface";
+export * from "./transaction_resolver.interface";
+export * from "./service.transaction.interface";
+export * from "./transaction.def.model.interface";
+export * from "./transaction.model.interface";
+export * from "./transaction_repo.interface";

@@ -5,8 +5,8 @@ import {
     accountJson,
     businessData,
     businessJson,
-    bwData,
-    bwJson,
+    businessWalletData,
+    businessWalletJson,
     countryJson,
     walletData,
     walletJson,
@@ -29,7 +29,7 @@ const runCreator = async () => businessCreator.create();
 const mockSuccess = () => {
     dependencies.repo.create.mockResolvedValue(businessJson);
     dependencies.getCountry.mockResolvedValue(countryJson);
-    dependencies.createBusinessWallet.mockResolvedValue(bwJson);
+    dependencies.createBusinessWallet.mockResolvedValue(businessWalletJson);
     dependencies.getOwner.mockResolvedValue(accountJson);
 };
 
@@ -89,8 +89,8 @@ describe("TESTING BUSINESS CREATOR", () => {
                 expect(dependencies.createBusinessWallet).toHaveBeenCalledTimes(1);
                 expect(dependencies.createBusinessWallet).toHaveBeenCalledWith(
                     {
-                        ...bwData,
-                        currencyCode: countryJson.currencyCode,
+                        ...businessWalletData,
+                        currency: countryJson.currencyCode,
                     },
                     sessionMock
                 );
