@@ -1,3 +1,4 @@
+import { BankDetails, PaymentProviderServiceInterface } from "@payment_providers/logic";
 import { InitializeWithdrawalDto } from "./dtos";
 import {
     WalletModelInterface,
@@ -7,11 +8,13 @@ import {
 
 export interface WithdrawalInitializerDependencies {
     getWalletByIdWithBusinessWallet: WalletServiceInterface["getWalletByIdWithBusinessWallet"];
+    verifyBankDetails: PaymentProviderServiceInterface["verifyBankDetails"];
 }
 
 export class WithdrawalInitializer {
     declare wallet: WalletModelInterface;
     declare businessWallet?: WalletModelInterface | null;
+    declare bankDetails: BankDetails;
 
     constructor(
         private readonly _dto: InitializeWithdrawalDto,
@@ -20,10 +23,21 @@ export class WithdrawalInitializer {
 
     async exec() {
         await this.fetchWallet();
+        await this.verifyBankDetails();
     }
 
-    fetchWallet = async () => {
+    private fetchWallet = async () => {
         this.wallet = await this._deps.getWalletByIdWithBusinessWallet(this._dto.walletId);
         this.businessWallet = this.wallet.parentWallet;
+    };
+
+    private verifyBankDetails = async () => {
+        const { accountNumber, bankCode } = this._dto;
+        this.bankDetails = await this._deps.verifyBankDetails(
+            new BankDetails({
+                accountNumber,
+                bankCode,
+            })
+        );
     };
 }

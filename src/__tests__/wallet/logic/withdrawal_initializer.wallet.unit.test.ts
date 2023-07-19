@@ -1,3 +1,4 @@
+import { BankDetails } from "@payment_providers/logic";
 import { WalletRepo } from "@wallet/data";
 import {
     InitializeWithdrawalDto,
@@ -19,6 +20,7 @@ const dto = new InitializeWithdrawalDto({
 
 const deps: { [key in keyof WithdrawalInitializerDependencies]: jest.Mock } = {
     getWalletByIdWithBusinessWallet: jest.fn(),
+    verifyBankDetails: jest.fn(),
 };
 
 const withdrawalInitializer = new WithdrawalInitializer(dto, deps);
@@ -29,8 +31,15 @@ const testWallet = {
     businessWalletId: walletJson.id,
 };
 
+const verifiedAccountDetails = new BankDetails({
+    accountNumber: dto.accountNumber,
+    bankCode: dto.bankCode,
+    accountName: "Person Human",
+});
+
 const mockAll = () => {
     deps.getWalletByIdWithBusinessWallet.mockResolvedValue(testWallet);
+    deps.verifyBankDetails.mockResolvedValue(verifiedAccountDetails);
 };
 
 describe("TESTING WITHDRAWAL INITIALIZER", () => {
@@ -42,6 +51,14 @@ describe("TESTING WITHDRAWAL INITIALIZER", () => {
         expect(deps.getWalletByIdWithBusinessWallet).toHaveBeenCalledWith(walletJson.id);
     });
     // Verify account information
+    it("should verify the bank account details provided", async () => {
+        mockAll();
+        await withdrawalInitializer.exec();
+        expect(deps.verifyBankDetails).toHaveBeenCalledTimes(1);
+        expect(deps.verifyBankDetails).toHaveBeenCalledWith(
+            new BankDetails({ accountNumber: dto.accountNumber, bankCode: dto.bankCode })
+        );
+    });
     // Calculate charges
     // Check if wallet balance is sufficient
     // Make call to payment provider for transfer
