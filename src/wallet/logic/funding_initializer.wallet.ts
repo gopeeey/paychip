@@ -40,7 +40,8 @@ export class FundingInitializer {
     private currency?: CurrencyModelInterface;
     private chargeStack?: ChargeStackModelInterface | null;
     private declare chargesResult: ChargesCalculationResultDto;
-    private provider: TransactionModelInterface["provider"] = config.payment.currentPaymentProvider;
+    private provider: TransactionModelInterface["provider"] =
+        config.payment.currentProviders.payment;
     private declare transaction: TransactionModelInterface;
     private declare paymentLink: string;
     private declare session: SessionInterface;

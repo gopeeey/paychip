@@ -7,7 +7,7 @@ export interface PaymentProviderServiceInterface {
         reference: string,
         provider: string
     ) => Promise<VerifyTransactionResponseDto | null>;
-    // verifyBankDetails: (details: BankDetails) => Promise<BankDetails>;
+    verifyBankDetails: (details: BankDetails) => Promise<BankDetails>;
 }
 
 export interface PaymentProviderServiceDependenciesInterface {

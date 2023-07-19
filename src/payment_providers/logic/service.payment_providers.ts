@@ -4,21 +4,26 @@ import {
     PaymentProviderServiceDependenciesInterface,
     PaymentProviderServiceInterface,
 } from "./interfaces";
-import { VerifyTransactionResponseDto } from "./dtos";
+import { BankDetails, VerifyTransactionResponseDto } from "./dtos";
 
 export class PaymentProviderService implements PaymentProviderServiceInterface {
-    private readonly currentTransferProviderKey: string = config.payment.currentTransferProvider;
-    private readonly currentPaymentProviderKey: string = config.payment.currentPaymentProvider;
-    private readonly currentPaymentProvider: PaymentProviderRepoInterface;
-    private readonly currentTransferProvider: PaymentProviderRepoInterface;
+    private readonly _currents: {
+        transfer: PaymentProviderRepoInterface;
+        payment: PaymentProviderRepoInterface;
+        bankVerification: PaymentProviderRepoInterface;
+    };
 
     constructor(private readonly _providers: PaymentProviderServiceDependenciesInterface) {
-        this.currentPaymentProvider = _providers[this.currentPaymentProviderKey];
-        this.currentTransferProvider = _providers[this.currentTransferProviderKey];
+        const { payment, transfer, bankVerification } = config.payment.currentProviders;
+        this._currents = {
+            transfer: _providers[transfer],
+            payment: _providers[payment],
+            bankVerification: _providers[bankVerification],
+        };
     }
 
     generatePaymentLink: PaymentProviderServiceInterface["generatePaymentLink"] = async (data) => {
-        const link = await this.currentPaymentProvider.generatePaymentLink(data);
+        const link = await this._currents.payment.generatePaymentLink(data);
         return link;
     };
 
@@ -28,5 +33,10 @@ export class PaymentProviderService implements PaymentProviderServiceInterface {
     ) => {
         const transactionDetails = await this._providers[provider].verifyTransaction(reference);
         return transactionDetails;
+    };
+
+    verifyBankDetails: PaymentProviderServiceInterface["verifyBankDetails"] = async (details) => {
+        const verifiedDetails = await this._currents.bankVerification.verifyBankDetails(details);
+        return verifiedDetails;
     };
 }

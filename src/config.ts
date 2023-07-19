@@ -25,6 +25,7 @@ const POSTGRES_TEST_DB_PORT = process.env.POSTGRES_TEST_DB_PORT as string;
 // payment settings
 const CURRENT_PAYMENT_PROVIDER = process.env.CURRENT_PAYMENT_PROVIDER as string;
 const CURRENT_TRANSFER_PROVIDER = process.env.CURRENT_TRANSFER_PROVIDER as string;
+const CURRENT_BANK_VERIFICATION_PROVIDER = process.env.CURRENT_BANK_VERIFICATION_PROVIDER as string;
 
 // third party keys
 // paystack
@@ -70,6 +71,11 @@ const paymentSettings = {
     currentPaymentProvider: CURRENT_PAYMENT_PROVIDER,
     currentTransferProvider: CURRENT_TRANSFER_PROVIDER,
     providerErrorMessage: "Payment provider error",
+    currentProviders: {
+        transfer: CURRENT_TRANSFER_PROVIDER,
+        payment: CURRENT_PAYMENT_PROVIDER,
+        bankVerification: CURRENT_BANK_VERIFICATION_PROVIDER,
+    },
 };
 
 const thirdParty = {

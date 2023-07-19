@@ -2,12 +2,14 @@ import {
     PaymentProviderService,
     PaymentProviderRepoInterface,
     VerifyTransactionResponseDto,
+    BankDetails,
 } from "@payment_providers/logic";
 import { PaymentProviderServiceDependenciesInterface } from "@payment_providers/logic/interfaces/service.payment_provider.interface";
 
-const repoMock = {
+const repoMock: { [key in keyof PaymentProviderRepoInterface]: jest.Mock } = {
     generatePaymentLink: jest.fn(),
     verifyTransaction: jest.fn(),
+    verifyBankDetails: jest.fn(),
 };
 
 const deps = { aProvider: repoMock } as unknown as PaymentProviderServiceDependenciesInterface;
@@ -69,6 +71,27 @@ describe("Testing PaymentProviderService", () => {
                 const response = await service.verifyTransaction("some", testProvider);
                 expect(response).toBeNull();
             });
+        });
+    });
+
+    describe(">>> verifyBankDetails", () => {
+        const input = new BankDetails({
+            accountNumber: "1234567890",
+            bankCode: "011",
+        });
+        const output = new BankDetails({ ...input, accountName: "Bank Customer" });
+
+        it("should call the correct method on the correct repo with the details passed", async () => {
+            repoMock.verifyBankDetails.mockResolvedValue(output);
+            await service.verifyBankDetails(input);
+            expect(repoMock.verifyBankDetails).toHaveBeenCalledTimes(1);
+            expect(repoMock.verifyBankDetails).toHaveBeenCalledWith(input);
+        });
+
+        it("should return the response from the repo", async () => {
+            repoMock.verifyBankDetails.mockResolvedValue(output);
+            const result = await service.verifyBankDetails(input);
+            expect(result).toEqual(output);
         });
     });
 });
