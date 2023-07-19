@@ -1,7 +1,9 @@
 import { PaystackRepo } from "@payment_providers/data";
 import {
+    BankDetails,
     GeneratePaymentLinkDto,
     GeneratePaymentLinkError,
+    InvalidBankDetails,
     VerifyTransactionResponseDto,
 } from "@payment_providers/logic";
 import { HttpClientInstanceMock, logErrorMock } from "src/__tests__/helpers/mocks";
@@ -9,6 +11,7 @@ import { HttpError, PostRequestArgsInterface, encodeHex } from "src/utils";
 import * as utilFuncs from "src/utils/functions";
 import config from "src/config";
 import { walletJson } from "src/__tests__/helpers/samples";
+import { InternalError } from "@bases/logic";
 
 jest.mock("../../../../utils/http_client/client", () => ({
     HttpClient: jest.fn(() => HttpClientInstanceMock),
@@ -273,6 +276,66 @@ describe("Testing PaystackRepo", () => {
                     message: "Error verifying transaction from paystack: " + err.message,
                     channels: ["console", "external"],
                 });
+            });
+        });
+    });
+
+    describe(">>> verifyBankDetails", () => {
+        const input = new BankDetails({
+            accountNumber: "1234567890",
+            bankCode: "011",
+        });
+        const output = new BankDetails({ ...input, accountName: "Bank Customer" });
+
+        const paystackRes = {
+            status: true,
+            message: "Account number resolved",
+            data: {
+                account_number: "1234567890",
+                account_name: "Bank Customer",
+                bank_id: 7,
+            },
+        };
+
+        const mockSuccess = () => {
+            HttpClientInstanceMock.get.mockResolvedValue(paystackRes);
+        };
+
+        describe("given the request to the provider succeeds", () => {
+            it("should return a bank details object", async () => {
+                mockSuccess();
+                const details = await paystackRepo.verifyBankDetails(input);
+                expect(details).toEqual(output);
+                expect(HttpClientInstanceMock.get).toHaveBeenCalledTimes(1);
+                expect(HttpClientInstanceMock.get).toHaveBeenCalledWith(
+                    `/bank/resolve?account_number=${input.accountNumber}&bank_code=${input.bankCode}`
+                );
+            });
+        });
+
+        describe("given the request to the provider fails with a 422", () => {
+            it("should throw an invalid bank details error", async () => {
+                const err = new HttpError({
+                    message: "Could not resolve account name. Check parameters or try again.",
+                    statusCode: 422,
+                });
+                HttpClientInstanceMock.get.mockRejectedValue(err);
+                await expect(() => paystackRepo.verifyBankDetails(input)).rejects.toThrow(
+                    InvalidBankDetails
+                );
+            });
+        });
+
+        describe("given the request to the provider fails with any other error code", () => {
+            it("should throw an internal error", async () => {
+                const err = new HttpError({
+                    message: "Gateway Timeout",
+                    statusCode: 504,
+                });
+                HttpClientInstanceMock.get.mockRejectedValue(err);
+                await expect(() => paystackRepo.verifyBankDetails(input)).rejects.toThrow(
+                    InternalError
+                );
             });
         });
     });

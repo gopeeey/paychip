@@ -59,7 +59,7 @@ export class FundingInitializer {
             await this.fetchCurrencyIfNeeded();
             await this.fetchChargeStackIfNeeded();
             this.calculateChargesAndAmounts();
-            await this.createTransaction();
+            await this.createTransaction(); // @TODO: Generate payment link before creating transaction
             await this.generatePaymentLink();
             await this.session.commit();
             await this.session.end();

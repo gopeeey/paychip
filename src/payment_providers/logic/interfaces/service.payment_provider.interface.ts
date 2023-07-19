@@ -1,4 +1,4 @@
-import { GeneratePaymentLinkDto, VerifyTransactionResponseDto } from "../dtos";
+import { BankDetails, GeneratePaymentLinkDto, VerifyTransactionResponseDto } from "../dtos";
 import { PaymentProviderRepoInterface } from "./payment_provider_repo.interface";
 
 export interface PaymentProviderServiceInterface {
@@ -7,6 +7,7 @@ export interface PaymentProviderServiceInterface {
         reference: string,
         provider: string
     ) => Promise<VerifyTransactionResponseDto | null>;
+    // verifyBankDetails: (details: BankDetails) => Promise<BankDetails>;
 }
 
 export interface PaymentProviderServiceDependenciesInterface {

@@ -6,3 +6,4 @@ export * from "./errors";
 export * from "./funding_initializer.wallet";
 export * from "./transaction_resolver.wallet";
 export * from "./transaction_service";
+export * from "./withdrawal_initializer.wallet";

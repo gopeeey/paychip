@@ -1,5 +1,7 @@
 import {
+    BankDetails,
     GeneratePaymentLinkError,
+    InvalidBankDetails,
     PaymentProviderRepoInterface,
     VerifyTransactionResponseDto,
 } from "@payment_providers/logic";
@@ -8,8 +10,10 @@ import generalConfig from "src/config";
 import { HttpClient, HttpError, logError, encodeHex, decodeHex } from "src/utils";
 import {
     InitializeTransactionResponseInterface,
+    VerifyBankDetailsResponseInterface,
     VerifyTransactionResponseInterface,
 } from "./interfaces";
+import { InternalError } from "@bases/logic";
 
 type PaystackChannelMapType = {
     [key: string]: Exclude<TransactionChannelType, "wallet">;
@@ -140,6 +144,34 @@ export class PaystackRepo implements PaymentProviderRepoInterface {
             if (err instanceof HttpError) message += ": " + err.message;
             logError({ error: err, message, channels: ["console", "external"] });
             return null;
+        }
+    };
+
+    verifyBankDetails: PaymentProviderRepoInterface["verifyBankDetails"] = async (details) => {
+        try {
+            const response = await this.client.get<VerifyBankDetailsResponseInterface>(
+                `/bank/resolve?account_number=${details.accountNumber}&bank_code=${details.bankCode}`
+            );
+
+            const data = response.data;
+            const verifiedDetails = new BankDetails({
+                accountName: data.account_name,
+                accountNumber: data.account_number,
+                bankCode: details.bankCode,
+            });
+
+            return verifiedDetails;
+        } catch (err) {
+            if (err instanceof HttpError) {
+                if (err.statusCode === 422) {
+                    throw new InvalidBankDetails();
+                }
+            }
+
+            throw new InternalError("Error verifying bank details from provider", {
+                ...details,
+                provider: "paystack",
+            });
         }
     };
 }

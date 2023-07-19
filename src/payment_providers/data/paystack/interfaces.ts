@@ -45,3 +45,10 @@ export interface VerifyTransactionResponseInterface extends BaseResponseInterfac
         };
     };
 }
+
+export interface VerifyBankDetailsResponseInterface extends BaseResponseInterface {
+    data: {
+        account_number: string;
+        account_name: string;
+    };
+}
