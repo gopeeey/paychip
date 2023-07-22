@@ -3,6 +3,7 @@ import { BankDetails } from "@payment_providers/logic";
 import { WalletRepo } from "@wallet/data";
 import {
     InitializeWithdrawalDto,
+    InsufficientWalletBalanceError,
     WithdrawalInitializer,
     WithdrawalInitializerDependencies,
 } from "@wallet/logic";
@@ -44,7 +45,8 @@ const withdrawalInitializer = new WithdrawalInitializer(dto, deps);
 
 const testWallet = {
     ...walletJson,
-    parentWallet: { ...walletJson, customFundingCs: [] },
+    balance: 4000,
+    parentWallet: { ...walletJson, balance: 4000, customFundingCs: [] },
     businessWalletId: walletJson.id,
 };
 
@@ -58,7 +60,7 @@ const mockAll = () => {
     deps.getWalletByIdWithBusinessWallet.mockResolvedValue(testWallet);
     deps.verifyBankDetails.mockResolvedValue(verifiedAccountDetails);
     deps.getWalletChargeStack.mockResolvedValue(chargeStackJson.wallet);
-    deps.calculateCharges.mockResolvedValue(chargeCalculationResult);
+    deps.calculateCharges.mockReturnValue(chargeCalculationResult);
     deps.getCurrency.mockResolvedValue(currencyJson);
 };
 
@@ -68,7 +70,7 @@ describe("TESTING WITHDRAWAL INITIALIZER", () => {
         mockAll();
         await withdrawalInitializer.exec();
         expect(deps.getWalletByIdWithBusinessWallet).toHaveBeenCalledTimes(1);
-        expect(deps.getWalletByIdWithBusinessWallet).toHaveBeenCalledWith(walletJson.id);
+        expect(deps.getWalletByIdWithBusinessWallet).toHaveBeenCalledWith(testWallet.id);
     });
 
     // Verify account information
@@ -86,16 +88,16 @@ describe("TESTING WITHDRAWAL INITIALIZER", () => {
         mockAll();
         await withdrawalInitializer.exec();
         expect(deps.getWalletChargeStack).toHaveBeenCalledTimes(1);
-        expect(deps.getWalletChargeStack).toHaveBeenCalledWith(walletJson.id, "withdrawal");
+        expect(deps.getWalletChargeStack).toHaveBeenCalledWith(testWallet.id, "withdrawal");
     });
 
     describe("given the fetched businessWallet has no customerFunding ChargeStack", () => {
         it("should fetch the currency", async () => {
             mockAll();
             deps.getWalletByIdWithBusinessWallet.mockResolvedValue({
-                ...walletJson,
-                parentWallet: { ...walletJson, customFundingCs: null },
-                businessWalletId: walletJson.id,
+                ...testWallet,
+                parentWallet: { ...testWallet, customFundingCs: null },
+                businessWalletId: testWallet.id,
             });
             await withdrawalInitializer.exec();
             expect(deps.getCurrency).toHaveBeenCalledTimes(1);
@@ -118,13 +120,38 @@ describe("TESTING WITHDRAWAL INITIALIZER", () => {
                 platformChargesPaidBy: "wallet",
                 platformChargeStack: [],
                 transactionType: "debit",
-                waiveBusinessCharges: walletJson.waiveWithdrawalCharges,
+                waiveBusinessCharges: testWallet.waiveWithdrawalCharges,
             })
         );
     });
 
     // Check if wallet balance is sufficient
+    describe("given the wallet balance is not sufficient to make the transaction", () => {
+        it("should throw an insufficient wallet balance error", async () => {
+            deps.getWalletByIdWithBusinessWallet.mockResolvedValue({
+                ...testWallet,
+                balance: 0,
+                parentWallet: { ...walletJson, customFundingCs: [] },
+            });
+            await expect(() => withdrawalInitializer.exec()).rejects.toThrow(
+                InsufficientWalletBalanceError
+            );
+        });
+    });
+
+    describe("given the parent wallet balance is not sufficient to make the transaction", () => {
+        it("should throw an insufficient wallet balance error", async () => {
+            deps.getWalletByIdWithBusinessWallet.mockResolvedValue({
+                ...testWallet,
+                parentWallet: { ...walletJson, balance: 0, customFundingCs: [] },
+            });
+            await expect(() => withdrawalInitializer.exec()).rejects.toThrow(
+                InsufficientWalletBalanceError
+            );
+        });
+    });
     // Make call to payment provider for transfer
     // Create transaction
+    // Debit wallet
     // Return the transaction
 });

@@ -12,6 +12,7 @@ import {
     ChargesServiceInterface,
 } from "@charges/logic";
 import { CurrencyModelInterface, CurrencyServiceInterface } from "@currency/logic";
+import { InsufficientWalletBalanceError } from "./errors";
 
 export interface WithdrawalInitializerDependencies {
     getWalletByIdWithBusinessWallet: WalletServiceInterface["getWalletByIdWithBusinessWallet"];
@@ -40,6 +41,7 @@ export class WithdrawalInitializer {
         await this.fetchChargeStack();
         await this.fetchCurrencyIfNeeded();
         this.calculateCharges();
+        this.checkWalletBalance();
     }
 
     private fetchWallet = async () => {
@@ -80,5 +82,17 @@ export class WithdrawalInitializer {
                 waiveBusinessCharges: this.wallet.waiveWithdrawalCharges,
             })
         );
+    };
+
+    private checkWalletBalance = () => {
+        console.log("\n\n\nTHE WALLET", this.chargesResult.senderPaid);
+        if (this.wallet.balance < this.chargesResult.senderPaid)
+            throw new InsufficientWalletBalanceError();
+
+        if (
+            this.wallet.parentWallet &&
+            this.wallet.parentWallet.balance < this.chargesResult.businessPaid
+        )
+            throw new InsufficientWalletBalanceError();
     };
 }
