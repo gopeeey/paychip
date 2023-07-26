@@ -52,3 +52,28 @@ export interface VerifyBankDetailsResponseInterface extends BaseResponseInterfac
         account_name: string;
     };
 }
+
+export interface TransferRecipient {
+    recipientId: string;
+    accountNumber: string;
+    bankCode: string;
+    currency: string;
+}
+
+export interface CreateTransferRecipientResponseInterface extends BaseResponseInterface {
+    data: {
+        recipient_code: string;
+        details: {
+            account_number: string;
+            bank_code: string;
+        };
+    };
+}
+
+export interface SendMoneyResponseInterface extends BaseResponseInterface {
+    data: {
+        amount: number;
+        status: string;
+        transfer_code: string;
+    };
+}

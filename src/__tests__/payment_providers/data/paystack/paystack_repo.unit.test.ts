@@ -1,9 +1,10 @@
-import { PaystackRepo } from "@payment_providers/data";
+import { PaystackRepo, TransferRecipient } from "@payment_providers/data";
 import {
     BankDetails,
     GeneratePaymentLinkDto,
     GeneratePaymentLinkError,
     InvalidBankDetails,
+    SendMoneyDto,
     VerifyTransactionResponseDto,
 } from "@payment_providers/logic";
 import { HttpClientInstanceMock, logErrorMock } from "src/__tests__/helpers/mocks";
@@ -12,12 +13,38 @@ import * as utilFuncs from "src/utils/functions";
 import config from "src/config";
 import { walletJson } from "src/__tests__/helpers/samples";
 import { InternalError } from "@bases/logic";
+import { runQuery } from "@db/postgres";
+import * as dbModule from "@db/postgres/service";
+import { Pool } from "pg";
+import * as queries from "@payment_providers/data/paystack/queries";
+import { DBSetup, SeedingError } from "src/__tests__/helpers/test_utils";
+import SQL from "sql-template-strings";
+
+const runQuerySpy = jest.spyOn(dbModule, "runQuery");
 
 jest.mock("../../../../utils/http_client/client", () => ({
     HttpClient: jest.fn(() => HttpClientInstanceMock),
 }));
 
-const paystackRepo = new PaystackRepo();
+const testBank = new BankDetails({
+    accountNumber: "1234567890",
+    bankCode: "012",
+});
+
+const testRecipient: TransferRecipient = {
+    recipientId: "RCP_uujz8yo39x9thmu",
+    accountNumber: testBank.accountNumber,
+    bankCode: testBank.bankCode,
+    currency: "NGN",
+};
+
+const seeder = async (pool: Pool) => {
+    await runQuery<TransferRecipient>(queries.createTransferRecipient(testRecipient), pool);
+};
+
+const pool = DBSetup(seeder);
+
+const paystackRepo = new PaystackRepo(pool);
 
 const paymentData = new GeneratePaymentLinkDto({
     allowedChannels: ["card"],
@@ -337,6 +364,162 @@ describe("Testing PaystackRepo", () => {
                     InternalError
                 );
             });
+        });
+    });
+
+    describe(">>> createOrGetTransferRecipient", () => {
+        describe("given the transferRecipient already exists", () => {
+            it("should return the recipient without calling the endpoint to create a new one", async () => {
+                const res = await runQuery<TransferRecipient>(
+                    SQL`SELECT * FROM "paystackTransferRecipients" LIMIT 1`,
+                    pool
+                );
+
+                const existing = res.rows[0];
+                if (!existing) throw new SeedingError("paystack transfer recipient not found");
+
+                console.log("\n\n\nSAVED RECIPIENT", existing);
+                const recipient = await paystackRepo.getOrCreateTransferRecipient(
+                    testBank,
+                    testRecipient.currency
+                );
+
+                expect(recipient).toEqual(existing);
+                expect(HttpClientInstanceMock.post).not.toHaveBeenCalled();
+            });
+        });
+
+        describe("given the transferRecipient does not already exist", () => {
+            const customTestBank = new BankDetails({ ...testBank, accountNumber: "121212121212" });
+            const paystackRes = {
+                status: true,
+                message: "Transfer recipient created successfully",
+                data: {
+                    active: true,
+                    createdAt: "2023-07-25T22:32:20.442Z",
+                    currency: "NGN",
+                    domain: "test",
+                    id: 57558905,
+                    integration: 830673,
+                    name: "Samuel Gopeh",
+                    recipient_code: testRecipient.recipientId,
+                    type: "nuban",
+                    updatedAt: "2023-07-25T22:32:20.442Z",
+                    is_deleted: false,
+                    isDeleted: false,
+                    details: {
+                        authorization_code: null,
+                        account_number: customTestBank.accountNumber,
+                        account_name: "GOPEH SAMUEL MBANG",
+                        bank_code: customTestBank.bankCode,
+                        bank_name: "First Bank of Nigeria",
+                    },
+                },
+            };
+
+            const mockSuccess = () => {
+                HttpClientInstanceMock.post.mockResolvedValue(paystackRes);
+            };
+            it("should call the paystack endpoint to create a new transferRecipient with the provided data", async () => {
+                mockSuccess();
+                const recipient = await paystackRepo.getOrCreateTransferRecipient(
+                    customTestBank,
+                    testRecipient.currency
+                );
+
+                const expectedRecipient: TransferRecipient = {
+                    recipientId: paystackRes.data.recipient_code,
+                    accountNumber: customTestBank.accountNumber,
+                    bankCode: customTestBank.bankCode,
+                    currency: paystackRes.data.currency,
+                };
+
+                expect(recipient).toEqual(expectedRecipient);
+            });
+
+            it("should persist the transferRecipient in the database", async () => {
+                mockSuccess();
+                runQuerySpy.mockClear();
+                await paystackRepo.getOrCreateTransferRecipient(
+                    customTestBank,
+                    testRecipient.currency
+                );
+                expect(runQuerySpy).toHaveBeenCalledTimes(2);
+                const res = await runQuery<TransferRecipient>(
+                    queries.getTransferRecipient(customTestBank),
+                    pool
+                );
+                const recipient = res.rows[0];
+                if (!recipient) throw new Error("Failed to save recipient");
+                expect(recipient).toEqual({
+                    ...testRecipient,
+                    accountNumber: customTestBank.accountNumber,
+                });
+            });
+        });
+    });
+
+    describe(">>> sendMoney", () => {
+        const dto = new SendMoneyDto({
+            bankDetails: testBank,
+            currencyCode: "NGN",
+            reference: "fruit",
+            amount: 200,
+        });
+        const getOrCreateTransferRecipientSpy = jest.spyOn(
+            paystackRepo,
+            "getOrCreateTransferRecipient"
+        );
+
+        const paystackRes = {
+            status: true,
+            message: "successful",
+            data: {
+                integration: 100073,
+                domain: "test",
+                amount: 20000,
+                currency: "NGN",
+                source: "balance",
+                reason: "Calm down",
+                recipient: 28,
+                status: "pending",
+                transfer_code: "TRF_1ptvuv321ahaa7q",
+                id: 14,
+                createdAt: "2017-02-03T17:21:54.508Z",
+                updatedAt: "2017-02-03T17:21:54.508Z",
+            },
+        };
+
+        const mockSuccess = () => {
+            getOrCreateTransferRecipientSpy.mockResolvedValue(testRecipient);
+            HttpClientInstanceMock.post.mockResolvedValue(paystackRes);
+        };
+        // Get a recipient
+        it("should call the getOrCreateTransferRecipient function", async () => {
+            mockSuccess();
+            await paystackRepo.sendMoney(dto);
+            expect(getOrCreateTransferRecipientSpy).toHaveBeenCalledTimes(1);
+            expect(getOrCreateTransferRecipientSpy).toHaveBeenCalledWith(
+                testBank,
+                dto.currencyCode
+            );
+        });
+
+        // Call the endpoint with the recipient id
+        it("should call the correct endpoint with the correct data and return the provider's reference", async () => {
+            mockSuccess();
+            const providerRef = await paystackRepo.sendMoney(dto);
+            expect(HttpClientInstanceMock.post).toHaveBeenCalledTimes(1);
+            expect(HttpClientInstanceMock.post).toHaveBeenCalledWith({
+                url: "/transfer",
+                body: {
+                    source: "balance",
+                    reason: expect.anything(),
+                    amount: dto.amount * 100,
+                    recipient: testRecipient.recipientId,
+                },
+            });
+            expect(providerRef).toBe(paystackRes.data.transfer_code);
         });
     });
 });

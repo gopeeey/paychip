@@ -3,17 +3,24 @@ import {
     GeneratePaymentLinkError,
     InvalidBankDetails,
     PaymentProviderRepoInterface,
+    SendMoneyError,
     VerifyTransactionResponseDto,
 } from "@payment_providers/logic";
 import { TransactionChannelType } from "@wallet/logic";
 import generalConfig from "src/config";
 import { HttpClient, HttpError, logError, encodeHex, decodeHex } from "src/utils";
 import {
+    CreateTransferRecipientResponseInterface,
     InitializeTransactionResponseInterface,
+    SendMoneyResponseInterface,
+    TransferRecipient,
     VerifyBankDetailsResponseInterface,
     VerifyTransactionResponseInterface,
 } from "./interfaces";
 import { InternalError } from "@bases/logic";
+import { runQuery } from "@db/postgres";
+import * as queries from "./queries";
+import { Pool } from "pg";
 
 type PaystackChannelMapType = {
     [key: string]: Exclude<TransactionChannelType, "wallet">;
@@ -32,6 +39,7 @@ export class PaystackRepo implements PaymentProviderRepoInterface {
     baseHeader = { Authorization: `Bearer ${this.secretKey}` };
     baseUrl = "https://api.paystack.co";
     client: HttpClient;
+    pool: Pool;
     channelMap: PaystackChannelMapType = { card: "card", bank_transfer: "bank" };
     platformToPaystackChannelMap: PlatformToPaystackChannelMapType = {
         card: "card",
@@ -43,9 +51,13 @@ export class PaystackRepo implements PaymentProviderRepoInterface {
     };
     errorMessage = generalConfig.payment.providerErrorMessage;
     conversionRate = 100;
+    currencyBankAccountTypeMap: { [key: string]: string } = {
+        NGN: "nuban",
+    };
 
-    constructor() {
+    constructor(pool: Pool) {
         this.client = new HttpClient({ baseUrl: this.baseUrl, headers: this.baseHeader });
+        this.pool = pool;
     }
 
     convertAmountToPaystack = (amount: number) => {
@@ -172,6 +184,74 @@ export class PaystackRepo implements PaymentProviderRepoInterface {
                 ...details,
                 provider: "paystack",
             });
+        }
+    };
+
+    getOrCreateTransferRecipient = async (bankDetails: BankDetails, currencyCode: string) => {
+        const res = await runQuery<TransferRecipient>(
+            queries.getTransferRecipient(bankDetails),
+            this.pool
+        );
+        const existing = res.rows[0];
+        if (existing) return existing;
+
+        const body = {
+            type: this.currencyBankAccountTypeMap[currencyCode],
+            name: bankDetails.accountName,
+            account_number: bankDetails.accountNumber,
+            bank_code: bankDetails.bankCode,
+            currency: currencyCode,
+        };
+        const response = await this.client.post<CreateTransferRecipientResponseInterface>({
+            url: "/transferrecipient",
+            body,
+        });
+
+        const data = response.data;
+        const recipient: TransferRecipient = {
+            accountNumber: data.details.account_number,
+            recipientId: data.recipient_code,
+            bankCode: data.details.bank_code,
+            currency: currencyCode,
+        };
+
+        await runQuery(queries.createTransferRecipient(recipient), this.pool);
+
+        return recipient;
+    };
+
+    sendMoney: PaymentProviderRepoInterface["sendMoney"] = async (dto) => {
+        try {
+            const recipient = await this.getOrCreateTransferRecipient(
+                dto.bankDetails,
+                dto.currencyCode
+            );
+
+            const body = {
+                source: "balance",
+                reason: "Wallet withdrawal",
+                amount: this.convertAmountToPaystack(dto.amount),
+                recipient: recipient.recipientId,
+            };
+
+            const response = await this.client.post<SendMoneyResponseInterface>({
+                url: "/transfer",
+                body,
+            });
+
+            const data = response.data;
+            if (data.status !== "pending")
+                throw new Error(`request succeeded but returned transfer status: ${data.status}`);
+            return data.transfer_code;
+        } catch (err) {
+            let message = "";
+            if (err instanceof HttpError) {
+                message = `${err.message} (statusCode: ${err.statusCode})`;
+            } else {
+                if (err instanceof Error) message = err.message;
+            }
+
+            throw new SendMoneyError(message, "paystack", dto);
         }
     };
 }
