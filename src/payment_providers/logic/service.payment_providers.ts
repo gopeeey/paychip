@@ -4,7 +4,7 @@ import {
     PaymentProviderServiceDependenciesInterface,
     PaymentProviderServiceInterface,
 } from "./interfaces";
-import { BankDetails, VerifyTransactionResponseDto } from "./dtos";
+import { BankDetails, SendMoneyDto, VerifyTransactionResponseDto } from "./dtos";
 
 export class PaymentProviderService implements PaymentProviderServiceInterface {
     private readonly _currents: {
@@ -38,5 +38,10 @@ export class PaymentProviderService implements PaymentProviderServiceInterface {
     verifyBankDetails: PaymentProviderServiceInterface["verifyBankDetails"] = async (details) => {
         const verifiedDetails = await this._currents.bankVerification.verifyBankDetails(details);
         return verifiedDetails;
+    };
+
+    sendMoney: PaymentProviderServiceInterface["sendMoney"] = async (data) => {
+        const ref = await this._currents.transfer.sendMoney(data);
+        return ref;
     };
 }

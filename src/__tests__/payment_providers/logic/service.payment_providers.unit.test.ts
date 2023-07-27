@@ -3,6 +3,7 @@ import {
     PaymentProviderRepoInterface,
     VerifyTransactionResponseDto,
     BankDetails,
+    SendMoneyDto,
 } from "@payment_providers/logic";
 import { PaymentProviderServiceDependenciesInterface } from "@payment_providers/logic/interfaces/service.payment_provider.interface";
 
@@ -10,6 +11,7 @@ const repoMock: { [key in keyof PaymentProviderRepoInterface]: jest.Mock } = {
     generatePaymentLink: jest.fn(),
     verifyTransaction: jest.fn(),
     verifyBankDetails: jest.fn(),
+    sendMoney: jest.fn(),
 };
 
 const deps = { aProvider: repoMock } as unknown as PaymentProviderServiceDependenciesInterface;
@@ -92,6 +94,30 @@ describe("Testing PaymentProviderService", () => {
             repoMock.verifyBankDetails.mockResolvedValue(output);
             const result = await service.verifyBankDetails(input);
             expect(result).toEqual(output);
+        });
+    });
+
+    describe(">>> sendMoney", () => {
+        const sendMoneyData = new SendMoneyDto({
+            amount: 2000,
+            bankDetails: { accountName: "Meep Meep", accountNumber: "1234567890", bankCode: "012" },
+            currencyCode: "NGN",
+            reference: "reference",
+        });
+        const providerRef = "providerRef";
+
+        const mockSuccess = () => repoMock.sendMoney.mockResolvedValue(providerRef);
+
+        it("should call the correct provider's sendMoney function", async () => {
+            mockSuccess();
+            await service.sendMoney(sendMoneyData);
+            expect(repoMock.sendMoney).toHaveBeenCalledTimes(1);
+            expect(repoMock.sendMoney).toHaveBeenCalledWith(sendMoneyData);
+        });
+
+        it("should return a provider reference", async () => {
+            const ref = await service.sendMoney(sendMoneyData);
+            expect(ref).toBe(providerRef);
         });
     });
 });
