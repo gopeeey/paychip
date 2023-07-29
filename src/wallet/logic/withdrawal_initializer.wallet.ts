@@ -1,7 +1,10 @@
 import { BankDetails, PaymentProviderServiceInterface } from "@payment_providers/logic";
-import { InitializeWithdrawalDto } from "./dtos";
+import { CreateTransactionDto, IncrementBalanceDto, InitializeWithdrawalDto } from "./dtos";
 import {
+    TransactionModelInterface,
+    TransactionServiceInterface,
     WalletModelInterface,
+    WalletRepoInterface,
     WalletServiceDependencies,
     WalletServiceInterface,
 } from "./interfaces";
@@ -13,6 +16,9 @@ import {
 } from "@charges/logic";
 import { CurrencyModelInterface, CurrencyServiceInterface } from "@currency/logic";
 import { InsufficientWalletBalanceError } from "./errors";
+import { CustomerServiceInterface } from "@customer/logic";
+import { generateId } from "src/utils";
+import { SessionInterface } from "@bases/logic";
 
 export interface WithdrawalInitializerDependencies {
     getWalletByIdWithBusinessWallet: WalletServiceInterface["getWalletByIdWithBusinessWallet"];
@@ -20,6 +26,10 @@ export interface WithdrawalInitializerDependencies {
     calculateCharges: ChargesServiceInterface["calculateTransactionCharges"];
     getWalletChargeStack: ChargesServiceInterface["getWalletChargeStack"];
     getCurrency: CurrencyServiceInterface["getCurrencyByIsoCode"];
+    createTransaction: TransactionServiceInterface["createTransaction"];
+    getOrCreateCustomer: CustomerServiceInterface["getOrCreateCustomer"];
+    incrementWalletBalance: WalletServiceInterface["incrementBalance"];
+    startSession: WalletRepoInterface["startSession"];
 }
 
 export class WithdrawalInitializer {
@@ -28,6 +38,9 @@ export class WithdrawalInitializer {
     declare bankDetails: BankDetails;
     declare chargeStack?: ChargeStackModelInterface | null;
     declare currency?: CurrencyModelInterface | null;
+    declare transaction: TransactionModelInterface;
+    declare reference: string;
+    declare session: SessionInterface;
     private declare chargesResult: ChargesCalculationResultDto;
 
     constructor(
@@ -36,12 +49,27 @@ export class WithdrawalInitializer {
     ) {}
 
     async exec() {
-        await this.fetchWallet();
-        await this.verifyBankDetails();
-        await this.fetchChargeStack();
-        await this.fetchCurrencyIfNeeded();
-        this.calculateCharges();
-        this.checkWalletBalance();
+        this.session = await this._deps.startSession();
+
+        try {
+            await this.fetchWallet();
+            await this.verifyBankDetails();
+            await this.fetchChargeStack();
+            await this.fetchCurrencyIfNeeded();
+            this.calculateCharges();
+            this.checkWalletBalance();
+            await this.createTransaction();
+            await this.debitWallets();
+
+            await this.session.commit();
+            await this.session.end();
+        } catch (err) {
+            if (!this.session.ended) {
+                await this.session.rollback();
+                await this.session.end();
+            }
+            throw err;
+        }
     }
 
     private fetchWallet = async () => {
@@ -85,7 +113,6 @@ export class WithdrawalInitializer {
     };
 
     private checkWalletBalance = () => {
-        console.log("\n\n\nTHE WALLET", this.chargesResult.senderPaid);
         if (this.wallet.balance < this.chargesResult.senderPaid)
             throw new InsufficientWalletBalanceError();
 
@@ -94,5 +121,71 @@ export class WithdrawalInitializer {
             this.wallet.parentWallet.balance < this.chargesResult.businessPaid
         )
             throw new InsufficientWalletBalanceError();
+    };
+
+    private createTransaction = async () => {
+        const customer = await this._deps.getOrCreateCustomer({
+            businessId: this.wallet.businessId,
+            email: this.wallet.email,
+        });
+
+        this.reference = generateId();
+
+        const { amount } = this._dto;
+        const {
+            businessCharge,
+            businessGot,
+            businessPaid,
+            platformCharge,
+            platformGot,
+            receiverPaid,
+            senderPaid,
+            settledAmount,
+            businessChargesPaidBy,
+            platformChargesPaidBy,
+        } = this.chargesResult;
+        const transactionData = new CreateTransactionDto({
+            amount,
+            businessCharge,
+            businessChargePaidBy: businessChargesPaidBy,
+            platformChargePaidBy: platformChargesPaidBy,
+            businessGot,
+            businessId: this.wallet.businessId,
+            businessPaid,
+            bwId: this.businessWallet?.id,
+            channel: "bank",
+            currency: this.wallet.currency,
+            platformCharge,
+            platformGot,
+            receiverPaid,
+            senderPaid,
+            settledAmount,
+            transactionType: "debit",
+            customerId: customer.id,
+            reference: this.reference,
+            senderWalletId: this.wallet.id,
+        });
+
+        this.transaction = await this._deps.createTransaction(transactionData, this.session);
+    };
+
+    private debitWallets = async () => {
+        await this._deps.incrementWalletBalance(
+            new IncrementBalanceDto({
+                walletId: this.wallet.id,
+                amount: -this.chargesResult.senderPaid,
+                session: this.session,
+            })
+        );
+
+        if (this.wallet.parentWallet && this.chargesResult.businessPaid) {
+            await this._deps.incrementWalletBalance(
+                new IncrementBalanceDto({
+                    walletId: this.wallet.parentWallet.id,
+                    amount: -this.chargesResult.businessPaid,
+                    session: this.session,
+                })
+            );
+        }
     };
 }

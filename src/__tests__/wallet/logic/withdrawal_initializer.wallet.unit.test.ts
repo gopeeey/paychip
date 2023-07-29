@@ -2,14 +2,21 @@ import { CalculateTransactionChargesDto, ChargesCalculationResultDto } from "@ch
 import { BankDetails } from "@payment_providers/logic";
 import { WalletRepo } from "@wallet/data";
 import {
+    IncrementBalanceDto,
     InitializeWithdrawalDto,
     InsufficientWalletBalanceError,
     WithdrawalInitializer,
     WithdrawalInitializerDependencies,
 } from "@wallet/logic";
 import { Pool } from "pg";
-import { createSpies } from "src/__tests__/helpers/mocks";
-import { chargeStackJson, currencyJson, walletJson } from "src/__tests__/helpers/samples";
+import { createSpies, generateIdMock, sessionMock } from "src/__tests__/helpers/mocks";
+import {
+    chargeStackJson,
+    currencyJson,
+    customerJson,
+    transactionJson,
+    walletJson,
+} from "src/__tests__/helpers/samples";
 
 const walletRepoMock = createSpies(new WalletRepo({} as Pool));
 
@@ -39,6 +46,10 @@ const deps: { [key in keyof WithdrawalInitializerDependencies]: jest.Mock } = {
     calculateCharges: jest.fn(),
     getWalletChargeStack: jest.fn(),
     getCurrency: jest.fn(),
+    createTransaction: jest.fn(),
+    getOrCreateCustomer: jest.fn(),
+    incrementWalletBalance: jest.fn(),
+    startSession: jest.fn(),
 };
 
 const withdrawalInitializer = new WithdrawalInitializer(dto, deps);
@@ -62,6 +73,10 @@ const mockAll = () => {
     deps.getWalletChargeStack.mockResolvedValue(chargeStackJson.wallet);
     deps.calculateCharges.mockReturnValue(chargeCalculationResult);
     deps.getCurrency.mockResolvedValue(currencyJson);
+    deps.createTransaction.mockResolvedValue(transactionJson);
+    deps.getOrCreateCustomer.mockResolvedValue(customerJson);
+    deps.incrementWalletBalance.mockResolvedValue(null);
+    deps.startSession.mockResolvedValue(sessionMock);
 };
 
 describe("TESTING WITHDRAWAL INITIALIZER", () => {
@@ -150,8 +165,61 @@ describe("TESTING WITHDRAWAL INITIALIZER", () => {
             );
         });
     });
-    // Make call to payment provider for transfer
+
     // Create transaction
-    // Debit wallet
+    it("should create a transaction", async () => {
+        mockAll();
+        await withdrawalInitializer.exec();
+        expect(generateIdMock).toHaveBeenCalledTimes(1);
+        expect(deps.getOrCreateCustomer).toHaveBeenCalledTimes(1);
+        expect(deps.createTransaction).toHaveBeenCalledTimes(1);
+        expect(deps.createTransaction).toHaveBeenCalledWith(expect.anything(), sessionMock);
+    });
+
+    // Debit wallets
+    it("should debit the wallet and parent wallet with the correct amounts", async () => {
+        mockAll();
+        await withdrawalInitializer.exec();
+        expect(deps.incrementWalletBalance).toHaveBeenCalledTimes(2);
+        expect(deps.incrementWalletBalance).toHaveBeenCalledWith(
+            new IncrementBalanceDto({
+                amount: -chargeCalculationResult.senderPaid,
+                walletId: testWallet.id,
+                session: sessionMock,
+            })
+        );
+
+        expect(deps.incrementWalletBalance).toHaveBeenCalledWith(
+            new IncrementBalanceDto({
+                amount: -chargeCalculationResult.businessPaid,
+                walletId: testWallet.parentWallet.id,
+                session: sessionMock,
+            })
+        );
+    });
+
+    describe("given the wallet has no parent", () => {
+        it("should debit only the wallet", async () => {
+            mockAll();
+            deps.getWalletByIdWithBusinessWallet.mockResolvedValue({
+                ...testWallet,
+                balance: 4000,
+                parentWallet: null,
+            });
+            await withdrawalInitializer.exec();
+            expect(deps.incrementWalletBalance).toHaveBeenCalledTimes(1);
+            expect(deps.incrementWalletBalance).toHaveBeenCalledWith(
+                new IncrementBalanceDto({
+                    amount: -chargeCalculationResult.senderPaid,
+                    walletId: testWallet.id,
+                    session: sessionMock,
+                })
+            );
+        });
+    });
+
+    // @TODO: Making the call to the provider should be moved to being consumed from a queue
+    // Make call to payment provider for transfer
+    // Update the transaction with the ref gotten from the provider
     // Return the transaction
 });
