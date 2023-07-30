@@ -1,5 +1,6 @@
 import { CalculateTransactionChargesDto, ChargesCalculationResultDto } from "@charges/logic";
 import { BankDetails } from "@payment_providers/logic";
+import { TransferMessageDto } from "@queues/transfers";
 import { WalletRepo } from "@wallet/data";
 import {
     IncrementBalanceDto,
@@ -27,6 +28,8 @@ const dto = new InitializeWithdrawalDto({
     walletId: walletJson.id,
 });
 
+const reference = "this is a reference";
+
 const chargeCalculationResult = new ChargesCalculationResultDto({
     businessCharge: 50,
     businessChargesPaidBy: "wallet",
@@ -50,6 +53,7 @@ const deps: { [key in keyof WithdrawalInitializerDependencies]: jest.Mock } = {
     getOrCreateCustomer: jest.fn(),
     incrementWalletBalance: jest.fn(),
     startSession: jest.fn(),
+    publishTransfer: jest.fn(),
 };
 
 const withdrawalInitializer = new WithdrawalInitializer(dto, deps);
@@ -77,6 +81,8 @@ const mockAll = () => {
     deps.getOrCreateCustomer.mockResolvedValue(customerJson);
     deps.incrementWalletBalance.mockResolvedValue(null);
     deps.startSession.mockResolvedValue(sessionMock);
+    generateIdMock.mockReturnValue(reference);
+    deps.publishTransfer.mockResolvedValue(null);
 };
 
 describe("TESTING WITHDRAWAL INITIALIZER", () => {
@@ -218,8 +224,22 @@ describe("TESTING WITHDRAWAL INITIALIZER", () => {
         });
     });
 
-    // @TODO: Making the call to the provider should be moved to being consumed from a queue
-    // Make call to payment provider for transfer
-    // Update the transaction with the ref gotten from the provider
-    // Return the transaction
+    // Queue the transfer
+    it("should queue the transfer", async () => {
+        mockAll();
+        await withdrawalInitializer.exec();
+        expect(deps.publishTransfer).toHaveBeenCalledTimes(1);
+        expect(deps.publishTransfer).toHaveBeenCalledWith(
+            new TransferMessageDto({
+                amount: chargeCalculationResult.settledAmount,
+                bankDetails: new BankDetails({
+                    accountNumber: dto.accountNumber,
+                    bankCode: dto.bankCode,
+                    accountName: expect.anything(),
+                }),
+                currencyCode: walletJson.currency,
+                reference,
+            })
+        );
+    });
 });

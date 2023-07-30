@@ -19,6 +19,7 @@ import { InsufficientWalletBalanceError } from "./errors";
 import { CustomerServiceInterface } from "@customer/logic";
 import { generateId } from "src/utils";
 import { SessionInterface } from "@bases/logic";
+import { TransferMessageDto } from "@queues/transfers";
 
 export interface WithdrawalInitializerDependencies {
     getWalletByIdWithBusinessWallet: WalletServiceInterface["getWalletByIdWithBusinessWallet"];
@@ -30,6 +31,7 @@ export interface WithdrawalInitializerDependencies {
     getOrCreateCustomer: CustomerServiceInterface["getOrCreateCustomer"];
     incrementWalletBalance: WalletServiceInterface["incrementBalance"];
     startSession: WalletRepoInterface["startSession"];
+    publishTransfer: WalletServiceDependencies["publishTransfer"];
 }
 
 export class WithdrawalInitializer {
@@ -60,6 +62,7 @@ export class WithdrawalInitializer {
             this.checkWalletBalance();
             await this.createTransaction();
             await this.debitWallets();
+            await this.queueTransfer();
 
             await this.session.commit();
             await this.session.end();
@@ -187,5 +190,16 @@ export class WithdrawalInitializer {
                 })
             );
         }
+    };
+
+    private queueTransfer = async () => {
+        this._deps.publishTransfer(
+            new TransferMessageDto({
+                bankDetails: this.bankDetails,
+                amount: this.chargesResult.settledAmount,
+                currencyCode: this.wallet.currency,
+                reference: this.reference,
+            })
+        );
     };
 }

@@ -64,6 +64,7 @@ const deps: { [key in keyof Omit<WalletServiceDependencies, "repo" | "imdsServic
         updateTransactionInfo: jest.fn(),
         updateCustomer: jest.fn(),
         sendEmail: jest.fn(),
+        publishTransfer: jest.fn(),
     };
 
 const walletService = new WalletService({
