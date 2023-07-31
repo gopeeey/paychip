@@ -43,4 +43,9 @@ export class PaymentProviderService implements PaymentProviderServiceInterface {
         const ref = await this._providers[data.provider].sendMoney(data);
         return ref;
     };
+
+    verifyTransfer: PaymentProviderServiceInterface["verifyTransfer"] = async (dto) => {
+        const res = await this._providers[dto.provider].verifyTransfer(dto);
+        return res;
+    };
 }
