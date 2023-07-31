@@ -6,6 +6,8 @@ import {
     InvalidBankDetails,
     SendMoneyDto,
     VerifyTransactionResponseDto,
+    VerifyTransferDto,
+    VerifyTransferResponseDto,
 } from "@payment_providers/logic";
 import { HttpClientInstanceMock, logErrorMock } from "src/__tests__/helpers/mocks";
 import { HttpError, PostRequestArgsInterface, encodeHex } from "src/utils";
@@ -521,6 +523,107 @@ describe("Testing PaystackRepo", () => {
                 },
             });
             expect(providerRef).toBe(paystackRes.data.transfer_code);
+        });
+    });
+
+    describe(">>> verifyTransfer", () => {
+        const input = new VerifyTransferDto({
+            provider: "paystack",
+            reference: "areference",
+        });
+
+        const output = new VerifyTransferResponseDto({
+            providerRef: "somereffrompaystack",
+            status: "successful",
+        });
+
+        const notFoundOutput = new VerifyTransferResponseDto({ status: "not_found" });
+
+        const paystackRes = {
+            status: true,
+            message: "Transfer retrieved",
+            data: {
+                integration: 119333,
+                recipient: {
+                    domain: "test",
+                    type: "nuban",
+                    currency: "NGN",
+                    name: "Zombie",
+                    details: {
+                        account_number: "0100000001",
+                        account_name: null,
+                        bank_code: "044",
+                        bank_name: "Access Bank",
+                    },
+                    description: "Zombier",
+                    metadata: "",
+                    recipient_code: "RCP_c2mty1w1uvd4av4",
+                    active: true,
+                    email: null,
+                    id: 31911,
+                    integration: 119333,
+                    createdAt: "2017-10-13T20:35:51.000Z",
+                    updatedAt: "2017-10-13T20:35:51.000Z",
+                },
+                domain: "test",
+                amount: 50000,
+                currency: "NGN",
+                reference: "ref_demo",
+                source: "balance",
+                source_details: null,
+                reason: "Test for reference",
+                status: "success",
+                failures: null,
+                transfer_code: output.providerRef,
+                titan_code: null,
+                transferred_at: null,
+                id: 476948,
+                createdAt: "2018-07-22T10:29:33.000Z",
+                updatedAt: "2018-07-22T10:29:33.000Z",
+            },
+        };
+
+        describe("given the request to the provider succeeds", () => {
+            it("should return a VerifyTransferResponseDto with the correct status and providerRef", async () => {
+                HttpClientInstanceMock.get.mockResolvedValue(paystackRes);
+                const res = await paystackRepo.verifyTransfer(input);
+
+                expect(res).toEqual(output);
+                expect(HttpClientInstanceMock.get).toHaveBeenCalledTimes(1);
+                expect(HttpClientInstanceMock.get).toHaveBeenCalledWith(
+                    `/transfer/verify/${input.reference}`
+                );
+            });
+        });
+
+        describe("given the request to the provider fails with a 404", () => {
+            it("should return a VerifyTransferResponseDto with the status not_found", async () => {
+                const err = new HttpError({
+                    message: "Not found",
+                    statusCode: 404,
+                });
+                HttpClientInstanceMock.get.mockRejectedValue(err);
+                const res = await paystackRepo.verifyTransfer(input);
+
+                expect(res).toEqual(notFoundOutput);
+                expect(HttpClientInstanceMock.get).toHaveBeenCalledTimes(1);
+                expect(HttpClientInstanceMock.get).toHaveBeenCalledWith(
+                    `/transfer/verify/${input.reference}`
+                );
+            });
+        });
+
+        describe("given the request to the provider fails with any other error code", () => {
+            it("should throw an internal error", async () => {
+                const err = new HttpError({
+                    message: "Gateway Timeout",
+                    statusCode: 504,
+                });
+                HttpClientInstanceMock.get.mockRejectedValue(err);
+                await expect(() => paystackRepo.verifyTransfer(input)).rejects.toThrow(
+                    InternalError
+                );
+            });
         });
     });
 });

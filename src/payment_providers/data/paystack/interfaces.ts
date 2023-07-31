@@ -77,3 +77,10 @@ export interface SendMoneyResponseInterface extends BaseResponseInterface {
         transfer_code: string;
     };
 }
+
+export interface VerifyTransferReponseInterface extends BaseResponseInterface {
+    data: {
+        status: "success" | "failed" | "pending";
+        transfer_code: string;
+    };
+}

@@ -3,6 +3,8 @@ import {
     GeneratePaymentLinkDto,
     SendMoneyDto,
     VerifyTransactionResponseDto,
+    VerifyTransferDto,
+    VerifyTransferResponseDto,
 } from "../dtos";
 
 export interface PaymentProviderRepoInterface {
@@ -10,4 +12,5 @@ export interface PaymentProviderRepoInterface {
     verifyTransaction: (reference: string) => Promise<VerifyTransactionResponseDto | null>;
     verifyBankDetails: (details: BankDetails) => Promise<BankDetails>;
     sendMoney: (sendMoneyDto: SendMoneyDto) => Promise<string>;
+    verifyTransfer: (dto: VerifyTransferDto) => Promise<VerifyTransferResponseDto>;
 }

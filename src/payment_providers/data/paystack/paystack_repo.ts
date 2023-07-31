@@ -5,6 +5,8 @@ import {
     PaymentProviderRepoInterface,
     SendMoneyError,
     VerifyTransactionResponseDto,
+    VerifyTransferDto,
+    VerifyTransferResponseDto,
 } from "@payment_providers/logic";
 import { TransactionChannelType } from "@wallet/logic";
 import generalConfig from "src/config";
@@ -16,6 +18,7 @@ import {
     TransferRecipient,
     VerifyBankDetailsResponseInterface,
     VerifyTransactionResponseInterface,
+    VerifyTransferReponseInterface,
 } from "./interfaces";
 import { InternalError } from "@bases/logic";
 import { runQuery } from "@db/postgres";
@@ -252,6 +255,31 @@ export class PaystackRepo implements PaymentProviderRepoInterface {
             }
 
             throw new SendMoneyError(message, "paystack", dto);
+        }
+    };
+
+    verifyTransfer: PaymentProviderRepoInterface["verifyTransfer"] = async (dto) => {
+        const statusMap = { success: "successful", failed: "failed", pending: "pending" } as const;
+        try {
+            const res = await this.client.get<VerifyTransferReponseInterface>(
+                `/transfer/verify/${dto.reference}`
+            );
+            const transfer = new VerifyTransferResponseDto({
+                status: statusMap[res.data.status],
+                providerRef: res.data.transfer_code,
+            });
+
+            return transfer;
+        } catch (err) {
+            if (err instanceof HttpError) {
+                if (err.statusCode === 404)
+                    return new VerifyTransferResponseDto({ status: "not_found" });
+            }
+
+            throw new InternalError("Error verifying transfer from provider", {
+                ...dto,
+                provider: "paystack",
+            });
         }
     };
 }
