@@ -18,6 +18,7 @@ import {
     transactionJson,
     walletJson,
 } from "src/__tests__/helpers/samples";
+import config from "src/config";
 
 const walletRepoMock = createSpies(new WalletRepo({} as Pool));
 
@@ -29,6 +30,7 @@ const dto = new InitializeWithdrawalDto({
 });
 
 const reference = "this is a reference";
+const testProvider = config.payment.currentProviders.transfer;
 
 const chargeCalculationResult = new ChargesCalculationResultDto({
     businessCharge: 50,
@@ -239,6 +241,7 @@ describe("TESTING WITHDRAWAL INITIALIZER", () => {
                 }),
                 currencyCode: walletJson.currency,
                 reference,
+                provider: testProvider,
             })
         );
     });

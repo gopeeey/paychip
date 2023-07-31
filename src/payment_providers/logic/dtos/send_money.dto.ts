@@ -5,6 +5,7 @@ type Props = {
     reference: string;
     currencyCode: string;
     amount: number;
+    provider: string;
 };
 
 export class SendMoneyDto {
@@ -12,11 +13,13 @@ export class SendMoneyDto {
     reference: Props["reference"];
     currencyCode: Props["currencyCode"];
     amount: Props["amount"];
+    provider: Props["provider"];
 
     constructor(body: Props) {
         this.bankDetails = body.bankDetails;
         this.reference = body.reference;
         this.currencyCode = body.currencyCode;
         this.amount = body.amount;
+        this.provider = body.provider;
     }
 }

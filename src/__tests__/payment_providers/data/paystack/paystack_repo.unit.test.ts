@@ -465,6 +465,7 @@ describe("Testing PaystackRepo", () => {
             currencyCode: "NGN",
             reference: "fruit",
             amount: 200,
+            provider: "paystack",
         });
         const getOrCreateTransferRecipientSpy = jest.spyOn(
             paystackRepo,

@@ -68,8 +68,6 @@ const dbConfig = {
 };
 
 const paymentSettings = {
-    currentPaymentProvider: CURRENT_PAYMENT_PROVIDER,
-    currentTransferProvider: CURRENT_TRANSFER_PROVIDER,
     providerErrorMessage: "Payment provider error",
     currentProviders: {
         transfer: CURRENT_TRANSFER_PROVIDER,

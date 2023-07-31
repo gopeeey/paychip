@@ -4,7 +4,6 @@ import {
     PaymentProviderServiceDependenciesInterface,
     PaymentProviderServiceInterface,
 } from "./interfaces";
-import { BankDetails, SendMoneyDto, VerifyTransactionResponseDto } from "./dtos";
 
 export class PaymentProviderService implements PaymentProviderServiceInterface {
     private readonly _currents: {
@@ -41,7 +40,7 @@ export class PaymentProviderService implements PaymentProviderServiceInterface {
     };
 
     sendMoney: PaymentProviderServiceInterface["sendMoney"] = async (data) => {
-        const ref = await this._currents.transfer.sendMoney(data);
+        const ref = await this._providers[data.provider].sendMoney(data);
         return ref;
     };
 }

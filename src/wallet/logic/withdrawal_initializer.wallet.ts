@@ -20,6 +20,7 @@ import { CustomerServiceInterface } from "@customer/logic";
 import { generateId } from "src/utils";
 import { SessionInterface } from "@bases/logic";
 import { TransferMessageDto } from "@queues/transfers";
+import config from "src/config";
 
 export interface WithdrawalInitializerDependencies {
     getWalletByIdWithBusinessWallet: WalletServiceInterface["getWalletByIdWithBusinessWallet"];
@@ -199,6 +200,7 @@ export class WithdrawalInitializer {
                 amount: this.chargesResult.settledAmount,
                 currencyCode: this.wallet.currency,
                 reference: this.reference,
+                provider: config.payment.currentProviders.transfer,
             })
         );
     };

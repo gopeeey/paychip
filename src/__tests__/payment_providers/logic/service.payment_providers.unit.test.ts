@@ -103,6 +103,7 @@ describe("Testing PaymentProviderService", () => {
             bankDetails: { accountName: "Meep Meep", accountNumber: "1234567890", bankCode: "012" },
             currencyCode: "NGN",
             reference: "reference",
+            provider: testProvider,
         });
         const providerRef = "providerRef";
 
