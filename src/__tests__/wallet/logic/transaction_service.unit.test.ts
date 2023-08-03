@@ -1,4 +1,5 @@
 import {
+    TransactionNotFoundError,
     TransactionRepoInterface,
     TransactionService,
     TransactionServiceDependencies,
@@ -43,6 +44,27 @@ describe("TESTING TRANSACTION SERIVCE", () => {
                 repo.getByReference.mockResolvedValue(null);
                 const transaction = await service.findTransactionByReference("something");
                 expect(transaction).toBeNull();
+            });
+        });
+    });
+
+    describe(">>> getTransactionByReference", () => {
+        describe("given the transaction exists", () => {
+            it("should return the transaction object", async () => {
+                repo.getByReference.mockResolvedValue(transactionJson);
+                const transaction = await service.getTransactionByReference("someref");
+                expect(transaction).toEqual(transactionJson);
+                expect(repo.getByReference).toHaveBeenCalledTimes(1);
+                expect(repo.getByReference).toHaveBeenCalledWith(transactionJson.reference);
+            });
+        });
+
+        describe("given the transaction does not exist", () => {
+            it("should throw a TransactionNotFoundError", async () => {
+                repo.getByReference.mockResolvedValue(null);
+                await expect(() => service.getTransactionByReference("someref")).rejects.toThrow(
+                    TransactionNotFoundError
+                );
             });
         });
     });

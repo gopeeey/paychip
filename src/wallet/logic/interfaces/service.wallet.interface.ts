@@ -18,7 +18,7 @@ import { TransactionServiceInterface } from "@wallet/logic";
 import { PaymentProviderService, PaymentProviderServiceInterface } from "@payment_providers/logic";
 import { CustomerServiceInterface } from "@customer/logic";
 import { NotificationServiceInterface } from "@notifications/logic";
-import { TransferQueueInterface } from "@queues/transfers";
+import { TransferMessageDto, TransferQueueInterface } from "@queues/transfers";
 
 export interface WalletServiceInterface {
     createWallet: (
@@ -39,7 +39,7 @@ export interface WalletServiceInterface {
         currency: WalletModelInterface["currency"]
     ) => Promise<WalletModelInterface>;
     dequeueTransaction: (msg: unknown) => Promise<void>;
-    dequeueTransfer: (msg: unknown) => Promise<void>;
+    dequeueTransfer: (msg: TransferMessageDto) => Promise<void>;
 }
 
 export interface WalletServiceDependencies {

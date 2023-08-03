@@ -13,13 +13,19 @@ import {
 import * as WalletCreatorModule from "@wallet/logic/creator.wallet";
 import * as TransactionResolverModule from "@wallet/logic/transaction_resolver.wallet";
 import * as FundingInitializerModule from "@wallet/logic/funding_initializer.wallet";
-import { businessWalletJson, walletData, walletJson } from "src/__tests__/helpers/samples";
+import {
+    businessWalletJson,
+    transactionJson,
+    walletData,
+    walletJson,
+} from "src/__tests__/helpers/samples";
 import { SpiesObj, createSpies, sessionMock } from "src/__tests__/helpers/mocks";
 import { WalletRepo } from "@wallet/data";
 import { Pool } from "pg";
-import { VerifyTransactionResponseDto } from "@payment_providers/logic";
+import { BankDetails, VerifyTransactionResponseDto } from "@payment_providers/logic";
 import { ImdsInterface, SessionInterface } from "@bases/logic";
 import { TransactionMessageDto } from "@queues/transactions";
+import { TransferMessageDto } from "@queues/transfers";
 
 const createFn = jest.fn();
 jest.mock("../../../wallet/logic/creator.wallet", () => ({
@@ -310,7 +316,30 @@ describe("TESTING WALLET SERVICE", () => {
     });
 
     describe(">>> dequeueTransfer", () => {
+        const { accountNumber, accountName, bankCode } = { ...transactionJson } as const;
+        const data = new TransferMessageDto({
+            amount: transactionJson.settledAmount,
+            bankDetails: new BankDetails({
+                accountNumber: accountNumber as string,
+                accountName: accountName as string,
+                bankCode: bankCode as string,
+            }),
+            currencyCode: transactionJson.currency,
+            provider: transactionJson.provider as string,
+            reference: transactionJson.reference,
+        });
+
+        const mockAll = () => {
+            deps.findTransactionByReference.mockResolvedValue(transactionJson);
+        };
         // Fetch transfer by reference from db
+        it("fetch the transaction using the getTransactionByReference function", async () => {
+            mockAll();
+            await walletService.dequeueTransfer(data);
+            expect(deps.findTransactionByReference).toHaveBeenCalledTimes(1);
+            expect(deps.findTransactionByReference).toHaveBeenCalledWith(data.reference);
+        });
+
         // Verify transfer from provider and act based on status. If status is
         //     * pending: do nothing.
         //     * failed: update the transfer reference and sendMoney with updated reference

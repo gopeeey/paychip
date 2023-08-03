@@ -1,7 +1,10 @@
+import { transactionJson } from "src/__tests__/helpers/samples";
+import { TransactionModelInterface } from "./interfaces";
 import {
     TransactionServiceDependencies,
     TransactionServiceInterface,
 } from "./interfaces/service.transaction.interface";
+import { TransactionNotFoundError } from "./errors";
 
 export class TransactionService implements TransactionServiceInterface {
     private readonly _repo: TransactionServiceDependencies["repo"];
@@ -22,6 +25,14 @@ export class TransactionService implements TransactionServiceInterface {
         reference
     ) => {
         const transaction = await this._repo.getByReference(reference);
+        return transaction;
+    };
+
+    getTransactionByReference: TransactionServiceInterface["getTransactionByReference"] = async (
+        reference
+    ) => {
+        const transaction = await this._repo.getByReference(reference);
+        if (!transaction) throw new TransactionNotFoundError();
         return transaction;
     };
 

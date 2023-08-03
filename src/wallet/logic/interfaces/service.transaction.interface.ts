@@ -17,6 +17,8 @@ export interface TransactionServiceInterface {
         status: TransactionStatusType
     ) => Promise<TransactionModelInterface | null>;
 
+    getTransactionByReference: (reference: string) => Promise<TransactionModelInterface>;
+
     updateTransactionReference: (
         id: TransactionModelInterface["id"],
         reference: TransactionModelInterface["reference"],
