@@ -112,4 +112,6 @@ export class WalletService implements WalletServiceInterface {
             throw err;
         }
     };
+
+    dequeueTransfer: WalletServiceInterface["dequeueTransfer"] = async (msg) => {};
 }

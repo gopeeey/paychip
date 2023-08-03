@@ -17,9 +17,9 @@ export interface TransactionServiceInterface {
         status: TransactionStatusType
     ) => Promise<TransactionModelInterface | null>;
 
-    updateTransactionStatus: (
+    updateTransactionReference: (
         id: TransactionModelInterface["id"],
-        status: TransactionModelInterface["status"],
+        reference: TransactionModelInterface["reference"],
         session?: SessionInterface
     ) => Promise<void>;
 

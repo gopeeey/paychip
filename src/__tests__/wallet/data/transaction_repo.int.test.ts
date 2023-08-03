@@ -144,21 +144,21 @@ describe("TESTING TRANSACTION REPO", () => {
         });
     });
 
-    describe(">>> updateStatus", () => {
-        it("should update the transaction record with the given status", async () => {
-            const statuses: TransactionModelInterface["status"][] = [
-                "failed",
-                "pending",
-                "successful",
+    describe(">>> updateReference", () => {
+        it("should update the transaction record with the given reference", async () => {
+            const references: TransactionModelInterface["reference"][] = [
+                "dflaksdjf",
+                "sdlkfj",
+                "sldkfjlsd",
             ];
 
             const trx = await getATransaction(pool);
-            for (const status of statuses) {
+            for (const reference of references) {
                 const session = await transactionRepo.startSession();
-                await transactionRepo.updateStatus(trx.id, status, session);
+                await transactionRepo.updateReference(trx.id, reference, session);
                 await session.end();
                 const newTrx = await getATransaction(pool, trx.id);
-                expect(newTrx.status).toBe(status);
+                expect(newTrx.reference).toBe(reference);
                 expect(runQuerySpy).toHaveBeenCalledWith(
                     expect.anything(),
                     expect.anything(),

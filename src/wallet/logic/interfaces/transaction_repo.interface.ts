@@ -20,9 +20,9 @@ export interface TransactionRepoInterface {
         session?: SessionInterface
     ) => Promise<TransactionModelInterface | null>;
 
-    updateStatus: (
+    updateReference: (
         transactionId: TransactionModelInterface["id"],
-        status: TransactionModelInterface["status"],
+        reference: TransactionModelInterface["reference"],
         session?: SessionInterface
     ) => Promise<void>;
 

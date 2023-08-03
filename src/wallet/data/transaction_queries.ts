@@ -85,12 +85,12 @@ export const getByReferenceQuery = (reference: string) => {
     `;
 };
 
-export const updateStatusQuery = (
+export const updateReferenceQuery = (
     transactionId: TransactionModelInterface["id"],
-    status: TransactionModelInterface["status"]
+    reference: TransactionModelInterface["reference"]
 ) => {
     return SQL`
-        UPDATE "transactions" SET "status" = ${status} WHERE "id" = ${transactionId};
+        UPDATE "transactions" SET "reference" = ${reference} WHERE "id" = ${transactionId};
     `;
 };
 

@@ -39,6 +39,7 @@ export interface WalletServiceInterface {
         currency: WalletModelInterface["currency"]
     ) => Promise<WalletModelInterface>;
     dequeueTransaction: (msg: unknown) => Promise<void>;
+    dequeueTransfer: (msg: unknown) => Promise<void>;
 }
 
 export interface WalletServiceDependencies {

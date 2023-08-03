@@ -308,4 +308,13 @@ describe("TESTING WALLET SERVICE", () => {
             });
         });
     });
+
+    describe(">>> dequeueTransfer", () => {
+        // Fetch transfer by reference from db
+        // Verify transfer from provider and act based on status. If status is
+        //     * pending: do nothing.
+        //     * failed: update the transfer reference and sendMoney with updated reference
+        //     * not_found: go ahead and send the money
+        //     * successful: do nothing
+    });
 });

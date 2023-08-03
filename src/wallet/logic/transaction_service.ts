@@ -31,12 +31,12 @@ export class TransactionService implements TransactionServiceInterface {
             return transaction;
         };
 
-    updateTransactionStatus: TransactionServiceInterface["updateTransactionStatus"] = async (
+    updateTransactionReference: TransactionServiceInterface["updateTransactionReference"] = async (
         id,
-        status,
+        reference,
         session
     ) => {
-        await this._repo.updateStatus(id, status, session);
+        await this._repo.updateReference(id, reference, session);
     };
 
     updateTransactionInfo: TransactionServiceInterface["updateTransactionInfo"] = async (

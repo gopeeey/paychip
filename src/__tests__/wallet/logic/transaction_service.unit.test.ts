@@ -11,7 +11,7 @@ const repo: { [key in keyof TransactionRepoInterface]: jest.Mock } = {
     create: jest.fn(),
     getByReference: jest.fn(),
     startSession: jest.fn(async () => sessionMock),
-    updateStatus: jest.fn(),
+    updateReference: jest.fn(),
     updateTransactionInfo: jest.fn(),
     getByRefAndStatus: jest.fn(),
 };
@@ -71,12 +71,14 @@ describe("TESTING TRANSACTION SERIVCE", () => {
         });
     });
 
-    describe(">>> updateTransactionStatus", () => {
-        it("should update the transaction status", async () => {
-            repo.updateStatus.mockImplementationOnce(async () => {});
-            await service.updateTransactionStatus("some", "pending", sessionMock);
-            expect(repo.updateStatus).toHaveBeenCalledTimes(1);
-            expect(repo.updateStatus).toHaveBeenCalledWith("some", "pending", sessionMock);
+    describe(">>> updateTransactionReference", () => {
+        it("should update the transaction reference", async () => {
+            repo.updateReference.mockImplementationOnce(async () => {});
+            const ref = "reference";
+            const id = "some";
+            await service.updateTransactionReference(id, ref, sessionMock);
+            expect(repo.updateReference).toHaveBeenCalledTimes(1);
+            expect(repo.updateReference).toHaveBeenCalledWith(id, ref, sessionMock);
         });
     });
 
