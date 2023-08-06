@@ -122,56 +122,56 @@ export class WalletService implements WalletServiceInterface {
         // Fetch the transaction
         const transaction = await this._deps.getTransactionByReference(reference);
 
-        // Verify the transaction from the provider
-        const verificationRes = await this._deps.verifyTransferFromProvider(
-            new VerifyTransferDto({
-                reference,
-                provider,
-            })
-        );
+        try {
+            // Verify the transaction from the provider
+            const verificationRes = await this._deps.verifyTransferFromProvider(
+                new VerifyTransferDto({
+                    reference,
+                    provider,
+                })
+            );
 
-        let providerRef: string = "",
-            sendRef: string = reference;
-        let toSend = false;
-        switch (verificationRes.status) {
-            case "pending":
-                if (!verificationRes.providerRef)
-                    throw new InternalError(
-                        `Transfer status ${verificationRes.status} without providerRef`,
-                        { message: msg, verificationRes }
-                    );
-                providerRef = verificationRes.providerRef;
-                toSend = false;
-                break;
+            let providerRef: string = "",
+                sendRef: string = reference;
+            let toSend = false;
+            switch (verificationRes.status) {
+                case "pending":
+                    if (!verificationRes.providerRef)
+                        throw new InternalError(
+                            `Transfer status ${verificationRes.status} without providerRef`,
+                            { message: msg, verificationRes }
+                        );
+                    providerRef = verificationRes.providerRef;
+                    toSend = false;
+                    break;
 
-            case "successful":
-                if (!verificationRes.providerRef)
-                    throw new InternalError(
-                        `Transfer status ${verificationRes.status} without providerRef`,
-                        { message: msg, verificationRes }
-                    );
-                providerRef = verificationRes.providerRef;
-                toSend = false;
-                break;
+                case "successful":
+                    if (!verificationRes.providerRef)
+                        throw new InternalError(
+                            `Transfer status ${verificationRes.status} without providerRef`,
+                            { message: msg, verificationRes }
+                        );
+                    providerRef = verificationRes.providerRef;
+                    toSend = false;
+                    break;
 
-            case "failed":
-                sendRef += config.payment.transferRetrialSuffix;
-                await this._deps.updateTransactionReference(transaction.id, sendRef);
-                toSend = true;
-                break;
-            case "not_found":
-                sendRef = reference;
-                toSend = true;
-                break;
-            default:
-                throw new InternalError("Invalid transfer status", {
-                    message: msg,
-                    verificationRes,
-                });
-        }
+                case "failed":
+                    sendRef += config.payment.transferRetrialSuffix;
+                    await this._deps.updateTransactionReference(transaction.id, sendRef);
+                    toSend = true;
+                    break;
+                case "not_found":
+                    sendRef = reference;
+                    toSend = true;
+                    break;
+                default:
+                    throw new InternalError("Invalid transfer status", {
+                        message: msg,
+                        verificationRes,
+                    });
+            }
 
-        if (toSend) {
-            try {
+            if (toSend) {
                 providerRef = await this._deps.sendMoney(
                     new SendMoneyDto({
                         amount,
@@ -181,22 +181,26 @@ export class WalletService implements WalletServiceInterface {
                         reference: sendRef,
                     })
                 );
-            } catch (err) {
-                await this._deps.updateTransactionInfo(
-                    transaction.id,
-                    new UpdateTransactionInfoDto({
-                        channel: "bank",
-                        providerRef: config.payment.retryTempProviderRef,
-                        status: "pending",
-                    })
-                );
-                throw err;
             }
-        }
 
-        await this._deps.updateTransactionInfo(
-            transaction.id,
-            new UpdateTransactionInfoDto({ channel: "bank", providerRef, status: "pending" })
-        );
+            await this._deps.updateTransactionInfo(
+                transaction.id,
+                new UpdateTransactionInfoDto({
+                    channel: "bank",
+                    providerRef,
+                    status: "pending",
+                })
+            );
+        } catch (err) {
+            await this._deps.updateTransactionInfo(
+                transaction.id,
+                new UpdateTransactionInfoDto({
+                    channel: "bank",
+                    providerRef: config.payment.retryTempProviderRef,
+                    status: "pending",
+                })
+            );
+            throw err;
+        }
     };
 }

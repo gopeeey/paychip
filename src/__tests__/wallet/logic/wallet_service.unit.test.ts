@@ -31,7 +31,7 @@ import {
     VerifyTransferDto,
     VerifyTransferResponseDto,
 } from "@payment_providers/logic";
-import { ImdsInterface, SessionInterface } from "@bases/logic";
+import { ImdsInterface, InternalError, SessionInterface } from "@bases/logic";
 import { TransactionMessageDto } from "@queues/transactions";
 import { TransferMessageDto } from "@queues/transfers";
 import config from "src/config";
@@ -384,6 +384,25 @@ describe("TESTING WALLET SERVICE", () => {
             expect(deps.verifyTransferFromProvider).toHaveBeenCalledWith(
                 new VerifyTransferDto({ reference: data.reference, provider: data.provider })
             );
+        });
+
+        describe("given the verifyTransferTransferFromProvider function fails", () => {
+            it("should update the providerRef with the retrial providerRef from config", async () => {
+                const err = new InternalError("Sorry", {});
+                mockAll();
+                deps.verifyTransferFromProvider.mockRejectedValue(err);
+
+                await expect(() => walletService.dequeueTransfer(data)).rejects.toThrow(err);
+                expect(deps.updateTransactionInfo).toHaveBeenCalledTimes(1);
+                expect(deps.updateTransactionInfo).toHaveBeenCalledWith(
+                    transactionJson.id,
+                    new UpdateTransactionInfoDto({
+                        channel: "bank",
+                        providerRef: config.payment.retryTempProviderRef,
+                        status: "pending",
+                    })
+                );
+            });
         });
 
         describe("given the status from verification is 'pending'", () => {
