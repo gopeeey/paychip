@@ -73,11 +73,15 @@ export const buildContainer = async (pool: Pool) => {
         generatePaymentLink: paymentProviderService.generatePaymentLink,
         getOrCreateCustomer: customerService.getOrCreateCustomer,
         findTransactionByReference: transactionService.findTransactionByReference,
+        getTransactionByReference: transactionService.getTransactionByReference,
         updateTransactionInfo: transactionService.updateTransactionInfo,
         verifyTransactionFromProvider: paymentProviderService.verifyTransaction,
         updateCustomer: customerService.updateCustomer,
         sendEmail: notificationService.sendEmail,
         publishTransfer: transferQueue.publish,
+        sendMoney: paymentProviderService.sendMoney,
+        updateTransactionReference: transactionService.updateTransactionReference,
+        verifyTransferFromProvider: paymentProviderService.verifyTransfer,
     });
 
     const businessRepo = new BusinessRepo(pool);
@@ -104,6 +108,7 @@ export const buildContainer = async (pool: Pool) => {
 
     // consume queues
     transactionQueue.consume(walletService.dequeueTransaction);
+    transferQueue.consume(walletService.dequeueTransfer);
 
     return container;
 };

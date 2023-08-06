@@ -55,11 +55,15 @@ export interface WalletServiceDependencies {
     calculateCharges: ChargesServiceInterface["calculateTransactionCharges"];
     createTransaction: TransactionServiceInterface["createTransaction"];
     findTransactionByReference: TransactionServiceInterface["findTransactionByReference"];
+    getTransactionByReference: TransactionServiceInterface["getTransactionByReference"];
     generatePaymentLink: PaymentProviderService["generatePaymentLink"];
     getOrCreateCustomer: CustomerServiceInterface["getOrCreateCustomer"];
     verifyTransactionFromProvider: PaymentProviderServiceInterface["verifyTransaction"];
+    verifyTransferFromProvider: PaymentProviderServiceInterface["verifyTransfer"];
     updateTransactionInfo: TransactionServiceInterface["updateTransactionInfo"];
+    updateTransactionReference: TransactionServiceInterface["updateTransactionReference"];
     updateCustomer: CustomerServiceInterface["updateCustomer"];
     sendEmail: NotificationServiceInterface["sendEmail"];
     publishTransfer: TransferQueueInterface["publish"];
+    sendMoney: PaymentProviderServiceInterface["sendMoney"];
 }

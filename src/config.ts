@@ -74,6 +74,9 @@ const paymentSettings = {
         payment: CURRENT_PAYMENT_PROVIDER,
         bankVerification: CURRENT_BANK_VERIFICATION_PROVIDER,
     },
+    retryTempProviderRef:
+        "this-transaction-has-failed-and-may-be-retried-a-certain-number-of-times",
+    transferRetrialSuffix: "__ret",
 };
 
 const thirdParty = {
