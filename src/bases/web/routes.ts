@@ -32,6 +32,7 @@ export class RootRoutes {
 
         const webhookRoutes = new WebhookRoute({
             publishTransactionTask: this._container.publishTransactionTask,
+            publishTransferVerificationTask: this._container.publishTransferVerificationTask,
         }).init();
 
         router.use("/account", accountRoutes);

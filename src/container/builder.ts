@@ -26,6 +26,7 @@ import { AuthMiddleware } from "@bases/web";
 // queues
 import { RabbitTransactionQueue } from "@queues/transactions";
 import { RabbitTransferQueue } from "@queues/transfers";
+import { RabbitVerifyTransferQueue } from "@queues/transfers";
 
 export const buildContainer = async (pool: Pool) => {
     // imds
@@ -34,6 +35,7 @@ export const buildContainer = async (pool: Pool) => {
     // queues
     const transactionQueue = new RabbitTransactionQueue();
     const transferQueue = new RabbitTransferQueue();
+    const verifyTransferQueue = new RabbitVerifyTransferQueue();
 
     const fakeEmailProvider = new FakeEmailProvider();
     const notificationService = new NotificationService({ emailProvider: fakeEmailProvider });
@@ -103,7 +105,9 @@ export const buildContainer = async (pool: Pool) => {
         countryService,
         walletService,
         paymentProviderService,
+        imdsService: imdsService,
         publishTransactionTask: transactionQueue.publish,
+        publishTransferVerificationTask: verifyTransferQueue.publish,
     };
 
     // consume queues

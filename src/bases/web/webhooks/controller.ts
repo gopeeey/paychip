@@ -2,16 +2,24 @@ import { BaseController, StandardControllerType } from "@bases/web";
 import { createHmac } from "crypto";
 import config from "src/config";
 import { sendResponse } from "src/utils";
-import { VerifyTransactionResponseInterface } from "@payment_providers/data";
+import {
+    VerifyTransactionResponseInterface,
+    VerifyTransferReponseInterface,
+} from "@payment_providers/data";
 import { TransactionMessageDto, TransactionQueueInterface } from "@queues/transactions";
+import { TransferQueueInterface, VerifyTransferQueueInterface } from "@queues/transfers";
 
 type PaystackBodyType = {
     event: "charge.success" | "transfer.success" | "transfer.failed" | "transfer.reversed";
-    data: VerifyTransactionResponseInterface["data"] | { boo: "foo" };
+    data:
+        | VerifyTransactionResponseInterface["data"]
+        | VerifyTransferReponseInterface["data"]
+        | { boo: "foo" };
 };
 
 export type WebhooksControllerDependencies = {
     publishTransactionTask: TransactionQueueInterface["publish"];
+    publishTransferVerificationTask: VerifyTransferQueueInterface["publish"];
 };
 
 export class WebhooksController extends BaseController {
@@ -36,12 +44,20 @@ export class WebhooksController extends BaseController {
                             new TransactionMessageDto({ provider, reference: chargeData.reference })
                         );
                         break;
-                    case "transfer.failed":
-                        break;
-                    case "transfer.reversed":
-                        break;
+
                     case "transfer.success":
+                        const transferData = body.data as VerifyTransferReponseInterface["data"];
+                        await this._deps.publishTransferVerificationTask(transferData.reference);
                         break;
+
+                    case "transfer.failed":
+                        console.log("NOT HANDLING FAILED TRANSFER WEBHOOK CALL YET");
+                        break;
+
+                    case "transfer.reversed":
+                        console.log("NOT HANDLING REVERSED TRANSFER WEBHOOK CALL YET");
+                        break;
+
                     default:
                         break;
                 }

@@ -82,5 +82,15 @@ export interface VerifyTransferReponseInterface extends BaseResponseInterface {
     data: {
         status: "success" | "failed" | "pending";
         transfer_code: string;
+        reference: string;
+        amount: number;
+        recipient: {
+            details: {
+                account_number: string;
+                account_name: string | null;
+                bank_code: string;
+                bank_name: string;
+            };
+        };
     };
 }

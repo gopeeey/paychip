@@ -1,7 +1,7 @@
 type Props = {
     accountNumber: string;
     bankCode: string;
-    accountName?: string;
+    accountName?: string | null;
 };
 
 export class BankDetails {

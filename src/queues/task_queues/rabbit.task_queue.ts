@@ -29,7 +29,7 @@ export class RabbitTaskQueue<M> implements TaskQueueInterface<M> {
             });
         } catch (err) {
             if (err instanceof Error) throw new TaskQueueError(err.message, this.name, message);
-            // Should log this to whatever you're using to monitor
+            //@TODO Log this error to what you're monitoring with
         }
     };
 
@@ -56,7 +56,7 @@ export class RabbitTaskQueue<M> implements TaskQueueInterface<M> {
             );
         } catch (err) {
             if (err instanceof Error) throw new TaskQueueError(err.message, this.name);
-            // Should log this to whatever you're using to monitor
+            //@TODO Log this error to what you're monitoring with
         }
     };
 }

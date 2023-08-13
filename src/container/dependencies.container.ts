@@ -6,6 +6,8 @@ import { WalletServiceInterface } from "@wallet/logic";
 import { AuthMiddlewareInterface } from "@bases/web";
 import { PaymentProviderServiceInterface } from "@payment_providers/logic";
 import { TransactionQueueInterface } from "@queues/transactions";
+import { VerifyTransferQueueInterface } from "@queues/transfers";
+import { ImdsInterface } from "@bases/logic";
 
 export interface DependencyContainerInterface {
     accountService: AccountServiceInterface;
@@ -14,6 +16,8 @@ export interface DependencyContainerInterface {
     countryService: CountryServiceInterface;
     walletService: WalletServiceInterface;
     authMiddleware: AuthMiddlewareInterface;
+    imdsService: ImdsInterface;
     paymentProviderService: PaymentProviderServiceInterface;
     publishTransactionTask: TransactionQueueInterface["publish"];
+    publishTransferVerificationTask: VerifyTransferQueueInterface["publish"];
 }
