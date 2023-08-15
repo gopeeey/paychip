@@ -1,4 +1,8 @@
-import { TransactionModelInterface, TransactionRepoInterface } from "@wallet/logic";
+import {
+    PreVerifyTransferDto,
+    TransactionModelInterface,
+    TransactionRepoInterface,
+} from "@wallet/logic";
 import { generateId } from "src/utils";
 import { PgBaseRepo } from "@db/postgres";
 import { Pool } from "pg";
@@ -24,6 +28,22 @@ export class TransactionRepo extends PgBaseRepo implements TransactionRepoInterf
             (session as PgSession)?.client
         );
         return res.rows[0];
+    };
+
+    createMultiple: TransactionRepoInterface["createMultiple"] = async (
+        transactionDtos,
+        session
+    ) => {
+        const query = queries.createMultipleTransactionsQuery(
+            transactionDtos.map((trx) => ({ ...trx, id: generateId(trx.businessId) }))
+        );
+
+        const res = await runQuery<TransactionModelInterface>(
+            query,
+            this._pool,
+            (session as PgSession)?.client
+        );
+        return res.rows;
     };
 
     getByReference: TransactionRepoInterface["getByReference"] = async (reference, session) => {
@@ -69,4 +89,12 @@ export class TransactionRepo extends PgBaseRepo implements TransactionRepoInterf
         const query = queries.updateTransactionInfo(transactionId, data);
         await runQuery(query, this._pool, (session as PgSession)?.client);
     };
+
+    getPendingDebitThatHaveProviderRef: TransactionRepoInterface["getPendingDebitThatHaveProviderRef"] =
+        async () => {
+            const query = queries.getPendingDebitThatHaveProviderRefQuery();
+            const res = await runQuery<PreVerifyTransferDto>(query, this._pool);
+
+            return res.rows;
+        };
 }

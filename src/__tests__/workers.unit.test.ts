@@ -20,6 +20,16 @@ const worker = new BackgroundWorker({
     imdsService: imdsServiceMock,
 });
 
+const inactiveWorker = new BackgroundWorker({
+    id: "InactiveWorkerId",
+    active: false,
+    interval: 5,
+    lock: true,
+    lockPeriod: 10,
+    workerFunction,
+    imdsService: imdsServiceMock,
+});
+
 const unlockedWorker = new BackgroundWorker({
     id: "UnlockedWorkerId",
     active: true,
@@ -30,6 +40,14 @@ const unlockedWorker = new BackgroundWorker({
 });
 
 describe("TESTING BACKGROUND WORKER IMPLEMENTATION", () => {
+    describe("given the worker is inactive", () => {
+        it("should not run", async () => {
+            await inactiveWorker.start();
+            expect(workerFunction).not.toHaveBeenCalled();
+            expect(imdsServiceMock.lock).not.toHaveBeenCalled();
+            expect(imdsServiceMock.release).not.toHaveBeenCalled();
+        });
+    });
     describe("given the property lock is true", () => {
         it("should try to acquire a lock with the worker's id", async () => {
             await worker.start();

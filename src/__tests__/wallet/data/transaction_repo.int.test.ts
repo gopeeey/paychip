@@ -17,11 +17,68 @@ import {
     transactionSeeder,
 } from "src/__tests__/helpers/samples";
 import { DBSetup } from "src/__tests__/helpers/test_utils";
+import config from "src/config";
 
 const pool = DBSetup(transactionSeeder);
 
 const runQuerySpy = jest.spyOn(dbModule, "runQuery");
 const transactionRepo = new TransactionRepo(pool);
+
+const getUnsavedTransactions = async () => {
+    const transaction = await getATransaction(pool);
+    const transactions: CreateTransactionDto[] = [
+        new CreateTransactionDto({
+            amount: 1000,
+            businessCharge: 100,
+            businessChargePaidBy: "wallet",
+            businessGot: 980,
+            businessId: transaction.businessId,
+            businessPaid: 20,
+            bwId: transaction.bwId,
+            channel: "bank",
+            currency: "NGN",
+            customerId: transaction.customerId,
+            platformCharge: 20,
+            platformChargePaidBy: "wallet",
+            platformGot: 1000,
+            settledAmount: 900,
+            receiverPaid: 100,
+            reference: "reference",
+            senderPaid: 0,
+            transactionType: "debit",
+            provider: config.payment.currentProviders.transfer,
+            providerRef: "providerRef",
+            senderWalletId: transaction.senderWalletId,
+            receiverWalletId: transaction.senderWalletId,
+        }),
+        new CreateTransactionDto({
+            amount: 100,
+            businessCharge: 10,
+            businessChargePaidBy: "wallet",
+            businessGot: 98,
+            businessId: transaction.businessId,
+            businessPaid: 2,
+            bwId: transaction.bwId,
+            channel: "bank",
+            currency: "NGN",
+            customerId: transaction.customerId,
+            platformCharge: 2,
+            platformChargePaidBy: "wallet",
+            platformGot: 100,
+            settledAmount: 90,
+            receiverPaid: 10,
+            reference: "reference2",
+            senderPaid: 0,
+            transactionType: "debit",
+            provider: config.payment.currentProviders.transfer,
+            providerRef: "providerRef2",
+            senderWalletId: transaction.senderWalletId,
+            receiverWalletId: transaction.senderWalletId,
+        }),
+    ];
+
+    return transactions;
+};
 
 describe("TESTING TRANSACTION REPO", () => {
     describe(">>> create", () => {
@@ -78,6 +135,36 @@ describe("TESTING TRANSACTION REPO", () => {
             const persistedTransaction = res.rows[0];
             if (!persistedTransaction) throw new Error("Failed to persist transaction");
             expect(persistedTransaction).toMatchObject(data);
+        });
+    });
+
+    describe(">>> createMultiple", () => {
+        it("should persist the multiple transactions and return an array of the persisted objects", async () => {
+            const transactionsData = await getUnsavedTransactions();
+            const session = await transactionRepo.startSession();
+
+            runQuerySpy.mockClear();
+            const persistedTransactions = await transactionRepo.createMultiple(
+                transactionsData,
+                session
+            );
+            await session.commit();
+            await session.end();
+
+            expect(runQuerySpy).toHaveBeenCalledTimes(1);
+            expect(runQuerySpy).toHaveBeenCalledWith(
+                expect.anything(),
+                pool,
+                (session as PgSession).client
+            );
+
+            for (const transaction of persistedTransactions) {
+                const data = transactionsData.find(
+                    (trx) => trx.reference === transaction.reference
+                );
+                if (!data) throw new Error("Not properly saved");
+                expect(transaction).toMatchObject(data);
+            }
         });
     });
 
@@ -239,6 +326,24 @@ describe("TESTING TRANSACTION REPO", () => {
             const transaction = res.rows[0];
             if (!transaction) throw new Error("Transaction not found");
             expect(transaction).toMatchObject({ ...data, status: "successful" });
+        });
+    });
+
+    describe(">>> getPendingDebitThatHaveProviderRef", () => {
+        it("should return an array of pending transactions that have a provider ref", async () => {
+            const unsaved = await getUnsavedTransactions(); // These transactions have a provider ref
+
+            const testTransactions = await transactionRepo.createMultiple(unsaved);
+
+            const result = await transactionRepo.getPendingDebitThatHaveProviderRef();
+
+            for (const transaction of result) {
+                const data = testTransactions.find(
+                    (trx) => trx.reference === transaction.reference
+                );
+                if (!data) throw new Error("Not properly saved");
+                expect(data).toMatchObject(transaction);
+            }
         });
     });
 });

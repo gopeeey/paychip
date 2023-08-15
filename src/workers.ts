@@ -44,6 +44,7 @@ export class BackgroundWorker {
     }
 
     async start() {
+        if (!this.active) return;
         await this.run();
         this.loop();
     }
@@ -58,7 +59,6 @@ export class BackgroundWorker {
         try {
             // Acquire lock if needed
             if (this.lock) lock = await this.imdsService.lock(this.id, this.lockPeriod as number);
-            console.log("\n\n\nHERE'S THE LOCK", lock);
             if (!lock) return;
 
             this.workerFunction(
@@ -76,3 +76,24 @@ export class BackgroundWorker {
         this.timeout = setInterval(this.run.bind(this), this.interval * 1000);
     }
 }
+
+export const startWorkers = (imdsService: ImdsInterface) => {
+    const workers: BackgroundWorker[] = [
+        new BackgroundWorker({
+            id: "TestWorker",
+            active: true,
+            imdsService,
+            interval: 4,
+            lock: true,
+            lockPeriod: 5,
+            workerFunction: (callback: () => void) => {
+                console.log("I am getting called");
+                callback();
+            },
+        }),
+    ];
+
+    for (const worker of workers) {
+        worker.start();
+    }
+};

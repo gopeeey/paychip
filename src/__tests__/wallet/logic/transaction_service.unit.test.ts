@@ -15,6 +15,8 @@ const repo: { [key in keyof TransactionRepoInterface]: jest.Mock } = {
     updateReference: jest.fn(),
     updateTransactionInfo: jest.fn(),
     getByRefAndStatus: jest.fn(),
+    getPendingDebitThatHaveProviderRef: jest.fn(),
+    createMultiple: jest.fn(),
 };
 
 const service = new TransactionService({ repo } as unknown as TransactionServiceDependencies);
@@ -115,6 +117,15 @@ describe("TESTING TRANSACTION SERIVCE", () => {
             await service.updateTransactionInfo("some", info, sessionMock);
             expect(repo.updateTransactionInfo).toHaveBeenCalledTimes(1);
             expect(repo.updateTransactionInfo).toHaveBeenCalledWith("some", info, sessionMock);
+        });
+    });
+
+    describe(">>> getPendingDebitTransactionsThatHaveProviderRef", () => {
+        it("should call the getPendingDebitThatHaveProviderRef repo function and return the results", async () => {
+            const expected = [transactionJson];
+            repo.getPendingDebitThatHaveProviderRef.mockResolvedValue(expected);
+            const result = await service.getPendingDebitTransactionsThatHaveProviderRef();
+            expect(result).toEqual(expected);
         });
     });
 });

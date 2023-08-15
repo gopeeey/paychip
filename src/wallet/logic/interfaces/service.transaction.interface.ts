@@ -1,5 +1,5 @@
 import { SessionInterface } from "@bases/logic";
-import { CreateTransactionDto, UpdateTransactionInfoDto } from "../dtos";
+import { CreateTransactionDto, PreVerifyTransferDto, UpdateTransactionInfoDto } from "../dtos";
 import { TransactionModelInterface } from "./transaction.model.interface";
 import { TransactionRepoInterface } from "./transaction_repo.interface";
 import { TransactionStatusType } from "./transaction.def.model.interface";
@@ -30,6 +30,8 @@ export interface TransactionServiceInterface {
         info: UpdateTransactionInfoDto,
         session?: SessionInterface
     ) => Promise<void>;
+
+    getPendingDebitTransactionsThatHaveProviderRef: () => Promise<PreVerifyTransferDto[]>;
 }
 
 export interface TransactionServiceDependencies {

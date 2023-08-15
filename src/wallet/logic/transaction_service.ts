@@ -57,4 +57,10 @@ export class TransactionService implements TransactionServiceInterface {
     ) => {
         await this._repo.updateTransactionInfo(transactionId, info, session);
     };
+
+    getPendingDebitTransactionsThatHaveProviderRef: TransactionServiceInterface["getPendingDebitTransactionsThatHaveProviderRef"] =
+        async () => {
+            const transactions = await this._repo.getPendingDebitThatHaveProviderRef();
+            return transactions;
+        };
 }
