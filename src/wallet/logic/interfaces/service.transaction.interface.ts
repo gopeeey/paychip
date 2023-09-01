@@ -3,6 +3,8 @@ import { CreateTransactionDto, PreVerifyTransferDto, UpdateTransactionInfoDto } 
 import { TransactionModelInterface } from "./transaction.model.interface";
 import { TransactionRepoInterface } from "./transaction_repo.interface";
 import { TransactionStatusType } from "./transaction.def.model.interface";
+import { TransferQueueInterface, VerifyTransferQueueInterface } from "@queues/transfers";
+import { PaymentProviderServiceInterface, VerifyTransferDto } from "@payment_providers/logic";
 
 export interface TransactionServiceInterface {
     createTransaction: (
@@ -31,9 +33,16 @@ export interface TransactionServiceInterface {
         session?: SessionInterface
     ) => Promise<void>;
 
-    getPendingDebitTransactionsThatHaveProviderRef: () => Promise<PreVerifyTransferDto[]>;
+    enqueueTransfersForVerification: (callback?: () => void) => Promise<void>;
+
+    dequeueTransferVerificationTask: (dto: VerifyTransferDto) => Promise<void>;
+
+    retryTransfers: (callback?: () => void) => Promise<void>;
 }
 
 export interface TransactionServiceDependencies {
     repo: TransactionRepoInterface;
+    publishTransfer: TransferQueueInterface["publish"];
+    publishTransfersForVerification: VerifyTransferQueueInterface["publish"];
+    verifyTransfer: PaymentProviderServiceInterface["verifyTransfer"];
 }

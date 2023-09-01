@@ -8,7 +8,7 @@ const run = async () => {
         const pool = await connectToDb();
         const container = await buildContainer(pool);
         const app = new App(container).init();
-        startServer(app, container.imdsService);
+        startServer(app, container);
     } catch (err) {
         console.log(err);
         process.exit(1);

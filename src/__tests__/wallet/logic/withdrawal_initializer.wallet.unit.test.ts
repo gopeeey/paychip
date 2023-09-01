@@ -3,6 +3,7 @@ import { BankDetails } from "@payment_providers/logic";
 import { TransferMessageDto } from "@queues/transfers";
 import { WalletRepo } from "@wallet/data";
 import {
+    CreateTransactionDto,
     IncrementBalanceDto,
     InitializeWithdrawalDto,
     InsufficientWalletBalanceError,
@@ -181,7 +182,10 @@ describe("TESTING WITHDRAWAL INITIALIZER", () => {
         expect(generateIdMock).toHaveBeenCalledTimes(1);
         expect(deps.getOrCreateCustomer).toHaveBeenCalledTimes(1);
         expect(deps.createTransaction).toHaveBeenCalledTimes(1);
-        expect(deps.createTransaction).toHaveBeenCalledWith(expect.anything(), sessionMock);
+        expect(deps.createTransaction).toHaveBeenCalledWith(
+            expect.any(CreateTransactionDto),
+            sessionMock
+        );
     });
 
     // Debit wallets

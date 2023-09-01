@@ -11,7 +11,7 @@ export type TransactionType = (typeof allowedTransactionTypes)[number];
 export const allowedTransactionChannels = ["bank", "card", "wallet"] as const;
 export type TransactionChannelType = (typeof allowedTransactionChannels)[number];
 
-export const allowedStatuses = ["pending", "successful", "failed"] as const;
+export const allowedStatuses = ["pending", "successful", "failed", "retrying"] as const;
 export type TransactionStatusType = (typeof allowedStatuses)[number];
 
 export interface TransactionModelInterfaceDef extends BaseModelInterface {
@@ -46,4 +46,6 @@ export interface TransactionModelInterfaceDef extends BaseModelInterface {
     callbackUrl?: string | null;
     senderWalletId?: WalletModelInterfaceDef["id"] | null;
     receiverWalletId?: WalletModelInterfaceDef["id"] | null;
+    retryAt?: Date | null;
+    retries: number;
 }

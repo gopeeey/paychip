@@ -168,6 +168,10 @@ export class WithdrawalInitializer {
             customerId: customer.id,
             reference: this.reference,
             senderWalletId: this.wallet.id,
+            bankCode: this.bankDetails.bankCode,
+            accountName: this.bankDetails.accountName,
+            accountNumber: this.bankDetails.accountNumber,
+            provider: config.payment.currentProviders.transfer,
         });
 
         this.transaction = await this._deps.createTransaction(transactionData, this.session);

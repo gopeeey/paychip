@@ -56,12 +56,17 @@ export const buildContainer = async (pool: Pool) => {
     const chargesRepo = new ChargesRepo(pool);
     const chargesService = new ChargesService({ repo: chargesRepo });
 
-    const transactionRepo = new TransactionRepo(pool);
-    const transactionService = new TransactionService({ repo: transactionRepo });
-
     const paystackRepo = new PaystackRepo(pool);
     const paymentProviderService = new PaymentProviderService({
         paystack: paystackRepo,
+    });
+
+    const transactionRepo = new TransactionRepo(pool);
+    const transactionService = new TransactionService({
+        repo: transactionRepo,
+        publishTransfersForVerification: verifyTransferQueue.publish,
+        publishTransfer: transferQueue.publish,
+        verifyTransfer: paymentProviderService.verifyTransfer,
     });
 
     const walletRepo = new WalletRepo(pool);
@@ -103,6 +108,7 @@ export const buildContainer = async (pool: Pool) => {
         businessService,
         chargesService,
         countryService,
+        transactionService,
         walletService,
         paymentProviderService,
         imdsService: imdsService,
@@ -112,7 +118,9 @@ export const buildContainer = async (pool: Pool) => {
 
     // consume queues
     transactionQueue.consume(walletService.dequeueTransaction);
+
     transferQueue.consume(walletService.dequeueTransfer);
+    verifyTransferQueue.consume(transactionService.dequeueTransferVerificationTask);
 
     return container;
 };

@@ -37,7 +37,15 @@ export interface TransactionRepoInterface {
         session?: SessionInterface
     ) => Promise<void>;
 
+    updateForRetrial: (
+        transactionId: TransactionModelInterface["id"],
+        retrialDate: Date,
+        session?: SessionInterface
+    ) => Promise<void>;
+
     getPendingDebitThatHaveProviderRef: () => Promise<PreVerifyTransferDto[]>;
+
+    getRetryTransfers: () => Promise<TransactionModelInterface[]>;
 
     startSession: () => Promise<SessionInterface>;
 }

@@ -8,6 +8,7 @@ import {
 } from "@payment_providers/data";
 import { TransactionMessageDto, TransactionQueueInterface } from "@queues/transactions";
 import { TransferQueueInterface, VerifyTransferQueueInterface } from "@queues/transfers";
+import { VerifyTransferDto } from "@payment_providers/logic";
 
 type PaystackBodyType = {
     event: "charge.success" | "transfer.success" | "transfer.failed" | "transfer.reversed";
@@ -47,7 +48,12 @@ export class WebhooksController extends BaseController {
 
                     case "transfer.success":
                         const transferData = body.data as VerifyTransferReponseInterface["data"];
-                        await this._deps.publishTransferVerificationTask(transferData.reference);
+                        await this._deps.publishTransferVerificationTask(
+                            new VerifyTransferDto({
+                                provider,
+                                reference: transferData.reference,
+                            })
+                        );
                         break;
 
                     case "transfer.failed":

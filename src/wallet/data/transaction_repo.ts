@@ -97,4 +97,19 @@ export class TransactionRepo extends PgBaseRepo implements TransactionRepoInterf
 
             return res.rows;
         };
+
+    updateForRetrial: TransactionRepoInterface["updateForRetrial"] = async (
+        transactionId,
+        retrialDate,
+        session
+    ) => {
+        const query = queries.updateForRetrialQuery(transactionId, retrialDate.toISOString());
+        await runQuery(query, this._pool, (session as PgSession)?.client);
+    };
+
+    getRetryTransfers: TransactionRepoInterface["getRetryTransfers"] = async () => {
+        const query = queries.getRetryTransfers();
+        const res = await runQuery<TransactionModelInterface>(query, this._pool);
+        return res.rows;
+    };
 }

@@ -2,7 +2,7 @@
 CREATE TYPE PAIDBY AS ENUM ('wallet', 'customer');
 CREATE TYPE CHARGETYPE AS ENUM ('funding', 'withdrawal', 'walletIn', 'walletOut');
 CREATE TYPE TRANSACTIONTYPE AS ENUM ('credit', 'debit');
-CREATE TYPE TRANSACTIONSTATUS AS ENUM ('pending', 'successful', 'failed');
+CREATE TYPE TRANSACTIONSTATUS AS ENUM ('pending', 'successful', 'failed', 'retrying');
 CREATE TYPE TRANSACTIONCHANNEL AS ENUM('bank', 'card', 'wallet');
 
 CREATE TABLE "accounts" (
@@ -168,6 +168,8 @@ CREATE TABLE "transactions" (
     "cardType" VARCHAR(10),
     "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "callbackUrl" VARCHAR,
+    "retryAt" TIMESTAMPTZ,
+    "retries" INTEGER DEFAULT 0,
     FOREIGN KEY("businessId") REFERENCES "businesses"("id") ON DELETE CASCADE,
     FOREIGN KEY("customerId") REFERENCES "customers"("id") ON DELETE SET NULL,
     FOREIGN KEY("currency") REFERENCES "currencies"("isoCode") ON DELETE CASCADE,

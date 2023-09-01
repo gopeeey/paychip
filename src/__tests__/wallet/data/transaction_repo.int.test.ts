@@ -18,6 +18,7 @@ import {
 } from "src/__tests__/helpers/samples";
 import { DBSetup } from "src/__tests__/helpers/test_utils";
 import config from "src/config";
+import moment from "moment";
 
 const pool = DBSetup(transactionSeeder);
 
@@ -243,6 +244,7 @@ describe("TESTING TRANSACTION REPO", () => {
             for (const reference of references) {
                 const session = await transactionRepo.startSession();
                 await transactionRepo.updateReference(trx.id, reference, session);
+                await session.commit();
                 await session.end();
                 const newTrx = await getATransaction(pool, trx.id);
                 expect(newTrx.reference).toBe(reference);
@@ -343,6 +345,53 @@ describe("TESTING TRANSACTION REPO", () => {
                 );
                 if (!data) throw new Error("Not properly saved");
                 expect(data).toMatchObject(transaction);
+            }
+        });
+    });
+
+    describe(">>> updateForRetrial", () => {
+        it("should update the status of the transaction to retrying and the retryAt to the given retrialDate", async () => {
+            const transaction = await getATransaction(pool);
+
+            const retrialDate = new Date();
+            const session = await transactionRepo.startSession();
+            await transactionRepo.updateForRetrial(transaction.id, retrialDate, session);
+            await session.commit();
+            await session.end();
+
+            const savedTransaction = await getATransaction(pool, transaction.id);
+            if (!savedTransaction) throw new Error("Did not update transaction");
+            expect(savedTransaction.retryAt?.toISOString()).toBe(retrialDate.toISOString());
+            expect(savedTransaction.status).toBe("retrying");
+            expect(savedTransaction.retries).toBe((transaction.retries as number) + 1);
+            expect(runQuerySpy).toHaveBeenCalledWith(
+                expect.anything(),
+                expect.anything(),
+                (session as PgSession).client
+            );
+        });
+    });
+
+    describe(">>> getRetryTransactions", () => {
+        it("should return transactions with status retrying and retryAt is in the past", async () => {
+            // Create such a transaction
+            const trxs = await getUnsavedTransactions();
+
+            const testTrxs = await transactionRepo.createMultiple(trxs);
+            // Update the transactions
+            const past = moment().subtract(10, "minutes");
+            for (const trx of testTrxs) {
+                await transactionRepo.updateForRetrial(trx.id, past.toDate());
+            }
+
+            const results = await transactionRepo.getRetryTransfers();
+            for (const trx of results) {
+                expect(trx.retryAt?.toISOString()).toBe(past.toISOString());
+                expect(trx.status).toBe("retrying");
+                expect(trx.transactionType).toBe("debit");
+                const prev = testTrxs.find((tr) => tr.id === trx.id);
+                expect(prev).toBeDefined();
+                expect(prev).not.toBeNull();
             }
         });
     });

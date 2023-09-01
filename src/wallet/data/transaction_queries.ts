@@ -5,7 +5,7 @@ import {
 } from "@wallet/logic";
 import SQL from "sql-template-strings";
 
-interface CreateTransactionArgType extends Omit<TransactionModelInterface, "channel"> {
+interface CreateTransactionArgType extends Omit<TransactionModelInterface, "channel" | "retries"> {
     channel: TransactionModelInterface["channel"] | null;
 }
 
@@ -214,5 +214,22 @@ export const getPendingDebitThatHaveProviderRefQuery = () => {
         WHERE "status" = 'pending'
         AND "transactionType" = 'debit'
         AND "providerRef" IS NOT NULL;
+    `;
+};
+
+export const updateForRetrialQuery = (transactionId: string, retrialDateString: string) => {
+    return SQL`
+        UPDATE "transactions" 
+        SET "status" = 'retrying', "retryAt" = ${retrialDateString}, retries = retries + 1  
+        WHERE "id" = ${transactionId};
+    `;
+};
+
+export const getRetryTransfers = () => {
+    return SQL`
+        SELECT * FROM "transactions"
+        WHERE "status" = 'retrying'
+        AND "retryAt" < CURRENT_TIMESTAMP
+        AND "transactionType" = 'debit';
     `;
 };

@@ -77,6 +77,8 @@ const paymentSettings = {
     retryTempProviderRef:
         "this-transaction-has-failed-and-may-be-retried-a-certain-number-of-times",
     transferRetrialSuffix: "__ret",
+    retrialInterval: 10, // minutes
+    maxRetries: 6,
 };
 
 const thirdParty = {
