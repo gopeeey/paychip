@@ -40,6 +40,7 @@ export const transactionJson: TransactionModelInterface = {
     channel: "bank",
     id: "somehere",
     status: "pending",
+    retries: 0,
 };
 
 export const transactionSeeder = async (pool: Pool) => {

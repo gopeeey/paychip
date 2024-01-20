@@ -1,8 +1,10 @@
 import { SessionInterface } from "@bases/logic";
-import { CreateTransactionDto, UpdateTransactionInfoDto } from "../dtos";
+import { CreateTransactionDto, PreVerifyTransferDto, UpdateTransactionInfoDto } from "../dtos";
 import { TransactionModelInterface } from "./transaction.model.interface";
 import { TransactionRepoInterface } from "./transaction_repo.interface";
 import { TransactionStatusType } from "./transaction.def.model.interface";
+import { TransferQueueInterface, VerifyTransferQueueInterface } from "@queues/transfers";
+import { PaymentProviderServiceInterface, VerifyTransferDto } from "@payment_providers/logic";
 
 export interface TransactionServiceInterface {
     createTransaction: (
@@ -17,9 +19,11 @@ export interface TransactionServiceInterface {
         status: TransactionStatusType
     ) => Promise<TransactionModelInterface | null>;
 
-    updateTransactionStatus: (
+    getTransactionByReference: (reference: string) => Promise<TransactionModelInterface>;
+
+    updateTransactionReference: (
         id: TransactionModelInterface["id"],
-        status: TransactionModelInterface["status"],
+        reference: TransactionModelInterface["reference"],
         session?: SessionInterface
     ) => Promise<void>;
 
@@ -28,8 +32,17 @@ export interface TransactionServiceInterface {
         info: UpdateTransactionInfoDto,
         session?: SessionInterface
     ) => Promise<void>;
+
+    enqueueTransfersForVerification: (callback?: () => void) => Promise<void>;
+
+    dequeueTransferVerificationTask: (dto: VerifyTransferDto) => Promise<void>;
+
+    retryTransfers: (callback?: () => void) => Promise<void>;
 }
 
 export interface TransactionServiceDependencies {
     repo: TransactionRepoInterface;
+    publishTransfer: TransferQueueInterface["publish"];
+    publishTransfersForVerification: VerifyTransferQueueInterface["publish"];
+    verifyTransfer: PaymentProviderServiceInterface["verifyTransfer"];
 }

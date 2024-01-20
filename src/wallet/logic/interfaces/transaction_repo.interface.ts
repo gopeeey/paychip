@@ -1,5 +1,5 @@
 import { SessionInterface } from "@bases/logic";
-import { CreateTransactionDto, UpdateTransactionInfoDto } from "../dtos";
+import { CreateTransactionDto, PreVerifyTransferDto, UpdateTransactionInfoDto } from "../dtos";
 import { TransactionModelInterface } from "./transaction.model.interface";
 import { TransactionStatusType } from "./transaction.def.model.interface";
 
@@ -8,6 +8,11 @@ export interface TransactionRepoInterface {
         createTransactionDto: CreateTransactionDto,
         session?: SessionInterface
     ) => Promise<TransactionModelInterface>;
+
+    createMultiple: (
+        createTransactionDtos: CreateTransactionDto[],
+        session?: SessionInterface
+    ) => Promise<TransactionModelInterface[]>;
 
     getByReference: (
         reference: string,
@@ -20,9 +25,9 @@ export interface TransactionRepoInterface {
         session?: SessionInterface
     ) => Promise<TransactionModelInterface | null>;
 
-    updateStatus: (
+    updateReference: (
         transactionId: TransactionModelInterface["id"],
-        status: TransactionModelInterface["status"],
+        reference: TransactionModelInterface["reference"],
         session?: SessionInterface
     ) => Promise<void>;
 
@@ -31,6 +36,16 @@ export interface TransactionRepoInterface {
         data: UpdateTransactionInfoDto,
         session?: SessionInterface
     ) => Promise<void>;
+
+    updateForRetrial: (
+        transactionId: TransactionModelInterface["id"],
+        retrialDate: Date,
+        session?: SessionInterface
+    ) => Promise<void>;
+
+    getPendingDebitThatHaveProviderRef: () => Promise<PreVerifyTransferDto[]>;
+
+    getRetryTransfers: () => Promise<TransactionModelInterface[]>;
 
     startSession: () => Promise<SessionInterface>;
 }

@@ -2,7 +2,7 @@
 CREATE TYPE PAIDBY AS ENUM ('wallet', 'customer');
 CREATE TYPE CHARGETYPE AS ENUM ('funding', 'withdrawal', 'walletIn', 'walletOut');
 CREATE TYPE TRANSACTIONTYPE AS ENUM ('credit', 'debit');
-CREATE TYPE TRANSACTIONSTATUS AS ENUM ('pending', 'successful', 'failed');
+CREATE TYPE TRANSACTIONSTATUS AS ENUM ('pending', 'successful', 'failed', 'retrying');
 CREATE TYPE TRANSACTIONCHANNEL AS ENUM('bank', 'card', 'wallet');
 
 CREATE TABLE "accounts" (
@@ -69,7 +69,7 @@ CREATE TABLE "wallets" (
     "id" VARCHAR(60) PRIMARY KEY NOT NULL,
     "businessId" INTEGER NOT NULL,
     "businessWalletId" VARCHAR(60),
-    "currency" VARCHAR(60) NOT NULL,
+    "currency" VARCHAR(3) NOT NULL,
     "isBusinessWallet" BOOLEAN NOT NULL DEFAULT FALSE,
     "active" BOOLEAN NOT NULL DEFAULT TRUE,
     "balance" NUMERIC(15, 2) NOT NULL DEFAULT 0,
@@ -168,6 +168,8 @@ CREATE TABLE "transactions" (
     "cardType" VARCHAR(10),
     "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "callbackUrl" VARCHAR,
+    "retryAt" TIMESTAMPTZ,
+    "retries" INTEGER DEFAULT 0,
     FOREIGN KEY("businessId") REFERENCES "businesses"("id") ON DELETE CASCADE,
     FOREIGN KEY("customerId") REFERENCES "customers"("id") ON DELETE SET NULL,
     FOREIGN KEY("currency") REFERENCES "currencies"("isoCode") ON DELETE CASCADE,
@@ -176,8 +178,17 @@ CREATE TABLE "transactions" (
     FOREIGN KEY("receiverWalletId") REFERENCES "wallets"("id") ON DELETE CASCADE
 );
 
+CREATE TABLE "paystackTransferRecipients" (
+    "recipientId" VARCHAR,
+    "accountNumber" VARCHAR(20),
+    "bankCode" VARCHAR(10),
+    "currency" VARCHAR(3)
+);
+
 
 -- Down Migration
+DROP TABLE "paystackTransferRecipients";
+
 DROP TABLE "transactions";
 
 DROP TABLE "walletCustomers";

@@ -25,6 +25,8 @@ import { AuthMiddleware } from "@bases/web";
 
 // queues
 import { RabbitTransactionQueue } from "@queues/transactions";
+import { RabbitTransferQueue } from "@queues/transfers";
+import { RabbitVerifyTransferQueue } from "@queues/transfers";
 
 export const buildContainer = async (pool: Pool) => {
     // imds
@@ -32,6 +34,8 @@ export const buildContainer = async (pool: Pool) => {
 
     // queues
     const transactionQueue = new RabbitTransactionQueue();
+    const transferQueue = new RabbitTransferQueue();
+    const verifyTransferQueue = new RabbitVerifyTransferQueue();
 
     const fakeEmailProvider = new FakeEmailProvider();
     const notificationService = new NotificationService({ emailProvider: fakeEmailProvider });
@@ -52,12 +56,17 @@ export const buildContainer = async (pool: Pool) => {
     const chargesRepo = new ChargesRepo(pool);
     const chargesService = new ChargesService({ repo: chargesRepo });
 
-    const transactionRepo = new TransactionRepo(pool);
-    const transactionService = new TransactionService({ repo: transactionRepo });
-
-    const paystackRepo = new PaystackRepo();
+    const paystackRepo = new PaystackRepo(pool);
     const paymentProviderService = new PaymentProviderService({
         paystack: paystackRepo,
+    });
+
+    const transactionRepo = new TransactionRepo(pool);
+    const transactionService = new TransactionService({
+        repo: transactionRepo,
+        publishTransfersForVerification: verifyTransferQueue.publish,
+        publishTransfer: transferQueue.publish,
+        verifyTransfer: paymentProviderService.verifyTransfer,
     });
 
     const walletRepo = new WalletRepo(pool);
@@ -71,10 +80,15 @@ export const buildContainer = async (pool: Pool) => {
         generatePaymentLink: paymentProviderService.generatePaymentLink,
         getOrCreateCustomer: customerService.getOrCreateCustomer,
         findTransactionByReference: transactionService.findTransactionByReference,
+        getTransactionByReference: transactionService.getTransactionByReference,
         updateTransactionInfo: transactionService.updateTransactionInfo,
         verifyTransactionFromProvider: paymentProviderService.verifyTransaction,
         updateCustomer: customerService.updateCustomer,
         sendEmail: notificationService.sendEmail,
+        publishTransfer: transferQueue.publish,
+        sendMoney: paymentProviderService.sendMoney,
+        updateTransactionReference: transactionService.updateTransactionReference,
+        verifyTransferFromProvider: paymentProviderService.verifyTransfer,
     });
 
     const businessRepo = new BusinessRepo(pool);
@@ -94,13 +108,19 @@ export const buildContainer = async (pool: Pool) => {
         businessService,
         chargesService,
         countryService,
+        transactionService,
         walletService,
         paymentProviderService,
+        imdsService: imdsService,
         publishTransactionTask: transactionQueue.publish,
+        publishTransferVerificationTask: verifyTransferQueue.publish,
     };
 
     // consume queues
     transactionQueue.consume(walletService.dequeueTransaction);
+
+    transferQueue.consume(walletService.dequeueTransfer);
+    verifyTransferQueue.consume(transactionService.dequeueTransferVerificationTask);
 
     return container;
 };

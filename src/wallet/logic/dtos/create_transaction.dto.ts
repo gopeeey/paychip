@@ -1,7 +1,7 @@
 import { TransactionModelInterface } from "../interfaces";
 
 interface RequiredProps
-    extends Omit<TransactionModelInterface, "id" | "status" | "customer" | "channel"> {
+    extends Omit<TransactionModelInterface, "id" | "status" | "customer" | "channel" | "retries"> {
     channel: TransactionModelInterface["channel"] | null;
     status?: TransactionModelInterface["status"];
 }

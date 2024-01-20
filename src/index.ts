@@ -7,7 +7,8 @@ const run = async () => {
     try {
         const pool = await connectToDb();
         const container = await buildContainer(pool);
-        startServer(new App(container).init());
+        const app = new App(container).init();
+        startServer(app, container);
     } catch (err) {
         console.log(err);
         process.exit(1);

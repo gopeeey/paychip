@@ -1,8 +1,8 @@
 import * as rabbitImp from "amqplib";
 import { Message } from "amqplib";
 import config from "src/config";
-import { TaskQueueInterface } from "./interface.task.queue";
-import { TaskQueueError } from "./error.task.queue";
+import { TaskQueueInterface } from "./interface.task_queue";
+import { TaskQueueError } from "./error.task_queue";
 const rabbit = require("amqplib") as typeof rabbitImp;
 
 const rabbitConfig = config.thirdParty.rabbitMq;
@@ -28,8 +28,8 @@ export class RabbitTaskQueue<M> implements TaskQueueInterface<M> {
                 await connection.close();
             });
         } catch (err) {
-            if (err instanceof Error) throw new TaskQueueError(err.message);
-            // Should log this to whatever you're using to monitor
+            if (err instanceof Error) throw new TaskQueueError(err.message, this.name, message);
+            //@TODO Log this error to what you're monitoring with
         }
     };
 
@@ -55,8 +55,8 @@ export class RabbitTaskQueue<M> implements TaskQueueInterface<M> {
                 { noAck: false }
             );
         } catch (err) {
-            if (err instanceof Error) throw new TaskQueueError(err.message);
-            // Should log this to whatever you're using to monitor
+            if (err instanceof Error) throw new TaskQueueError(err.message, this.name);
+            //@TODO Log this error to what you're monitoring with
         }
     };
 }

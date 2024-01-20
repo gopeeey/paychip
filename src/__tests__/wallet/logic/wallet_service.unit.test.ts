@@ -9,17 +9,32 @@ import {
     TransactionResolverDependencies,
     ResolveTransactionDto,
     TransactionResolutionError,
+    UpdateTransactionInfoDto,
 } from "@wallet/logic";
 import * as WalletCreatorModule from "@wallet/logic/creator.wallet";
 import * as TransactionResolverModule from "@wallet/logic/transaction_resolver.wallet";
 import * as FundingInitializerModule from "@wallet/logic/funding_initializer.wallet";
-import { businessWalletJson, walletData, walletJson } from "src/__tests__/helpers/samples";
+import {
+    businessWalletJson,
+    transactionJson,
+    walletData,
+    walletJson,
+} from "src/__tests__/helpers/samples";
 import { SpiesObj, createSpies, sessionMock } from "src/__tests__/helpers/mocks";
 import { WalletRepo } from "@wallet/data";
 import { Pool } from "pg";
-import { VerifyTransactionResponseDto } from "@payment_providers/logic";
-import { ImdsInterface, SessionInterface } from "@bases/logic";
+import {
+    BankDetails,
+    SendMoneyDto,
+    SendMoneyError,
+    VerifyTransactionResponseDto,
+    VerifyTransferDto,
+    VerifyTransferResponseDto,
+} from "@payment_providers/logic";
+import { ImdsInterface, InternalError, SessionInterface } from "@bases/logic";
 import { TransactionMessageDto } from "@queues/transactions";
+import { TransferMessageDto } from "@queues/transfers";
+import config from "src/config";
 
 const createFn = jest.fn();
 jest.mock("../../../wallet/logic/creator.wallet", () => ({
@@ -64,6 +79,11 @@ const deps: { [key in keyof Omit<WalletServiceDependencies, "repo" | "imdsServic
         updateTransactionInfo: jest.fn(),
         updateCustomer: jest.fn(),
         sendEmail: jest.fn(),
+        publishTransfer: jest.fn(),
+        getTransactionByReference: jest.fn(),
+        verifyTransferFromProvider: jest.fn(),
+        sendMoney: jest.fn(),
+        updateTransactionReference: jest.fn(),
     };
 
 const walletService = new WalletService({
@@ -306,5 +326,257 @@ describe("TESTING WALLET SERVICE", () => {
                 expect(walletRepoMock.getBusinessWalletByCurrency).toHaveBeenCalledWith(...data);
             });
         });
+    });
+
+    describe(">>> dequeueTransfer", () => {
+        const { accountNumber, accountName, bankCode } = { ...transactionJson } as const;
+        const data = new TransferMessageDto({
+            amount: transactionJson.settledAmount,
+            bankDetails: new BankDetails({
+                accountNumber: accountNumber as string,
+                accountName: accountName as string,
+                bankCode: bankCode as string,
+            }),
+            currencyCode: transactionJson.currency,
+            provider: transactionJson.provider as string,
+            reference: transactionJson.reference,
+        });
+
+        const failedReference = transactionJson.reference + config.payment.transferRetrialSuffix;
+        const normalProviderRef = "this is the provider ref returned by the send money function";
+
+        const mockAll = () => {
+            deps.getTransactionByReference.mockResolvedValue(transactionJson);
+            deps.verifyTransferFromProvider.mockResolvedValue(
+                new VerifyTransferResponseDto({
+                    status: "not_found",
+                })
+            );
+            deps.updateTransactionReference.mockResolvedValue(null);
+            deps.updateTransactionReference.mockResolvedValue(null);
+            deps.sendMoney.mockResolvedValue(normalProviderRef);
+        };
+        const providerRef = "this is the provider ref";
+        const pendingTransferProviderRes = new VerifyTransferResponseDto({
+            status: "pending",
+            providerRef,
+        });
+        const failedTransferProviderRes = new VerifyTransferResponseDto({
+            status: "failed",
+            providerRef,
+        });
+        const successfulTransferProviderRef = new VerifyTransferResponseDto({
+            status: "successful",
+            providerRef,
+        });
+
+        it("should fetch the transaction using the getTransactionByReference function", async () => {
+            mockAll();
+            await walletService.dequeueTransfer(data);
+            expect(deps.getTransactionByReference).toHaveBeenCalledTimes(1);
+            expect(deps.getTransactionByReference).toHaveBeenCalledWith(data.reference);
+        });
+
+        it("should verify the transfer from the provider using the verifyTransferFromProvider function", async () => {
+            mockAll();
+            await walletService.dequeueTransfer(data);
+            expect(deps.verifyTransferFromProvider).toHaveBeenCalledTimes(1);
+            expect(deps.verifyTransferFromProvider).toHaveBeenCalledWith(
+                new VerifyTransferDto({ reference: data.reference, provider: data.provider })
+            );
+        });
+
+        describe("given the verifyTransferTransferFromProvider function fails", () => {
+            it("should update the providerRef with the retrial providerRef from config", async () => {
+                const err = new InternalError("Sorry", {});
+                mockAll();
+                deps.verifyTransferFromProvider.mockRejectedValue(err);
+
+                await expect(() => walletService.dequeueTransfer(data)).rejects.toThrow(err);
+                expect(deps.updateTransactionInfo).toHaveBeenCalledTimes(1);
+                expect(deps.updateTransactionInfo).toHaveBeenCalledWith(
+                    transactionJson.id,
+                    new UpdateTransactionInfoDto({
+                        channel: "bank",
+                        providerRef: config.payment.retryTempProviderRef,
+                        status: "pending",
+                    })
+                );
+            });
+        });
+
+        describe("given the status from verification is 'pending'", () => {
+            it("should update the transaction providerRef but not call the function to send money", async () => {
+                mockAll();
+                deps.verifyTransferFromProvider.mockResolvedValue(pendingTransferProviderRes);
+                await walletService.dequeueTransfer(data);
+                expect(deps.updateTransactionInfo).toHaveBeenCalledTimes(1);
+                expect(deps.updateTransactionInfo).toHaveBeenCalledWith(
+                    transactionJson.id,
+                    new UpdateTransactionInfoDto({
+                        channel: "bank",
+                        providerRef: pendingTransferProviderRes.providerRef,
+                        status: "pending",
+                    })
+                );
+                expect(deps.updateTransactionReference).not.toHaveBeenCalled();
+                expect(deps.sendMoney).not.toHaveBeenCalled();
+            });
+        });
+
+        describe("given the status from verification is 'successful'", () => {
+            it("should update the transaction providerRef but not call the function to send money", async () => {
+                mockAll();
+                deps.verifyTransferFromProvider.mockResolvedValue(successfulTransferProviderRef);
+                await walletService.dequeueTransfer(data);
+                expect(deps.updateTransactionInfo).toHaveBeenCalledTimes(1);
+                expect(deps.updateTransactionInfo).toHaveBeenCalledWith(
+                    transactionJson.id,
+                    new UpdateTransactionInfoDto({
+                        channel: "bank",
+                        providerRef: pendingTransferProviderRes.providerRef,
+                        status: "pending",
+                    })
+                );
+                expect(deps.sendMoney).not.toHaveBeenCalled();
+                expect(deps.updateTransactionReference).not.toHaveBeenCalled();
+            });
+        });
+
+        describe("given the status from verification is 'failed'", () => {
+            it("should update the transaction reference to a new one and call the sendMoney function with the new reference", async () => {
+                mockAll();
+                deps.verifyTransferFromProvider.mockResolvedValue(failedTransferProviderRes);
+                await walletService.dequeueTransfer(data);
+                expect(deps.updateTransactionReference).toHaveBeenCalledTimes(1);
+                expect(deps.updateTransactionReference).toHaveBeenCalledWith(
+                    transactionJson.id,
+                    failedReference
+                );
+
+                expect(deps.sendMoney).toHaveBeenCalledTimes(1);
+                expect(deps.sendMoney).toHaveBeenCalledWith(
+                    new SendMoneyDto({
+                        amount: data.amount,
+                        bankDetails: data.bankDetails,
+                        currencyCode: data.currencyCode,
+                        provider: data.provider,
+                        reference: failedReference,
+                    })
+                );
+            });
+
+            describe("given the sendMoney function succeeds", () => {
+                it("should update the providerRef with the one returned from the sendMoney function", async () => {
+                    mockAll();
+                    deps.verifyTransferFromProvider.mockResolvedValue(failedTransferProviderRes);
+                    await walletService.dequeueTransfer(data);
+                    expect(deps.updateTransactionInfo).toHaveBeenCalledTimes(1);
+                    expect(deps.updateTransactionInfo).toHaveBeenCalledWith(
+                        transactionJson.id,
+                        new UpdateTransactionInfoDto({
+                            channel: "bank",
+                            providerRef: normalProviderRef,
+                            status: "pending",
+                        })
+                    );
+                });
+            });
+
+            describe("given the sendMoney function fails", () => {
+                it("should update the providerRef with the retrial providerRef from config", async () => {
+                    mockAll();
+                    deps.verifyTransferFromProvider.mockResolvedValue(failedTransferProviderRes);
+                    deps.sendMoney.mockRejectedValue(
+                        new SendMoneyError(
+                            "This failed, sorry",
+                            data.provider,
+                            new SendMoneyDto({ ...data })
+                        )
+                    );
+
+                    await expect(() => walletService.dequeueTransfer(data)).rejects.toThrow(
+                        SendMoneyError
+                    );
+                    expect(deps.updateTransactionInfo).toHaveBeenCalledTimes(1);
+                    expect(deps.updateTransactionInfo).toHaveBeenCalledWith(
+                        transactionJson.id,
+                        new UpdateTransactionInfoDto({
+                            channel: "bank",
+                            providerRef: config.payment.retryTempProviderRef,
+                            status: "pending",
+                        })
+                    );
+                });
+            });
+        });
+
+        describe("given the status from verification is 'not_found'", () => {
+            it("should call the sendMoney function with the reference provided in the dequeued data", async () => {
+                mockAll();
+
+                await walletService.dequeueTransfer(data);
+                expect(deps.updateTransactionReference).not.toHaveBeenCalled();
+                expect(deps.sendMoney).toHaveBeenCalledTimes(1);
+                expect(deps.sendMoney).toHaveBeenCalledWith(
+                    new SendMoneyDto({
+                        amount: data.amount,
+                        bankDetails: data.bankDetails,
+                        currencyCode: data.currencyCode,
+                        provider: data.provider,
+                        reference: data.reference,
+                    })
+                );
+            });
+
+            describe("given the sendMoney function succeeds", () => {
+                it("should update the providerRef with the one returned from the sendMoney function", async () => {
+                    mockAll();
+
+                    await walletService.dequeueTransfer(data);
+                    expect(deps.updateTransactionInfo).toHaveBeenCalledTimes(1);
+                    expect(deps.updateTransactionInfo).toHaveBeenCalledWith(
+                        transactionJson.id,
+                        new UpdateTransactionInfoDto({
+                            channel: "bank",
+                            providerRef: normalProviderRef,
+                            status: "pending",
+                        })
+                    );
+                });
+            });
+
+            describe("given the sendMoney function fails", () => {
+                it("should update the providerRef with the retrial providerRef from config", async () => {
+                    mockAll();
+                    deps.sendMoney.mockRejectedValue(
+                        new SendMoneyError(
+                            "This failed, sorry",
+                            data.provider,
+                            new SendMoneyDto({ ...data })
+                        )
+                    );
+
+                    await expect(() => walletService.dequeueTransfer(data)).rejects.toThrow(
+                        SendMoneyError
+                    );
+                    expect(deps.updateTransactionInfo).toHaveBeenCalledTimes(1);
+                    expect(deps.updateTransactionInfo).toHaveBeenCalledWith(
+                        transactionJson.id,
+                        new UpdateTransactionInfoDto({
+                            channel: "bank",
+                            providerRef: config.payment.retryTempProviderRef,
+                            status: "pending",
+                        })
+                    );
+                });
+            });
+        });
+
+        //      If status is
+        //     * pending: do nothing.
+        //     * failed: update the transfer reference and sendMoney with updated reference
+        //     * not_found: go ahead and send the money
+        //     * successful: do nothing
     });
 });

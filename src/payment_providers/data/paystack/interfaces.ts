@@ -45,3 +45,52 @@ export interface VerifyTransactionResponseInterface extends BaseResponseInterfac
         };
     };
 }
+
+export interface VerifyBankDetailsResponseInterface extends BaseResponseInterface {
+    data: {
+        account_number: string;
+        account_name: string;
+    };
+}
+
+export interface TransferRecipient {
+    recipientId: string;
+    accountNumber: string;
+    bankCode: string;
+    currency: string;
+}
+
+export interface CreateTransferRecipientResponseInterface extends BaseResponseInterface {
+    data: {
+        recipient_code: string;
+        details: {
+            account_number: string;
+            bank_code: string;
+        };
+    };
+}
+
+export interface SendMoneyResponseInterface extends BaseResponseInterface {
+    data: {
+        amount: number;
+        status: string;
+        transfer_code: string;
+    };
+}
+
+export interface VerifyTransferReponseInterface extends BaseResponseInterface {
+    data: {
+        status: "success" | "failed" | "pending";
+        transfer_code: string;
+        reference: string;
+        amount: number;
+        recipient: {
+            details: {
+                account_number: string;
+                account_name: string | null;
+                bank_code: string;
+                bank_name: string;
+            };
+        };
+    };
+}

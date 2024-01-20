@@ -17,11 +17,69 @@ import {
     transactionSeeder,
 } from "src/__tests__/helpers/samples";
 import { DBSetup } from "src/__tests__/helpers/test_utils";
+import config from "src/config";
+import moment from "moment";
 
 const pool = DBSetup(transactionSeeder);
 
 const runQuerySpy = jest.spyOn(dbModule, "runQuery");
 const transactionRepo = new TransactionRepo(pool);
+
+const getUnsavedTransactions = async () => {
+    const transaction = await getATransaction(pool);
+    const transactions: CreateTransactionDto[] = [
+        new CreateTransactionDto({
+            amount: 1000,
+            businessCharge: 100,
+            businessChargePaidBy: "wallet",
+            businessGot: 980,
+            businessId: transaction.businessId,
+            businessPaid: 20,
+            bwId: transaction.bwId,
+            channel: "bank",
+            currency: "NGN",
+            customerId: transaction.customerId,
+            platformCharge: 20,
+            platformChargePaidBy: "wallet",
+            platformGot: 1000,
+            settledAmount: 900,
+            receiverPaid: 100,
+            reference: "reference",
+            senderPaid: 0,
+            transactionType: "debit",
+            provider: config.payment.currentProviders.transfer,
+            providerRef: "providerRef",
+            senderWalletId: transaction.senderWalletId,
+            receiverWalletId: transaction.senderWalletId,
+        }),
+        new CreateTransactionDto({
+            amount: 100,
+            businessCharge: 10,
+            businessChargePaidBy: "wallet",
+            businessGot: 98,
+            businessId: transaction.businessId,
+            businessPaid: 2,
+            bwId: transaction.bwId,
+            channel: "bank",
+            currency: "NGN",
+            customerId: transaction.customerId,
+            platformCharge: 2,
+            platformChargePaidBy: "wallet",
+            platformGot: 100,
+            settledAmount: 90,
+            receiverPaid: 10,
+            reference: "reference2",
+            senderPaid: 0,
+            transactionType: "debit",
+            provider: config.payment.currentProviders.transfer,
+            providerRef: "providerRef2",
+            senderWalletId: transaction.senderWalletId,
+            receiverWalletId: transaction.senderWalletId,
+        }),
+    ];
+
+    return transactions;
+};
 
 describe("TESTING TRANSACTION REPO", () => {
     describe(">>> create", () => {
@@ -78,6 +136,36 @@ describe("TESTING TRANSACTION REPO", () => {
             const persistedTransaction = res.rows[0];
             if (!persistedTransaction) throw new Error("Failed to persist transaction");
             expect(persistedTransaction).toMatchObject(data);
+        });
+    });
+
+    describe(">>> createMultiple", () => {
+        it("should persist the multiple transactions and return an array of the persisted objects", async () => {
+            const transactionsData = await getUnsavedTransactions();
+            const session = await transactionRepo.startSession();
+
+            runQuerySpy.mockClear();
+            const persistedTransactions = await transactionRepo.createMultiple(
+                transactionsData,
+                session
+            );
+            await session.commit();
+            await session.end();
+
+            expect(runQuerySpy).toHaveBeenCalledTimes(1);
+            expect(runQuerySpy).toHaveBeenCalledWith(
+                expect.anything(),
+                pool,
+                (session as PgSession).client
+            );
+
+            for (const transaction of persistedTransactions) {
+                const data = transactionsData.find(
+                    (trx) => trx.reference === transaction.reference
+                );
+                if (!data) throw new Error("Not properly saved");
+                expect(transaction).toMatchObject(data);
+            }
         });
     });
 
@@ -144,21 +232,22 @@ describe("TESTING TRANSACTION REPO", () => {
         });
     });
 
-    describe(">>> updateStatus", () => {
-        it("should update the transaction record with the given status", async () => {
-            const statuses: TransactionModelInterface["status"][] = [
-                "failed",
-                "pending",
-                "successful",
+    describe(">>> updateReference", () => {
+        it("should update the transaction record with the given reference", async () => {
+            const references: TransactionModelInterface["reference"][] = [
+                "dflaksdjf",
+                "sdlkfj",
+                "sldkfjlsd",
             ];
 
             const trx = await getATransaction(pool);
-            for (const status of statuses) {
+            for (const reference of references) {
                 const session = await transactionRepo.startSession();
-                await transactionRepo.updateStatus(trx.id, status, session);
+                await transactionRepo.updateReference(trx.id, reference, session);
+                await session.commit();
                 await session.end();
                 const newTrx = await getATransaction(pool, trx.id);
-                expect(newTrx.status).toBe(status);
+                expect(newTrx.reference).toBe(reference);
                 expect(runQuerySpy).toHaveBeenCalledWith(
                     expect.anything(),
                     expect.anything(),
@@ -239,6 +328,71 @@ describe("TESTING TRANSACTION REPO", () => {
             const transaction = res.rows[0];
             if (!transaction) throw new Error("Transaction not found");
             expect(transaction).toMatchObject({ ...data, status: "successful" });
+        });
+    });
+
+    describe(">>> getPendingDebitThatHaveProviderRef", () => {
+        it("should return an array of pending transactions that have a provider ref", async () => {
+            const unsaved = await getUnsavedTransactions(); // These transactions have a provider ref
+
+            const testTransactions = await transactionRepo.createMultiple(unsaved);
+
+            const result = await transactionRepo.getPendingDebitThatHaveProviderRef();
+
+            for (const transaction of result) {
+                const data = testTransactions.find(
+                    (trx) => trx.reference === transaction.reference
+                );
+                if (!data) throw new Error("Not properly saved");
+                expect(data).toMatchObject(transaction);
+            }
+        });
+    });
+
+    describe(">>> updateForRetrial", () => {
+        it("should update the status of the transaction to retrying and the retryAt to the given retrialDate", async () => {
+            const transaction = await getATransaction(pool);
+
+            const retrialDate = new Date();
+            const session = await transactionRepo.startSession();
+            await transactionRepo.updateForRetrial(transaction.id, retrialDate, session);
+            await session.commit();
+            await session.end();
+
+            const savedTransaction = await getATransaction(pool, transaction.id);
+            if (!savedTransaction) throw new Error("Did not update transaction");
+            expect(savedTransaction.retryAt?.toISOString()).toBe(retrialDate.toISOString());
+            expect(savedTransaction.status).toBe("retrying");
+            expect(savedTransaction.retries).toBe((transaction.retries as number) + 1);
+            expect(runQuerySpy).toHaveBeenCalledWith(
+                expect.anything(),
+                expect.anything(),
+                (session as PgSession).client
+            );
+        });
+    });
+
+    describe(">>> getRetryTransactions", () => {
+        it("should return transactions with status retrying and retryAt is in the past", async () => {
+            // Create such a transaction
+            const trxs = await getUnsavedTransactions();
+
+            const testTrxs = await transactionRepo.createMultiple(trxs);
+            // Update the transactions
+            const past = moment().subtract(10, "minutes");
+            for (const trx of testTrxs) {
+                await transactionRepo.updateForRetrial(trx.id, past.toDate());
+            }
+
+            const results = await transactionRepo.getRetryTransfers();
+            for (const trx of results) {
+                expect(trx.retryAt?.toISOString()).toBe(past.toISOString());
+                expect(trx.status).toBe("retrying");
+                expect(trx.transactionType).toBe("debit");
+                const prev = testTrxs.find((tr) => tr.id === trx.id);
+                expect(prev).toBeDefined();
+                expect(prev).not.toBeNull();
+            }
         });
     });
 });

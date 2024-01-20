@@ -1,3 +1,3 @@
-export * from "./rabbit.task.queue";
-export * from "./error.task.queue";
-export * from "./interface.task.queue";
+export * from "./rabbit.task_queue";
+export * from "./error.task_queue";
+export * from "./interface.task_queue";

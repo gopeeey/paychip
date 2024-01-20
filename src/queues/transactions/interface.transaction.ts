@@ -1,4 +1,4 @@
-import { BaseQueueInterface } from "@queues/base_queue_interface";
 import { TransactionMessageDto } from "./message.dto.transaction";
+import { TaskQueueInterface } from "@queues/task_queues";
 
-export interface TransactionQueueInterface extends BaseQueueInterface<TransactionMessageDto> {}
+export interface TransactionQueueInterface extends TaskQueueInterface<TransactionMessageDto> {}

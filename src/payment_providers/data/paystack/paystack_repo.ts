@@ -1,15 +1,29 @@
 import {
+    BankDetails,
     GeneratePaymentLinkError,
+    InvalidBankDetails,
     PaymentProviderRepoInterface,
+    SendMoneyError,
     VerifyTransactionResponseDto,
+    VerifyTransferDto,
+    VerifyTransferResponseDto,
 } from "@payment_providers/logic";
 import { TransactionChannelType } from "@wallet/logic";
 import generalConfig from "src/config";
 import { HttpClient, HttpError, logError, encodeHex, decodeHex } from "src/utils";
 import {
+    CreateTransferRecipientResponseInterface,
     InitializeTransactionResponseInterface,
+    SendMoneyResponseInterface,
+    TransferRecipient,
+    VerifyBankDetailsResponseInterface,
     VerifyTransactionResponseInterface,
+    VerifyTransferReponseInterface,
 } from "./interfaces";
+import { InternalError } from "@bases/logic";
+import { runQuery } from "@db/postgres";
+import * as queries from "./queries";
+import { Pool } from "pg";
 
 type PaystackChannelMapType = {
     [key: string]: Exclude<TransactionChannelType, "wallet">;
@@ -28,6 +42,7 @@ export class PaystackRepo implements PaymentProviderRepoInterface {
     baseHeader = { Authorization: `Bearer ${this.secretKey}` };
     baseUrl = "https://api.paystack.co";
     client: HttpClient;
+    pool: Pool;
     channelMap: PaystackChannelMapType = { card: "card", bank_transfer: "bank" };
     platformToPaystackChannelMap: PlatformToPaystackChannelMapType = {
         card: "card",
@@ -39,9 +54,13 @@ export class PaystackRepo implements PaymentProviderRepoInterface {
     };
     errorMessage = generalConfig.payment.providerErrorMessage;
     conversionRate = 100;
+    currencyBankAccountTypeMap: { [key: string]: string } = {
+        NGN: "nuban",
+    };
 
-    constructor() {
+    constructor(pool: Pool) {
         this.client = new HttpClient({ baseUrl: this.baseUrl, headers: this.baseHeader });
+        this.pool = pool;
     }
 
     convertAmountToPaystack = (amount: number) => {
@@ -140,6 +159,127 @@ export class PaystackRepo implements PaymentProviderRepoInterface {
             if (err instanceof HttpError) message += ": " + err.message;
             logError({ error: err, message, channels: ["console", "external"] });
             return null;
+        }
+    };
+
+    verifyBankDetails: PaymentProviderRepoInterface["verifyBankDetails"] = async (details) => {
+        try {
+            const response = await this.client.get<VerifyBankDetailsResponseInterface>(
+                `/bank/resolve?account_number=${details.accountNumber}&bank_code=${details.bankCode}`
+            );
+
+            const data = response.data;
+            const verifiedDetails = new BankDetails({
+                accountName: data.account_name,
+                accountNumber: data.account_number,
+                bankCode: details.bankCode,
+            });
+
+            return verifiedDetails;
+        } catch (err) {
+            if (err instanceof HttpError) {
+                if (err.statusCode === 422) {
+                    throw new InvalidBankDetails();
+                }
+            }
+
+            throw new InternalError("Error verifying bank details from provider", {
+                ...details,
+                provider: "paystack",
+            });
+        }
+    };
+
+    getOrCreateTransferRecipient = async (bankDetails: BankDetails, currencyCode: string) => {
+        const res = await runQuery<TransferRecipient>(
+            queries.getTransferRecipient(bankDetails),
+            this.pool
+        );
+        const existing = res.rows[0];
+        if (existing) return existing;
+
+        const body = {
+            type: this.currencyBankAccountTypeMap[currencyCode],
+            name: bankDetails.accountName,
+            account_number: bankDetails.accountNumber,
+            bank_code: bankDetails.bankCode,
+            currency: currencyCode,
+        };
+        const response = await this.client.post<CreateTransferRecipientResponseInterface>({
+            url: "/transferrecipient",
+            body,
+        });
+
+        const data = response.data;
+        const recipient: TransferRecipient = {
+            accountNumber: data.details.account_number,
+            recipientId: data.recipient_code,
+            bankCode: data.details.bank_code,
+            currency: currencyCode,
+        };
+
+        await runQuery(queries.createTransferRecipient(recipient), this.pool);
+
+        return recipient;
+    };
+
+    sendMoney: PaymentProviderRepoInterface["sendMoney"] = async (dto) => {
+        try {
+            const recipient = await this.getOrCreateTransferRecipient(
+                dto.bankDetails,
+                dto.currencyCode
+            );
+
+            const body = {
+                source: "balance",
+                reason: "Wallet withdrawal",
+                amount: this.convertAmountToPaystack(dto.amount),
+                recipient: recipient.recipientId,
+            };
+
+            const response = await this.client.post<SendMoneyResponseInterface>({
+                url: "/transfer",
+                body,
+            });
+
+            const data = response.data;
+            if (data.status !== "pending")
+                throw new Error(`request succeeded but returned transfer status: ${data.status}`);
+            return data.transfer_code;
+        } catch (err) {
+            let message = "";
+            if (err instanceof HttpError) {
+                message = `${err.message} (statusCode: ${err.statusCode})`;
+            } else {
+                if (err instanceof Error) message = err.message;
+            }
+
+            throw new SendMoneyError(message, "paystack", dto);
+        }
+    };
+
+    verifyTransfer: PaymentProviderRepoInterface["verifyTransfer"] = async (dto) => {
+        const statusMap = { success: "successful", failed: "failed", pending: "pending" } as const;
+        try {
+            const res = await this.client.get<VerifyTransferReponseInterface>(
+                `/transfer/verify/${dto.reference}`
+            );
+            const transfer = new VerifyTransferResponseDto({
+                status: statusMap[res.data.status],
+                providerRef: res.data.transfer_code,
+            });
+
+            return transfer;
+        } catch (err) {
+            if (err instanceof HttpError) {
+                if (err.statusCode === 404)
+                    return new VerifyTransferResponseDto({ status: "not_found" });
+            }
+
+            throw new InternalError("Error verifying transfer from provider", {
+                ...dto,
+                provider: "paystack",
+            });
         }
     };
 }
